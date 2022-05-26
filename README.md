@@ -4,6 +4,16 @@ https://user-images.githubusercontent.com/6053155/170525726-2db23ae0-97b8-4bd1-8
 
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
 
+Created by:
+
+- Lewis Menelaws
+- tmrrw
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="">
+  <source media="(prefers-color-scheme: light)" srcset="">
+  <img alt="Shows an illustrated sun in light color mode and a moon with stars in dark color mode." src="">
+</picture>
+
 ## Motivation 🤔
 
 These videos on TikTok, YouTube and Instagram get MILLIONS of views across all platforms and require very little effort. The only original thing being done is the editing and gathering of all materials...
