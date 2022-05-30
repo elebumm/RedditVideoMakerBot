@@ -17,6 +17,8 @@ def download_background():
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
     """
+    # List of choices for the background video
+    background_choices = ["https://www.youtube.com/watch?v=n_Dv4JMiwK8"]
 
     if not Path("assets/mp4/background.mp4").is_file():
         print_step(

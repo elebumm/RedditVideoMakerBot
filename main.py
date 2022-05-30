@@ -1,3 +1,4 @@
+from utils.cleanup import cleanup
 from utils.console import print_markdown
 import time
 from reddit.askreddit import get_askreddit_threads
@@ -20,3 +21,8 @@ download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
 download_background()
 chop_background_video(length)
 final_video = make_final_video(number_of_comments)
+cleanup()
+
+print_markdown(
+    "### File saved at assets/final_video.mp4 🎉. If you enjoyed this, make sure to give us a star on GitHub! 🌟"
+)
