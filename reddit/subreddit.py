@@ -10,7 +10,7 @@ def get_subreddit_threads():
     Returns a list of threads from the AskReddit subreddit.
     """
 
-    print_step("Getting AskReddit threads...")
+    print_step("Getting subreddit threads...")
 
     content = {}
     load_dotenv()
@@ -21,7 +21,15 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=os.getenv("REDDIT_PASSWORD"),
     )
+    """
+    Ask user for subreddit input
+    """
     subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
+    
+    """
+    Allow you to specify in .env. Done for automation purposes.
+    subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+    """
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
