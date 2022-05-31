@@ -21,15 +21,20 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=os.getenv("REDDIT_PASSWORD"),
     )
-    """
-    Ask user for subreddit input
-    """
-    subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
-    
-    """
-    Allow you to specify in .env. Done for automation purposes.
-    subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
-    """
+
+    if os.getenv("ASK_EACH_TIME") == TRUE:
+        try:
+            subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
+        except NameError:
+            subreddit = reddit.subreddit("askreddit")
+            print_substep("Subreddit not defined. Using AskReddit.")
+    else:
+        try:
+            subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        except NameError:
+            subreddit = reddit.subreddit("askreddit")
+            print_substep("Subreddit not defined. Using AskReddit.")
+
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
