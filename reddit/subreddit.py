@@ -43,7 +43,6 @@ def get_subreddit_threads():
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     os.environ["VIDEO_TITLE"] = str(ascifi(submission.title))
-    print_substep(f"Video will be: {os.getenv('VIDEO_TITLE')} :thumbsup:")
     try:
 
         content["thread_url"] = submission.url

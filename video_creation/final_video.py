@@ -2,7 +2,9 @@ import os
 
 from moviepy.editor import (VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips,
                             CompositeAudioClip, CompositeVideoClip)
-from utils.console import print_step
+
+from utils.cleanup import cleanup
+from utils.console import print_step, print_substep
 
 W, H = 1080, 1920
 
@@ -44,6 +46,8 @@ def make_final_video(number_of_clips):
 
     final.write_videofile(f"assets/{get_video_title()}.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
 
-
+    print_step("Removing temporary files 🗑")
+    cleanups = cleanup()
+    print_substep(f"Removed {cleanups} temporary files 🗑")
 
     print_step(f"Reddit title: {os.getenv('VIDEO_TITLE')} | Background Credit {os.getenv('background_credit')}")

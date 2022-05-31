@@ -21,17 +21,17 @@ def download_background():
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
     Shoutout to: Orbital Gameplay (https://www.youtube.com/watch?v=2X9QGY__0II)
     """
-    Path("assets/backgronds/").mkdir(parents=True, exist_ok=True)
+    Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", 'bbswitzer'),
         # note: make sure the file name doesn't include a - in it
         ("https://www.youtube.com/watch?v=2X9QGY__0II", "rocket_league.mp4", 'Orbital Gameplay'), ]
-    if listdir('assets/backgrounds/') != len(background_options):
+    if listdir('./assets/backgrounds') != len(background_options):
         print_step("We need to download the backgrounds videos. they are fairly large but it's only done once. 😎")
         print_substep("Downloading the backgrounds video... please be patient 🙏 ")
 
         for uri, filename, credit in track(background_options, description="Downloading..."):
-            print_step(f"Downloading {filename} from {uri}")
+            print_substep(f"Downloading {filename} from {uri}")
             YouTube(uri).streams.filter(res="720p").first().download("assets/backgrounds",
                                                                      filename=f"{credit}-{filename}")
         print_substep("Background videos downloaded successfully! 🎉", style="bold green")
