@@ -1,8 +1,10 @@
+from os import getenv
+
 from playwright.sync_api import sync_playwright
 from pathlib import Path
 from rich.progress import track
-from utils.console import print_step, print_substep
 
+from utils.console import print_step, print_substep
 
 def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
     """Downloads screenshots of reddit posts as they are seen on the web.
@@ -14,7 +16,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
     print_step("Downloading Screenshots of Reddit Posts 📷")
 
     # ! Make sure the reddit screenshots folder exists
-    Path("assets/png").mkdir(parents=True, exist_ok=True)
+    Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
@@ -27,17 +29,18 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
 
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
+            if getenv("ALLOW_NSFW").casefold() == "false":
+                print_substep("NSFW Post Detected. Skipping...")
+                from subprocess import call
+                call(["python", "main.py"])
+                exit(1)
 
             print_substep("Post is NSFW. You are spicy... :fire:")
             page.locator('[data-testid="content-gate"] button').click()
 
-        page.locator('[data-test-id="post-content"]').screenshot(
-            path="assets/png/title.png"
-        )
+        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
 
-        for idx, comment in track(
-            enumerate(reddit_object["comments"]), "Downloading screenshots..."
-        ):
+        for idx, comment in track(enumerate(reddit_object["comments"]), "Downloading screenshots..."):
 
             # Stop if we have reached the screenshot_num
             if idx >= screenshot_num:
@@ -47,7 +50,5 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 page.locator('[data-testid="content-gate"] button').click()
 
             page.goto(f'https://reddit.com{comment["comment_url"]}')
-            page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                path=f"assets/png/comment_{idx}.png"
-            )
+            page.locator(f"#t1_{comment['comment_id']}").screenshot(path=f"assets/temp/png/comment_{idx}.png")
         print_substep("Screenshots downloaded Successfully.", style="bold green")
