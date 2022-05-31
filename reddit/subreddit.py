@@ -22,16 +22,16 @@ def get_subreddit_threads():
         password=os.getenv("REDDIT_PASSWORD"),
     )
 
-    if os.getenv("ASK_EACH_TIME") == TRUE:
+    if os.getenv("ASK_EACH_TIME") == "TRUE":
         try:
             subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
-        except NameError:
+        except ValueError:
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
     else:
         try:
             subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
-        except NameError:
+        except ValueError:
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
