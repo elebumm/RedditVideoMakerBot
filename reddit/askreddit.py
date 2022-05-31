@@ -1,4 +1,4 @@
-from utils.console import print_markdown, print_step, print_substep
+from utils.console import print_step, print_substep
 import praw
 import random
 from dotenv import load_dotenv

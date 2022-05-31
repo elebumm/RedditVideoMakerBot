@@ -5,7 +5,7 @@ from random import randrange
 from pytube import YouTube
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
-from rich.progress import track, Progress
+from rich.progress import Progress
 
 from utils.console import print_step, print_substep
 
@@ -24,8 +24,8 @@ def download_background():
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", 'bbswitzer'),
-        # note: make sure the file name doesn't include a - in it
         ("https://www.youtube.com/watch?v=2X9QGY__0II", "rocket_league.mp4", 'Orbital Gameplay'), ]
+        # note: make sure the file name doesn't include a - in it
     print(listdir('./assets/backgrounds'), 'podsods', len(background_options))
     if listdir('./assets/backgrounds') != len(background_options):
         print_step("We need to download the backgnrounds videos. they are fairly large but it's only done once. 😎")

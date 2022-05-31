@@ -42,6 +42,8 @@ def get_subreddit_threads():
 
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
+    print_substep(f'subreddit thread is: {submission.title}\n(if you dont like this, you can change it by exiting and rerunning the program)')
+
     os.environ["VIDEO_TITLE"] = str(ascifi(submission.title))
     try:
 

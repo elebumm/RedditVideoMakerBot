@@ -50,4 +50,4 @@ def make_final_video(number_of_clips):
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
 
-    print_step(f"Reddit title: {os.getenv('VIDEO_TITLE')} | Background Credit {os.getenv('background_credit')}")
+    print_step(f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}")
