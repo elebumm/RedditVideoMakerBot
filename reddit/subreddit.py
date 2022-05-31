@@ -22,7 +22,7 @@ def get_subreddit_threads():
         password=os.getenv("REDDIT_PASSWORD"),
     )
     subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
-    threads = subreddot.hot(limit=25)
+    threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     try:
