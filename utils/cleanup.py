@@ -7,10 +7,12 @@ def cleanup() -> int:
     count += len(files)
     for f in files:
         os.remove(f)
-
-    for file in os.listdir('./assets/temp/mp4'):
-        count += 1
-        os.remove('./assets/temp/mp4/' + file)
+    try:
+        for file in os.listdir('./assets/temp/mp4'):
+            count += 1
+            os.remove('./assets/temp/mp4/' + file)
+    except FileNotFoundError:
+        pass
     for file in os.listdir('./assets/temp/mp3'):
         count += 1
         os.remove('./assets/temp/mp3/' + file)

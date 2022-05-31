@@ -1,3 +1,4 @@
+from utils.cleanup import cleanup
 from utils.console import print_markdown
 import time
 from reddit.subreddit import get_subreddit_threads
@@ -12,6 +13,7 @@ print_markdown(
 
 time.sleep(2)
 
+
 def main():
     reddit_object = get_subreddit_threads()
 
@@ -23,4 +25,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print_markdown("## Clearing temp files")
+        cleanup()
+        exit()

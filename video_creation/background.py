@@ -5,7 +5,7 @@ from random import randrange
 from pytube import YouTube
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
-from rich.progress import track
+from rich.progress import track, Progress
 
 from utils.console import print_step, print_substep
 
@@ -26,14 +26,20 @@ def download_background():
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", 'bbswitzer'),
         # note: make sure the file name doesn't include a - in it
         ("https://www.youtube.com/watch?v=2X9QGY__0II", "rocket_league.mp4", 'Orbital Gameplay'), ]
+    print(listdir('./assets/backgrounds'), 'podsods', len(background_options))
     if listdir('./assets/backgrounds') != len(background_options):
-        print_step("We need to download the backgrounds videos. they are fairly large but it's only done once. 😎")
-        print_substep("Downloading the backgrounds video... please be patient 🙏 ")
+        print_step("We need to download the backgnrounds videos. they are fairly large but it's only done once. 😎")
+        print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
+        with Progress() as progress:
 
-        for uri, filename, credit in track(background_options, description="Downloading..."):
-            print_substep(f"Downloading {filename} from {uri}")
-            YouTube(uri).streams.filter(res="720p").first().download("assets/backgrounds",
-                                                                     filename=f"{credit}-{filename}")
+            download_task = progress.add_task("[green]Downloading...", total=2)
+
+            for uri, filename, credit in background_options:
+                print_substep(f"Downloading {filename} from {uri}")
+                YouTube(uri).streams.filter(res="720p").first().download("assets/backgrounds",
+                                                                         filename=f"{credit}-{filename}")
+                progress.update(download_task, advance=1)
+
         print_substep("Background videos downloaded successfully! 🎉", style="bold green")
 
 
