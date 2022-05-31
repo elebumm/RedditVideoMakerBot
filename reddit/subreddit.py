@@ -50,5 +50,5 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
-    print_substep("Received subreddot threads Successfully.", style="bold green")
+    print_substep("Received subreddit threads Successfully.", style="bold green")
     return content
