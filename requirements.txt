@@ -31,7 +31,7 @@ pytube==12.1.0
 regex==2020.10.15
 requests==2.27.1
 rich==12.4.4
-six @ file:///AppleInternal/BuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-110/six-1.15.0-py2.py3-none-any.whl
+six==1.16.0
 toml==0.10.1
 tqdm==4.64.0
 typed-ast==1.4.1
