@@ -1,3 +1,5 @@
 assets/
+reddit/__pycache__/
+utils/__pycache__/
 .env
 reddit-bot-351418-5560ebc49cac.json
