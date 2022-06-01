@@ -22,8 +22,15 @@ def get_askreddit_threads():
         password=os.getenv("REDDIT_PASSWORD"),
     )
     askreddit = reddit.subreddit("askreddit")
-    threads = askreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    # change to update number of choices that show up in console
+    number_choices = 25
+    choices_string = ""
+    number = 1
+    for thread in askreddit.hot(limit=number_choices):
+        choices_string += f"{number}) {thread.title}\n"
+        number += 1
+    submissionChoice = input(f"{choices_string}\nWhich thread would you like to use? ")
+    submission = list(askreddit.hot(limit=number_choices))[int(submissionChoice) - 1]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     try:
 
