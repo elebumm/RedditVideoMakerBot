@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from os.path import exists
 
 from moviepy.editor import (VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips,
                             CompositeAudioClip, CompositeVideoClip)
@@ -61,6 +62,9 @@ def make_final_video(number_of_clips):
             json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
 
     save_data()
+    if not exists('./results'):
+        print_substep('the results folder didn\'t exist so I made it')
+        os.mkdir("./results")
     final.write_videofile(f"results/{filename}", fps=30, audio_codec="aac", audio_bitrate="192k")
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
