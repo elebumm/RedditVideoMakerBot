@@ -18,10 +18,10 @@ reddit_object = get_askreddit_threads()
 
 length, number_of_comments = save_text_to_mp3(reddit_object)
 download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-download_background()
-chop_background_video(length)
+video_id = download_background()
+chop_background_video(length, video_id)
 final_video = make_final_video(number_of_comments)
-cleanup()
+# cleanup()
 
 print_markdown(
     "### File saved at assets/final_video.mp4 🎉. If you enjoyed this, make sure to give us a star on GitHub! 🌟"
