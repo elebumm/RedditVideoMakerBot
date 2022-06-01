@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 
-def get_askreddit_threads():
+def get_askreddit_threads(threadID):
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -21,9 +21,12 @@ def get_askreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=os.getenv("REDDIT_PASSWORD"),
     )
-    askreddit = reddit.subreddit("askreddit")
-    threads = askreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    if threadID:
+        submission = reddit.submission(threadID)
+    else:
+        askreddit = reddit.subreddit("askreddit")
+        threads = askreddit.hot(limit=25)
+        submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     try:
 

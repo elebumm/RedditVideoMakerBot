@@ -17,7 +17,7 @@ def save_text_to_mp3(reddit_obj):
     # Create a folder for the mp3 files.
     Path("assets/mp3").mkdir(parents=True, exist_ok=True)
 
-    tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False, tld="co.uk")
+    tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False, tld="com.au")
     tts.save(f"assets/mp3/title.mp3")
     length += MP3(f"assets/mp3/title.mp3").info.length
 
