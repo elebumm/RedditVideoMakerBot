@@ -7,6 +7,7 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
 [<picture>
+
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
@@ -26,7 +27,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Requirements
 
 - Python 3.6+
-- Playwright (this should install automatically in installation)
+- Playwright (this should install automatically in installation, if not you need to install it manually by running the command `pip install playwright` or if that doesn't work, you can try `pip3 install playwright`)
 
 ## Installation 👩‍💻
 
