@@ -32,7 +32,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             if getenv("ALLOW_NSFW").casefold() == "false":
                 print_substep("NSFW Post Detected. Skipping...")
                 from subprocess import call
-                call(["python3", "main.py"])
+                call(["python", "main.py"])
                 exit(1)
 
             print_substep("Post is NSFW. You are spicy... :fire:")

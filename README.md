@@ -36,14 +36,15 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 4. install [SoX](https://sourceforge.net/projects/sox/files/sox/)
 5. Run `python3 main.py`
 6. Enjoy 😎
-
+## Usage 
+ * an example of a reddit ID is ult7el
 ## Contributing & Ways to improve 📈
 
 In its current state, this bot does exactly what it needs to do. However, lots of improvements can be made.
 
 I have tried to simplify the code so anyone can read it and start contibuting at any skill level. Don't be shy :) contribute!
 
-- [ ] Allowing users to choose a reddit thread instead of being randomized.
+- [x] Allowing users to choose a reddit thread instead of being randomized.
 - [x] Allowing users to choose a background that is picked instead of the Minecraft one.
 - [x] Allowing users to choose between any subreddit.
 - [x] Allowing users to change voice.

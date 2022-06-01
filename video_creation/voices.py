@@ -36,7 +36,7 @@ def save_text_to_mp3(reddit_obj):
         ttttsw.tts(comment["comment_body"], filename=f"assets/temp/mp3/{idx}.mp3", random_speaker=False)
         try:
             length += MP3(f"assets/temp/mp3/{idx}.mp3").info.length
-        except HeaderNotFoundError or MutagenError:
+        except (HeaderNotFoundError, MutagenError, Exception):
             length = sox.file_info.duration(f"assets/temp/mp3/{idx}.mp3")
 
     print_substep("Saved Text to MP3 files Successfully.", style="bold green")
