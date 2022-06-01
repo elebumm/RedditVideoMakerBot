@@ -15,12 +15,12 @@ def get_accent(_in: str) -> str:
 
     accents = {
         "australia": "com.au",
-        "united kingdom": "co.uk",
-        "united states": "com",
+        "united_kingdom": "co.uk",
+        "united_states": "com",
         "canada": "ca",
         "india" : "co.in",
         "ireland": "ie",
-        "south africa": "co.za"
+        "south_africa": "co.za"
     }
 
     return accents[_in.lower()]
