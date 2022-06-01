@@ -33,8 +33,8 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 1. Clone this repository
 2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
 3. Run `pip3 install -r requirements.txt`
-4. Run `python3 main.py`
-5. ...
+4. install [SoX](https://sourceforge.net/projects/sox/files/sox/)
+5. Run `python3 main.py`
 6. Enjoy 😎
 
 ## Contributing & Ways to improve 📈
@@ -44,7 +44,7 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 I have tried to simplify the code so anyone can read it and start contibuting at any skill level. Don't be shy :) contribute!
 
 - [ ] Allowing users to choose a reddit thread instead of being randomized.
-- [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
-- [ ] Allowing users to choose between any subreddit.
-- [ ] Allowing users to change voice.
+- [x] Allowing users to choose a background that is picked instead of the Minecraft one.
+- [x] Allowing users to choose between any subreddit.
+- [x] Allowing users to change voice.
 - [ ] Creating better documentation and adding a command line interface.
