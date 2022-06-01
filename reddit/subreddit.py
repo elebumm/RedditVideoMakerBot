@@ -31,6 +31,7 @@ def get_subreddit_threads():
     else:
         try:
             subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+            print_substep(f"Using subreddit {os.getenv('SUBREDDIT')}")
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
