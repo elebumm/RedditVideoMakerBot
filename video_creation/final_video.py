@@ -44,10 +44,11 @@ def make_final_video(number_of_clips):
         else:
             return title[0:30] + "..."
 
-    final.write_videofile(f"assets/{get_video_title()}.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
+    final.write_videofile(f"results/{get_video_title()}.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
 
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
+    print_substep(f"See result in the results folder!")
 
     print_step(f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}")
