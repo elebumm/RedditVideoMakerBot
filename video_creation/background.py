@@ -25,9 +25,9 @@ def download_background():
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", 'bbswitzer'),
         ("https://www.youtube.com/watch?v=2X9QGY__0II", "rocket_league.mp4", 'Orbital Gameplay'), ]
-        # note: make sure the file name doesn't include a - in it
-    print(listdir('./assets/backgrounds'), 'podsods', len(background_options))
-    if listdir('./assets/backgrounds') != len(background_options):
+    # note: make sure the file name doesn't include a - in it
+    if len(listdir('./assets/backgrounds')) != len(
+            background_options):  # if there are any background videos not installed
         print_step("We need to download the backgnrounds videos. they are fairly large but it's only done once. 😎")
         print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
         with Progress() as progress:

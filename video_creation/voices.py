@@ -1,5 +1,7 @@
 import sox
 from pathlib import Path
+
+from mutagen import MutagenError
 from mutagen.mp3 import MP3, HeaderNotFoundError
 from utils.console import print_step, print_substep
 from rich.progress import track
@@ -34,7 +36,7 @@ def save_text_to_mp3(reddit_obj):
         ttttsw.tts(comment["comment_body"], filename=f"assets/temp/mp3/{idx}.mp3", random_speaker=False)
         try:
             length += MP3(f"assets/temp/mp3/{idx}.mp3").info.length
-        except HeaderNotFoundError:
+        except HeaderNotFoundError or MutagenError:
             length = sox.file_info.duration(f"assets/temp/mp3/{idx}.mp3")
 
     print_substep("Saved Text to MP3 files Successfully.", style="bold green")

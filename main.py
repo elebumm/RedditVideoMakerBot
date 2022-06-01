@@ -7,9 +7,9 @@ from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.final_video import make_final_video
 
+# base code by elebumm
 print_markdown(
-    "### Thanks for using this tool! 😊 [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com). If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
-)
+    "### Thanks for using this tool! 😊 Feel free to contribute to this project on GitHub! (JasonLovesDoggo/RedditVideoMakerBot). If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue.")
 
 time.sleep(2)
 
