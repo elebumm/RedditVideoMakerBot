@@ -7,16 +7,11 @@ from dotenv import load_dotenv
 from os import getenv, environ
 
 from utils.videos import check_done
+TEXT_WHITELIST = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890')
 
+def textify(text):
+    return ''.join(filter(TEXT_WHITELIST.__contains__, text))
 
-def ascifi(text):
-    regrex_pattern = re.compile(pattern="["
-                                        u"\U0001F600-\U0001F64F"  # emoticons
-                                        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                                        u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                                        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                                        "]+", flags=re.UNICODE)
-    return regrex_pattern.sub(r'', text)
 
 
 def get_subreddit_threads():
@@ -52,8 +47,8 @@ def get_subreddit_threads():
     print_substep(
         f'subreddit thread is: {submission.title}\n(if you dont like this, you can change it by exiting and rerunning the program)')
 
-    environ["VIDEO_TITLE"] = str(ascifi(submission.title))
-    environ["VIDEO_ID"] = str(ascifi(submission.id))
+    environ["VIDEO_TITLE"] = str(textify(submission.title))
+    environ["VIDEO_ID"] = str(textify(submission.id))
     try:
 
         content["thread_url"] = submission.url
