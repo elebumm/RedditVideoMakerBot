@@ -1,3 +1,4 @@
+import json
 from os import getenv
 
 from playwright.sync_api import sync_playwright
@@ -22,9 +23,14 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         print_substep("Launching Headless Browser...")
 
         browser = p.chromium.launch()
+        context = browser.new_context()
 
+        if getenv("THEME").upper() == "DARK":
+            cookie_file = open('./video_creation/data/cookie.json')
+            cookies = json.load(cookie_file)
+            context.add_cookies(cookies)
         # Get the thread screenshot
-        page = browser.new_page()
+        page = context.new_page()
         page.goto(reddit_object["thread_url"])
 
         if page.locator('[data-testid="content-gate"]').is_visible():
