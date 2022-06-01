@@ -65,9 +65,8 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
         b64d = base64.b64decode(vstr)
 
-        out = open(filename, "wb")
-        out.write(b64d)
-        out.close()
+        with open(filename, "wb") as out:
+            out.write(b64d)
 
     @staticmethod
     def randomvoice():

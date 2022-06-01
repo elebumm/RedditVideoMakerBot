@@ -44,8 +44,11 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 
 I have tried to simplify the code so anyone can read it and start contibuting at any skill level. Don't be shy :) contribute!
 
+- [ ] Creating better documentation and adding a command line interface.
 - [x] Allowing users to choose a reddit thread instead of being randomized.
 - [x] Allowing users to choose a background that is picked instead of the Minecraft one.
 - [x] Allowing users to choose between any subreddit.
 - [x] Allowing users to change voice.
-- [ ] Creating better documentation and adding a command line interface.
+- [x] Checks if a video has already been created
+- [x] Light and Dark modes
+- [x] Nsfw post filter
