@@ -1,5 +1,6 @@
 from random import randrange
 from pytube import YouTube
+from pytube.cli import on_progress
 from pathlib import Path
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
@@ -23,7 +24,7 @@ def download_background():
             "We need to download the Minecraft background video. This is fairly large but it's only done once. 😎"
         )
         print_substep("Downloading the background video... please be patient 🙏")
-        YouTube("https://www.youtube.com/watch?v=n_Dv4JMiwK8").streams.filter(
+        YouTube("https://www.youtube.com/watch?v=n_Dv4JMiwK8", on_progress_callback=on_progress).streams.filter(
             res="720p"
         ).first().download(
             "assets/mp4",
