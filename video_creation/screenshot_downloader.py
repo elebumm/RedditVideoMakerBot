@@ -2,9 +2,10 @@ from playwright.sync_api import sync_playwright
 from pathlib import Path
 from rich.progress import track
 from utils.console import print_step, print_substep
+import json
 
 
-def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
+def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     """Downloads screenshots of reddit posts as they are seen on the web.
 
     Args:
@@ -20,9 +21,15 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         print_substep("Launching Headless Browser...")
 
         browser = p.chromium.launch()
+        context = browser.new_context()
+
+        if theme == "dark":
+            cookie_file = open('video_creation/cookies.json')
+            cookies = json.load(cookie_file)
+            context.add_cookies(cookies)
 
         # Get the thread screenshot
-        page = browser.new_page()
+        page = context.new_page()
         page.goto(reddit_object["thread_url"])
 
         if page.locator('[data-testid="content-gate"]').is_visible():
