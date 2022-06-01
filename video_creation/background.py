@@ -12,7 +12,6 @@ def get_start_and_end_times(video_length, length_of_clip):
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
-
 def download_background():
     """Downloads the background video from youtube.
 
