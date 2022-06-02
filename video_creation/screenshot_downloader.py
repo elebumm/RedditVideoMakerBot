@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, ViewportSize
 from pathlib import Path
 from rich.progress import track
 from utils.console import print_step, print_substep
@@ -24,7 +24,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         # Get the thread screenshot
         page = browser.new_page()
         page.goto(reddit_object["thread_url"])
-
+        page.set_viewport_size(ViewportSize(width=1920, height=1080))
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
@@ -50,4 +50,5 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             page.locator(f"#t1_{comment['comment_id']}").screenshot(
                 path=f"assets/png/comment_{idx}.png"
             )
-        print_substep("Screenshots downloaded Successfully.", style="bold green")
+        print_substep("Screenshots downloaded Successfully.",
+                      style="bold green")

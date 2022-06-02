@@ -1,0 +1,1 @@
+docker run -v $(pwd)/out/:/app/assets -it rvmt
