@@ -3,7 +3,7 @@ from pathlib import Path
 from mutagen.mp3 import MP3
 from utils.console import print_step, print_substep
 from rich.progress import track
-from sys import argv
+from os import getenv
 
 def get_accent(_in: str) -> str:
     """Returns the short version of an accent.
@@ -32,8 +32,7 @@ def save_text_to_mp3(reddit_obj):
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
     try:
-        accent = get_accent(argv[1])
-    # If no argument; set to default (co.uk)
+        accent = get_accent(getenv("VOICE"))
     except IndexError:
         accent = "co.uk"
 
