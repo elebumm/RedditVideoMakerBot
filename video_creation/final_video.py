@@ -14,7 +14,7 @@ W, H = 1080, 1920
 
 
 def make_final_video(number_of_clips):
-    print_step("Creating the final video 🎥")
+    print_step("Creating the final video...")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
 

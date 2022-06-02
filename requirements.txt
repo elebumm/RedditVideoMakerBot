@@ -15,7 +15,7 @@ mccabe==0.6.1
 moviepy==1.0.3
 mutagen==1.45.1
 mypy-extensions==0.4.3
-numpy==1.22.3
+numpy
 pathspec==0.8.0
 Pillow==9.1.1
 playwright==1.22.0
@@ -27,7 +27,6 @@ pyee==8.1.0
 pyflakes==2.2.0
 Pygments==2.12.0
 python-dotenv==0.20.0
-pytube==12.1.0
 regex==2020.10.15
 requests==2.27.1
 rich==12.4.4
@@ -40,3 +39,4 @@ update-checker==0.18.0
 urllib3==1.26.9
 websocket-client==1.3.2
 websockets==10.1
+yt-dlp

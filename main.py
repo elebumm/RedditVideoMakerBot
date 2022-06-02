@@ -7,7 +7,7 @@ from video_creation.screenshot_downloader import download_screenshots_of_reddit_
 from video_creation.final_video import make_final_video
 
 print_markdown(
-    "### Thanks for using this tool! 😊 [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com). If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
+    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
 )
 
 time.sleep(3)

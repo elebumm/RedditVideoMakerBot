@@ -10,21 +10,31 @@ def get_askreddit_threads():
     Returns a list of threads from the AskReddit subreddit.
     """
 
+    load_dotenv()
+
     print_step("Getting AskReddit threads...")
 
+    if os.getenv("REDDIT_2FA") == "yes" or "YES":
+        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+        code = input("> ")
+        print()
+        pw = os.getenv("REDDIT_PASSWORD")
+        passkey = f'{pw}:{code}'
+    else:
+        passkey = os.getenv("REDDIT_PASSWORD")
+
     content = {}
-    load_dotenv()
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
         user_agent="Accessing AskReddit threads",
         username=os.getenv("REDDIT_USERNAME"),
-        password=os.getenv("REDDIT_PASSWORD"),
+        password=passkey,
     )
     askreddit = reddit.subreddit("askreddit")
     threads = askreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
+    print_substep(f"Video will be: {submission.title}")
     try:
 
         content["thread_url"] = submission.url
@@ -42,5 +52,5 @@ def get_askreddit_threads():
 
     except AttributeError as e:
         pass
-    print_substep("Received AskReddit threads Successfully.", style="bold green")
+    print_substep("Received AskReddit threads successfully.", style="bold green")
     return content
