@@ -6,20 +6,34 @@ import os
 
 
 def get_subreddit_threads():
+
     """
     Returns a list of threads from the AskReddit subreddit.
     """
 
-    print_step("Getting subreddit threads...")
+    load_dotenv()
+
+    print_step("Getting AskReddit threads...")
+
+    if os.getenv("REDDIT_2FA").lower() == "yes":
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
+        code = input("> ")
+        print()
+        pw = os.getenv("REDDIT_PASSWORD")
+        passkey = f"{pw}:{code}"
+    else:
+        passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
-    load_dotenv()
+
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
         user_agent="Accessing AskReddit threads",
         username=os.getenv("REDDIT_USERNAME"),
-        password=os.getenv("REDDIT_PASSWORD"),
+        password=passkey,
     )
 
     if os.getenv("SUBREDDIT"):
@@ -54,5 +68,6 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
-    print_substep("Received subreddit threads Successfully.", style="bold green")
+    print_substep("Received AskReddit threads successfully.", style="bold green")
+
     return content

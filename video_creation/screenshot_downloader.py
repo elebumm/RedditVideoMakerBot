@@ -28,7 +28,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
-            print_substep("Post is NSFW. You are spicy... :fire:")
+            print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
 
         page.locator('[data-test-id="post-content"]').screenshot(
@@ -50,5 +50,6 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             page.locator(f"#t1_{comment['comment_id']}").screenshot(
                 path=f"assets/png/comment_{idx}.png"
             )
+
         print_substep("Screenshots downloaded Successfully.",
                       style="bold green")
