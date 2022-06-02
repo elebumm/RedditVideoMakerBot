@@ -34,6 +34,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 2. Run `pip3 install -r requirements.txt`
 3. 
 	2a. **Automatic Setup**: Run `python3 main.py`, it will automatically detect that you do not have variables set 
+
 	2b. **Manual Setup**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
 
 4. (only if you did manual setup) Run `python3 main.py`
