@@ -4,15 +4,8 @@ from utils.console import print_step
 from utils.console import print_substep
 from rich.console import Console
 import time
-<<<<<<< HEAD
 import os
-from reddit.askreddit import get_askreddit_threads
-||||||| 5b39896
-from reddit.askreddit import get_askreddit_threads
-=======
-
 from reddit.subreddit import get_subreddit_threads
->>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9
 from video_creation.background import download_background, chop_background_video
 from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
