@@ -1,9 +1,10 @@
+from rich import Console
 from utils.console import print_markdown, print_step, print_substep
 import praw
 import random
 from dotenv import load_dotenv
 import os
-
+console = Console()
 
 def get_askreddit_threads():
     """
@@ -14,6 +15,7 @@ def get_askreddit_threads():
 
     content = {}
     load_dotenv()
+    console.log("Logging in to reddit...")
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
@@ -25,6 +27,7 @@ def get_askreddit_threads():
     threads = askreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+    console.log("Getting video comments...")
     try:
 
         content["thread_url"] = submission.url
