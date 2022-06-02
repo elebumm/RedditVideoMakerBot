@@ -27,16 +27,24 @@ pyee==8.1.0
 pyflakes==2.2.0
 Pygments==2.12.0
 python-dotenv==0.20.0
-pytube==12.1.0
+
 regex==2020.10.15
+
 requests==2.27.1
 rich==12.4.4
 six==1.16.0
 toml==0.10.1
 tqdm==4.64.0
+<<<<<<< HEAD
 typed-ast==1.5.4 # Please see issue https://github.com/elebumm/RedditVideoMakerBot/issues/16 comment three. 
+||||||| 5b39896
+typed-ast==1.4.1
+=======
+typed-ast==1.5.4
+>>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9
 typing_extensions==4.2.0
 update-checker==0.18.0
 urllib3==1.26.9
 websocket-client==1.3.2
 websockets==10.1
+yt-dlp==2022.5.18
