@@ -22,8 +22,10 @@ def get_accent(_in: str) -> str:
         "ireland": "ie",
         "south_africa": "co.za"
     }
+    if _in == "" or _in.isspace():
+        return "co.uk"
 
-    return accents[_in.lower()]
+    return accents[_in.lower().replace(" ", "")]
 
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
