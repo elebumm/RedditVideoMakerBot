@@ -22,16 +22,14 @@ def get_subreddit_threads():
         password=os.getenv("REDDIT_PASSWORD"),
     )
 
-    if os.getenv("ASK_EACH_TIME") == "TRUE":
-        try:
-            subreddit = reddit.subreddit(input("What subreddit would you like to pull from? "))
-        except ValueError:
-            subreddit = reddit.subreddit("askreddit")
-            print_substep("Subreddit not defined. Using AskReddit.")
+    if os.getenv("SUBREDDIT"):
+        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
     else:
+        # ! Prompt the user to enter a subreddit
         try:
-            subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
-            print_substep(f"Using subreddit {os.getenv('SUBREDDIT')}")
+            subreddit = reddit.subreddit(
+                input("What subreddit would you like to pull from? ")
+            )
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
