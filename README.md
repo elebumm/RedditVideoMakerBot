@@ -33,9 +33,9 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 1. Clone this repository
 2. Run `pip3 install -r requirements.txt`
 3. 
-	2a. **Automatic Setup**: Run `python3 main.py` and type "yes" where it says "Setup Wizard". The Setup Wizard will guide you through the setup process.
+	3a. **Automatic Setup**: Run `python3 main.py` and type "yes" where it says "Setup Wizard". The Setup Wizard will guide you through the setup process.
 
-	2b. **Manual Setup**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
+	3b. **Manual Setup**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
 
 4. (only if you did manual setup) Run `python3 main.py`
 6. Enjoy 😎
