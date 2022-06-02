@@ -13,13 +13,15 @@ def get_askreddit_threads():
     load_dotenv()
 
     print_step("Getting AskReddit threads...")
-
-    if os.getenv("REDDIT_2FA") == "yes" or "YES":
-        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+    print(os.getenv("REDDIT_2FA"))
+    if os.getenv("REDDIT_2FA").lower() == "yes":
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
         code = input("> ")
         print()
         pw = os.getenv("REDDIT_PASSWORD")
-        passkey = f'{pw}:{code}'
+        passkey = f"{pw}:{code}"
     else:
         passkey = os.getenv("REDDIT_PASSWORD")
 

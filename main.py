@@ -1,6 +1,6 @@
 from utils.console import print_markdown
 import time
-from reddit.askreddit import get_askreddit_threads
+from reddit.subreddit import get_askreddit_threads
 from video_creation.background import download_background, chop_background_video
 from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts

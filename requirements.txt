@@ -15,7 +15,7 @@ mccabe==0.6.1
 moviepy==1.0.3
 mutagen==1.45.1
 mypy-extensions==0.4.3
-numpy==1.15.1
+numpy==1.22.3
 pathspec==0.8.0
 Pillow==9.1.1
 playwright==1.22.0

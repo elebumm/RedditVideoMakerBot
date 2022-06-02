@@ -25,8 +25,8 @@ def download_background():
         print_substep("Downloading the background video... please be patient.")
 
         ydl_opts = {
-            'outtmpl': 'assets/mp4/background',
-            'merge_output_format': 'mp4', 
+            "outtmpl": "assets/mp4/background.mp4",
+            "merge_output_format": "mp4",
         }
 
         with YoutubeDL(ydl_opts) as ydl:
