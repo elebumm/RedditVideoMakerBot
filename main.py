@@ -32,7 +32,7 @@ password=os.getenv("REDDIT_PASSWORD")
 console.log("[bold green]Checking environment variables...")
 time.sleep(1)
 
-if client_id == "" or client_secret == "" or username == "" or password == "":
+if not all(client_id, client_secret, username, password):
 
 	console.log("[red]Looks like you need to set your Reddit credentials in the .env file. Please follow the instructions in the README.md file to set them up.")
 	time.sleep(0.5)

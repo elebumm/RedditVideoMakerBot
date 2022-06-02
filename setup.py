@@ -12,7 +12,14 @@ from utils.console import print_step
 from utils.console import print_substep
 from rich.console import Console
 from utils.loader import Loader
+from os.path import exists
 console = Console()
+
+setup_done = exists(".setup-done-before")
+
+if setup_done == True:
+	console.log("[red]Setup was already completed! Please make sure you have to run this script again. If you have to, please delete the file .setup-done-before")
+	exit()
 
 # These lines ensure the user:
 # - knows they are in setup mode
@@ -25,7 +32,7 @@ print_markdown(
 )
 
 # This Input is used to ensure the user is sure they want to continue.
-ensureSetupIsRequired = input("Are you sure you want to continue? > ")
+ensureSetupIsRequired = input("Are you sure you want to continue? > ").casefold()
 if ensureSetupIsRequired != "yes":
 	console.print("[red]Exiting...")
 	time.sleep(0.5)
@@ -33,7 +40,7 @@ if ensureSetupIsRequired != "yes":
 else:
 	# Again, let them know they are about to erase all other setup data.
 	console.print("[bold red] This will overwrite your current settings. Are you sure you want to continue? [bold green]yes/no")
-	overwriteSettings = input("Are you sure you want to continue? > ")
+	overwriteSettings = input("Are you sure you want to continue? > ").casefold()
 	if overwriteSettings != "yes":
 		console.print("[red]Abort mission! Exiting...")
 		time.sleep(0.5)
@@ -51,7 +58,7 @@ console.log("[bold green]Reddit Password")
 time.sleep(0.5)
 console.print("[green]If you don't have these, please follow the instructions in the README.md file to set them up.")
 console.print("[green]If you do have these, type yes to continue. If you dont, go ahead and grab those quickly and come back.")
-confirmUserHasCredentials = input("Are you sure you have the credentials? > ")
+confirmUserHasCredentials = input("Are you sure you have the credentials? > ").casefold()
 if confirmUserHasCredentials != "yes":
 	console.print("[red]I don't understand that.")
 	console.print("[red]Exiting...")
@@ -87,6 +94,9 @@ with open('.env', 'a') as f:
 	f.write(f'REDDIT_USERNAME="{user}"\n')
 	time.sleep(0.5)
 	f.write(f'REDDIT_PASSWORD="{passw}"\n')
+
+with open('.setup-done-before', 'a') as f:
+	f.write("This file blocks the setup assistant from running again. Delete this file to run setup again.")
 
 loader.stop()
 
