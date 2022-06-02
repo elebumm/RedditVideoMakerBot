@@ -31,29 +31,12 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
-<<<<<<< HEAD
-2. Run `pip3 install -r requirements.txt`
-3. 
-	3a. **Automatic Setup**: Run `python3 main.py` and type "yes" where it says "Setup Wizard". The Setup Wizard will guide you through the setup process.
-
-	3b. **Manual Setup**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
-
-4. (only if you did manual setup) Run `python3 main.py`
-6. Enjoy 😎
-||||||| 5b39896
-2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` files.
-3. Run `pip3 install -r requirements.txt`
-4. Run `python3 main.py`
-5. ...
-6. Enjoy 😎
-=======
 2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 3. Run `pip3 install -r requirements.txt`
 4. Run `playwright install` and `playwright install-deps`.
 5. Run `python3 main.py`
 6. ...
 7. Enjoy 😎
->>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9
 
 ## Contributing & Ways to improve 📈
 
