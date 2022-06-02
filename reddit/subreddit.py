@@ -5,18 +5,16 @@ from dotenv import load_dotenv
 import os
 
 
-
 def get_subreddit_threads():
 
     """
     Returns a list of threads from the AskReddit subreddit.
     """
 
-
     load_dotenv()
 
     print_step("Getting AskReddit threads...")
-    print(os.getenv("REDDIT_2FA"))
+
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
@@ -37,10 +35,6 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-    askreddit = reddit.subreddit("askreddit")
-    threads = askreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
-    print_substep(f"Video will be: {submission.title}")
 
     if os.getenv("SUBREDDIT"):
         subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
