@@ -28,14 +28,6 @@ def get_subreddit_threads():
         passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
-<<<<<<< HEAD:reddit/askreddit.py
-    load_dotenv()
-    console.log("Logging in to reddit...")
-||||||| 5b39896:reddit/askreddit.py
-    load_dotenv()
-=======
-
->>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9:reddit/subreddit.py
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
@@ -77,14 +69,6 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
-<<<<<<< HEAD:reddit/askreddit.py
-    print_substep("Received AskReddit threads Successfully.", style="bold green")
-    return content
-||||||| 5b39896:reddit/askreddit.py
-    print_substep("Received AskReddit threads Successfully.", style="bold green")
-    return content
-=======
     print_substep("Received AskReddit threads successfully.", style="bold green")
 
     return content
->>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9:reddit/subreddit.py
