@@ -12,8 +12,6 @@ TEXT_WHITELIST = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234
 def textify(text):
     return ''.join(filter(TEXT_WHITELIST.__contains__, text))
 
-
-
 def get_subreddit_threads():
     """
     Returns a list of threads from the AskReddit subreddit.

@@ -1,3 +1,5 @@
+from os import remove
+
 import sox
 from pathlib import Path
 
@@ -7,6 +9,8 @@ from utils.console import print_step, print_substep
 from rich.progress import track
 
 from video_creation.TTSwrapper import TTTTSWrapper
+
+VIDEO_LENGTH: int = 40  # secs
 
 
 def save_text_to_mp3(reddit_obj):
@@ -27,18 +31,27 @@ def save_text_to_mp3(reddit_obj):
         length += MP3(f"assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:
         length = sox.file_info.duration(f"assets/temp/mp3/title.mp3")
-
-    for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
+    com = 0
+    for comment in track((reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than 50 seconds. This can be longer, but this is just a good_voices starting point
-        if length > 50:
+        if length > VIDEO_LENGTH:
             break
 
-        ttttsw.tts(comment["comment_body"], filename=f"assets/temp/mp3/{idx}.mp3", random_speaker=False)
+        ttttsw.tts(comment["comment_body"], filename=f"assets/temp/mp3/{com}.mp3", random_speaker=False)
         try:
-            length += MP3(f"assets/temp/mp3/{idx}.mp3").info.length
+            length += MP3(f"assets/temp/mp3/{com}.mp3").info.length
+            com += 1
         except (HeaderNotFoundError, MutagenError, Exception):
-            length = sox.file_info.duration(f"assets/temp/mp3/{idx}.mp3")
+            try:
+                length += sox.file_info.duration(f"assets/temp/mp3/{com}.mp3")
+                com += 1
+            except (OSError, IOError):
+                print('would have removed'
+                      f"assets/temp/mp3/{com}.mp3"
+                      f"assets/temp/png/comment_{com}.png")
+                #remove(f"assets/temp/mp3/{com}.mp3")
+                #remove(f"assets/temp/png/comment_{com}.png")# todo might cause odd un-syncing
 
     print_substep("Saved Text to MP3 files Successfully.", style="bold green")
     # ! Return the index so we know how many screenshots of comments we need to make.
-    return length, idx
+    return length, com
