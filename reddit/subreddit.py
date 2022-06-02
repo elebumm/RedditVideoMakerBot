@@ -8,12 +8,12 @@ import os
 def get_subreddit_threads():
 
     """
-    Returns a list of threads from the AskReddit subreddit.
+    Returns a list of threads from the provided subreddit.
     """
 
     load_dotenv()
 
-    print_step("Getting AskReddit threads...")
+    print_step("Getting subbreddit threads...")
 
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
@@ -50,7 +50,7 @@ def get_subreddit_threads():
 
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
+    print_substep(f"Video will be: {submission.title}")
     try:
 
         content["thread_url"] = submission.url
