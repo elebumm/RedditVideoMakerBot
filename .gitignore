@@ -2,3 +2,5 @@ assets/
 .env
 reddit-bot-351418-5560ebc49cac.json
 __pycache__
+.idea/
+.DS_Store
