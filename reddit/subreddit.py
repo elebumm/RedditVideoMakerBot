@@ -13,7 +13,8 @@ def get_subreddit_threads():
 
     load_dotenv()
 
-    print_step("Getting AskReddit threads...")
+    print_step("Getting "+os.getenv("SUBREDDIT")+"  threads...")
+
 
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
@@ -55,6 +56,7 @@ def get_subreddit_threads():
 
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
+        content["thread_selftext"] = submission.selftext	   
         content["comments"] = []
 
         for top_level_comment in submission.comments:
