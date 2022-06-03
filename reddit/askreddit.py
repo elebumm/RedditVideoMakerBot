@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 
-def get_askreddit_threads():
+def get_askreddit_threads(voice):
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -32,6 +32,8 @@ def get_askreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+            if voice == "male" and len(top_level_comment.body) > 550:
+                continue
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,

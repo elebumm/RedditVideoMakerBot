@@ -15,9 +15,9 @@ print_markdown(
 time.sleep(3)
 
 
-reddit_object = get_askreddit_threads()
-
 load_dotenv()
+reddit_object = get_askreddit_threads(os.getenv("VOICE"))
+
 length, number_of_comments = save_text_to_mp3(reddit_object, os.getenv("VOICE"))
 download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
 download_background()
