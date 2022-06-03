@@ -54,7 +54,8 @@ def get_subreddit_threads():
     try:
 
         content["thread_url"] = submission.url
-        content["thread_title"] = submission.title + submission.selftext
+        content["thread_title"] = submission.title
+        content["thread_post"] = submission.selftext
         content["comments"] = []
 
         for top_level_comment in submission.comments:
