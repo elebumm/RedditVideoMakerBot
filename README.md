@@ -31,6 +31,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
+
 2. Run `pip3 install -r requirements.txt`
 3. Run `playwright install` and `playwright install-deps`.
 4. 
@@ -39,8 +40,8 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 	4b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
 5. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
-6. ...
 7. Enjoy 😎
+
 
 ## Contributing & Ways to improve 📈
 
