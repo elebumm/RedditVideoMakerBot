@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import os
 
 def get_askreddit_threads():
-    global submission
     """
     Returns a list of threads from the AskReddit subreddit.
     """
