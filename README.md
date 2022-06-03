@@ -35,8 +35,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 3. Run `pip3 install -r requirements.txt`
 4. Run `playwright install` and `playwright install-deps`.
 5. Run `python3 main.py`
-6. ...
-7. Enjoy 😎
+6. Enjoy 😎
 
 ## Contributing & Ways to improve 📈
 
