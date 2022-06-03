@@ -13,7 +13,7 @@ def get_subreddit_threads():
 
     load_dotenv()
 
-    print_step("Getting subbreddit threads...")
+    print_step("Getting subreddit threads...")
 
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
@@ -31,7 +31,7 @@ def get_subreddit_threads():
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-        user_agent="Accessing AskReddit threads",
+        user_agent="Accessing subreddit threads",
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
