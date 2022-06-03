@@ -37,7 +37,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 5. Run `python3 main.py`
 6. Enjoy 😎
 
-If you want to see more detailed guide, refer to the official [documentation](https://immaharry.gitbook.io/reddit-automated-video-bot/)
+If you want to see more detailed guide, please refer to the official [documentation](https://immaharry.gitbook.io/reddit-automated-video-bot/).
 
 ## Contributing & Ways to improve 📈
 
