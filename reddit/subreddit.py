@@ -13,7 +13,6 @@ def get_subreddit_threads():
 
     load_dotenv()
 
-    print_step("Getting AskReddit threads...")
 
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
@@ -35,24 +34,36 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
+    # If the user inserts a thread link, pick that one
+    if os.getenv("THREAD_LINK"):
 
-    if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        print_step(f"Getting the inserted thread...")
+
+        thread_id = os.getenv("THREAD_LINK").split("/")[6]
+        submission = reddit.submission(thread_id)
     else:
-        # ! Prompt the user to enter a subreddit
-        try:
-            subreddit = reddit.subreddit(
-                input("What subreddit would you like to pull from? ")
-            )
-        except ValueError:
-            subreddit = reddit.subreddit("askreddit")
-            print_substep("Subreddit not defined. Using AskReddit.")
+        # Otherwise, picks a random thread from the inserted subreddit
+        if os.getenv("SUBREDDIT"):
+            subreddit_name = os.getenv("SUBREDDIT")
+            print_step(f"Getting a random thread from r/{subreddit_name}")
+            subreddit = reddit.subreddit(subreddit_name)
+        else:
+            # ! Prompt the user to enter a subreddit
+            try:
+                subreddit = reddit.subreddit(
+                    input("What subreddit would you like to pull from? ")
+                )
+            except ValueError:
+                subreddit = reddit.subreddit("askreddit")
+                print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+        threads = subreddit.hot(limit=25)
+        submission = list(threads)[random.randrange(0, 25)]
+
+
+
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     try:
-
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
         content["comments"] = []
