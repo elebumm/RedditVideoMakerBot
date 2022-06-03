@@ -23,7 +23,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         browser = p.chromium.launch()
         context = browser.new_context()
 
-        if theme == "dark":
+        if theme.casefold() == "dark":
             cookie_file = open('video_creation/cookies.json')
             cookies = json.load(cookie_file)
             context.add_cookies(cookies)
