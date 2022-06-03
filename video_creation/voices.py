@@ -12,7 +12,7 @@ def save_text_to_mp3(reddit_obj, voice):
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    print_step("Saving Text to MP3 files 🎶")
+    print_step("Saving Text to MP3 files...")
     length = 0
 
     # Create a folder for the mp3 files.
@@ -29,7 +29,7 @@ def save_text_to_mp3(reddit_obj, voice):
         generate_and_save_tts(voice, comment["comment_body"], f"assets/mp3/{idx}.mp3")
         length += MP3(f"assets/mp3/{idx}.mp3").info.length
 
-    print_substep("Saved Text to MP3 files Successfully.", style="bold green")
+    print_substep("Saved Text to MP3 files successfully.", style="bold green")
     # ! Return the index so we know how many screenshots of comments we need to make.
     return length, idx
 
