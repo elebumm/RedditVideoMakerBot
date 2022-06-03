@@ -2,13 +2,7 @@ assets/
 reddit/__pycache__/
 utils/__pycache__/
 .env
-<<<<<<< HEAD
 reddit-bot-351418-5560ebc49cac.json
 video_creation/__pycache__/
 .setup-done-before
-||||||| 5b39896
-reddit-bot-351418-5560ebc49cac.json
-=======
-reddit-bot-351418-5560ebc49cac.json
 __pycache__
->>>>>>> 6fc5d2a7377dfe9f65d0d011fc260602527847c9
