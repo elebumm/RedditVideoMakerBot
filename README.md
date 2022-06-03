@@ -40,6 +40,10 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 If you want to see more detailed guide, please refer to the official [documentation](https://immaharry.gitbook.io/reddit-automated-video-bot/).
 *The Documentation is still being developed and worked on, please be patient as we change / add new knowledge!
 
+#### OPTIONAL
+
+If you wish to edit the language or accent of the voice, please refer to the GTTS documentation [Localized Accents](https://gtts.readthedocs.io/en/latest/module.html#localized-accents) & the specifics of how to use it is located [GTTS Accent Examples](https://gtts.readthedocs.io/en/latest/module.html#examples). This can be edited in the voices.py file which is located inside /video_creation, adding the parameter `tld="co.uk"` for example in the `tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)` lines.
+
 ## Contributing & Ways to improve 📈
 
 In its current state, this bot does exactly what it needs to do. However, lots of improvements can be made.
