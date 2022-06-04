@@ -17,7 +17,7 @@ print_markdown(
 time.sleep(3)
 
 # The maximum length of the video in seconds. (This is the length of the video that will be created, but not 100% accurate)
-MAX_LENGTH = 1
+MAX_LENGTH = 60
 
 # Video speed multiplier (1.0 = normal speed, 2.0 = double speed, 0.5 = half speed)
 VIDEO_SPEED = 1.4
