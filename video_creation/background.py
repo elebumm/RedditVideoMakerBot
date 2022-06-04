@@ -45,8 +45,6 @@ def download_background(background):
                 else: # if the link is not youtube link
                     raise ValueError
         except (
-                ConnectionError,
-                FileNotFoundError,
                 ValueError
                 # add more exceptions
             ):

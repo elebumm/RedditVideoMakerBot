@@ -1,4 +1,3 @@
-from re import M
 from setuptools import setup, find_packages
 
 

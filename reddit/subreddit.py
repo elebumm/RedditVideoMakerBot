@@ -50,8 +50,7 @@ def get_subreddit_threads(subreddit_):
             subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
         else:
             subreddit = reddit.subreddit("askreddit")
-
-        print_substep("Subreddit not defined. Using AskReddit.")
+            print_substep("Subreddit not defined. Using AskReddit.")
 
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
