@@ -13,7 +13,7 @@ def get_subreddit_threads():
 
     print_step("Getting AskReddit threads...")
 
-    if os.getenv("REDDIT_2FA").lower() == "yes":
+    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
