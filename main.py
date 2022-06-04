@@ -7,8 +7,6 @@ from video_creation.final_video import make_final_video
 from dotenv import load_dotenv
 import os, time, shutil
 
-REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD"]
-
 REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD", "OPACITY"]
 
 print_markdown(
