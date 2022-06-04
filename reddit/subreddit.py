@@ -26,13 +26,9 @@ def get_subreddit_threads():
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+
+    content = build_content_comments(submission)
    
-    content = { 'thread_url': submission.url, 'thread_title': submission.title }
-    content["comments"] = [{
-                "comment_body": top_level_comment.body,
-                "comment_url": top_level_comment.permalink,
-                "comment_id": top_level_comment.id,
-            } for top_level_comment in submission.comments]
 
             
     print_substep("Received AskReddit threads successfully.", style="bold green")
@@ -68,3 +64,22 @@ def choose_subreddit(reddit):
             print_substep("Subreddit not defined. Using AskReddit.")
     
     return subreddit
+
+def build_content_comments(submission):
+    try:
+        content = { 'thread_url': submission.url, 'thread_title': submission.title }
+        content["comments"] = []
+
+        for top_level_comment in submission.comments:
+            content["comments"].append(
+                {
+                    "comment_body": top_level_comment.body,
+                    "comment_url": top_level_comment.permalink,
+                    "comment_id": top_level_comment.id,
+                }
+            )
+
+    except AttributeError as e:
+        pass
+
+    return content
