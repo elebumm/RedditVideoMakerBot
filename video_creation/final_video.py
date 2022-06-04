@@ -30,6 +30,11 @@ def make_final_video(number_of_clips):
         .resize(height=H)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
+    try:
+        float(os.getenv("OPACITY"))
+    except:
+        print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
+    configured = False
     # Gather all audio clips
     audio_clips = []
     for i in range(0, number_of_clips):

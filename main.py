@@ -9,6 +9,8 @@ from video_creation.final_video import make_final_video
 from dotenv import load_dotenv
 import os
 
+REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD", "OPACITY"]
+
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
 )
