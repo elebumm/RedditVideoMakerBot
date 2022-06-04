@@ -30,6 +30,12 @@ for val in REQUIRED_VALUES:
         print(f"Please set the variable \"{val}\" in your .env file.")
         configured = False
 
+try:
+    float(os.getenv("OPACITY"))
+except:
+    print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
+    configured = False
+
 if configured:
     reddit_object = get_subreddit_threads()
     length, number_of_comments = save_text_to_mp3(reddit_object)
