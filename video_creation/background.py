@@ -1,7 +1,5 @@
 from random import randrange
-
 from yt_dlp import YoutubeDL
-
 from pathlib import Path
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
