@@ -20,4 +20,3 @@ def cleanup() -> int:
             os.remove('./assets/temp/mp3/' + file)
         return count
     return 0
-

@@ -1,11 +1,9 @@
-import re
-
-from utils.console import print_step, print_substep
-import praw
 import random
-from dotenv import load_dotenv
 from os import getenv, environ
 
+import praw
+
+from utils.console import print_step, print_substep
 from utils.videos import check_done
 
 TEXT_WHITELIST = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890')
@@ -22,7 +20,6 @@ def get_subreddit_threads():
 
     print_step("Getting subreddit threads...")
     content = {}
-    load_dotenv()
     if getenv("REDDIT_2FA").casefold() == "yes":
         print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
@@ -66,7 +63,7 @@ def get_subreddit_threads():
         for top_level_comment in submission.comments:
             content["comments"].append(
                 {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
-                    "comment_id": top_level_comment.id, })
+                 "comment_id": top_level_comment.id, })
 
     except AttributeError as e:
         pass

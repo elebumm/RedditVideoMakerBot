@@ -1,4 +1,3 @@
-import inspect
 import json
 from os import getenv
 

@@ -1,4 +1,6 @@
-import requests, base64, random, os
+import base64
+import random
+import requests
 
 # https://twitter.com/scanlime/status/1512598559769702406
 voices = [  # DISNEY VOICES
@@ -74,4 +76,3 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         if ok_or_good == 1:  # 1/10 chance of ok voice
             return random.choice(good_voices['ok'])
         return random.choice(good_voices['good'])  # 9/10 chance of good voice
-
