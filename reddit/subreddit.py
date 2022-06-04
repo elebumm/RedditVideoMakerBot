@@ -2,12 +2,12 @@ import random
 import os
 
 import praw
-from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
+
+from utils.console import print_step, print_substep
 
 
 def get_subreddit_threads():
-
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -21,7 +21,6 @@ def get_subreddit_threads():
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
         code = input("> ")
-        print()
         pw = os.getenv("REDDIT_PASSWORD")
         passkey = f"{pw}:{code}"
     else:
@@ -62,10 +61,9 @@ def get_subreddit_threads():
                     "comment_id": top_level_comment.id,
                 }
             )
-
     except AttributeError as e:
         pass
 
-    print_substep("Received AskReddit threads successfully.", style="bold green")
+    print_substep("AskReddit threads retrieved successfully.", style="bold green")
 
     return content
