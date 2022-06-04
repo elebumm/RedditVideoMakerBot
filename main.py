@@ -2,7 +2,7 @@ import os
 from sys import platform
 if platform == "darwin":
     # Check if running on MacOs, needs to add that ffmpeg.exe path
-    os.environ["IMAGEIO_FFMPEG_EXE"] = "/Users/orenking/audio-orchestrator-ffmpeg/bin/ffmpeg"
+    os.environ["IMAGEIO_FFMPEG_EXE"] = "YOUR_PATH_TO_FFPEG.EXE"
 from utils.console import print_markdown
 import time
 
