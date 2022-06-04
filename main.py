@@ -7,8 +7,6 @@ from video_creation.final_video import make_final_video
 from dotenv import load_dotenv
 import os, time, shutil
 
-REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD"]
-
 REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD", "OPACITY"]
 
 print_markdown(
@@ -29,6 +27,12 @@ for val in REQUIRED_VALUES:
     if val not in os.environ or not os.getenv(val):
         print(f"Please set the variable \"{val}\" in your .env file.")
         configured = False
+
+try:
+    float(os.getenv("OPACITY"))
+except:
+    print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
+    configured = False
 
 if configured:
     reddit_object = get_subreddit_threads()
