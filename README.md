@@ -49,5 +49,5 @@ I have tried to simplify the code so anyone can read it and start contributing a
 - [ ] Allowing users to choose a reddit thread instead of being randomized.
 - [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
 - [x] Allowing users to choose between any subreddit.
-- [ ] Allowing users to change voice.
+- [x] Allowing users to change voice.
 - [ ] Creating better documentation and adding a command line interface.

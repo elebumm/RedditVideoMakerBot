@@ -10,8 +10,8 @@ def get_subreddit_threads():
     """
 
     load_dotenv()
-
-    print_step("Getting AskReddit threads...")
+    _SUBREDDIT = os.getenv("SUBREDDIT")
+    print_step(f"Getting {_SUBREDDIT} threads...")
 
     if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
