@@ -8,7 +8,7 @@ from moviepy.editor import (
     CompositeVideoClip,
 )
 from utils.console import print_step
-
+from datetime import datetime
 
 W, H = 1080, 1920
 
@@ -53,8 +53,12 @@ def make_final_video(number_of_clips):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
+    def _getToday():
+        today = datetime.now()
+        return today.strftime('%Y%m%d_%H%M%S')
+    filename = "%s_%s.%s" % ("final_video", _getToday() ,"mp4")
     final.write_videofile(
-        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
+        filename, fps=30, audio_codec="aac", audio_bitrate="192k"
     )
 
     for i in range(0, number_of_clips):
