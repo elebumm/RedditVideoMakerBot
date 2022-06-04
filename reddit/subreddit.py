@@ -1,8 +1,6 @@
 from utils.console import print_markdown, print_step, print_substep
-import praw
-import random
 from dotenv import load_dotenv
-import os
+import os, random, praw, re
 
 def get_subreddit_threads():
     global submission
@@ -14,7 +12,7 @@ def get_subreddit_threads():
 
     print_step("Getting AskReddit threads...")
 
-    if os.getenv("REDDIT_2FA").lower() == "yes":
+    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
@@ -36,12 +34,12 @@ def get_subreddit_threads():
     )
 
     if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
     else:
         # ! Prompt the user to enter a subreddit
         try:
             subreddit = reddit.subreddit(
-                input("What subreddit would you like to pull from? ")
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
             )
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
@@ -57,6 +55,7 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+           if not top_level_comment.stickied:
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,
