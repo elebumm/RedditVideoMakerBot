@@ -36,5 +36,7 @@ while True:
     else:
         print(f"Video for thread already exists! Trying again...")
 
-    if os.getenv("LOOP") != "true":
+    print(os.getenv("LOOP"))
+
+    if os.getenv("LOOP") != "yes":
         break
