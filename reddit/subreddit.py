@@ -1,8 +1,6 @@
 from utils.console import print_markdown, print_step, print_substep
-import praw
-import random
 from dotenv import load_dotenv
-import os
+import os, random, praw, re
 
 
 def get_subreddit_threads():
