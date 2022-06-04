@@ -1,3 +1,4 @@
+import re
 from random import randrange
 from pathlib import Path
 
@@ -12,15 +13,17 @@ def get_start_and_end_times(video_length, length_of_clip):
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
-def download_background():
+
+def download_background(background):
     """Downloads the background video from youtube.
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
     """
 
     if not Path("assets/mp4/background.mp4").is_file():
-        print_step(
-            "We need to download the Minecraft background video. This is fairly large but it's only done once."
+        print_step( # removed minecraft, since the background can be changed according to user input.
+            "We need to download the background video. This may be"
+            + " large, depending on the input but it's only done once."
         )
 
         print_substep("Downloading the background video... please be patient.")
@@ -30,10 +33,26 @@ def download_background():
             "merge_output_format": "mp4",
         }
 
-        with YoutubeDL(ydl_opts) as ydl:
-            ydl.download("https://www.youtube.com/watch?v=n_Dv4JMiwK8")
+        try:
+            with YoutubeDL(ydl_opts) as ydl:
+                if background is None:
+                    ydl.download("https://www.youtube.com/watch?v=n_Dv4JMiwK8")
 
-        print_substep("Background video downloaded successfully!", style="bold green")
+                if (
+                        re.match("https://*youtube.com*", background) and background is not None
+                    ):
+                    ydl.download(background)
+                else: # if the link is not youtube link
+                    raise ValueError
+        except (
+                ConnectionError,
+                FileNotFoundError,
+                ValueError
+                # add more exceptions
+            ):
+            print_substep("The given link is not accepted!", style="bold red")
+        else:
+            print_substep("Background video downloaded successfully!", style="bold green")
 
 
 def chop_background_video(video_length):
