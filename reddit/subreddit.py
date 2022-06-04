@@ -35,7 +35,7 @@ def get_subreddit_threads():
     )
 
     if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
     else:
         # ! Prompt the user to enter a subreddit
         try:
