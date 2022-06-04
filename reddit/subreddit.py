@@ -1,8 +1,9 @@
-from utils.console import print_markdown, print_step, print_substep
-import praw
 import random
-from dotenv import load_dotenv
 import os
+
+import praw
+from utils.console import print_markdown, print_step, print_substep
+from dotenv import load_dotenv
 
 
 def get_subreddit_threads():
@@ -36,23 +37,19 @@ def get_subreddit_threads():
         password=passkey,
     )
 
-    if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
-    else:
-        # ! Prompt the user to enter a subreddit
-        try:
-            subreddit = reddit.subreddit(
-                input("What subreddit would you like to pull from? ")
-            )
-        except ValueError:
-            subreddit = reddit.subreddit("askreddit")
-            print_substep("Subreddit not defined. Using AskReddit.")
+    try:
+        subreddit = reddit.subreddit(
+            input("What subreddit would you like to pull from? ")
+        )
+    except ValueError:
+        subreddit = reddit.subreddit("askreddit")
+        print_substep("Subreddit not defined. Using AskReddit.")
 
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
-    try:
 
+    try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
         content["comments"] = []
@@ -68,6 +65,7 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
+
     print_substep("Received AskReddit threads successfully.", style="bold green")
 
     return content
