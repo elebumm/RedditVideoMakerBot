@@ -11,7 +11,7 @@ from video_creation.final_video import make_final_video
 from utils.console import print_markdown
 
 
-def main():
+def main(subreddit_=None, background=None):
     print_markdown(
         "### Thanks for using this tool! [Feel free to contribute to this project on "
         + "GitHub!](https://lewismenelaws.com) If you have any questions, feel free to"
@@ -20,11 +20,11 @@ def main():
 
     time.sleep(3)
 
-    reddit_object = get_subreddit_threads()
+    reddit_object = get_subreddit_threads(subreddit_)
 
     load_dotenv()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME"))
-    download_background()
+    download_background(background)
     chop_background_video(length)
     final_video = make_final_video(number_of_comments)
