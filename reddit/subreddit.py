@@ -3,6 +3,7 @@ import praw
 import random
 from dotenv import load_dotenv
 import os
+import sys
 
 
 def get_subreddit_threads():
@@ -13,7 +14,17 @@ def get_subreddit_threads():
 
     load_dotenv()
 
-    print_step("Getting AskReddit threads...")
+    # print_step("Getting AskReddit threads...")
+    
+    if os.getenv("FFMPEG_PATH"):
+        ffmpeg_exe = os.getenv("FFMPEG_PATH")
+    else:
+        # ! Prompt the user to enter the path to FFmpeg
+        try:
+            ffmpeg_exe = input("What is the path to ffmpeg.exe?")
+        except ValueError:
+            print_step("Error with FFmpeg path. Terminating script.", style="bold red")
+            sys.exit()
 
     if os.getenv("REDDIT_2FA").lower() == "yes":
         print(
@@ -38,24 +49,34 @@ def get_subreddit_threads():
 
     if os.getenv("SUBREDDIT"):
         subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        subreddit_title = os.getenv("SUBREDDIT")
     else:
         # ! Prompt the user to enter a subreddit
         try:
-            subreddit = reddit.subreddit(
-                input("What subreddit would you like to pull from? ")
-            )
+            subreddit_title = input("What subreddit would you like to pull from? ")
+            subreddit = reddit.subreddit(subreddit_title)
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
+            subreddit_title = "askreddit"
             print_substep("Subreddit not defined. Using AskReddit.")
+
+    
 
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
+
+    # print_substep(f"Video will be: {submission.title}")
+
+    print_step("Video will be: "+subreddit_title.upper()+" - "+submission.title)
+    # print_step("Thread Title: " + submission.title)
+
     try:
 
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
         content["comments"] = []
+        content["subreddit"] = subreddit_title.upper()
+        content["ffmpeg_exe"] = str(ffmpeg_exe)
 
         for top_level_comment in submission.comments:
             content["comments"].append(
