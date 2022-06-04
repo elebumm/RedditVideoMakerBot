@@ -1,5 +1,6 @@
 import random
 import os
+import re
 
 import praw
 from dotenv import load_dotenv
@@ -20,7 +21,7 @@ def get_subreddit_threads(subreddit_):
 
     print_step("Getting AskReddit threads...")
 
-    if os.getenv("REDDIT_2FA").lower() == "yes":
+    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
@@ -45,7 +46,11 @@ def get_subreddit_threads(subreddit_):
 
         subreddit = reddit.subreddit(subreddit_)
     except ValueError:
-        subreddit = reddit.subreddit("askreddit")
+        if os.getenv("SUBREDDIT"):
+            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
+        else:
+            subreddit = reddit.subreddit("askreddit")
+
         print_substep("Subreddit not defined. Using AskReddit.")
 
     threads = subreddit.hot(limit=25)
