@@ -32,6 +32,7 @@ def make_final_video(number_of_clips):
         .resize(height=H)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
+
     try:
         float(os.getenv("OPACITY"))
     except:
