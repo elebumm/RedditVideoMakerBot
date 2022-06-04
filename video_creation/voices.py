@@ -30,7 +30,10 @@ def save_text_to_mp3(reddit_obj):
     for i, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
         tts = gTTS(text=comment["comment_body"], tld=os.getenv("ACCENT"), slow=False)
         tts.save(f"assets/mp3/{total_files}.mp3")
-        if total_length(total_files) < 60:
+        clip_length = MP3(f"assets/mp3/{total_files}.mp3").info.length
+        print(clip_length)
+        combined_length = total_length(total_files)
+        if int(os.getenv("MIN_CLIP")) <= clip_length <= int(os.getenv("MAX_CLIP")) and combined_length <= int(os.getenv("MAX_VID")):
             total_files += 1
         else:
             break

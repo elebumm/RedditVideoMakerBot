@@ -4,8 +4,7 @@ import random
 from dotenv import load_dotenv
 import os
 
-
-def get_subreddit_threads():
+def get_subreddit_threads(thread_number):
 
     """
     Returns a list of threads from the AskReddit subreddit.
@@ -48,8 +47,8 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    threads = subreddit.top(time_filter="month", limit=int(os.getenv("LIMIT")))
+    submission = list(threads)[thread_number]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     try:
 
@@ -57,7 +56,7 @@ def get_subreddit_threads():
         content["thread_title"] = submission.title
         content["comments"] = []
 
-        for top_level_comment in submission.comments:
+        for top_level_comment in submission.comments.top(time_filter="all"):
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,

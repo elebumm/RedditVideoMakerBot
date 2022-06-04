@@ -13,7 +13,7 @@ from utils.console import print_step
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips, name):
+def make_final_video(number_of_clips, name, length):
     print_step("Creating the final video...")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
@@ -52,9 +52,11 @@ def make_final_video(number_of_clips, name):
         ("center", "center")
     )
     image_concat.audio = audio_composite
-    final = CompositeVideoClip([background_clip, image_concat])
+    final = CompositeVideoClip([background_clip, image_concat]).subclip(0, length)
+
     final.write_videofile(
-        "output/" + name + ".mp4", fps=30, audio_codec="aac", audio_bitrate="64k"
+        "output/" + name + ".mp4", fps=30, audio_codec="aac", audio_bitrate="64k",
+        threads=12
     )
 
     for i in range(0, number_of_clips):
