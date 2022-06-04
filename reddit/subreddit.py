@@ -59,10 +59,10 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            COMMENT_LENGHT_RANGE = [0, Infinity]
-            if os.getenv("COMMENT_LENGHT_RANGE"):
-                COMMENT_LENGHT_RANGE = [int(i) for i in os.getenv("COMMENT_LENGHT_RANGE").split(",")]                
-            if COMMENT_LENGHT_RANGE[0] <= len(top_level_comment.body) <= COMMENT_LENGHT_RANGE[1]:
+            COMMENT_LENGTH_RANGE = [0, Infinity]
+            if os.getenv("COMMENT_LENGTH_RANGE"):
+                COMMENT_LENGTH_RANGE = [int(i) for i in os.getenv("COMMENT_LENGTH_RANGE").split(",")]                
+            if COMMENT_LENGTH_RANGE[0] <= len(top_level_comment.body) <= COMMENT_LENGTH_RANGE[1]:
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,
