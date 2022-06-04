@@ -40,7 +40,7 @@ def get_subreddit_threads():
         # ! Prompt the user to enter a subreddit
         try:
             subreddit = reddit.subreddit(
-                input("What subreddit would you like to pull from? ")
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
             )
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
