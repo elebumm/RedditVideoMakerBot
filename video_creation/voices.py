@@ -21,6 +21,11 @@ def save_text_to_mp3(reddit_obj):
     tts.save(f"assets/mp3/title.mp3")
     length += MP3(f"assets/mp3/title.mp3").info.length
 
+    try:
+        Path(f"assets/mp3/posttext.mp3").unlink()
+    except OSError as e:
+        pass
+
     if reddit_obj["thread_post"] != "":
         tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
         tts.save(f"assets/mp3/posttext.mp3")
