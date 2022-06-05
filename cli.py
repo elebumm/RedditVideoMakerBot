@@ -32,12 +32,22 @@ def program_options():
         help="Use another video background for video (accepts link).",
         action="store"
     )
+    parser.add_argument(
+        "-f",
+        "--filename",
+        help="Set a filename for the video.",
+        action="store"
+    )
 
     args = parser.parse_args()
 
     try:
         if args.create:
-            main(args.subreddit, args.background)
+            main(
+                args.subreddit,
+                args.background,
+                args.filename
+            )
         else:
             print_substep("Error occured!", style="bold red")
             raise SystemExit()

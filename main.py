@@ -12,7 +12,7 @@ from video_creation.final_video import make_final_video
 from utils.console import print_markdown, print_substep
 
 
-def main(subreddit_=None, background=None):
+def main(subreddit_=None, background=None, filename=None):
     REQUIRED_VALUES = [
         "REDDIT_CLIENT_ID",
         "REDDIT_CLIENT_SECRET",
@@ -42,7 +42,10 @@ def main(subreddit_=None, background=None):
     if configured:
         reddit_object = get_subreddit_threads(subreddit_)
         length, number_of_comments = save_text_to_mp3(reddit_object)
-        download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME"))
+        download_screenshots_of_reddit_posts(
+            reddit_object, number_of_comments,
+            os.getenv("THEME")
+        )
         download_background(background)
         chop_background_video(length)
-        final_video = make_final_video(number_of_comments)
+        final_video = make_final_video(snumber_of_comments, filename)
