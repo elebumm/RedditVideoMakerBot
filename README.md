@@ -27,7 +27,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 - Python 3.6+
 - Playwright (this should install automatically during installation)
-
+- pip
 ## Installation 👩‍💻
 
 1. Clone this repository
