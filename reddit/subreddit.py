@@ -2,7 +2,7 @@ from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
 import os, random, praw, re
 
-def get_subreddit_threads(voice):
+def get_subreddit_threads():
     global submission
     """
     Returns a list of threads from the AskReddit subreddit.
@@ -55,16 +55,14 @@ def get_subreddit_threads(voice):
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if voice == "male" and len(top_level_comment.body) > 550:
-                continue
-            if not top_level_comment.stickied:
-                content["comments"].append(
-                    {
-                        "comment_body": top_level_comment.body,
-                        "comment_url": top_level_comment.permalink,
-                        "comment_id": top_level_comment.id,
-                    }
-                )
+           if not top_level_comment.stickied:
+            content["comments"].append(
+                {
+                    "comment_body": top_level_comment.body,
+                    "comment_url": top_level_comment.permalink,
+                    "comment_id": top_level_comment.id,
+                }
+            )
 
     except AttributeError as e:
         pass

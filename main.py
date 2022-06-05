@@ -35,8 +35,8 @@ except:
     configured = False
 
 if configured:
-    reddit_object = get_subreddit_threads(os.getenv("VOICE"))
-    length, number_of_comments = save_text_to_mp3(reddit_object, os.getenv("VOICE"))
+    reddit_object = get_subreddit_threads()
+    length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.getenv("THEME", "light"))
     download_background()
     chop_background_video(length)
