@@ -34,11 +34,11 @@ def get_subreddit_threads(subreddit_):
 
     content = {}
     reddit = praw.Reddit(
-        client_id=os.getenv("REDDIT_CLIENT_ID"),
-        client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
+        client_id=os.getenv("REDDIT_CLIENT_ID").strip(),
+        client_secret=os.getenv("REDDIT_CLIENT_SECRET").strip(),
         user_agent="Accessing AskReddit threads",
-        username=os.getenv("REDDIT_USERNAME"),
-        password=passkey,
+        username=os.getenv("REDDIT_USERNAME").strip(),
+        password=passkey.strip(),
     )
 
     try:
@@ -48,7 +48,7 @@ def get_subreddit_threads(subreddit_):
         subreddit = reddit.subreddit(subreddit_)
     except ValueError:
         if os.getenv("SUBREDDIT"):
-            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
+            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT").strip()))
         else:
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
