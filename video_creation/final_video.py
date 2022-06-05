@@ -40,6 +40,10 @@ def make_final_video(number_of_clips):
     for i in range(0, number_of_clips):
         audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
     audio_clips.insert(0, AudioFileClip(f"assets/mp3/title.mp3"))
+    try:
+        audio_clips.insert(1, AudioFileClip(f"assets/mp3/posttext.mp3"))
+    except:
+        OSError()
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
@@ -53,14 +57,24 @@ def make_final_video(number_of_clips):
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
         )
-    image_clips.insert(
-        0,
-        ImageClip(f"assets/png/title.png")
-        .set_duration(audio_clips[0].duration)
-        .set_position("center")
-        .resize(width=W - 100)
-        .set_opacity(float(opacity)),
-    )
+    if os.path.exists(f"assets/mp3/posttext.mp3"):
+        image_clips.insert(
+            0,
+            ImageClip(f"assets/png/title.png")
+            .set_duration(audio_clips[0].duration + audio_clips[1].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(float(opacity)),
+            )
+    else:
+        image_clips.insert(
+            0,
+            ImageClip(f"assets/png/title.png")
+            .set_duration(audio_clips[0].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(float(opacity)),
+            )
     image_concat = concatenate_videoclips(image_clips).set_position(
         ("center", "center")
     )
