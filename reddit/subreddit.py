@@ -64,13 +64,13 @@ def get_subreddit_threads(subreddit_):
 
         for top_level_comment in submission.comments:
            if not top_level_comment.stickied:
-            content["comments"].append(
-                {
-                    "comment_body": top_level_comment.body,
-                    "comment_url": top_level_comment.permalink,
-                    "comment_id": top_level_comment.id,
-                }
-            )
+                content["comments"].append(
+                    {
+                        "comment_body": top_level_comment.body,
+                        "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id,
+                    }
+                )
     except AttributeError as e:
         pass
 
