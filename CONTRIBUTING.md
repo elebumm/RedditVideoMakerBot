@@ -106,4 +106,4 @@ When making your PR, follow these guidelines:
 
 ### Improving The Documentation
 
-All updates to the documentation should be made in a pull request to [this repo](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)
+All updates to the documentation should be made in a pull request to [this repo](https://github.com/LukaHietala/reddit-bot-docs)
