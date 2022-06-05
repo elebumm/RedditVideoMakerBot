@@ -29,9 +29,14 @@ for val in REQUIRED_VALUES:
         configured = False
 
 try:
-    float(os.getenv("OPACITY"))
+    float(os.getenv("TITLE_OPACITY"))
 except:
-    print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
+    print(f"Please ensure that TITLE_OPACITY is set between 0 and 1 in your .env file")
+    configured = False
+try:
+    float(os.getenv("COMMENT_OPACITY"))
+except:
+    print(f"Please ensure that COMMENT_OPACITY is set between 0 and 1 in your .env file")
     configured = False
 
 if configured:
