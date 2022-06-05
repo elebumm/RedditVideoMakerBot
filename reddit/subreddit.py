@@ -9,6 +9,7 @@ from utils.console import print_step, print_substep
 
 
 def get_subreddit_threads(subreddit_):
+    global submission
     """
     Takes subreddit_ as parameter which defaults to None, but in this
     case since it is None, it would raise ValueError, thus defaulting
@@ -62,6 +63,7 @@ def get_subreddit_threads(subreddit_):
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+           if not top_level_comment.stickied:
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,

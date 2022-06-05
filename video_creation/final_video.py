@@ -1,4 +1,5 @@
 import os
+import re
 
 from dotenv import load_dotenv
 from moviepy.editor import (
@@ -11,6 +12,7 @@ from moviepy.editor import (
     CompositeVideoClip,
 )
 
+import reddit.subreddit
 from utils.console import print_step
 
 
@@ -18,11 +20,11 @@ W, H = 1080, 1920
 
 
 def make_final_video(number_of_clips):
-   # Calls opacity from the .env
-    load_dotenv()
-    opacity = os.getenv("OPACITY")
 
+    # Calls opacity from the .env
+    load_dotenv()
     print_step("Creating the final video...")
+
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
 
@@ -34,7 +36,7 @@ def make_final_video(number_of_clips):
     )
 
     try:
-        float(os.getenv("OPACITY"))
+        opacity = float(os.getenv("OPACITY"))
     except:
         print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
         configured = False
@@ -56,7 +58,7 @@ def make_final_video(number_of_clips):
             .set_duration(audio_clips[i + 1].duration)
             .set_position("center")
             .resize(width=W - 100)
-            .set_opacity(float(opacity)),
+            .set_opacity(opacity),
         )
 
     image_clips.insert(
@@ -65,16 +67,16 @@ def make_final_video(number_of_clips):
         .set_duration(audio_clips[0].duration)
         .set_position("center")
         .resize(width=W - 100)
-        .set_opacity(float(opacity)),
+        .set_opacity(opacity),
     )
     image_concat = concatenate_videoclips(image_clips).set_position(
         ("center", "center")
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
-    final.write_videofile(
-        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
+    filename = (
+        re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4"))
     )
-
+    final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     for i in range(0, number_of_clips):
         pass
