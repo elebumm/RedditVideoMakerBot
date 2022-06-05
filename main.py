@@ -19,11 +19,6 @@ def main():
 
     def get_obj():
         reddit_obj = get_subreddit_threads()
-        for comment in (reddit_obj["comments"]):
-            if len(comment) > 250:
-                print(comment)
-                reddit_obj["comments"].remove(comment)
-                print(reddit_obj["comments"])
         return reddit_obj
 
     reddit_object = get_obj()
@@ -31,7 +26,7 @@ def main():
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
     chop_background_video(length)
-    final_video = make_final_video(number_of_comments)
+    final_video = make_final_video(number_of_comments, length)
 
 
 if __name__ == '__main__':

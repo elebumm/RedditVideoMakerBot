@@ -43,6 +43,8 @@ def get_subreddit_threads():
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
     submission = check_done(submission)
+    if submission == None:
+        return get_subreddit_threads()
 
     print_substep(
         f'subreddit thread is: {submission.title}\n(if you dont like this, you can change it by exiting and rerunning the program)')
@@ -56,9 +58,10 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            content["comments"].append(
-                {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
-                 "comment_id": top_level_comment.id, })
+            if len(top_level_comment.body) <= 250:
+                content["comments"].append(
+                    {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
+                    "comment_id": top_level_comment.id, })
 
     except AttributeError as e:
         pass

@@ -54,10 +54,7 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = 'https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker='
 
     def tts(self, req_text: str = "TikTok Text To Speech", filename: str = 'title.mp3', random_speaker: bool = False):
-        if len(req_text) > 299:
-            return ValueError("Text too long must be under 299 characters")
-        if random_speaker:
-            req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
+        req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
         voice = self.randomvoice() if random_speaker else 'en_us_002'
         r = requests.post(f"{self.URI_BASE}{voice}&req_text={req_text}&speaker_map_type=0")
 
