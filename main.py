@@ -19,9 +19,6 @@ def main():
 
     def get_obj():
         reddit_obj = get_subreddit_threads()
-        for comment in (reddit_obj["comments"]):
-            if len(comment["comment_body"]) > 250:
-                reddit_obj["comments"].remove(comment)
         return reddit_obj
 
     reddit_object = get_obj()
