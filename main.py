@@ -14,8 +14,10 @@ from dotenv import load_dotenv
 console = Console()
 from dotenv import load_dotenv
 import os, time, shutil
+
 configured = True
-REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD"]
+REQUIRED_VALUES = ["REDDIT_CLIENT_ID","REDDIT_CLIENT_SECRET","REDDIT_USERNAME","REDDIT_PASSWORD", "OPACITY"]
+
 
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
@@ -47,7 +49,6 @@ for val in REQUIRED_VALUES:
     if val not in os.environ or not os.getenv(val):
         console.log(f"[bold red]Missing Variable: \"{val}\"")
         configured = False
-
 	      console.log("[red]Looks like you need to set your Reddit credentials in the .env file. Please follow the instructions in the README.md file to set them up.")
 	      time.sleep(0.5)
 	      console.log("[red]We can also launch the easy setup wizard. type yes to launch it, or no to quit the program.")
@@ -68,9 +69,14 @@ for val in REQUIRED_VALUES:
 			
 
 	exit()
-
+try:
+    float(os.getenv("OPACITY"))
+except:
+    console.log(f"[red]Please ensure that OPACITY is set between 0 and 1 in your .env file")
+    configured = False
+    exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
-time.sleep(3)
+
 
 load_dotenv()
 length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -78,6 +84,9 @@ download_screenshots_of_reddit_posts(reddit_object, number_of_comments, os.geten
 download_background()
 chop_background_video(length)
 final_video = make_final_video(number_of_comments)
+
+
+
 
 if configured:
     reddit_object = get_subreddit_threads()
