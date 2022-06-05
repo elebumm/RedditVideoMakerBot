@@ -7,6 +7,7 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
 [<picture>
+
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
@@ -20,13 +21,13 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 ## Disclaimers 🚨
 
-- This is purely for fun purposes.
-- **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that you will then have to upload manually. This is for the sake of avoiding any sort of community guideline issues.
+-   This is purely for fun purposes.
+-   **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that you will then have to upload manually. This is for the sake of avoiding any sort of community guideline issues.
 
 ## Requirements
 
-- Python 3.6+
-- Playwright (this should install automatically during installation)
+-   Python 3.6+
+-   Playwright (this should install automatically during installation)
 
 ## Installation 👩‍💻
 
@@ -38,7 +39,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 6. Enjoy 😎
 
 If you want to see more detailed guide, please refer to the official [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/).
-*The Documentation is still being developed and worked on, please be patient as we change / add new knowledge!
+\*The Documentation is still being developed and worked on, please be patient as we change / add new knowledge!
 
 ## Contributing & Ways to improve 📈
 
@@ -46,8 +47,10 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 
-- [ ] Allowing users to choose a reddit thread instead of being randomized.
+- [x] Allowing users to choose a reddit thread instead of being randomized.
 - [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
 - [x] Allowing users to choose between any subreddit.
 - [ ] Allowing users to change voice.
 - [ ] Creating better documentation and adding a command line interface.
+
+Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
