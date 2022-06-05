@@ -39,8 +39,7 @@ def get_subreddit_threads():
         print_substep("Insert the full thread link:", style="bold green")
         thread_link = input()
         print_step(f"Getting the inserted thread...")
-        thread_id = thread_link.split("/")[6]
-        submission = reddit.submission(thread_id)
+        submission = reddit.submission(url=thread_link)
     else:
         # Otherwise, picks a random thread from the inserted subreddit
         if os.getenv("SUBREDDIT"):
