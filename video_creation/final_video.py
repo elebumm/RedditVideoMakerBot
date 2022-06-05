@@ -21,7 +21,8 @@ def make_final_video(number_of_clips):
   
     # Calls opacity from the .env
     load_dotenv()
-    opacity = os.getenv('OPACITY')
+    titleopacity = os.getenv('COMMENT_OPACITY')
+    commentopacity = os.getenv('TITLE_OPACITY')
     
     print_step("Creating the final video...")
 
@@ -51,7 +52,7 @@ def make_final_video(number_of_clips):
             .set_duration(audio_clips[i + 1].duration)
             .set_position("center")
             .resize(width=W - 100)
-            .set_opacity(float(opacity)),
+            .set_opacity(float(commentopacity)),
         )
     image_clips.insert(
         0,
@@ -59,7 +60,7 @@ def make_final_video(number_of_clips):
         .set_duration(audio_clips[0].duration)
         .set_position("center")
         .resize(width=W - 100)
-        .set_opacity(float(opacity)),
+        .set_opacity(float(titleopacity)),
     )
     image_concat = concatenate_videoclips(image_clips).set_position(
         ("center", "center")
