@@ -33,7 +33,7 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-    
+
     # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
@@ -62,6 +62,7 @@ def get_subreddit_threads():
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
+        content["thread_post"] = submission.selftext
         content["comments"] = []
 
         for top_level_comment in submission.comments:
