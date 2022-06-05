@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from mutagen.mp3 import MP3
 from video_creation.TTSwrapper import TTTTSWrapper as TTS
+import re
 
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
@@ -34,7 +35,10 @@ def save_text_to_mp3(reddit_obj):
         if length > 50:
             break
 
-        TTS.tts(str(comment["comment_body"]), f"./assets/mp3/{idx}.mp3", Voice)
+        comment=comment["comment_body"]
+        text=re.sub('((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', '', comment)
+        
+        TTS.tts(text, f"./assets/mp3/{idx}.mp3", Voice)
         length += MP3(f"./assets/mp3/{idx}.mp3").info.length
     print_substep("Saved Text to MP3 files successfully.", style="bold green")
     # ! Return the index so we know how many screenshots of comments we need to make.
