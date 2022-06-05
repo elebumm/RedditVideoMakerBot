@@ -27,14 +27,13 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 - Python 3.6+
 - Playwright (this should install automatically during installation)
-
 ## Installation 👩‍💻
 
 1. Clone this repository
 2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-3. Run `pip3 install -r requirements.txt`
-4. Run `playwright install` and `playwright install-deps`.
-5. Run `python3 main.py`
+3. Open Terminal in the directory and run `pip3 install -r requirements.txt`
+4. Then run `playwright install` and `playwright install-deps`.
+5. and then `python3 main.py`
 6. Enjoy 😎
 
 If you want to see more detailed guide, please refer to the official [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/).
