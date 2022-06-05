@@ -1,7 +1,7 @@
 import re
+import os
 from random import randrange
 from pathlib import Path
-from turtle import back
 
 from yt_dlp import YoutubeDL
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -31,10 +31,11 @@ def download_background(background):
 
     background_check = Path("assets/mp4/background.mp4").is_file()
     if background is not None or not background_check:
-        if background_check:
+        if background_check and background is not None:
             print_substep(
                 "Background video is already downloaded! Replacing ...", style="bold red"
             )
+            os.system("rm assets/mp4/background.mp4")
 
         try:
             with YoutubeDL(ydl_opts) as ydl:
