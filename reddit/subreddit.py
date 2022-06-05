@@ -1,3 +1,6 @@
+from webbrowser import get
+
+from click import style
 from utils.console import print_markdown, print_step, print_substep
 import praw
 import random
@@ -34,12 +37,12 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-    # If the user inserts a thread link, pick that one
-    if os.getenv("THREAD_LINK"):
-
+    # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
+    if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
+        print_substep("Insert the full thread link:", style="bold green")
+        thread_link = input()
         print_step(f"Getting the inserted thread...")
-
-        thread_id = os.getenv("THREAD_LINK").split("/")[6]
+        thread_id = thread_link.split("/")[6]
         submission = reddit.submission(thread_id)
     else:
         # Otherwise, picks a random thread from the inserted subreddit
