@@ -36,7 +36,7 @@ def download_background():
 
             for uri, filename, credit in background_options:
                 print_substep(f"Downloading {filename} from {uri}")
-                YouTube(uri).streams.filter(res="720p").first().download("assets/backgrounds",
+                YouTube(uri).streams.filter(res="1080p").first().download("assets/backgrounds",
                                                                          filename=f"{credit}-{filename}")
                 progress.update(download_task, advance=1)
 

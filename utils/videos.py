@@ -17,6 +17,5 @@ def check_done(redditobj):  # don't set this to be run anyplace that isn't subre
     for video in done_videos:
         if video['id'] == str(redditobj):
             print_step('Getting new post as the current one has already been done')
-            from reddit.subreddit import get_subreddit_threads
-            return get_subreddit_threads()  # recursive func
+            return None
     return redditobj
