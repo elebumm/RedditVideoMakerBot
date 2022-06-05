@@ -19,7 +19,7 @@ from utils.console import print_step
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips):
+def make_final_video(number_of_clips, file_name):
     # Calls opacity from the .env
     load_dotenv()
     opacity = os.getenv('OPACITY')
@@ -80,9 +80,11 @@ def make_final_video(number_of_clips):
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
 
-    filename = (
-        re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4"))
-    )
+    if file_name is None:
+        filename = (
+            re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4"))
+        )
+
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     for i in range(0, number_of_clips):
         pass
