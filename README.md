@@ -32,11 +32,17 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-3. Run `pip3 install -r requirements.txt`
-4. Run `playwright install` and `playwright install-deps`.
-5. Run `python3 main.py`
-6. Enjoy 😎
+
+2. Run `pip3 install -r requirements.txt`
+3. Run `playwright install` and `playwright install-deps`.
+4. 
+	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
+
+	4b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
+
+5. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+7. Enjoy 😎
+
 
 If you want to see more detailed guide, please refer to the official [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/).
 \*The Documentation is still being developed and worked on, please be patient as we change / add new knowledge!
