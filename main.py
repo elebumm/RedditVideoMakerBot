@@ -54,7 +54,7 @@ if not os.path.exists(".env"):
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
 for val in REQUIRED_VALUES:
-    print(os.getenv(val))
+    #print(os.getenv(val))
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
@@ -70,8 +70,8 @@ for val in REQUIRED_VALUES:
             console.log("[bold green]Here goes nothing! Launching setup wizard...")
             time.sleep(0.5)
             os.system("python3 setup.py")
-    else:
-        if setup_ask == "no":
+
+        elif setup_ask == "no":
             console.print("[red]Exiting...")
             time.sleep(0.5)
             exit()
@@ -79,8 +79,6 @@ for val in REQUIRED_VALUES:
             console.print("[red]I don't understand that. Exiting...")
             time.sleep(0.5)
             exit()
-
-    exit()
 try:
     float(os.getenv("OPACITY"))
 except:
