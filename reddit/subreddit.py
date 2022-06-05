@@ -74,6 +74,7 @@ def get_subreddit_threads():
 
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
+        content["thread_selftext"] = submission.selftext
         content["comments"] = []
         content["subreddit"] = subreddit_title.upper()
         content["ffmpeg_exe"] = str(ffmpeg_exe)

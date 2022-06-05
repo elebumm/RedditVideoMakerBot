@@ -12,7 +12,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         reddit_object: The Reddit Object you received in askreddit.py
         screenshot_num: The number of screenshots you want to download.
     """
-    print_step("Downloading Screenshots of Reddit Posts 📷")
+    print_step(f"Downloading Screenshots of Reddit Posts: {screenshot_num} 📷")
 
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
@@ -31,7 +31,9 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         # Get the thread screenshot
         page = context.new_page()
         page.goto(reddit_object["thread_url"])
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
+        # page.set_viewport_size(ViewportSize(width=1080, height=1920))
+        page.set_viewport_size(ViewportSize(width=700, height=1280, device_scale_factor=0.5))
+
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
@@ -41,6 +43,9 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         page.locator('[data-test-id="post-content"]').screenshot(
             path="assets/png/title.png"
         )
+        # page.evaluate('() => { const styleSheet = document.createElement("style");styleSheet.type = "text/css"; const css = "p{font-size:2em !important}";styleSheet.innerText = css;document.head.appendChild(styleSheet); }')
+        # page.set_viewport_size(ViewportSize(width=720, height=1920, device_scale_factor=1))
+        # page.goto(reddit_object["thread_url"])
 
         for idx, comment in track(
             enumerate(reddit_object["comments"]), "Downloading screenshots..."
@@ -58,5 +63,4 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
                 path=f"assets/png/comment_{idx}.png"
             )
 
-        print_substep("Screenshots downloaded Successfully.",
-                      style="bold green")
+        print_substep("Screenshots downloaded Successfully.", style="bold green")

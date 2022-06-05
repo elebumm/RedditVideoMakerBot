@@ -19,17 +19,18 @@ print_markdown(
 time.sleep(3)
 
 # The maximum length of the video in seconds. (This is the length of the video that will be created, but not 100% accurate)
-MAX_LENGTH = 60
+MAX_LENGTH = 55
 
 # Video speed multiplier (1.0 = normal speed, 2.0 = double speed, 0.5 = half speed)
-VIDEO_SPEED = 1.4
+VIDEO_SPEED = 1.2
 
 # Voice accent https://gtts.readthedocs.io/en/latest/module.html?highlight=accent
 VOICE_ACCENT = "co.uk"
 
 # Background video to use (video id from youtube)
 # Use an array of videos to create a random background video
-BACKGROUND_VIDEO_ARRAY = ["5sYdvjXX7YU", "Pt5_GSKIWQM"]
+
+BACKGROUND_VIDEO_ARRAY = ["5sYdvjXX7YU", "Pt5_GSKIWQM", "uVKxtdMgJVU","E-8JlyO59Io","cEXWuxP1cW0","aeiAt1lFkGg","r9QzNn25SDs","vVJuMq1CMNo","xVqwTUTOOWg","U0By6YNp2C4"]
 # select random 1
 BACKGROUND_VIDEO = BACKGROUND_VIDEO_ARRAY[random.randrange(0, len(BACKGROUND_VIDEO_ARRAY))]
 

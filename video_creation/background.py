@@ -15,10 +15,10 @@ def get_start_and_end_times(video_length, length_of_clip):
 def download_background(youtube_id):
     if not Path(f"assets/mp4/background-{youtube_id}.mp4").is_file():
         print_step(
-            "We need to download the background video. This is fairly large but it's only done once."
+            "We need to download the background video. This is fairly large but it's only done once per video."
         )
 
-        print_substep("Downloading the background video... please be patient.")
+        print_substep("Downloading the background video...")
 
         ydl_opts = {
             "outtmpl": f"assets/mp4/background-{youtube_id}.mp4",
