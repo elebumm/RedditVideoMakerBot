@@ -45,9 +45,14 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    if os.getenv("REDDITTHREAD"):
+        submission = reddit.submission(url=os.getenv("REDDITTHREAD"))
+    else:
+        threads = subreddit.hot(limit=25)
+        submission = list(threads)[random.randrange(0, 25)]
+        
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+    
     try:
 
         content["thread_url"] = submission.url
