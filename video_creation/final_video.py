@@ -47,7 +47,7 @@ def make_final_video(number_of_clips):
             .set_duration(audio_clips[i + 1].duration)
             .set_position("center")
             .resize(width=W - 100)
-            .set_opacity(float(opacity)),
+            .set_opacity(float(opacity)) for i in range(0, number_of_clips)
     ]
     image_clips.insert(
         0,
