@@ -18,7 +18,7 @@ def download_background(background):
     """Downloads the background video from youtube.
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
-    """
+        """
     print_step( # removed minecraft, since the background can be changed according to user input.
         "Downloading the background video."
     )
@@ -33,13 +33,14 @@ def download_background(background):
             with YoutubeDL(ydl_opts) as ydl:
                 if background is None:
                     ydl.download("https://www.youtube.com/watch?v=n_Dv4JMiwK8")
-
-                if (
-                        re.match("https://*youtube.com*", background) and background is not None
-                    ):
-                    ydl.download(background)
-                else: # if the link is not youtube link
-                    raise ValueError
+                else:
+                    if (
+                            re.match("https://*youtube.com*", background)
+                            and background is not None
+                        ):
+                        ydl.download(background)
+                    else: # if the link is not youtube link
+                        raise ValueError
         except (
                 ValueError
                 # add more exceptions
