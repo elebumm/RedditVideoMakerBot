@@ -12,7 +12,7 @@ from moviepy.editor import (
     CompositeVideoClip,
 )
 
-import reddit.subreddit
+import reddit.subreddit 
 from utils.console import print_step
 
 
@@ -22,6 +22,8 @@ W, H = 1080, 1920
 def make_final_video(number_of_clips):
     # Calls opacity from the .env
     load_dotenv()
+    opacity = os.getenv('OPACITY')
+    
     print_step("Creating the final video...")
 
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -73,6 +75,7 @@ def make_final_video(number_of_clips):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
+
     filename = (
         re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4"))
     )
