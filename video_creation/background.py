@@ -39,7 +39,7 @@ def download_background(background):
                     ydl.download("https://www.youtube.com/watch?v=n_Dv4JMiwK8")
                 else:
                     if (
-                            re.match("https://*youtube.com*", background)
+                            re.match("https://www.youtube.com/watch?v*", background)
                             and background is not None
                         ):
                         ydl.download(background)
