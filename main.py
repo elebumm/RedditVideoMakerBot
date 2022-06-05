@@ -91,16 +91,6 @@ except:
     exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
-
-length, number_of_comments = save_text_to_mp3(reddit_object)
-download_screenshots_of_reddit_posts(
-    reddit_object, number_of_comments, os.getenv("THEME")
-)
-download_background()
-chop_background_video(length)
-final_video = make_final_video(number_of_comments)
-
-
 if configured:
     reddit_object = get_subreddit_threads()
     length, number_of_comments = save_text_to_mp3(reddit_object)
