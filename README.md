@@ -1,6 +1,7 @@
 # Reddit Video Maker Bot 🎥
 
-https://user-images.githubusercontent.com/6053155/170525726-2db23ae0-97b8-4bd1-8c95-00da60ce099f.mp4
+https://user-images.githubusercontent.com/42091381/172048230-62efc0e8-bfde-470c-a764-7027df454956.mp4
+
 
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
 
