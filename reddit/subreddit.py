@@ -2,11 +2,10 @@ from utils.console import print_markdown, print_step, print_substep
 from praw import Reddit
 import random
 from dotenv import load_dotenv
-import os
-
+import os, random, re
 
 def get_subreddit_threads():
-
+    global submission
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -23,6 +22,7 @@ def get_subreddit_threads():
 
     subreddit = choose_subreddit(reddit)
 
+
     threads = subreddit.hot(limit=25)
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
@@ -36,7 +36,8 @@ def get_subreddit_threads():
     return content
 
 def handle_2FA():
-    if os.getenv("REDDIT_2FA").lower() == "yes":
+    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
+
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
@@ -51,13 +52,13 @@ def handle_2FA():
 
 def choose_subreddit(reddit):
     if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
     else:
         # ! Prompt the user to enter a subreddit
         try:
             subreddit_name = input("What subreddit would you like to pull from? ")
             subreddit = reddit.subreddit(
-                subreddit_name
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
             )
         except ValueError:
             subreddit = reddit.subreddit("AskReddit")
@@ -71,6 +72,7 @@ def build_content_comments(submission):
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+           if not top_level_comment.stickied:
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,
