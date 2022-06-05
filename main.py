@@ -9,7 +9,7 @@ from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.final_video import make_final_video
 
-from utils.console import print_markdown
+from utils.console import print_markdown, print_substep
 
 
 def main(subreddit_=None, background=None):
@@ -24,7 +24,7 @@ def main(subreddit_=None, background=None):
     print_markdown(
         "### Thanks for using this tool! [Feel free to contribute to this project on "
         + "GitHub!](https://lewismenelaws.com) If you have any questions, feel free to"
-        + "reach out to me on Twitter or submit a GitHub issue."
+        + " reach out to me on Twitter or submit a GitHub issue."
     )
 
     configured = True
@@ -36,7 +36,7 @@ def main(subreddit_=None, background=None):
 
     for val in REQUIRED_VALUES:
         if not os.getenv(val):
-            print(f"Please set the variable \"{val}\" in your .env file.")
+            print_substep(f"Please set the variable \"{val}\" in your .env file.", style="bold red")
             configured = False
 
     if configured:

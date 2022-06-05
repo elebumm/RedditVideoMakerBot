@@ -20,7 +20,6 @@ W, H = 1080, 1920
 
 
 def make_final_video(number_of_clips):
-
     # Calls opacity from the .env
     load_dotenv()
     print_step("Creating the final video...")
