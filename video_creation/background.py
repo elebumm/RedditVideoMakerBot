@@ -19,20 +19,16 @@ def download_background(background):
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
     """
+    print_step( # removed minecraft, since the background can be changed according to user input.
+        "Downloading the background video."
+    )
 
-    if not Path("assets/mp4/background.mp4").is_file():
-        print_step( # removed minecraft, since the background can be changed according to user input.
-            "We need to download the background video. This may be"
-            + " large, depending on the input but it's only done once."
-        )
+    ydl_opts = {
+        "outtmpl": "assets/mp4/background.mp4",
+        "merge_output_format": "mp4",
+    }
 
-        print_substep("Downloading the background video... please be patient.")
-
-        ydl_opts = {
-            "outtmpl": "assets/mp4/background.mp4",
-            "merge_output_format": "mp4",
-        }
-
+    if background is not None or not Path("assets/mp4/background.mp4").is_file():
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 if background is None:
