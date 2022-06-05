@@ -9,7 +9,6 @@ from utils.console import print_step, print_substep
 
 
 def get_subreddit_threads(subreddit_):
-    global submission
     """
     Takes subreddit_ as parameter which defaults to None, but in this
     case since it is None, it would raise ValueError, thus defaulting
@@ -18,6 +17,7 @@ def get_subreddit_threads(subreddit_):
     Returns a list of threads from the AskReddit subreddit.
     """
 
+    global submission
     load_dotenv()
 
     print_step("Getting AskReddit threads...")

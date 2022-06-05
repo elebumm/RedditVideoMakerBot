@@ -19,16 +19,16 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as p:
+    with sync_playwright() as browser_:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch()
+        browser = browser_.chromium.launch()
         context = browser.new_context()
 
         if theme.casefold() == "dark":
-            cookie_file = open("video_creation/cookies.json")
-            cookies = json.load(cookie_file)
-            context.add_cookies(cookies)
+            with open("video_creation/cookies.json", encoding="utf-8") as cookie_file:
+                cookies = json.load(cookie_file)
+                context.add_cookies(cookies)
 
         # Get the thread screenshot
         page = context.new_page()
@@ -45,8 +45,8 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         )
 
         for idx, comment in track(
-            enumerate(reddit_object["comments"]), "Downloading screenshots..."
-        ):
+                enumerate(reddit_object["comments"]), "Downloading screenshots..."
+            ):
 
             # Stop if we have reached the screenshot_num
             if idx >= screenshot_num:
