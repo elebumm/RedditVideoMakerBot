@@ -1,5 +1,8 @@
+from rich.console import Console
 from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
+
+console = Console()
 import os, random, praw, re
 
 
@@ -23,7 +26,6 @@ def get_subreddit_threads():
         passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
-
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
@@ -31,6 +33,7 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
+    
     # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
@@ -45,11 +48,7 @@ def get_subreddit_threads():
             # ! Prompt the user to enter a subreddit
             try:
                 subreddit = reddit.subreddit(
-                    re.sub(
-                        r"r\/",
-                        "",
-                        input("What subreddit would you like to pull from? "),
-                    )
+                    re.sub(r"r\/", "",input("What subreddit would you like to pull from? "))
                 )
             except ValueError:
                 subreddit = reddit.subreddit("askreddit")
@@ -59,6 +58,7 @@ def get_subreddit_threads():
         submission = list(threads)[random.randrange(0, 25)]
 
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+    console.log("Getting video comments...")
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
