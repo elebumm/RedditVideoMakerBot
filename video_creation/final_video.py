@@ -12,7 +12,7 @@ from moviepy.editor import (
     CompositeVideoClip,
 )
 
-import reddit.subreddit 
+import reddit.subreddit
 from utils.console import print_step
 
 
@@ -23,7 +23,7 @@ def make_final_video(number_of_clips):
     # Calls opacity from the .env
     load_dotenv()
     opacity = os.getenv('OPACITY')
-    
+
     print_step("Creating the final video...")
 
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -38,7 +38,11 @@ def make_final_video(number_of_clips):
 
     try:
         opacity = float(os.getenv("OPACITY"))
-    except:
+    except (
+            ValueError,
+            FloatingPointError,
+            TypeError
+        ):
         print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
         configured = False
 
