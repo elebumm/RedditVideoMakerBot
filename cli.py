@@ -26,8 +26,6 @@ def program_options():
         help="Use another sub-reddit.",
         action="store"
     )
-    # this one accepts link as input, defaults to the minecraft video
-    # does not accept file or already downloaded background yet.
     parser.add_argument(
         "-b",
         "--background",
