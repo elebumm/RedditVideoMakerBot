@@ -2,9 +2,8 @@ from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
 import os, random, praw, re
 
-
 def get_subreddit_threads():
-
+    global submission
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -56,6 +55,7 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+           if not top_level_comment.stickied:
             content["comments"].append(
                 {
                     "comment_body": top_level_comment.body,
