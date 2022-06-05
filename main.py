@@ -50,7 +50,6 @@ time.sleep(1)
 
 
 if not os.path.exists(".env"):
-    shutil.copy(".env.template", ".env")
     configured = False
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
