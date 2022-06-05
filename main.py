@@ -27,6 +27,7 @@ def main(subreddit_=None, background=None):
         + "reach out to me on Twitter or submit a GitHub issue."
     )
 
+    configured = True
     if not os.path.exists(".env"):
         shutil.copy(".env.template", ".env")
         configured = False
