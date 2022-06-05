@@ -28,7 +28,11 @@ def download_background(background):
         "merge_output_format": "mp4",
     }
 
-    if background is not None or not Path("assets/mp4/background.mp4").is_file():
+    background_check = Path("assets/mp4/background.mp4").is_file()
+    if background is not None or not background_check:
+        if background_check:
+            print_substep("Background video is already downloaded! Replacing ...")
+
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 if background is None:
