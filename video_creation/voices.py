@@ -35,8 +35,8 @@ def save_text_to_mp3(reddit_obj):
         if length > 50:
             break
 
-        comment=comment["comment_body"]
-        text=re.sub('((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', '', comment)
+        comment = comment["comment_body"]
+        text = re.sub('((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', '', comment)
         
         TTS.tts(text, f"./assets/mp3/{idx}.mp3", Voice)
         length += MP3(f"./assets/mp3/{idx}.mp3").info.length
