@@ -68,11 +68,8 @@ def program_options():
         else:
             print_substep("Error occured!", style="bold red")
             raise SystemExit()
-    except (
-        ConnectionError,
-        KeyboardInterrupt,
-    ):
-        print_substep("Error occured!", style="bold red")
+    except KeyboardInterrupt:
+        print_substep("\nOperation Aborted!", style="bold red")
 
 
 if __name__ == "__main__":
