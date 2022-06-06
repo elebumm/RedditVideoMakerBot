@@ -50,7 +50,7 @@ class TTSEngine:
         self.call_tts("title", self.reddit_object["thread_title"])
 
         if self.reddit_object["thread_post"] != "":
-            self.call_tts("posttext", self.reddit_object["thread_post"])
+            self.call_tts("posttext", sanitise_text(self.reddit_object["thread_post"]))
 
         idx = None
         for idx, comment in track(
@@ -60,9 +60,9 @@ class TTSEngine:
             if self.length > self.max_length:
                 break
             if not self.tts_module.max_chars:
-                self.call_tts(f"{idx}", comment["comment_body"])
+                self.call_tts(f"{idx}", sanitise_text(comment["comment_body"]))
             else:
-                self.split_post(comment["comment_body"], idx)
+                self.split_post(sanitise_text(comment["comment_body"]), idx)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
@@ -92,3 +92,11 @@ class TTSEngine:
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=text, filepath=f"{self.path}/{filename}.mp3")
         self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+
+
+def sanitise_text(text: str) -> str:
+    return re.sub(
+        r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*",
+        "",
+        text,
+    )
