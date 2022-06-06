@@ -1,7 +1,17 @@
 assets/
+reddit/__pycache__/
+utils/__pycache__/
 .env
 reddit-bot-351418-5560ebc49cac.json
+video_creation/__pycache__/
+.setup-done-before
 __pycache__
+<<<<<<< HEAD
 out
 venv
 old
+=======
+.idea/
+.DS_Store
+out
+>>>>>>> cf6b3a9c44d86909f585a3111d62005cd05c8f7d
