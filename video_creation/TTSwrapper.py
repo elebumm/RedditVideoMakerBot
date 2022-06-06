@@ -1,9 +1,13 @@
-import requests, base64, random, os
 import re
+
+import base64
+import os
+import random
+import requests
 from moviepy.editor import AudioFileClip, concatenate_audioclips, CompositeAudioClip
 
 # https://twitter.com/scanlime/status/1512598559769702406
-voices = [  # DISNEY VOICES
+nonhuman = [  # DISNEY VOICES
     'en_us_ghostface',  # Ghost Face
     'en_us_chewbacca',  # Chewbacca
     'en_us_c3po',  # C3PO
@@ -12,18 +16,20 @@ voices = [  # DISNEY VOICES
     'en_us_rocket',  # Rocket
 
     # ENGLISH VOICES
-    'en_au_001',  # English AU - Female
-    'en_au_002',  # English AU - Male
-    'en_uk_001',  # English UK - Male 1
-    'en_uk_003',  # English UK - Male 2
-    'en_us_001',  # English US - Female (Int. 1)
-    'en_us_002',  # English US - Female (Int. 2)
-    'en_us_006',  # English US - Male 1
-    'en_us_007',  # English US - Male 2
-    'en_us_009',  # English US - Male 3
-    'en_us_010',  # English US - Male 4
+]
+human = ['en_au_001',  # English AU - Female
+         'en_au_002',  # English AU - Male
+         'en_uk_001',  # English UK - Male 1
+         'en_uk_003',  # English UK - Male 2
+         'en_us_001',  # English US - Female (Int. 1)
+         'en_us_002',  # English US - Female (Int. 2)
+         'en_us_006',  # English US - Male 1
+         'en_us_007',  # English US - Male 2
+         'en_us_009',  # English US - Male 3
+         'en_us_010']
+voices = nonhuman + human
 
-    # EUROPE VOICES
+noneng = [
     'fr_001',  # French - Male 1
     'fr_002',  # French - Male 2
     'de_001',  # German - Female
@@ -47,8 +53,10 @@ voices = [  # DISNEY VOICES
     'kr_003',  # Korean - Female
     'kr_004',  # Korean - Male 2
 ]
-good_voices = {'good': ['en_us_002', 'en_us_006'],
-               'ok': ['en_au_002', 'en_uk_001']}  # less en_us_stormtrooper more less en_us_rocket en_us_ghostface
+
+
+# good_voices = {'good': ['en_us_002', 'en_us_006'],
+#               'ok': ['en_au_002', 'en_uk_001']}  # less en_us_stormtrooper more less en_us_rocket en_us_ghostface
 
 
 class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
@@ -58,9 +66,9 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
     def tts(self, req_text: str = "TikTok Text To Speech", filename: str = 'title.mp3', random_speaker: bool = False):
         req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
 
-        voice = self.randomvoice() if random_speaker else 'en_us_002'
+        voice = self.randomvoice() if random_speaker else (os.getenv('VOICE') or random.choice(human))
 
-        chunks = [m.group().strip() for m in re.finditer(r' *((.{0,200})(\.|.$))',req_text)]
+        chunks = [m.group().strip() for m in re.finditer(r' *((.{0,200})(\.|.$))', req_text)]
 
         audio_clips = []
 
@@ -75,7 +83,7 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
             audio_clips.append(AudioFileClip(f"{filename}-{chunkId}"))
 
-            chunkId = chunkId+1;
+            chunkId = chunkId + 1
 
         audio_concat = concatenate_audioclips(audio_clips)
         audio_composite = CompositeAudioClip([audio_concat])
@@ -85,6 +93,5 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
     def randomvoice():
         ok_or_good = random.randrange(1, 10)
         if ok_or_good == 1:  # 1/10 chance of ok voice
-            return random.choice(good_voices['ok'])
-        return random.choice(good_voices['good'])  # 9/10 chance of good voice
-
+            return random.choice(voices)
+        return random.choice(human)  # 9/10 chance of good voice

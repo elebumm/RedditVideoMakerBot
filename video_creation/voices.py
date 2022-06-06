@@ -24,7 +24,7 @@ def save_text_to_mp3(reddit_obj):
     Path("assets/temp/mp3").mkdir(parents=True, exist_ok=True)
 
     ttttsw = TTTTSWrapper()  # tiktok text to speech wrapper
-    ttttsw.tts(reddit_obj["thread_title"], filename=f"assets/temp/mp3/title.mp3", random_speaker=True)
+    ttttsw.tts(reddit_obj["thread_title"], filename=f"assets/temp/mp3/title.mp3", random_speaker=False)
     try:
         length += MP3(f"assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:  # note to self AudioFileClip
