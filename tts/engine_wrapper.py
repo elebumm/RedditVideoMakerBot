@@ -6,6 +6,7 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 
+
 class TTSEngine:
 
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
@@ -20,7 +21,13 @@ class TTSEngine:
         tts_module must take the arguments text and filepath.
     """
 
-    def __init__(self, tts_module, reddit_object: dict, path: str = "assets/mp3", max_length: int = 50):
+    def __init__(
+        self,
+        tts_module,
+        reddit_object: dict,
+        path: str = "assets/mp3",
+        max_length: int = 50,
+    ):
         self.tts_module = tts_module
         self.reddit_object = reddit_object
         self.path = path
@@ -44,26 +51,38 @@ class TTSEngine:
         if self.reddit_object["thread_post"] != "":
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
-        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+        idx = None
+        for idx, comment in track(
+            enumerate(self.reddit_object["comments"]), "Saving..."
+        ):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
                 break
             if not self.tts_module.max_chars:
-                self.call_tts(f"{idx}",comment["comment_body"])
+                self.call_tts(f"{idx}", comment["comment_body"])
             else:
                 self.split_post(comment["comment_body"], idx)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
 
-    def split_post(self, text: str, idx:int) -> str:
+    def split_post(self, text: str, idx: int) -> str:
         split_files = []
-        split_text = [x.group().strip() for x in re.finditer(fr' *((.{{0,{self.tts_module.max_chars}}})(\.|.$))', text)]
+        split_text = [
+            x.group().strip()
+            for x in re.finditer(
+                rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text
+            )
+        ]
+
+        idy = None
         for idy, text_cut in enumerate(split_text):
             print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
             split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
-        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None)
+        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
+            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
+        )
 
         for i in range(0, idy + 1):
             print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
