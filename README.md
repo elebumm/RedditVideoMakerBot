@@ -60,3 +60,11 @@ I have tried to simplify the code so anyone can read it and start contributing a
 - [ ] Creating better documentation and adding a command line interface.
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
+
+## Developers and maintainers.
+
+Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+CallumIO - https://github.com/CallumIO
+HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+Freebiell - https://github.com/FreebieII
