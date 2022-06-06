@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from utils.console import print_step, print_substep
 from rich.progress import track
