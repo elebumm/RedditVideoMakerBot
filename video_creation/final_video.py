@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -7,7 +8,7 @@ from moviepy.editor import (
     CompositeAudioClip,
     CompositeVideoClip,
 )
-import reddit.subreddit 
+import reddit.subreddit
 import re
 from utils.console import print_step
 from dotenv import load_dotenv
@@ -16,13 +17,12 @@ import os
 W, H = 1080, 1920
 
 
-
 def make_final_video(number_of_clips):
-  
+
     # Calls opacity from the .env
     load_dotenv()
-    opacity = os.getenv('OPACITY')
-    
+    opacity = os.getenv("OPACITY")
+
     print_step("Creating the final video...")
 
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -65,7 +65,7 @@ def make_final_video(number_of_clips):
             .set_position("center")
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
-            )
+        )
     else:
         image_clips.insert(
             0,
@@ -74,13 +74,15 @@ def make_final_video(number_of_clips):
             .set_position("center")
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
-            )
+        )
     image_concat = concatenate_videoclips(image_clips).set_position(
         ("center", "center")
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
-    filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
+    filename = re.sub(
+        '[?"%*:|<>]', "", ("assets/" + reddit.subreddit.submission.title + ".mp4")
+    )
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     for i in range(0, number_of_clips):
         pass

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from rich.console import Console
 from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
@@ -48,7 +49,11 @@ def get_subreddit_threads():
             # ! Prompt the user to enter a subreddit
             try:
                 subreddit = reddit.subreddit(
-                    re.sub(r"r\/", "",input("What subreddit would you like to pull from? "))
+                    re.sub(
+                        r"r\/",
+                        "",
+                        input("What subreddit would you like to pull from? "),
+                    )
                 )
             except ValueError:
                 subreddit = reddit.subreddit("askreddit")

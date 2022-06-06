@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from gtts import gTTS
 from pathlib import Path
 from mutagen.mp3 import MP3

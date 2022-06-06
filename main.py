@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Main
 from utils.console import print_markdown
 from utils.console import print_step
@@ -54,7 +55,7 @@ if not os.path.exists(".env"):
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
 for val in REQUIRED_VALUES:
-    #print(os.getenv(val))
+    # print(os.getenv(val))
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
