@@ -24,7 +24,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         context = browser.new_context()
 
         if theme.casefold() == "dark":
-            cookie_file = open('video_creation/cookies.json')
+            cookie_file = open("video_creation/cookies.json")
             cookies = json.load(cookie_file)
             context.add_cookies(cookies)
 
@@ -42,8 +42,8 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             path="assets/png/title.png"
         )
 
-        for idx, comment in track(
-            enumerate(reddit_object["comments"]), "Downloading screenshots..."
+        for idx, comment in enumerate(
+            track(reddit_object["comments"]), "Downloading screenshots..."
         ):
 
             # Stop if we have reached the screenshot_num
@@ -58,5 +58,4 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
                 path=f"assets/png/comment_{idx}.png"
             )
 
-        print_substep("Screenshots downloaded Successfully.",
-                      style="bold green")
+        print_substep("Screenshots downloaded Successfully.", style="bold green")
