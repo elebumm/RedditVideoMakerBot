@@ -3,7 +3,14 @@ import os
 import re
 
 import praw
+from prawcore.exceptions import (
+    OAuthException,
+    ResponseException,
+    RequestException,
+    BadRequest
+)
 from dotenv import load_dotenv
+from rich.console import Console
 
 from utils.console import print_step, print_substep
 
@@ -17,12 +24,14 @@ def get_subreddit_threads(subreddit_, thread_link_):
     Returns a list of threads from the AskReddit subreddit.
     """
 
+    console = Console()
+
     global submission
     load_dotenv()
 
     if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
-            "\nEnter your two-factor authentication code from your authenticator app.\n"
+            "\nEnter your two-factor authentication code from your authenticator app.\n", end=" "
         )
         code = input("> ")
         pw = os.getenv("REDDIT_PASSWORD")
@@ -31,14 +40,27 @@ def get_subreddit_threads(subreddit_, thread_link_):
         passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
-    reddit = praw.Reddit(
-        client_id=os.getenv("REDDIT_CLIENT_ID").strip(),
-        client_secret=os.getenv("REDDIT_CLIENT_SECRET").strip(),
-        user_agent="Accessing AskReddit threads",
-        username=os.getenv("REDDIT_USERNAME").strip(),
-        password=passkey.strip(),
-    )
-
+    try:
+        reddit = praw.Reddit(
+            client_id=os.getenv("REDDIT_CLIENT_ID").strip(),
+            client_secret=os.getenv("REDDIT_CLIENT_SECRET").strip(),
+            user_agent="Accessing AskReddit threads",
+            username=os.getenv("REDDIT_USERNAME").strip(),
+            password=passkey.strip(),
+        )
+    except (
+            OAuthException,
+            ResponseException,
+            RequestException,
+            BadRequest
+        ):
+        console.print(
+            "[bold red]There is something wrong with the .env file, kindly check:[/bold red]\n"
+            + "1. ClientID\n"
+            + "2. ClientSecret\n"
+            + "3. If these variables are fine, kindly check other variables."
+            + "4. Check if the type of Reddit app created is script (personal use script)."
+        )
 
 
     # If the user specifies that he doesnt want a random thread, or if
