@@ -12,6 +12,9 @@ import re
 from utils.console import print_step
 from dotenv import load_dotenv
 import os
+from rich.console import Console
+console = Console()
+
 
 W, H = 1080, 1920
 
@@ -46,6 +49,11 @@ def make_final_video(number_of_clips):
         OSError()
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
+
+    #Get sum of all clip lengths
+    total_length = sum([clip.duration for clip in audio_clips])
+    #Output Length
+    console.log("[bold green] Video Will Be: " + str(total_length) + " Seconds Long")
 
     # Gather all images
     image_clips = []
