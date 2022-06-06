@@ -12,3 +12,4 @@ old
 .idea/
 .DS_Store
 out
+.env.bak

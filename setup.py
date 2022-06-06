@@ -59,6 +59,8 @@ console.log("[bold green]Reddit 2FA (yes or no)")
 console.log("[bold green]Opacity (range of 0-1, decimals are OK)")
 console.log("[bold green]Subreddit (without r/ or /r/)")
 console.log("[bold green]Theme (light or dark)")
+console.log("[bold green]Voice")
+console.log("[bold green]Get random thread everytime")
 time.sleep(0.5)
 console.print("[green]If you don't have these, please follow the instructions in the README.md file to set them up.")
 console.print("[green]If you do have these, type yes to continue. If you dont, go ahead and grab those quickly and come back.")
@@ -86,12 +88,17 @@ twofactor = input("2fa Enabled? (yes/no) > ")
 opacity = input("Opacity? (range of 0-1) > ")
 subreddit = input("Subreddit (without r/) > ")
 theme = input("Theme? (light or dark) > ")
+Voice = input("Voice? (leave blank for default) or check the valid options here\nhttps://github.com/The-Drobe/RedditVideoMakerBot/blob/master/examples/ValidOptionsTTS.txt > ")
+RandomThread = input("Get random thread everytime? (yes or no) > ")
 console.log("Attempting to save your credentials...")
 loader = Loader("Saving Credentials...", "Done!").start()
  # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
 console.log("Removing old .env file...")
-os.remove(".env")
+try:
+	os.remove(".env")
+except FileNotFoundError:
+	pass
 time.sleep(0.5)
 console.log("Creating new .env file...")
 with open('.env', 'a') as f:
@@ -110,6 +117,10 @@ with open('.env', 'a') as f:
 	f.write(f'SUBREDDIT="{subreddit}"\n')
 	time.sleep(0.5)
 	f.write(f'OPACITY="{opacity}"\n')
+	time.sleep(0.5)
+	f.write(f'Voice="{Voice}"')
+	time.sleep(0.5)
+	f.write(f'RANDOM_THREAD="{RandomThread}"')
 
 with open('.setup-done-before', 'a') as f:
 	f.write("This file blocks the setup assistant from running again. Delete this file to run setup again.")
