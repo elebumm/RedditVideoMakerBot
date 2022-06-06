@@ -15,7 +15,7 @@ class TTSEngine:
         tts_function must take the arguments text and filepath.
     """
 
-    def __init__(self, tts_function: function, reddit_object, path: str = "assets/mp3", max_length: int = 50):
+    def __init__(self, tts_function: function, reddit_object: dict, path: str = "assets/mp3", max_length: int = 50):
         self.tts_function = tts_function
         self.reddit_object = reddit_object
         self.path = path
