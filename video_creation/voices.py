@@ -9,5 +9,5 @@ def save_text_to_mp3(reddit_obj):
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    text_to_mp3 = TTSEngine(tts.google_translate_tts.run, reddit_obj)
+    text_to_mp3 = TTSEngine(tts.google_translate_tts, reddit_obj)
     return text_to_mp3.run()
