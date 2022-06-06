@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # Main
 from utils.console import print_markdown
-from utils.console import print_step
-from utils.console import print_substep
 from rich.console import Console
 import time
 from reddit.subreddit import get_subreddit_threads
@@ -10,12 +8,10 @@ from video_creation.background import download_background, chop_background_video
 from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.final_video import make_final_video
-from utils.loader import Loader
 from dotenv import load_dotenv
+import os
 
 console = Console()
-from dotenv import load_dotenv
-import os, time, shutil
 
 configured = True
 REQUIRED_VALUES = [
@@ -82,9 +78,9 @@ for val in REQUIRED_VALUES:
             exit()
 try:
     float(os.getenv("OPACITY"))
-except:
+except ValueError:
     console.log(
-        f"[red]Please ensure that OPACITY is set between 0 and 1 in your .env file"
+        "[red]Please ensure that OPACITY is set between 0 and 1 in your .env file"
     )
     configured = False
     exit()
