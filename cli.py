@@ -1,6 +1,10 @@
 import argparse
 
-from prawcore.exceptions import OAuthException
+from prawcore.exceptions import (
+    OAuthException,
+    ResponseException,
+    RequestException
+)
 from rich.console import Console
 
 from main import main
@@ -79,10 +83,17 @@ def program_options():
         print_substep("Error occured!", style="bold red")
     except OAuthException:
         console.print(
-            "There is something wrong with the .env file, kindly check:[/bold]\n"
+            "[bold red]There is something wrong with the .env file, kindly check:[/bold red]\n"
             + "1. ClientID\n"
             + "2. ClientSecret\n"
             + "3. If these variables are fine, kindly check other variables."
+        )
+    except (
+            RequestException,
+            ResponseException,
+        ):
+        console.print(
+            "[bold red]Kindly check the kind of application created, it must be script.[/bold red]"
         )
 
 
