@@ -26,9 +26,11 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         context = browser.new_context()
 
         if getenv("THEME").upper() == "DARK":
-            cookie_file = open('./video_creation/data/cookie.json')
-            cookies = json.load(cookie_file)
-            context.add_cookies(cookies)
+            cookie_file = open('./video_creation/data/cookie-dark-mode.json')
+        else:
+            cookie_file = open('./video_creation/data/cookie-light-mode.json')
+        cookies = json.load(cookie_file)
+        context.add_cookies(cookies)
         # Get the thread screenshot
         page = context.new_page()
         page.goto(reddit_object["thread_url"])
