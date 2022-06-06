@@ -18,7 +18,8 @@ def download_background(background):
     """Downloads the background video from youtube.
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
-        """
+    """
+
     print_step( # removed minecraft, since the background can be changed according to user input.
         "Downloading the background video."
     )
@@ -34,7 +35,7 @@ def download_background(background):
             print_substep(
                 "Background video is already downloaded! Replacing ...", style="bold red"
             )
-            os.system("rm assets/mp4/background.mp4")
+            os.remove("assets/mp4/background.mp4")
 
         try:
             with YoutubeDL(ydl_opts) as ydl:
@@ -52,11 +53,10 @@ def download_background(background):
                         os.replace(background.strip(), "assets/mp4/background.mp4")
                 else: # if the link is not youtube link
                     raise ValueError
-        except (
-                ValueError
-                # add more exceptions
-            ):
+        except ValueError:
             print_substep("The given link is not accepted!", style="bold red")
+        except ConnectionError:
+            print_substep("There is a connection error!", style="bold red")
         else:
             print_substep("Background video downloaded successfully!", style="bold green")
 
