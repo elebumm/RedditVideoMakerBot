@@ -21,3 +21,7 @@ class TTSEngine:
         self.path = path
         self.max_length = max_length
         self.length = 0
+
+    def call_tts(self, filename, text):
+        self.tts_function(text=text, filepath=f"{self.path}/{filename}.mp3")
+        self.length += MP3(f"{self.path}/{filename}.mp3").info.length
