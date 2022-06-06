@@ -41,7 +41,7 @@ class TTSEngine:
         # This file needs to be removed in case this post does not use post text, so that it wont appear in the final video
         try:
             Path(f"{self.path}/posttext.mp3").unlink()
-        except OSError as e:
+        except OSError:
             pass
 
         print_step("Saving Text to MP3 files...")
