@@ -22,6 +22,33 @@ class TTSEngine:
         self.max_length = max_length
         self.length = 0
 
+    def run(self):
+
+        Path(self.path).mkdir(parents=True, exist_ok=True)
+
+        # This file needs to be removed in case this post does not use post text, so that it wont appear in the final video
+        try:
+            Path(f"{self.path}/posttext.mp3").unlink()
+        except OSError as e:
+            pass
+
+        print_step("Saving Text to MP3 files...")
+
+        self.call_tts("title", self.reddit_object["thread_title"])
+
+        if self.reddit_object["thread_post"] != "":
+            self.call_tts("posttext", self.reddit_object["thread_post"])
+
+        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+            # ! Stop creating mp3 files if the length is greater than max length.
+            if self.length > self.max_length:
+                break
+
+            self.call_tts(f"{idx}",comment["comment_body"])
+
+        print_substep("Saved Text to MP3 files successfully.", style="bold green")
+        return self.length, idx
+
     def call_tts(self, filename, text):
         self.tts_function(text=text, filepath=f"{self.path}/{filename}.mp3")
         self.length += MP3(f"{self.path}/{filename}.mp3").info.length
