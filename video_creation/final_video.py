@@ -13,14 +13,13 @@ from moviepy.editor import (
 )
 
 import reddit.subreddit
-from utils.console import print_step
+from utils.console import print_step, print_substep
 
 
 W, H = 1080, 1920
 
 
 def make_final_video(number_of_clips, file_name):
-    # Calls opacity from the .env
     load_dotenv()
     opacity = os.getenv("OPACITY")
 
@@ -57,10 +56,11 @@ def make_final_video(number_of_clips, file_name):
             OSError,
             FileNotFoundError,
         ):
-        ...
-
-    audio_concat = concatenate_audioclips(audio_clips)
-    audio_composite = CompositeAudioClip([audio_concat])
+        print_substep("An error occured! Aborting.", style="bold red")
+        raise SystemExit()
+    else:
+        audio_concat = concatenate_audioclips(audio_clips)
+        audio_composite = CompositeAudioClip([audio_concat])
 
     # Gather all images
     image_clips = []
