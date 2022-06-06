@@ -39,17 +39,7 @@ def get_subreddit_threads(subreddit_, thread_link_):
         password=passkey.strip(),
     )
 
-    try:
-        if subreddit_ is None:
-            raise ValueError
 
-        subreddit = reddit.subreddit(subreddit_)
-    except ValueError:
-        if os.getenv("SUBREDDIT"):
-            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT").strip()))
-        else:
-            subreddit = reddit.subreddit("askreddit")
-            print_substep("Subreddit not defined. Using AskReddit.")
 
     # If the user specifies that he doesnt want a random thread, or if
     # he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
@@ -58,16 +48,17 @@ def get_subreddit_threads(subreddit_, thread_link_):
         print_step(f"Getting the inserted thread...")
         submission = reddit.submission(url=thread_link)
     else:
-        # Otherwise, picks a random thread from the inserted subreddit
-        if os.getenv("SUBREDDIT"):
-            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
-        else:
-            # ! Prompt the user to enter a subreddit
-            try:
+        try:
+            if subreddit_ is None:
+                raise ValueError
+
+            subreddit = reddit.subreddit(subreddit_)
+        except ValueError:
+            if os.getenv("SUBREDDIT"):
                 subreddit = reddit.subreddit(
-                    re.sub(r"r\/", "",input("What subreddit would you like to pull from? "))
+                    re.sub(r"r\/", "", os.getenv("SUBREDDIT").strip())
                 )
-            except ValueError:
+            else:
                 subreddit = reddit.subreddit("askreddit")
                 print_substep("Subreddit not defined. Using AskReddit.")
 
