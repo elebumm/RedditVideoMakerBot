@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import Callable, Tuple
+from typing import Tuple
+import re
 from mutagen.mp3 import MP3
-from utils.console import print_step, print_substep
 from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
-import re
+from utils.console import print_step, print_substep
 
 class TTSEngine:
 
