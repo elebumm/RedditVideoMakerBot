@@ -67,7 +67,7 @@ def get_subreddit_threads(subreddit_, thread_link_):
     # he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if thread_link_ is not None:
         thread_link = thread_link_
-        print_step(f"Getting the inserted thread...")
+        print_step("Getting the inserted thread...")
         submission = reddit.submission(url=thread_link)
     else:
         try:
@@ -104,7 +104,7 @@ def get_subreddit_threads(subreddit_, thread_link_):
                         "comment_id": top_level_comment.id,
                     }
                 )
-    except AttributeError as e:
+    except AttributeError:
         pass
 
     print_substep("AskReddit threads retrieved successfully.", style="bold green")

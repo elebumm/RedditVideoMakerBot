@@ -25,14 +25,14 @@ def save_text_to_mp3(reddit_obj):
     length += MP3("assets/mp3/title.mp3").info.length
 
     try:
-        Path(f"assets/mp3/posttext.mp3").unlink()
+        Path("assets/mp3/posttext.mp3").unlink()
     except OSError:
         pass
 
     if reddit_obj["thread_post"] != "":
         tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
-        tts.save(f"assets/mp3/posttext.mp3")
-        length += MP3(f"assets/mp3/posttext.mp3").info.length
+        tts.save("assets/mp3/posttext.mp3")
+        length += MP3("assets/mp3/posttext.mp3").info.length
 
     for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than 50 seconds.

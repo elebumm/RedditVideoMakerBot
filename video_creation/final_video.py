@@ -40,7 +40,7 @@ def make_final_video(number_of_clips, file_name):
             TypeError
         ):
         print_substep(
-            f"Please ensure that OPACITY is between 0 and 1 in .env file", style="bold red"
+            "Please ensure that OPACITY is between 0 and 1 in .env file", style="bold red"
         )
 
     # Gather all audio clips
@@ -50,7 +50,7 @@ def make_final_video(number_of_clips, file_name):
 
     audio_clips.insert(0, AudioFileClip("assets/mp3/title.mp3"))
     try:
-        audio_clips.insert(1, AudioFileClip(f"assets/mp3/posttext.mp3"))
+        audio_clips.insert(1, AudioFileClip("assets/mp3/posttext.mp3"))
     except (
             OSError,
             FileNotFoundError,
@@ -63,10 +63,10 @@ def make_final_video(number_of_clips, file_name):
 
     # Gather all images
     image_clips = []
-    if os.path.exists(f"assets/mp3/posttext.mp3"):
+    if os.path.exists("assets/mp3/posttext.mp3"):
         image_clips.insert(
             0,
-            ImageClip(f"assets/png/title.png")
+            ImageClip("assets/png/title.png")
             .set_duration(audio_clips[0].duration + audio_clips[1].duration)
             .set_position("center")
             .resize(width=1080 - 100)
@@ -75,7 +75,7 @@ def make_final_video(number_of_clips, file_name):
     else:
         image_clips.insert(
             0,
-            ImageClip(f"assets/png/title.png")
+            ImageClip("assets/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
             .resize(width=1080 - 100)

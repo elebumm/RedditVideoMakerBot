@@ -62,7 +62,7 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
             TypeError,
         ):
         console.print(
-            f"[bold red]Please ensure that OPACITY is between 0 and 1 in .env file.[/bold red]"
+            "[bold red]Please ensure that OPACITY is between 0 and 1 in .env file.[/bold red]"
         )
         raise SystemExit()
 

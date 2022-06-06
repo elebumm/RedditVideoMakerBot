@@ -42,7 +42,7 @@ def setup():
         + " grab those quickly and come back.[/bold]"
     )
 
-    """Begin the setup process."""
+    # Begin the setup process.
 
     cliID = input("Client ID > ")
     cliSec = input("Client Secret > ")
