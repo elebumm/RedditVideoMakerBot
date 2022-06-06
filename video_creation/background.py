@@ -5,7 +5,6 @@ from random import randrange
 from pytube import YouTube
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
-
 from utils.console import print_step, print_substep
 
 
