@@ -1,11 +1,16 @@
 import argparse
 
+from prawcore.exceptions import OAuthException
+from rich.console import Console
+
 from main import main
 from setup_program import setup
 from utils.console import print_substep
 
 
 def program_options():
+    console = Console()
+
     description = """\
         DESCRIPTION HERE.
     """
@@ -72,6 +77,13 @@ def program_options():
         KeyboardInterrupt,
     ):
         print_substep("Error occured!", style="bold red")
+    except OAuthException:
+        console.print(
+            "There is something wrong with the .env file, kindly check:[/bold]\n"
+            + "1. ClientID\n"
+            + "2. ClientSecret\n"
+            + "3. If these variables are fine, kindly check other variables."
+        )
 
 
 if __name__ == "__main__":
