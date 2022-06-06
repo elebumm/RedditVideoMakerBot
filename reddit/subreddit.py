@@ -16,7 +16,7 @@ def textify(text):
 
 def get_subreddit_threads():
     """
-    Returns a list of threads from the AskReddit subreddit.
+    Returns a list of threads from the selected subreddit.
     """
 
     print_step("Getting subreddit threads...")
@@ -24,7 +24,7 @@ def get_subreddit_threads():
     content = {}
     load_dotenv()
     reddit = praw.Reddit(client_id=getenv("REDDIT_CLIENT_ID"), client_secret=getenv("REDDIT_CLIENT_SECRET"),
-                         user_agent="Accessing AskReddit threads", username=getenv("REDDIT_USERNAME"),
+                         user_agent="Accessing subreddit threads", username=getenv("REDDIT_USERNAME"),
                          password=getenv("REDDIT_PASSWORD"), )
     """
     Ask user for subreddit input
@@ -58,7 +58,7 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if len(top_level_comment.body) <= 250:
+            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
                 content["comments"].append(
                     {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
                     "comment_id": top_level_comment.id, })
