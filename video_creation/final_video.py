@@ -22,7 +22,7 @@ W, H = 1080, 1920
 def make_final_video(number_of_clips, file_name):
     # Calls opacity from the .env
     load_dotenv()
-    opacity = os.getenv('OPACITY')
+    opacity = os.getenv("OPACITY")
 
     print_step("Creating the final video...")
 
@@ -44,7 +44,6 @@ def make_final_video(number_of_clips, file_name):
             TypeError
         ):
         print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
-        configured = False
 
     # Gather all audio clips
     audio_clips = []

@@ -1,8 +1,6 @@
 import re
 import os
 from random import randrange
-from pathlib import Path
-from turtle import back
 
 from yt_dlp import YoutubeDL
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -30,7 +28,7 @@ def download_background(background):
         "merge_output_format": "mp4",
     }
 
-    background_check = Path("assets/mp4/background.mp4").is_file()
+    background_check = os.path.isfile("assets/mp4/background.mp4")
     if background is not None or not background_check:
         if background_check and background is not None:
             print_substep(
