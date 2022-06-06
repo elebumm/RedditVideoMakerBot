@@ -64,7 +64,11 @@ Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed inf
 ## Developers and maintainers.
 
 Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+
 CallumIO - https://github.com/CallumIO
+
 HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+
 Freebiell - https://github.com/FreebieII
