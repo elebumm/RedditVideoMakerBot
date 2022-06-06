@@ -31,10 +31,10 @@ print_markdown(
 )
 
 """
--
+
 Load .env file if exists. If it doesnt exist, print a warning and launch the setup wizard.
 If there is a .env file, check if the required variables are set. If not, print a warning and launch the setup wizard.
--
+
 """
 
 client_id = os.getenv("REDDIT_CLIENT_ID")
