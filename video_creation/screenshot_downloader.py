@@ -19,9 +19,8 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
 
+    print_substep("Launching Headless Browser...")
     with sync_playwright() as browser_:
-        print_substep("Launching Headless Browser...")
-
         browser = browser_.chromium.launch()
         context = browser.new_context()
 

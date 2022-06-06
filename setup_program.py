@@ -43,7 +43,7 @@ def setup():
     )
     console.print(
         "[bold]If you don't have these, please follow the instructions in the README.md file to "
-        + "set them up.\n If you do have these, type yes to continue. If you don't, go ahead and "
+        + "set them up.\nIf you do have these, type yes to continue. If you don't, go ahead and "
         + "grab those quickly and come back.[/bold]"
     )
 

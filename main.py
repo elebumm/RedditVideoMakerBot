@@ -45,7 +45,7 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
             "[bold red] Your .env file is invalid, or was never created. Standby.[/bold red]"
         )
 
-    console.print("[bold green]Checking environment variables...[/bol green]")
+    console.print("[bold green]Checking environment variables...[/bold green]")
 
     for val in REQUIRED_VALUES:
         if not os.getenv(val):
