@@ -3,6 +3,7 @@ import os
 from random import randrange
 
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 
@@ -27,6 +28,7 @@ def download_background(background):
     ydl_opts = {
         "outtmpl": "assets/mp4/background.mp4",
         "merge_output_format": "mp4",
+        "retries": 3,
     }
 
     background_check = os.path.isfile("assets/mp4/background.mp4")
@@ -37,6 +39,7 @@ def download_background(background):
             )
             os.remove("assets/mp4/background.mp4")
 
+        cancel = True
         try:
             with YoutubeDL(ydl_opts) as ydl:
                 if background is None:
@@ -57,8 +60,15 @@ def download_background(background):
             print_substep("The given link is not accepted!", style="bold red")
         except ConnectionError:
             print_substep("There is a connection error!", style="bold red")
+        except DownloadError:
+            print_substep("There is a download error!", style="bold red")
         else:
             print_substep("Background video downloaded successfully!", style="bold green")
+            cancel = False
+
+        if cancel:
+            # to prevent further error and processes from happening
+            raise SystemExit()
 
 
 def chop_background_video(video_length):
