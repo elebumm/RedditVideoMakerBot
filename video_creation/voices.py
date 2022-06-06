@@ -15,7 +15,22 @@ def save_text_to_mp3(reddit_obj):
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    text_to_mp3 = TTSEngine(tts.google_translate_tts, reddit_obj)
+    env = os.getenv("TTS_PROVIDER","")
+    if env in TTSProviders.keys(): text_to_mp3 = TTSEngine(env, reddit_obj)
+    else:
+        chosen = False
+        choice = ""
+        while not chosen:
+            print("Please choose one of the following TTS providers: ")
+            for i in TTSProviders.keys():
+                print(i)
+            choice = input("\n")
+            if choice.casefold() not in map(lambda _: _.casefold(), TTSProviders.keys()):
+                print("Unknown Choice")
+            else:
+                chosen = True
+        text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, choice), reddit_obj)
+
     return text_to_mp3.run()
 
 

@@ -44,8 +44,7 @@ class TTSEngine:
         if self.reddit_object["thread_post"] != "":
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
-        #for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
-        for idx, comment in enumerate(self.reddit_object["comments"]):
+        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
                 break
