@@ -9,11 +9,13 @@ import re
 class TTSEngine:
 
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
+
     Args:
         tts_module          : The TTS module. Your module should handle the TTS itself and saving to the given path under the run method.
         reddit_object         : The reddit object that contains the posts to read.
         path (Optional)       : The unix style path to save the mp3 files to. This must not have leading or trailing slashes.
         max_length (Optional) : The maximum length of the mp3 files in total.
+
     Notes:
         tts_module must take the arguments text and filepath.
     """
