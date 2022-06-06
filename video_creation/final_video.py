@@ -3,7 +3,8 @@ import os
 import time
 from os.path import exists
 
-from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips, CompositeAudioClip, CompositeVideoClip
+from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips, \
+    CompositeAudioClip, CompositeVideoClip
 from moviepy.video.io import ffmpeg_tools
 
 from reddit import subreddit
@@ -17,10 +18,10 @@ def make_final_video(number_of_clips, length):
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
-
+    opacity = os.getenv('OPACITY')
     background_clip = (
         VideoFileClip("assets/temp/background.mp4").without_audio().resize(height=H).crop(x1=1166.6, y1=0, x2=2246.6,
-                                                                                           y2=1920))
+                                                                                          y2=1920))
     # Gather all audio clips
     audio_clips = []
     for i in range(0, number_of_clips):
@@ -34,9 +35,10 @@ def make_final_video(number_of_clips, length):
     for i in range(0, number_of_clips):
         image_clips.append(
             ImageClip(f"assets/temp/png/comment_{i}.png").set_duration(audio_clips[i + 1].duration).set_position(
-                "center").resize(width=W - 100), )
+                "center").resize(width=W - 100).set_opacity(float(opacity)), )
     image_clips.insert(0, ImageClip(f"assets/temp/png/title.png").set_duration(audio_clips[0].duration).set_position(
-        "center").resize(width=W - 100), )
+        "center").resize(width=W - 100).set_opacity(float(opacity)),
+                       )
     image_concat = concatenate_videoclips(image_clips).set_position(("center", "center"))
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
@@ -69,7 +71,7 @@ def make_final_video(number_of_clips, length):
 
     final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
     ffmpeg_tools.ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}")
-    #os.remove("assets/temp/temp.mp4")
+    # os.remove("assets/temp/temp.mp4")
 
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
