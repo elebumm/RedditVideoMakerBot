@@ -4,8 +4,9 @@ import time
 from os.path import exists
 
 from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips, CompositeAudioClip, CompositeVideoClip
-from moviepy.video import io
+from moviepy.video.io import ffmpeg_tools
 
+from reddit import subreddit
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 
@@ -18,7 +19,7 @@ def make_final_video(number_of_clips, length):
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
 
     background_clip = (
-        VideoFileClip("assets/temp/backgrounds.mp4").without_audio().resize(height=H).crop(x1=1166.6, y1=0, x2=2246.6,
+        VideoFileClip("assets/temp/background.mp4").without_audio().resize(height=H).crop(x1=1166.6, y1=0, x2=2246.6,
                                                                                            y2=1920))
     # Gather all audio clips
     audio_clips = []
@@ -52,7 +53,7 @@ def make_final_video(number_of_clips, length):
     def save_data():
         with open('./video_creation/data/videos.json', 'r+') as raw_vids:
             done_vids = json.load(raw_vids)
-            if str(os.getenv("VIDEO_ID")) in [video['id'] for video in done_vids]:
+            if str(subreddit.submission.id) in [video['id'] for video in done_vids]:
                 return  # video already done but was specified to continue anyway in the .env file
             payload = {"id": str(os.getenv("VIDEO_ID")), 'time': str(int(time.time())),
                        "background_credit": str(os.getenv('background_credit')),
@@ -66,9 +67,9 @@ def make_final_video(number_of_clips, length):
         print_substep('the results folder didn\'t exist so I made it')
         os.mkdir("./results")
 
-    final.write_videofile("temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
-    io.ffmpeg_tools.ffmpeg_extract_subclip("temp.mp4", 0, length, targetname=f"results/{filename}")
-    os.remove("temp.mp4")
+    final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
+    ffmpeg_tools.ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}")
+    #os.remove("assets/temp/temp.mp4")
 
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()

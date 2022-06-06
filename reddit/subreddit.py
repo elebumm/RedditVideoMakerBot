@@ -1,24 +1,23 @@
-import re
-
-from utils.console import print_step, print_substep
-import praw
 import random
-from dotenv import load_dotenv
 from os import getenv, environ
 
+import praw
+
+from utils.console import print_step, print_substep
 from utils.videos import check_done
+
 TEXT_WHITELIST = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890')
+
 
 def textify(text):
     return ''.join(filter(TEXT_WHITELIST.__contains__, text))
-
 
 
 def get_subreddit_threads():
     """
     Returns a list of threads from the AskReddit subreddit.
     """
-
+    global submission
     print_step("Getting subreddit threads...")
 
     content = {}
@@ -50,8 +49,8 @@ def get_subreddit_threads():
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
     submission = check_done(submission)
-    if submission == None:
-        return get_subreddit_threads() # todo check
+    if submission is None:
+        return get_subreddit_threads()  # submission already done. rerun
     print_substep(f"Video will be: {submission.title} :thumbsup:")
 
     print_substep(
