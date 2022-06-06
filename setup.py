@@ -127,9 +127,9 @@ client_id = handle_input(
     False,
     "[-a-zA-Z0-9._~+/]+=*",
     "That is somehow not a correct ID, try again.",
-    20,
-    40,
-    "The ID should be over 20 and under 40 characters, double check your input.",
+    12,
+    30,
+    "The ID should be over 12 and under 30 characters, double check your input.",
 )
 client_sec = handle_input(
     "Client Secret > ",
