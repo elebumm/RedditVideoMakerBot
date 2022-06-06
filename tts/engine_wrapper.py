@@ -12,7 +12,7 @@ class TTSEngine:
         path (Optional)       : The unix style path to save the mp3 files to. This must not have leading or trailing slashes.
         max_length (Optional) : The maximum length of the mp3 files in total.
     Notes:
-        tts_function must take the parameters text and filepath as arguments.
+        tts_function must take the arguments text and filepath.
     """
 
     def __init__(self, tts_function: function, reddit_object, path: str = "assets/mp3", max_length: int = 50):
