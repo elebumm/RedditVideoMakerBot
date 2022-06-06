@@ -6,6 +6,7 @@ from moviepy.editor import (
     concatenate_audioclips,
     CompositeAudioClip,
     CompositeVideoClip,
+    vfx,
 )
 import reddit.subreddit 
 import re
@@ -80,6 +81,8 @@ def make_final_video(number_of_clips):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
+    #speed video up, would prefer to use GETENV 
+    final = final.fx(vfx.speedx, 1.2)
     filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     for i in range(0, number_of_clips):
