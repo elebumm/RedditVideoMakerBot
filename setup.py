@@ -206,4 +206,4 @@ loader.stop()
 console.log("[bold green]Setup Complete! Returning...")
 
 # Post-Setup: send message and try to run main.py again.
-subprocess.call("python3 main.py", shell=False)
+subprocess.call("python3 main.py", shell=True)
