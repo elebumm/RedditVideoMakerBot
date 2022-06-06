@@ -1,6 +1,5 @@
 # Imports
 import os
-import time
 from os.path import exists
 
 from rich.console import Console
@@ -64,26 +63,17 @@ def setup():
 
     loader = Loader("Saving Credentials...", "Done!").start()
     # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
-    time.sleep(0.5)
     console.log("Removing old .env file...")
     os.remove(".env")
-    time.sleep(0.5)
     console.log("Creating new .env file...")
-    with open('.env', 'a') as f:
+    with open('.env', 'a', encoding="utf-8") as f:
         f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
-        time.sleep(0.5)
         f.write(f'REDDIT_CLIENT_SECRET="{cliSec}"\n')
-        time.sleep(0.5)
         f.write(f'REDDIT_USERNAME="{user}"\n')
-        time.sleep(0.5)
         f.write(f'REDDIT_PASSWORD="{passw}"\n')
-        time.sleep(0.5)
         f.write(f'REDDIT_2FA="{twofactor}"\n')
-        time.sleep(0.5)
         f.write(f'THEME="{theme}"\n')
-        time.sleep(0.5)
         f.write(f'SUBREDDIT="{subreddit}"\n')
-        time.sleep(0.5)
         f.write(f'OPACITY="{opacity}"\n')
 
     with open(".setup-done-before", "a", encoding="utf-8") as f:
