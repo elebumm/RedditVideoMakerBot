@@ -53,19 +53,23 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 
-<<<<<<< HEAD
-- [ ] Allowing users to choose a reddit thread instead of being randomized.
+- [x] Allowing users to choose a reddit thread instead of being randomized.
 - [X] Allowing users to choose a background that is picked instead of the Minecraft one.
 - [x] Allowing users to choose between any subreddit.
 - [ ] Allowing users to change voice.
 - [ ] Creating better documentation.
 - [X] Adding a command line interface.
-=======
-- [x] Allowing users to choose a reddit thread instead of being randomized.
-- [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
-- [x] Allowing users to choose between any subreddit.
-- [ ] Allowing users to change voice.
-- [ ] Creating better documentation and adding a command line interface.
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
->>>>>>> cf6b3a9c44d86909f585a3111d62005cd05c8f7d
+
+## Developers and maintainers.
+
+Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+
+CallumIO - https://github.com/CallumIO
+
+HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+
+LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+
+Freebiell - https://github.com/FreebieII
