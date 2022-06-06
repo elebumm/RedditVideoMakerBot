@@ -36,8 +36,7 @@ def save_text_to_mp3(reddit_obj):
         pass
 
     if reddit_obj["thread_post"] != "":
-        tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
-        tts.save(f"assets/mp3/posttext.mp3")
+        TTS.tts(reddit_obj["thread_post"], f"assets/mp3/posttext.mp3", Voice)
         length += MP3(f"assets/mp3/posttext.mp3").info.length
 
     try:
@@ -46,8 +45,7 @@ def save_text_to_mp3(reddit_obj):
         pass
 
     if reddit_obj["thread_post"] != "":
-        tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
-        tts.save(f"assets/mp3/posttext.mp3")
+        TTS.tts(reddit_obj["thread_post"], f"assets/mp3/posttext.mp3", Voice)
         length += MP3(f"assets/mp3/posttext.mp3").info.length
 
     for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
