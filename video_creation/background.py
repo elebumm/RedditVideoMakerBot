@@ -16,8 +16,6 @@ def get_start_and_end_times(video_length, length_of_clip):
 def download_background():
     """Downloads the backgrounds/s video from youtube.
 
-    Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
-    Shoutout to: Orbital Gameplay (https://www.youtube.com/watch?v=2X9QGY__0II)
     """
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
