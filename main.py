@@ -12,7 +12,7 @@ from video_creation.final_video import make_final_video
 from utils.console import print_markdown, print_substep
 
 
-def main(subreddit_=None, background=None, filename=None):
+def main(subreddit_=None, background=None, filename=None, thread_link_=None):
     """
     Load .env file if exists. If it doesnt exist, print a warning and
     launch the setup wizard. If there is a .env file, check if the
@@ -61,7 +61,7 @@ def main(subreddit_=None, background=None, filename=None):
 
         console.log("[bold green]Enviroment Variables are set! Continuing...[/bold green]")
 
-        reddit_object = get_subreddit_threads(subreddit_)
+        reddit_object = get_subreddit_threads(subreddit_, thread_link_)
         length, number_of_comments = save_text_to_mp3(reddit_object)
         download_screenshots_of_reddit_posts(
             reddit_object,

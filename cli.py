@@ -38,6 +38,12 @@ def program_options():
         help="Set a filename for the video.",
         action="store"
     )
+    parser.add_argument(
+        "-t",
+        "--thread",
+        help="Use the given thread link instead of randomized.",
+        action="store"
+    )
 
     args = parser.parse_args()
 
@@ -46,7 +52,8 @@ def program_options():
             main(
                 args.subreddit,
                 args.background,
-                args.filename
+                args.filename,
+                args.thread,
             )
         else:
             print_substep("Error occured!", style="bold red")
