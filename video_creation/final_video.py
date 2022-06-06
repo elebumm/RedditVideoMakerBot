@@ -3,8 +3,8 @@ import os
 import time
 from os.path import exists
 
-from moviepy.editor import (VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips,
-                            CompositeAudioClip, CompositeVideoClip)
+from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips, CompositeAudioClip, CompositeVideoClip
+from moviepy.video import io
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
@@ -12,7 +12,7 @@ from utils.console import print_step, print_substep
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips):
+def make_final_video(number_of_clips, length):
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
@@ -65,7 +65,11 @@ def make_final_video(number_of_clips):
     if not exists('./results'):
         print_substep('the results folder didn\'t exist so I made it')
         os.mkdir("./results")
-    final.write_videofile(f"results/{filename}", fps=30, audio_codec="aac", audio_bitrate="192k")
+
+    final.write_videofile("temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
+    io.ffmpeg_tools.ffmpeg_extract_subclip("temp.mp4", 0, length, targetname=f"results/{filename}")
+    os.remove("temp.mp4")
+
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")

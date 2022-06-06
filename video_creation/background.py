@@ -1,11 +1,11 @@
 import random
-from os import listdir, environ, remove
+from os import listdir, environ
 from pathlib import Path
 from random import randrange
-
-from moviepy.editor import VideoFileClip
+from pytube import YouTube
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-from yt_dlp import YoutubeDL
+from moviepy.editor import VideoFileClip
+from rich.progress import Progress
 
 from utils.console import print_step, print_substep
 
@@ -30,31 +30,27 @@ def download_background():
             background_options):  # if there are any background videos not installed
         print_step("We need to download the backgnrounds videos. they are fairly large but it's only done once. 😎")
         print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
+        with Progress() as progress:
 
-        for uri, filename, credit in background_options:
-            filename = f"{credit}-{filename}"
-            ydl_opts = {'outtmpl': f'assets/backgrounds/_raw_{filename}', 'merge_output_format': 'mp4', }
-            with YoutubeDL(ydl_opts) as ydl:
-                ydl.download(uri)
-            videoclip = VideoFileClip(f"assets/backgrounds/{filename}")
-            new_clip = videoclip.without_audio()
-            new_clip.write_videofile(f"assets/backgrounds/{filename}")
-            remove(f'assets/backgrounds/_raw_{filename}')
+            download_task = progress.add_task("[green]Downloading...", total=2)
+
+            for uri, filename, credit in background_options:
+                print_substep(f"Downloading {filename} from {uri}")
+                YouTube(uri).streams.filter(res="1080p").first().download("assets/backgrounds",
+                                                                          filename=f"{credit}-{filename}")
+                progress.update(download_task, advance=1) # todo remove
 
         print_substep("Background videos downloaded successfully! 🎉", style="bold green")
 
 
 def chop_background_video(video_length):
-    print_step("Finding a spot in the background video to chop...")
+    print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = random.choice(listdir('assets/backgrounds'))
     environ["background_credit"] = choice.split('-')[0]
+
     background = VideoFileClip(f"assets/backgrounds/{choice}")
+
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
-    print_substep(choice)
-    ffmpeg_extract_subclip(
-        f"assets/backgrounds/{choice}",
-        start_time,
-        end_time,
-        targetname="assets/temp/background.mp4",
-    )
-    print_substep("Background video chopped successfully!", style="bold green")
+    ffmpeg_extract_subclip(f'assets/backgrounds/{choice}', start_time, end_time,
+                           targetname="assets/temp/background.mp4", )
+    print_substep("Background video chopped successfully! 🎉", style="bold green")

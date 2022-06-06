@@ -1,6 +1,6 @@
-import base64
-import random
-import requests
+import requests, base64, random, os
+import re
+from moviepy.editor import AudioFileClip, concatenate_audioclips, CompositeAudioClip
 
 # https://twitter.com/scanlime/status/1512598559769702406
 voices = [  # DISNEY VOICES
@@ -56,19 +56,30 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = 'https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker='
 
     def tts(self, req_text: str = "TikTok Text To Speech", filename: str = 'title.mp3', random_speaker: bool = False):
-        if len(req_text) > 299:
-            return ValueError("Text too long must be under 299 characters")
-        if random_speaker:
-            req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
+        req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
+
         voice = self.randomvoice() if random_speaker else 'en_us_002'
-        r = requests.post(f"{self.URI_BASE}{voice}&req_text={req_text}&speaker_map_type=0")
 
-        vstr = [r.json()["data"]["v_str"]][0]
+        chunks = [m.group().strip() for m in re.finditer(r' *((.{0,200})(\.|.$))',req_text)]
 
-        b64d = base64.b64decode(vstr)
+        audio_clips = []
 
-        with open(filename, "wb") as out:
-            out.write(b64d)
+        chunkId = 0
+        for chunk in chunks:
+            r = requests.post(f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0")
+            vstr = [r.json()["data"]["v_str"]][0]
+            b64d = base64.b64decode(vstr)
+
+            with open(f"{filename}-{chunkId}", "wb") as out:
+                out.write(b64d)
+
+            audio_clips.append(AudioFileClip(f"{filename}-{chunkId}"))
+
+            chunkId = chunkId+1;
+
+        audio_concat = concatenate_audioclips(audio_clips)
+        audio_composite = CompositeAudioClip([audio_concat])
+        audio_composite.write_audiofile(filename, 44100, 2, 2000, None)
 
     @staticmethod
     def randomvoice():
@@ -76,3 +87,4 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         if ok_or_good == 1:  # 1/10 chance of ok voice
             return random.choice(good_voices['ok'])
         return random.choice(good_voices['good'])  # 9/10 chance of good voice
+
