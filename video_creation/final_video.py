@@ -16,22 +16,19 @@ import reddit.subreddit
 from utils.console import print_step, print_substep
 
 
-W, H = 1080, 1920
-
-
 def make_final_video(number_of_clips, file_name):
     load_dotenv()
     opacity = os.getenv("OPACITY")
 
     print_step("Creating the final video...")
 
-    VideoFileClip.reW = lambda clip: clip.resize(width=W)
-    VideoFileClip.reH = lambda clip: clip.resize(width=H)
+    VideoFileClip.reW = lambda clip: clip.resize(width=1080)
+    VideoFileClip.reH = lambda clip: clip.resize(width=1920)
 
     background_clip = (
         VideoFileClip("assets/mp4/clip.mp4")
         .without_audio()
-        .resize(height=H)
+        .resize(height=1920)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
 
@@ -72,7 +69,7 @@ def make_final_video(number_of_clips, file_name):
             ImageClip(f"assets/png/title.png")
             .set_duration(audio_clips[0].duration + audio_clips[1].duration)
             .set_position("center")
-            .resize(width=W - 100)
+            .resize(width=1080 - 100)
             .set_opacity(float(opacity)),
         )
     else:
@@ -81,7 +78,7 @@ def make_final_video(number_of_clips, file_name):
             ImageClip(f"assets/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
-            .resize(width=W - 100)
+            .resize(width=1080 - 100)
             .set_opacity(float(opacity)),
         )
 

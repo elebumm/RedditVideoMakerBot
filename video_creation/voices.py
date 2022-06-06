@@ -26,7 +26,7 @@ def save_text_to_mp3(reddit_obj):
 
     try:
         Path(f"assets/mp3/posttext.mp3").unlink()
-    except OSError as e:
+    except OSError:
         pass
 
     if reddit_obj["thread_post"] != "":

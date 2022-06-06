@@ -8,10 +8,9 @@ from utils.console import print_markdown
 from utils.console import print_step
 
 
-console = Console()
-
-
 def setup():
+    console = Console()
+
     if exists(".setup-done-before"):
         console.log(
             "[bold red]Setup was already done before! Please make"
@@ -55,7 +54,7 @@ def setup():
     theme = input("Theme? (light or dark) > ")
 
     # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
-    console.log("[bold]Saving details...[/bold]")
+    console.log("Saving credentials...")
     os.remove(".env")
     with open('.env', 'a', encoding="utf-8") as f:
         f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
