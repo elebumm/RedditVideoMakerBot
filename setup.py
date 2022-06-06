@@ -7,8 +7,6 @@ from rich.console import Console
 from utils.console import print_markdown
 from utils.console import print_step
 
-from utils.loader import Loader
-
 
 console = Console()
 
@@ -61,26 +59,24 @@ def setup():
     theme = input("Theme? (light or dark) > ")
     console.log("Attempting to save your credentials...")
 
-    loader = Loader("Saving Credentials...", "Done!").start()
-    # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
-    console.log("Removing old .env file...")
-    os.remove(".env")
-    console.log("Creating new .env file...")
-    with open('.env', 'a', encoding="utf-8") as f:
-        f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
-        f.write(f'REDDIT_CLIENT_SECRET="{cliSec}"\n')
-        f.write(f'REDDIT_USERNAME="{user}"\n')
-        f.write(f'REDDIT_PASSWORD="{passw}"\n')
-        f.write(f'REDDIT_2FA="{twofactor}"\n')
-        f.write(f'THEME="{theme}"\n')
-        f.write(f'SUBREDDIT="{subreddit}"\n')
-        f.write(f'OPACITY="{opacity}"\n')
+    with console.status("[bold magenta]Saving credentials...[/bold magenta]"):
+        # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
+        console.log("Removing old .env file...")
+        os.remove(".env")
+        console.log("Creating new .env file...")
+        with open('.env', 'a', encoding="utf-8") as f:
+            f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
+            f.write(f'REDDIT_CLIENT_SECRET="{cliSec}"\n')
+            f.write(f'REDDIT_USERNAME="{user}"\n')
+            f.write(f'REDDIT_PASSWORD="{passw}"\n')
+            f.write(f'REDDIT_2FA="{twofactor}"\n')
+            f.write(f'THEME="{theme}"\n')
+            f.write(f'SUBREDDIT="{subreddit}"\n')
+            f.write(f'OPACITY="{opacity}"\n')
 
-    with open(".setup-done-before", "a", encoding="utf-8") as f:
-        f.write(
-            "This file will stop the setup assistant from running again."
-        )
-
-    loader.stop()
+        with open(".setup-done-before", "a", encoding="utf-8") as f:
+            f.write(
+                "This file will stop the setup assistant from running again."
+            )
 
     console.log("[bold green]Setup Complete![/bold green]")
