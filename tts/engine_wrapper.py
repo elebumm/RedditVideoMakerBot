@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable
 from mutagen.mp3 import MP3
 from utils.console import print_step, print_substep
 from rich.progress import track
@@ -15,7 +16,7 @@ class TTSEngine:
         tts_function must take the arguments text and filepath.
     """
 
-    def __init__(self, tts_function: function, reddit_object: dict, path: str = "assets/mp3", max_length: int = 50):
+    def __init__(self, tts_function: Callable[[str, str], None], reddit_object: dict, path: str = "assets/mp3", max_length: int = 50):
         self.tts_function = tts_function
         self.reddit_object = reddit_object
         self.path = path
