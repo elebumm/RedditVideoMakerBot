@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 from rich.console import Console
-from utils.console import print_markdown, print_step, print_substep
+from utils.console import print_step, print_substep
 from dotenv import load_dotenv
+import os
+import random
+import praw
+import re
 
 console = Console()
-import os, random, praw, re
 
 
 def get_subreddit_threads():
@@ -39,7 +42,7 @@ def get_subreddit_threads():
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
         thread_link = input()
-        print_step(f"Getting the inserted thread...")
+        print_step("Getting the inserted thread...")
         submission = reddit.submission(url=thread_link)
     else:
         # Otherwise, picks a random thread from the inserted subreddit
@@ -80,7 +83,7 @@ def get_subreddit_threads():
                     }
                 )
 
-    except AttributeError as e:
+    except AttributeError:
         pass
     print_substep("Received AskReddit threads successfully.", style="bold green")
 
