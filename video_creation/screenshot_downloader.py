@@ -3,6 +3,8 @@ from pathlib import Path
 from rich.progress import track
 from utils.console import print_step, print_substep
 import json
+from rich.console import Console
+console = Console()
 
 
 def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
@@ -43,9 +45,12 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         )
 
         for idx, comment in track(
-            enumerate(reddit_object["comments"]), "Downloading screenshots..."
+            enumerate(reddit_object["comments"])
         ):
 
+            #allow user to see what comment is being saved
+            print_substep(f"Downloading screenshot {idx + 1}")
+            
             # Stop if we have reached the screenshot_num
             if idx >= screenshot_num:
                 break
@@ -57,6 +62,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             page.locator(f"#t1_{comment['comment_id']}").screenshot(
                 path=f"assets/png/comment_{idx}.png"
             )
-
-        print_substep("Screenshots downloaded Successfully.",
-                      style="bold green")
+            
+        #let user know that the screenshots are done
+        console.log(f"[bold green]Saved {idx + 1} screenshots.")
+        
