@@ -24,4 +24,5 @@ def print_step(text):
 
 def print_substep(text, style=""):
     """Prints a rich info message without the panelling."""
+
     console.print(text, style=style)
