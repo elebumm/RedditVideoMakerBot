@@ -32,11 +32,6 @@ print_markdown(
 
 """
 
-Load .env file if exists. If it doesnt exist, print a warning and launch the setup wizard.
-If there is a .env file, check if the required variables are set. If not, print a warning and launch the setup wizard.
-
-"""
-
 client_id = os.getenv("REDDIT_CLIENT_ID")
 client_secret = os.getenv("REDDIT_CLIENT_SECRET")
 username = os.getenv("REDDIT_USERNAME")
@@ -58,43 +53,4 @@ for val in REQUIRED_VALUES:
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
-        console.log(
-            "[red]Looks like you need to set your Reddit credentials in the .env file. Please follow the instructions in the README.md file to set them up."
-        )
-        time.sleep(0.5)
-        console.log(
-            "[red]We can also launch the easy setup wizard. type yes to launch it, or no to quit the program."
-        )
-        setup_ask = input("Launch setup wizard? > ")
-        if setup_ask == "yes":
-            console.log("[bold green]Here goes nothing! Launching setup wizard...")
-            time.sleep(0.5)
-            os.system("python3 setup.py")
 
-        elif setup_ask == "no":
-            console.print("[red]Exiting...")
-            time.sleep(0.5)
-            exit()
-        else:
-            console.print("[red]I don't understand that. Exiting...")
-            time.sleep(0.5)
-            exit()
-try:
-    float(os.getenv("OPACITY"))
-except:
-    console.log(
-        f"[red]Please ensure that OPACITY is set between 0 and 1 in your .env file"
-    )
-    configured = False
-    exit()
-console.log("[bold green]Enviroment Variables are set! Continuing...")
-
-if configured:
-    reddit_object = get_subreddit_threads()
-    length, number_of_comments = save_text_to_mp3(reddit_object)
-    download_screenshots_of_reddit_posts(
-        reddit_object, number_of_comments, os.getenv("THEME", "light")
-    )
-    download_background()
-    chop_background_video(length)
-    final_video = make_final_video(number_of_comments)
