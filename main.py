@@ -11,6 +11,7 @@ from video_creation.screenshot_downloader import download_screenshots_of_reddit_
 from video_creation.final_video import make_final_video
 from utils.loader import Loader
 from dotenv import load_dotenv
+import pyttsx3
 
 console = Console()
 from dotenv import load_dotenv
@@ -89,9 +90,27 @@ except:
     exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
+
 if configured:
+    engine = pyttsx3.init()
+  
+    voices = engine.getProperty("voices")
+
+    array_of_voices = []
+
+    print("Available voices:")
+
+
+    for voice in voices:
+        array_of_voices.append(voice)
+
+    for i in range(len(array_of_voices)):
+        print(f"[{i}] {array_of_voices[i].name}\n")
+
+    selected_voice = int(input(f"Choose voice (0-{len(array_of_voices) - 1}): "))
+
     reddit_object = get_subreddit_threads()
-    length, number_of_comments = save_text_to_mp3(reddit_object)
+    length, number_of_comments = save_text_to_mp3(reddit_object, voices, selected_voice)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
     )

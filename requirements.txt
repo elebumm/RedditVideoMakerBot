@@ -1,8 +1,8 @@
-gTTS==2.2.4
+audioread==2.1.9
 moviepy==1.0.3
-mutagen==1.45.1
 playwright==1.22.0
 praw==7.6.0
 python-dotenv==0.20.0
+pyttsx3==2.91
 rich==12.4.4
 yt_dlp==2022.5.18
