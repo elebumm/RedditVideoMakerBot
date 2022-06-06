@@ -21,10 +21,7 @@ def download_background(background):
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
     """
 
-    print_step( # removed minecraft, since the background can be changed according to user input.
-        "Downloading the background video."
-    )
-
+    print_step("Downloading the background video.")
     ydl_opts = {
         "outtmpl": "assets/mp4/background.mp4",
         "merge_output_format": "mp4",
@@ -47,17 +44,20 @@ def download_background(background):
                 elif background is not None:
                     check_link = re.match(
                         "https://www.youtube.com/watch?v*", background.strip()
+                    ) or re.match(
+                        "https://youtu.be/*", background.strip()
                     )
-                    if check_link and background is not None:
+
+                    if check_link:
                         print_substep(f"Downloading video from: {background}", style="bold")
                         ydl.download(background)
-                    elif background is not None and not check_link:
+                    elif re.match(background[-4], "mp4"):
                         print_substep(f"Using the given video file: {background}", style="bold")
                         os.replace(background.strip(), "assets/mp4/background.mp4")
-                else: # if the link is not youtube link
-                    raise ValueError
+                    else: # if the link is not youtube link or  a file
+                        raise ValueError
         except ValueError:
-            print_substep("The given link is not accepted!", style="bold red")
+            print_substep("Invalid input!", style="bold red")
         except ConnectionError:
             print_substep("There is a connection error!", style="bold red")
         except DownloadError:
