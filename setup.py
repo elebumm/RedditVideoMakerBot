@@ -23,7 +23,7 @@ def handle_input(
     nmax=None,
     oob_error="",
 ):
-    match = re.compile(match)
+    match = re.compile(match + "$")
     while True:
         user_input = input(message + "\n> ").strip()
         if re.match(match, user_input) is not None:
@@ -149,7 +149,7 @@ user = handle_input(
     20,
     "A username HAS to be between 3 and 20 characters",
 )
-passw = handle_input("Password > ", False, "", "", 8, None, "Password too short")
+passw = handle_input("Password > ", False, ".*", "", 8, None, "Password too short")
 twofactor = handle_input(
     "2fa Enabled? (yes/no) > ",
     False,
@@ -159,7 +159,7 @@ twofactor = handle_input(
 opacity = handle_input(
     "Opacity? (range of 0-1) > ",
     float,
-    "",
+    ".*",
     "You need to input a number between 0 and 1",
     0,
     1,
@@ -206,4 +206,4 @@ loader.stop()
 console.log("[bold green]Setup Complete! Returning...")
 
 # Post-Setup: send message and try to run main.py again.
-subprocess.call("python3 main.py", shell=True)
+subprocess.call("python3 main.py", shell=False)
