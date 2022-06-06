@@ -17,3 +17,7 @@ def save_text_to_mp3(reddit_obj):
     """
     text_to_mp3 = TTSEngine(tts.google_translate_tts, reddit_obj)
     return text_to_mp3.run()
+
+
+def get_case_insensitive_key_value(input_dict, key):
+    return next((value for dict_key, value in input_dict.items() if dict_key.lower() == key.lower()), None)
