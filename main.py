@@ -42,6 +42,7 @@ client_secret = os.getenv("REDDIT_CLIENT_SECRET")
 username = os.getenv("REDDIT_USERNAME")
 password = os.getenv("REDDIT_PASSWORD")
 reddit2fa = os.getenv("REDDIT_2FA")
+Voice = os.getenv('Voice')
 
 load_dotenv()
 
