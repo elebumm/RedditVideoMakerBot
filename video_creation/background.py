@@ -8,6 +8,8 @@ from utils.console import print_step, print_substep
 
 def get_start_and_end_times(video_length, length_of_clip):
 
+    if(int(length_of_clip) < int(video_length)):
+        print("Error: selected video is not long enough - fix this with a proper error call")
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
