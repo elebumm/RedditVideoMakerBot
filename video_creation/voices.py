@@ -6,6 +6,7 @@ from mutagen.mp3 import MP3, HeaderNotFoundError
 from rich.progress import track
 
 from utils.console import print_step, print_substep
+from utils.voice import sanitize_text
 from video_creation.TTSwrapper import TTTTSWrapper
 
 VIDEO_LENGTH: int = 40  # secs
@@ -24,7 +25,7 @@ def save_text_to_mp3(reddit_obj):
     Path("assets/temp/mp3").mkdir(parents=True, exist_ok=True)
 
     ttttsw = TTTTSWrapper()  # tiktok text to speech wrapper
-    ttttsw.tts(reddit_obj["thread_title"], filename=f"assets/temp/mp3/title.mp3", random_speaker=False)
+    ttttsw.tts(sanitize_text(reddit_obj["thread_title"]), filename=f"assets/temp/mp3/title.mp3", random_speaker=False)
     try:
         length += MP3(f"assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:  # note to self AudioFileClip
@@ -35,7 +36,7 @@ def save_text_to_mp3(reddit_obj):
         if length > VIDEO_LENGTH:
             break
 
-        ttttsw.tts(comment["comment_body"], filename=f"assets/temp/mp3/{com}.mp3", random_speaker=False)
+        ttttsw.tts(sanitize_text(comment["comment_body"]), filename=f"assets/temp/mp3/{com}.mp3", random_speaker=False)
         try:
             length += MP3(f"assets/temp/mp3/{com}.mp3").info.length
             com += 1
