@@ -1,6 +1,7 @@
 import argparse
 
 from main import main
+from setup_program import setup
 from utils.console import print_substep
 
 
@@ -21,7 +22,7 @@ def program_options():
         action="store_true"
     )
     parser.add_argument( # only accepts the name of subreddit, not links.
-        "-S",
+        "-s",
         "--subreddit",
         help="Use another sub-reddit.",
         action="store"
@@ -44,6 +45,12 @@ def program_options():
         help="Use the given thread link instead of randomized.",
         action="store"
     )
+    parser.add_argument(
+        "--setup",
+        "--setup",
+        help="Setup the program.",
+        action="store_true"
+    )
 
     args = parser.parse_args()
 
@@ -55,6 +62,8 @@ def program_options():
                 args.filename,
                 args.thread,
             )
+        elif args.setup:
+            setup()
         else:
             print_substep("Error occured!", style="bold red")
             raise SystemExit()
@@ -62,7 +71,8 @@ def program_options():
         ConnectionError,
         KeyboardInterrupt,
     ):
-        ...
+        print_substep("Error occured!", style="bold red")
 
 
-program_options()
+if __name__ == "__main__":
+    program_options()
