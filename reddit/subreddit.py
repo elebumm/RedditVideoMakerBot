@@ -1,3 +1,4 @@
+from email.mime import base
 from rich.console import Console
 from utils.console import print_markdown, print_step, print_substep
 from dotenv import load_dotenv
@@ -67,13 +68,14 @@ def get_subreddit_threads():
 
         for top_level_comment in submission.comments:
             if not top_level_comment.stickied:
-                content["comments"].append(
-                    {
-                        "comment_body": top_level_comment.body,
-                        "comment_url": top_level_comment.permalink,
-                        "comment_id": top_level_comment.id,
-                    }
-                )
+                if len(top_level_comment.body) <= int(os.getenv("MAX_COMMENT_LEN")):
+                    content["comments"].append(
+                        {
+                            "comment_body": top_level_comment.body,
+                            "comment_url": top_level_comment.permalink,
+                            "comment_id": top_level_comment.id,
+                        }
+                    )
 
     except AttributeError as e:
         pass
