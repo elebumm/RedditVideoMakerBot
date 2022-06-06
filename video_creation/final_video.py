@@ -42,7 +42,9 @@ def make_final_video(number_of_clips, file_name):
             FloatingPointError,
             TypeError
         ):
-        print(f"Please ensure that OPACITY is set between 0 and 1 in your .env file")
+        print_substep(
+            f"Please ensure that OPACITY is between 0 and 1 in .env file", style="bold red"
+        )
 
     # Gather all audio clips
     audio_clips = []
@@ -72,7 +74,7 @@ def make_final_video(number_of_clips, file_name):
             .set_position("center")
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
-            )
+        )
     else:
         image_clips.insert(
             0,
@@ -81,11 +83,9 @@ def make_final_video(number_of_clips, file_name):
             .set_position("center")
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
-            )
+        )
 
-    image_concat = concatenate_videoclips(
-        image_clips).set_position(("center", "center")
-    )
+    image_concat = concatenate_videoclips(image_clips).set_position(("center", "center"))
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
 

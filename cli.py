@@ -1,14 +1,11 @@
 import argparse
 
-from rich.console import Console
-
 from main import main
 from setup_program import setup
 from utils.console import print_substep
 
 
 def program_options():
-    console = Console()
 
     description = """\
         DESCRIPTION HERE.
