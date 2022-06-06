@@ -38,15 +38,15 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
         + " reach out to me on Twitter or submit a GitHub issue."
     )
 
-    configured = True
     if not os.path.exists(".env"):
         shutil.copy(".env.template", ".env")
         console.print(
             "[bold red] Your .env file is invalid, or was never created. Standby.[/bold red]"
         )
 
-    console.print("[bold green]Checking environment variables...[/bold green]")
+    console.print("[bold]Checking environment variables...[/bold]")
 
+    configured = True
     for val in REQUIRED_VALUES:
         if not os.getenv(val):
             print_substep(
@@ -54,15 +54,15 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
             )
             configured = False
 
-    if configured:
-        try:
-            float(os.getenv("OPACITY"))
-        except:
-            console.print(
-                f"[bold red]Please ensure that OPACITY is between 0 and 1 in .env file.[/bold red]"
-            )
-            raise SystemExit()
+    try:
+        float(os.getenv("OPACITY"))
+    except:
+        console.print(
+            f"[bold red]Please ensure that OPACITY is between 0 and 1 in .env file.[/bold red]"
+        )
+        raise SystemExit()
 
+    if configured:
         console.print("[bold green]Enviroment Variables are set! Continuing...[/bold green]")
 
         reddit_object = get_subreddit_threads(subreddit_, thread_link_)
