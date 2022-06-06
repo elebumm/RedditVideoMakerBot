@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from gtts import gTTS
 
 max_chars = 0
