@@ -65,27 +65,40 @@ def get_subreddit_threads(subreddit_, thread_link_):
 
     # If the user specifies that he doesnt want a random thread, or if
     # he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
-    if thread_link_ is not None:
-        thread_link = thread_link_
-        print_step("Getting the inserted thread...")
-        submission = reddit.submission(url=thread_link)
-    else:
-        try:
-            if subreddit_ is None:
-                raise ValueError
+    while True:
+        with open("created_videos", "r", encoding="utf-8") as reference:
+            videos = list(reference.readlines())
 
-            subreddit = reddit.subreddit(subreddit_)
-        except ValueError:
-            if os.getenv("SUBREDDIT"):
-                subreddit = reddit.subreddit(
-                    re.sub(r"r\/", "", os.getenv("SUBREDDIT").strip())
-                )
-            else:
-                subreddit = reddit.subreddit("askreddit")
-                print_substep("Subreddit not defined. Using AskReddit.")
+        if thread_link_ is not None:
+            thread_link = thread_link_
+            print_step("Getting the inserted thread...")
+            submission = reddit.submission(url=thread_link)
+        else:
+            try:
+                if subreddit_ is None:
+                    raise ValueError
 
-        threads = subreddit.hot(limit=25)
-        submission = list(threads)[random.randrange(0, 25)]
+                subreddit = reddit.subreddit(subreddit_)
+            except ValueError:
+                if os.getenv("SUBREDDIT"):
+                    subreddit = reddit.subreddit(
+                        re.sub(r"r\/", "", os.getenv("SUBREDDIT").strip())
+                    )
+                else:
+                    subreddit = reddit.subreddit("askreddit")
+                    print_substep("Subreddit not defined. Using AskReddit.")
+
+            threads = subreddit.hot(limit=25)
+            submission = list(threads)[random.randrange(0, 25)]
+
+        if submission.title in videos:
+            print_substep(
+                "[bold]There is already a video for thread: [cyan]"
+                + f"{submission.title}[/cyan]. Finding another one.[/bold]"
+            )
+            continue
+
+        break
 
     print_substep(f"Video will be: [cyan]{submission.title}[/cyan] :thumbsup:")
 

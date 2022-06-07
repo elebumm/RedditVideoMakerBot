@@ -3,6 +3,7 @@ import shutil
 
 from dotenv import load_dotenv
 
+import reddit.subreddit
 from reddit.subreddit import get_subreddit_threads
 from video_creation.background import download_background, chop_background_video
 from video_creation.voices import save_text_to_mp3
@@ -62,6 +63,10 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
         download_background(background)
         chop_background_video(length)
         make_final_video(number_of_comments, filename)
+
+        with open("created_videos", "a", encoding="utf-8") as video_lists:
+            video_lists.write(reddit.subreddit.submission.title)
+
         return True
 
     print_substep(
