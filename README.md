@@ -6,12 +6,7 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
-[<picture>
-
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
-  <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
-</picture>](https://tmrrwinc.ca)
+[<source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png"> <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png"> <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">](https://tmrrwinc.ca)
 
 ## Motivation 🤔
 
@@ -34,12 +29,12 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 1. Clone this repository
 2. Run `pip3 install -r requirements.txt`
 3. Run `python3 -m playwright install` and `python3 -m playwright install-deps`.
-4. 
-	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
+4.
+	4a **Install 1**: Run `python3 -c`, this would activate the setup assistant if `.env` is not yet configure, or run `python3 cli.py --setup`, this command would also work for reconfiguration or re-setup.
 
 	4b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
-5. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+5. Run `python3 cli.py [OPTIONS (arguments)]` to do the task, do `python3 cli.py -h` for help.
 7. Enjoy 😎
 
 
