@@ -2,7 +2,6 @@ import os
 import shutil
 
 from dotenv import load_dotenv
-from rich.console import Console
 
 from reddit.subreddit import get_subreddit_threads
 from video_creation.background import download_background, chop_background_video
@@ -20,8 +19,6 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
     required variables are set. If not, print a warning and launch the
     setup wizard.
     """
-
-    console = Console()
     load_dotenv()
 
     REQUIRED_VALUES = [
@@ -40,11 +37,9 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
 
     if not os.path.exists(".env"):
         shutil.copy(".env.template", ".env")
-        console.print(
-            "[bold red] The .env file is invalid. Creating .env file.[/bold red]"
-        )
+        print_substep("The .env file is invalid. Creating .env file.", style_="bold red")
 
-    console.print("[bold]Checking environment variables...[/bold]")
+    print_substep("Checking environment variables ...", style_="bold")
 
     configured = True
     for val in REQUIRED_VALUES:
@@ -55,7 +50,7 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
             configured = False
 
     if configured:
-        console.print("[bold green]Enviroment Variables are set! Continuing...[/bold green]")
+        print_substep("Enviroment Variables are set! Continuing ...", style_="bold green")
 
         reddit_object = get_subreddit_threads(subreddit_, thread_link_)
         length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -67,11 +62,13 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
         download_background(background)
         chop_background_video(length)
         make_final_video(number_of_comments, filename)
-    else:
-        console.print(
-            "[bold red]Looks like you need to set your Reddit credentials in the .env file. "
-            + "Please follow the instructions in the README.md file to set them up.[/bold red]"
-        )
-        setup_ask = input("\033[1mLaunch setup wizard? [y/N] > \033[0m")
-        if setup_ask in ["y", "Y"]:
-            setup()
+        return True
+
+    print_substep(
+        "Looks like you need to set your Reddit credentials in the .env file. Please follow "
+        + "the instructions in the README.md file to set them up.", style_="bold red"
+    )
+    if input("\033[1mLaunch setup wizard? [y/N] > \033[0m").strip() in ["y", "Y"]:
+        setup()
+
+    return False
