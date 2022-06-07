@@ -56,7 +56,7 @@ def run_many(times):
 
 if __name__ == "__main__":
     try:
-        if getenv("TIMES_TO_RUN"):
+        if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
             run_many(int(getenv("TIMES_TO_RUN")))
         else:
             main()

@@ -1,10 +1,11 @@
-import re
-
 import base64
 import os
 import random
+import re
+
 import requests
 from moviepy.editor import AudioFileClip, concatenate_audioclips, CompositeAudioClip
+from requests.adapters import HTTPAdapter, Retry
 
 # from profanity_filter import ProfanityFilter
 # pf = ProfanityFilter()
@@ -66,11 +67,11 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
 
     def tts(
-        self,
-        req_text: str = "TikTok Text To Speech",
-        filename: str = "title.mp3",
-        random_speaker: bool = False,
-        censer=False,
+            self,
+            req_text: str = "TikTok Text To Speech",
+            filename: str = "title.mp3",
+            random_speaker: bool = False,
+            censer=False,
     ):
         req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
         if censer:
@@ -90,9 +91,18 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
         chunkId = 0
         for chunk in chunks:
-            r = requests.post(
-                f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0"
-            )
+            try:
+                r = requests.post(
+                    f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0"
+                )
+            except requests.exceptions.SSLError:
+                # https://stackoverflow.com/a/47475019/18516611
+                session = requests.Session()
+                retry = Retry(connect=3, backoff_factor=0.5)
+                adapter = HTTPAdapter(max_retries=retry)
+                session.mount('http://', adapter)
+                session.mount('https://', adapter)
+                r = session.post(f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0")
             vstr = [r.json()["data"]["v_str"]][0]
             b64d = base64.b64decode(vstr)
 
