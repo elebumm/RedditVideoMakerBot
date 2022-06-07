@@ -9,7 +9,6 @@ import os
 import time
 from utils.console import print_markdown
 from utils.console import print_step
-from utils.console import print_substep
 from rich.console import Console
 from utils.loader import Loader
 from os.path import exists
@@ -90,8 +89,13 @@ console.log("Attempting to save your credentials...")
 loader = Loader("Saving Credentials...", "Done!").start()
  # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
-console.log("Removing old .env file...")
-os.remove(".env")
+
+try:
+	console.log("Removing old .env file...")
+	os.remove(".env")
+except:
+	console.log("No .env file found.")
+
 time.sleep(0.5)
 console.log("Creating new .env file...")
 with open('.env', 'a') as f:
