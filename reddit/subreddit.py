@@ -1,7 +1,13 @@
 from numpy import Infinity
-from utils.console import print_markdown, print_step, print_substep
+from rich.console import Console
+from utils.console import print_step, print_substep, print_markdown
 from dotenv import load_dotenv
-import os, random, praw, re
+import os
+import random
+import praw
+import re
+
+console = Console()
 
 
 def get_subreddit_threads():
@@ -24,7 +30,6 @@ def get_subreddit_threads():
         passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
-
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
@@ -32,11 +37,12 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
+
     # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
         thread_link = input()
-        print_step(f"Getting the inserted thread...")
+        print_step("Getting the inserted thread...")
         submission = reddit.submission(url=thread_link)
     else:
         # Otherwise, picks a random thread from the inserted subreddit
@@ -60,9 +66,11 @@ def get_subreddit_threads():
         submission = list(threads)[random.randrange(0, 25)]
 
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+    console.log("Getting video comments...")
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
+        content["thread_post"] = submission.selftext
         content["comments"] = []
 
         for top_level_comment in submission.comments:
@@ -79,7 +87,7 @@ def get_subreddit_threads():
                         }
                     )
 
-    except AttributeError as e:
+    except AttributeError:
         pass
     print_substep("Received AskReddit threads successfully.", style="bold green")
 

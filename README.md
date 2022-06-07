@@ -32,11 +32,16 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-3. Run `pip3 install -r requirements.txt`
-4. Run `playwright install` and `playwright install-deps`.
-5. Run `python3 main.py`
-6. Enjoy 😎
+2. Run `pip3 install -r requirements.txt`
+3. Run `python3 -m playwright install` and `python3 -m playwright install-deps`.
+4. 
+	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
+
+	4b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
+
+5. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+7. Enjoy 😎
+
 
 If you want to see more detailed guide, please refer to the official [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/).
 \*The Documentation is still being developed and worked on, please be patient as we change / add new knowledge!
@@ -47,8 +52,22 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 
--   [x] Allowing users to choose a reddit thread instead of being randomized.
--   [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
--   [x] Allowing users to choose between any subreddit.
--   [ ] Allowing users to change voice.
--   [ ] Creating better documentation and adding a command line interface.
+- [x] Allowing users to choose a reddit thread instead of being randomized.
+- [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
+- [x] Allowing users to choose between any subreddit.
+- [ ] Allowing users to change voice.
+- [ ] Creating better documentation and adding a command line interface.
+
+Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
+
+## Developers and maintainers.
+
+Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+
+CallumIO - https://github.com/CallumIO
+
+HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+
+LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+
+Freebiell - https://github.com/FreebieII
