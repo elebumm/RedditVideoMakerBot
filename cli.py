@@ -1,4 +1,5 @@
 import argparse
+from venv import create
 
 from main import main
 from setup_program import setup
@@ -57,12 +58,21 @@ def program_options():
 
     try:
         if args.create:
-            main(
-                args.subreddit,
-                args.background,
-                args.filename,
-                args.thread,
-            )
+            trial = 0
+            while trial < 3:
+                create = main(
+                    args.subreddit,
+                    args.background,
+                    args.filename,
+                    args.thread,
+                )
+                if not create:
+                    try_again = input("Something went wrong! Try again? [y/N] > ").strip()
+                    if try_again in ["y", "Y"]:
+                        trial += 1
+                        continue
+
+                break
         elif args.setup:
             setup()
         else:
