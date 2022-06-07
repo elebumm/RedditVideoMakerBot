@@ -1,31 +1,37 @@
-import re
-
-from utils.console import print_step, print_substep
-import praw
 import random
-from dotenv import load_dotenv
 from os import getenv, environ
 
+import praw
+
+from utils.console import print_step, print_substep
 from utils.videos import check_done
+
 TEXT_WHITELIST = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890')
+
 
 def textify(text):
     return ''.join(filter(TEXT_WHITELIST.__contains__, text))
 
 
-
 def get_subreddit_threads():
     """
-    Returns a list of threads from the selected subreddit.
+    Returns a list of threads from the AskReddit subreddit.
     """
-
+    global submission
     print_step("Getting subreddit threads...")
 
     content = {}
-    load_dotenv()
+    if getenv("REDDIT_2FA").casefold() == "yes":
+        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+        code = input("> ")
+        print()
+        pw = getenv("REDDIT_PASSWORD")
+        passkey = f"{pw}:{code}"
+    else:
+        passkey = getenv("REDDIT_PASSWORD")
     reddit = praw.Reddit(client_id=getenv("REDDIT_CLIENT_ID"), client_secret=getenv("REDDIT_CLIENT_SECRET"),
-                         user_agent="Accessing subreddit threads", username=getenv("REDDIT_USERNAME"),
-                         password=getenv("REDDIT_PASSWORD"), )
+                         user_agent="Accessing Reddit threads", username=getenv("REDDIT_USERNAME"),
+                         passkey=passkey, check_for_async=False,)
     """
     Ask user for subreddit input
     """
@@ -43,13 +49,17 @@ def get_subreddit_threads():
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
     submission = check_done(submission)
-    if submission == None:
-        return get_subreddit_threads()
+    if submission is None:
+        return get_subreddit_threads()  # submission already done. rerun
+    upvotes = submission.score
+    ratio = submission.upvote_ratio * 100
+    num_comments = submission.num_comments
 
-    print_substep(
-        f'subreddit thread is: {submission.title}\n(if you dont like this, you can change it by exiting and rerunning the program)')
-
-    environ["VIDEO_TITLE"] = str(textify(submission.title))
+    print_substep(f"Video will be: {submission.title} :thumbsup:", style='bold green')
+    print_substep(f"Thread has " + str(upvotes) + " upvotes", style='bold blue')
+    print_substep(f"Thread has a upvote ratio of " + str(ratio) + "%", style='bold blue')
+    print_substep(f"Thread has " + str(num_comments) + " comments", style='bold blue')
+    environ["VIDEO_TITLE"] = str(textify(submission.title))  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
     try:
 
@@ -58,11 +68,11 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
-                content["comments"].append(
-                    {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
-                    "comment_id": top_level_comment.id, })
-
+            if not top_level_comment.stickied:
+                if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+                    content["comments"].append(
+                        {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
+                         "comment_id": top_level_comment.id, })
     except AttributeError as e:
         pass
     print_substep("Received subreddit threads Successfully.", style="bold green")

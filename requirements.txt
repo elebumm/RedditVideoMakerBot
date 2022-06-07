@@ -2,8 +2,8 @@ praw~=7.6.0
 moviepy~=1.0.3
 rich~=12.4.4
 mutagen~=1.45.1
-pytube~=12.1.0
 playwright~=1.22.0
 python-dotenv==0.20.0
 typed-ast~=1.5.4
 requests~=2.27.1
+yt-dlp
