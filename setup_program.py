@@ -1,21 +1,18 @@
 import os
 from os.path import exists
 
-from rich.console import Console
-
-from utils.console import print_markdown
+from utils.console import print_markdown, print_substep
 
 
 def setup():
-    console = Console()
-
     if exists(".setup-done-before"):
-        console.log(
-            "[bold red]Setup was already done before! Please make"
-            + " sure you have to run this script again.[/bold red]"
+        print_substep(
+            "Setup was already done before! Please make sure you have "
+            + "to run this script again.", style_="bold red"
         )
         # to run the setup script again, but in better and more convenient manner.
-        if input("\033[1mRun the script again? [y/N] > \033[0m") not in ["y", "Y"]:
+        if str(input("\033[1mRun the script again? [y/N] > \033[0m")).strip() not in ["y", "Y"]:
+            print_substep("Permission denied!", style_="bold red")
             raise SystemExit()
 
     print_markdown(
@@ -25,7 +22,7 @@ def setup():
 
     # This Input is used to ensure the user is sure they want to continue.
     # Again, let them know they are about to erase all other setup data.
-    console.print(
+    print_substep(
         "Ensure you have the following ready to enter:\n"
         + "[bold green]Reddit Client ID\n"
         + "Reddit Client Secret\n"
@@ -35,9 +32,9 @@ def setup():
         + "Opacity (range of 0-1, decimals are accepted.)\n"
         + "Subreddit (without r/ or /r/)\n"
         + "Theme (light or dark)[/bold green]"
-        + "[bold]If you don't have these, please follow the instructions in the README.md file to"
-        + " set them up.\nIf you do have these, type y or Y to continue. If you don't, go ahead and"
-        + " grab those quickly and come back.[/bold]"
+        + "[bold]If you don't have these, please follow the instructions in the README.md "
+        + "set them up.\nIf you do have these, type y or Y to continue. If you don't, "
+        + "go ahead and grab those quickly and come back.[/bold]"
     )
 
     # Begin the setup process.
@@ -51,9 +48,9 @@ def setup():
     subreddit = input("Subreddit (without r/) > ")
     theme = input("Theme? (light or dark) > ")
 
-    # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
-    console.log("Saving credentials...")
-    os.remove(".env")
+    if exists(".env"):
+        os.remove(".env")
+
     with open(".env", "a", encoding="utf-8") as f:
         f.write(
             f'REDDIT_CLIENT_ID="{cliID}"\n'
@@ -67,8 +64,6 @@ def setup():
         )
 
     with open(".setup-done-before", "a", encoding="utf-8") as f:
-        f.write(
-            "This file will stop the setup assistant from running again."
-        )
+        f.write("This file will stop the setup assistant from running again.")
 
-    console.print("[bold green]Setup Complete![/bold green]")
+    print_substep("[bold green]Setup Complete![/bold green]")
