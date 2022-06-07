@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown
+from utils.console import print_markdown, print_step
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
@@ -36,6 +36,9 @@ def main():
 
 def run_many(times):
     for x in range(times):
+        print_step(
+            f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration')  # correct 1st 2nd 3rd 4th 5th....
+        os.system('cls' if os.name == 'nt' else 'clear') # clear terminal
         main()
 
 
