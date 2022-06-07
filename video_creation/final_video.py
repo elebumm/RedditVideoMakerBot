@@ -80,7 +80,7 @@ def make_final_video(number_of_clips, file_name):
 
     if file_name is None:
         filename =  re.sub(
-            "[?\"%*:|<>]", "", (f"assets/{reddit.subreddit.submission.title}.mp4")
+            "[?\"%*:|<>]/", "", (f"assets/{reddit.subreddit.submission.title}.mp4")
         )
 
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
