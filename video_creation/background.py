@@ -31,7 +31,7 @@ def download_background(background):
     background_check = os.path.isfile("assets/mp4/background.mp4")
     if background_check and background is not None:
         print_substep(
-            "Background video is already downloaded! Replacing ...", style="bold red"
+            "Background video is already downloaded! Replacing ...", style_="bold red"
         )
         os.remove("assets/mp4/background.mp4")
 
@@ -49,21 +49,21 @@ def download_background(background):
                 )
 
                 if check_link:
-                    print_substep(f"Downloading video from: {background}", style="bold")
+                    print_substep(f"Downloading video from: {background}", style_="bold")
                     ydl.download(background)
                 elif re.match(background[-4], "mp4"):
-                    print_substep(f"Using the given video file: {background}", style="bold")
+                    print_substep(f"Using the given video file: {background}", style_="bold")
                     os.replace(background.strip(), "assets/mp4/background.mp4")
                 else: # if the link is not youtube link or  a file
                     raise ValueError
     except ValueError:
-        print_substep("Invalid input!", style="bold red")
+        print_substep("Invalid input!", style_="bold red")
     except ConnectionError:
-        print_substep("There is a connection error!", style="bold red")
+        print_substep("There is a connection error!", style_="bold red")
     except DownloadError:
-        print_substep("There is a download error!", style="bold red")
+        print_substep("There is a download error!", style_="bold red")
     else:
-        print_substep("Background video downloaded successfully!", style="bold green")
+        print_substep("Background video downloaded successfully!", style_="bold green")
         cancel = False
 
         if cancel:
@@ -82,4 +82,4 @@ def chop_background_video(video_length):
         end_time,
         targetname="assets/mp4/clip.mp4",
     )
-    print_substep("Background video chopped successfully!", style="bold green")
+    print_substep("Background video chopped successfully!", style_="bold green")

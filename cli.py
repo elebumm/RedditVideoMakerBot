@@ -75,10 +75,10 @@ def program_options():
         elif args.setup:
             setup()
         else:
-            print_substep("Error occured!", style="bold red")
+            print_substep("Error occured!", style_="bold red")
             raise SystemExit()
     except KeyboardInterrupt:
-        print_substep("\nOperation Aborted!", style="bold red")
+        print_substep("\nOperation Aborted!", style_="bold red")
 
 
 if __name__ == "__main__":

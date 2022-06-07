@@ -51,6 +51,6 @@ def save_text_to_mp3(reddit_obj):
         tts.save(f"assets/mp3/{idx}.mp3")
         length += MP3(f"assets/mp3/{idx}.mp3").info.length
 
-    print_substep("Saved Text to MP3 files successfully.", style="bold green")
+    print_substep("Saved Text to MP3 files successfully.", style_="bold green")
     # ! Return the index so we know how many screenshots of comments we need to make.
     return length, idx

@@ -40,7 +40,7 @@ def make_final_video(number_of_clips, file_name):
             TypeError
         ):
         print_substep(
-            "Please ensure that OPACITY is between 0 and 1 in .env file", style="bold red"
+            "Please ensure that OPACITY is between 0 and 1 in .env file", style_="bold red"
         )
 
     # Gather all audio clips
@@ -55,7 +55,7 @@ def make_final_video(number_of_clips, file_name):
             OSError,
             FileNotFoundError,
         ):
-        print_substep("An error occured! Aborting.", style="bold red")
+        print_substep("An error occured! Aborting.", style_="bold red")
         raise SystemExit()
     else:
         audio_concat = concatenate_audioclips(audio_clips)

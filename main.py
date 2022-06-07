@@ -52,7 +52,7 @@ def main(
     for val in REQUIRED_VALUES:
         if not os.getenv(val):
             print_substep(
-                f"Please set the variable \"{val}\" in your .env file.", style="bold red"
+                f"Please set the variable \"{val}\" in your .env file.", style_="bold red"
             )
             configured = False
 

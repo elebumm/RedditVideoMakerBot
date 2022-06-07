@@ -59,4 +59,4 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
                     f"#t1_{comment['comment_id']}"
                 ).screenshot(path=f"assets/png/comment_{idx}.png")
 
-        print_substep("Screenshots downloaded Successfully.", style="bold green")
+        print_substep("Screenshots downloaded Successfully.", style_="bold green")

@@ -128,6 +128,6 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     except AttributeError:
         pass
 
-    print_substep("AskReddit threads retrieved successfully.", style="bold green")
+    print_substep("AskReddit threads retrieved successfully.", style_="bold green")
 
     return content
