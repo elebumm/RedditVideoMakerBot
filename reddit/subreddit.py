@@ -29,43 +29,55 @@ def get_subreddit_threads():
     else:
         passkey = os.getenv("REDDIT_PASSWORD")
 
-    content = {}
-    reddit = praw.Reddit(
-        client_id=os.getenv("REDDIT_CLIENT_ID"),
-        client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-        user_agent="Accessing AskReddit threads",
-        username=os.getenv("REDDIT_USERNAME"),
-        password=passkey,
-    )
+    print_step("Getting AskReddit threads...")
+    accept_thread = False
+    while (accept_thread == False):
+        content = {}
+        reddit = praw.Reddit(
+            client_id=os.getenv("REDDIT_CLIENT_ID"),
+            client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
+            user_agent="Accessing AskReddit threads",
+            username=os.getenv("REDDIT_USERNAME"),
+            password=passkey,
+        )
 
-    # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
-    if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
-        print_substep("Insert the full thread link:", style="bold green")
-        thread_link = input()
-        print_step("Getting the inserted thread...")
-        submission = reddit.submission(url=thread_link)
-    else:
-        # Otherwise, picks a random thread from the inserted subreddit
-        if os.getenv("SUBREDDIT"):
-            subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
+        # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
+        if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
+            print_substep("Insert the full thread link:", style="bold green")
+            thread_link = input()
+            print_step("Getting the inserted thread...")
+            submission = reddit.submission(url=thread_link)
         else:
-            # ! Prompt the user to enter a subreddit
-            try:
-                subreddit = reddit.subreddit(
-                    re.sub(
-                        r"r\/",
-                        "",
-                        input("What subreddit would you like to pull from? "),
+            # Otherwise, picks a random thread from the inserted subreddit
+            if os.getenv("SUBREDDIT"):
+                subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
+            else:
+                # ! Prompt the user to enter a subreddit
+                try:
+                    subreddit = reddit.subreddit(
+                        re.sub(
+                            r"r\/",
+                            "",
+                            input("What subreddit would you like to pull from? "),
+                        )
                     )
-                )
-            except ValueError:
-                subreddit = reddit.subreddit("askreddit")
-                print_substep("Subreddit not defined. Using AskReddit.")
+                except ValueError:
+                    subreddit = reddit.subreddit("askreddit")
+                    print_substep("Subreddit not defined. Using AskReddit.")
 
-        threads = subreddit.hot(limit=25)
-        submission = list(threads)[random.randrange(0, 25)]
+            threads = subreddit.hot(limit=25)
+            submission = list(threads)[random.randrange(0, 25)]
 
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
+        print_substep(f"Video will be: {submission.title} :thumbsup:")
+
+        response = input("Is this thread acceptable? [yes/no/exit]: ").strip().lower()
+        if response == "yes" or response == "y":
+            accept_thread = TRUE
+        elif response == "exit":
+            return -1
+        else:
+            print_step("Getting new AskReddit threads...")
+
     console.log("Getting video comments...")
     try:
         content["thread_url"] = submission.url

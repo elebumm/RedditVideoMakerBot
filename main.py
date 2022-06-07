@@ -88,6 +88,9 @@ console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 if configured:
     reddit_object = get_subreddit_threads()
+    if (reddit_object == -1):
+        exit()
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
