@@ -75,7 +75,9 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                 if subreddit_ is None:
                     raise ValueError
 
-                subreddit = reddit.subreddit(subreddit_)
+                subreddit = reddit.subreddit(
+                    re.sub(r"r\/", "", subreddit_.strip())
+                )
             except ValueError:
                 if os.getenv("SUBREDDIT"):
                     subreddit = reddit.subreddit(
