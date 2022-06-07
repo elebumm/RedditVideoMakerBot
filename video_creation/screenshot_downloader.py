@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from playwright.sync_api import sync_playwright, ViewportSize
 from pathlib import Path
 from rich.progress import track
@@ -26,7 +27,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         context = browser.new_context()
 
         if theme.casefold() == "dark":
-            cookie_file = open('video_creation/cookies.json')
+            cookie_file = open("video_creation/cookies.json")
             cookies = json.load(cookie_file)
             context.add_cookies(cookies)
 
@@ -65,4 +66,4 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             
         #let user know that the screenshots are done
         console.log(f"[bold green]Saved {idx + 1} screenshots.")
-        
+       
