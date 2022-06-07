@@ -37,7 +37,7 @@ def make_final_video(number_of_clips):
     # Gather all audio clips
     audio_clips = []
     for i in range(0, number_of_clips):
-        audio_clips.append(AudioFileClip("assets/mp3/{i}.mp3"))
+        audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
     audio_clips.insert(0, AudioFileClip("assets/mp3/title.mp3"))
     try:
         audio_clips.insert(1, AudioFileClip("assets/mp3/posttext.mp3"))
