@@ -6,9 +6,9 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 > And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
 >
-> - Star the project
-> - Tweet about it
-> - Refer this project in your project's readme
+> - ⭐ Star the project 
+> - 📣 Tweet about it 
+> - 🌲  Refer this project in your project's readme
 
 ## Table of Contents
 
@@ -33,7 +33,7 @@ If you then still feel the need to ask a question and need clarification, we rec
 
 We will then take care of the issue as soon as possible.
 
-Additionally, there is a [discord channel](https://discord.gg/swqtb7AsNQ) for any questions you may have
+Additionally, there is a [Discord Server](https://discord.gg/swqtb7AsNQ) for any questions you may have
 
 ## I Want To Contribute
 
@@ -44,7 +44,7 @@ Additionally, there is a [discord channel](https://discord.gg/swqtb7AsNQ) for an
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
 
 - Make sure that you are using the latest version.
-- Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions (Make sure that you have read the [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/). If you are looking for support, you might want to check [this section](#i-have-a-question)).
+- Determine if your bug is really a bug and not an error on your side e.g., using incompatible environment components/versions (Make sure that you have read the [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/). If you are looking for support, you might want to check [this section](#i-have-a-question)).
 - To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [issues](https://github.com/elebumm/RedditVideoMakerBot/).
 - Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue - you probably aren't the first to get the error!
 - Collect information about the bug:
@@ -100,7 +100,7 @@ You development environment should follow the requirements stated in the [README
 
 When making your PR, follow these guidelines:
 
-- Your branch has a base of _develop_ **not** _master_
+- Your branch has a base of _develop_, **not** _master_
 - You are merging your branch into the _develop_ branch
 - You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request.
 
