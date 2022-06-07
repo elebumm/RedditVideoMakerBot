@@ -22,7 +22,9 @@ def print_step(text):
     console.print(panel)
 
 
-def print_substep(text):
+def print_substep(text, style_=None):
     """Prints a rich info message without the panelling."""
 
+    if style_ is not None:
+        console.print(text, style=style_)
     console.print(text)
