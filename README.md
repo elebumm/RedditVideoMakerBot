@@ -33,7 +33,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 1. Clone this repository
 
 2. Run `pip3 install -r requirements.txt`
-3. Run `playwright install` and `playwright install-deps`.
+3. Run `python3 -m playwright install` and `python3 -m playwright install-deps`.
 4.
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
