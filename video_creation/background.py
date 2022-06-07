@@ -42,9 +42,10 @@ def download_background(background):
                 ydl.download("https://www.youtube.com/watch?v=n_Dv4JMiwK8")
             elif background is not None:
                 check_link = re.match(
-                    "https://www.youtube.com/watch?v*", background.strip()
-                ) or re.match(
-                    "https://youtu.be/*", background.strip()
+                    "(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/"
+                    + "\S*(?:watch|embed)(?:(?:(?=\/[-a-zA-Z0-9_]{11,}(?!"
+                    + "\S))\/)|(?:\S*v=|v\/)))([-a-zA-Z0-9_]{11,})"
+                    , background.strip()
                 )
 
                 if check_link:
