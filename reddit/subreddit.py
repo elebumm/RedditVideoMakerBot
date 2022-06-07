@@ -58,10 +58,11 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
-                content["comments"].append(
-                    {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
-                    "comment_id": top_level_comment.id, })
+            if not top_level_comment.stickied:
+                if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+                    content["comments"].append(
+                        {"comment_body": top_level_comment.body, "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id, })
 
     except AttributeError as e:
         pass
