@@ -34,7 +34,7 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 2. Run `pip3 install -r requirements.txt`
 3. Run `python3 -m playwright install` and `python3 -m playwright install-deps`.
-4.
+4. 
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
 	4b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
