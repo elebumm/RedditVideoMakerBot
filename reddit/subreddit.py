@@ -51,11 +51,14 @@ def get_subreddit_threads():
     submission = check_done(submission)
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
+    upvotes = submission.score
+    ratio = submission.upvote_ratio * 100
+    num_comments = submission.num_comments
 
-    print_substep(
-        f'subreddit thread is: {submission.title}\n(if you dont like this, you can change it by exiting and rerunning the program)')
-
+    print_substep(f"Video will be: {submission.title} :thumbsup:", style='bold green')
+    print_substep(f"Thread has " + str(upvotes) + " upvotes", style='bold blue')
+    print_substep(f"Thread has a upvote ratio of " + str(ratio) + "%", style='bold blue')
+    print_substep(f"Thread has " + str(num_comments) + " comments", style='bold blue')
     environ["VIDEO_TITLE"] = str(textify(submission.title))  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
     try:

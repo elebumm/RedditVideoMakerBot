@@ -1,6 +1,8 @@
 import time
+from subprocess import Popen
+
 from dotenv import load_dotenv
-from os import system, getenv, name
+from os import getenv, name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
@@ -47,7 +49,7 @@ def run_many(times):
         print_step(
             f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration of {times}')  # correct 1st 2nd 3rd 4th 5th....
         main()
-        system('cls' if name == 'nt' else 'clear') # clear terminal
+        Popen('cls' if name == 'nt' else 'clear', shell=True).wait()
 
 
 if __name__ == '__main__':
