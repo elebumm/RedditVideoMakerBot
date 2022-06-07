@@ -90,10 +90,10 @@ loader = Loader("Saving Credentials...", "Done!").start()
  # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
 
-try:
+if os.path.exists('.env'):
 	console.log("Removing old .env file...")
 	os.remove(".env")
-except:
+else:
 	console.log("No .env file found.")
 
 time.sleep(0.5)
