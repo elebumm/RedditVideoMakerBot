@@ -6,12 +6,11 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
-[<picture>
-
+[
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
-</picture>](https://tmrrwinc.ca)
+](https://tmrrwinc.ca)
 
 ## Motivation 🤔
 
@@ -32,9 +31,8 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
-
 2. Run `pip3 install -r requirements.txt`
-3. Run `playwright install` and `playwright install-deps`.
+3. Run `python3 -m playwright install` and `python3 -m playwright install-deps`.
 4. 
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
