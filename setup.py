@@ -91,7 +91,11 @@ loader = Loader("Saving Credentials...", "Done!").start()
  # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
 console.log("Removing old .env file...")
-os.remove(".env")
+if not os.path.exists(".env"):
+    configured = False
+    console.log(".env doesn't exist, skipping.")
+else:
+    os.remove(".env")
 time.sleep(0.5)
 console.log("Creating new .env file...")
 with open('.env', 'a') as f:
