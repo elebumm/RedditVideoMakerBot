@@ -1,9 +1,9 @@
+import re
 from pathlib import Path
 
 from gtts import gTTS
 from mutagen.mp3 import MP3
 from rich.progress import track
-import re
 
 from utils.console import print_step, print_substep
 
@@ -40,8 +40,13 @@ def save_text_to_mp3(reddit_obj):
         # ! This can be longer, but this is just a good starting point
         if length > 50:
             break
-        comment=comment["comment_body"]
-        text=re.sub('((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', '', comment)
+        comment = comment["comment_body"]
+        text = re.sub(
+            "((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+"
+            + "\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*",
+            "",
+            comment
+        )
         tts = gTTS(text, lang="en", slow=False)
         tts.save(f"assets/mp3/{idx}.mp3")
         length += MP3(f"assets/mp3/{idx}.mp3").info.length
