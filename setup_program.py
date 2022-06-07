@@ -56,15 +56,17 @@ def setup():
     # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
     console.log("Saving credentials...")
     os.remove(".env")
-    with open('.env', 'a', encoding="utf-8") as f:
-        f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
-        f.write(f'REDDIT_CLIENT_SECRET="{cliSec}"\n')
-        f.write(f'REDDIT_USERNAME="{user}"\n')
-        f.write(f'REDDIT_PASSWORD="{passw}"\n')
-        f.write(f'REDDIT_2FA="{twofactor}"\n')
-        f.write(f'THEME="{theme}"\n')
-        f.write(f'SUBREDDIT="{subreddit}"\n')
-        f.write(f'OPACITY="{opacity}"\n')
+    with open(".env", "a", encoding="utf-8") as f:
+        f.write(
+            f'REDDIT_CLIENT_ID="{cliID}"\n'
+            + f'REDDIT_CLIENT_SECRET="{cliSec}"\n'
+            + f'REDDIT_USERNAME="{user}"\n'
+            + f'REDDIT_PASSWORD="{passw}"\n'
+            + f'REDDIT_2FA="{twofactor}"\n'
+            + f'THEME="{theme}"\n'
+            + f'SUBREDDIT="{subreddit}"\n'
+            + f'OPACITY="{opacity}"\n'
+        )
 
     with open(".setup-done-before", "a", encoding="utf-8") as f:
         f.write(
