@@ -66,9 +66,6 @@ def get_subreddit_threads(subreddit_, thread_link_):
     # If the user specifies that he doesnt want a random thread, or if
     # he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     while True:
-        with open("created_videos", "r", encoding="utf-8") as reference:
-            videos = list(reference.readlines())
-
         if thread_link_ is not None:
             thread_link = thread_link_
             print_step("Getting the inserted thread...")
@@ -91,14 +88,18 @@ def get_subreddit_threads(subreddit_, thread_link_):
             threads = subreddit.hot(limit=25)
             submission = list(threads)[random.randrange(0, 25)]
 
-        if submission.title in videos:
-            print_substep(
-                "[bold]There is already a video for thread: [cyan]"
-                + f"{submission.title}[/cyan]. Finding another one.[/bold]"
-            )
-            continue
+        try:
+            with open("created_videos", "r", encoding="utf-8") as reference:
+                videos = list(reference.readlines())
 
-        break
+            if submission.title in videos:
+                print_substep(
+                    "[bold]There is already a video for thread: [cyan]"
+                    + f"{submission.title}[/cyan]. Finding another one.[/bold]"
+                )
+                continue
+        except FileNotFoundError:
+            break
 
     print_substep(f"Video will be: [cyan]{submission.title}[/cyan] :thumbsup:")
 
