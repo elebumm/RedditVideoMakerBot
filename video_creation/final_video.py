@@ -1,4 +1,3 @@
-from click import style
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
