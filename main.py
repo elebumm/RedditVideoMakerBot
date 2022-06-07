@@ -22,7 +22,7 @@ REQUIRED_VALUES = [
     "OPACITY",
 ]
 
-#create an giant banner
+#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
 banner = '''
 
 ██████╗░███████╗██████╗░██████╗░██╗████████╗  ██╗░░░██╗██╗██████╗░███████╗░█████╗░
@@ -41,6 +41,8 @@ banner = '''
  
 '''
 print(banner)
+
+#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
 
 time.sleep(.5)
 
