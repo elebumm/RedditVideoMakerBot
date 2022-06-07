@@ -15,7 +15,7 @@ from rich.console import Console
 from utils.console import print_step, print_substep
 
 
-def get_subreddit_threads(subreddit_, thread_link_):
+def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     """
     Takes subreddit_ as parameter which defaults to None, but in this
     case since it is None, it would raise ValueError, thus defaulting
@@ -109,7 +109,12 @@ def get_subreddit_threads(subreddit_, thread_link_):
         content["thread_post"] = submission.selftext
         content["comments"] = []
 
+        comment_count = 0
         for top_level_comment in submission.comments:
+            if number_of_comments is not None:
+                if comment_count > number_of_comments:
+                    break
+
             if not top_level_comment.stickied:
                 content["comments"].append(
                     {

@@ -48,6 +48,12 @@ def program_options():
         action="store"
     )
     parser.add_argument(
+        "-n",
+        "--number",
+        help="Number of comments to include.",
+        action="store"
+    )
+    parser.add_argument(
         "--setup",
         "--setup",
         help="Setup the program.",
@@ -65,6 +71,7 @@ def program_options():
                     args.background,
                     args.filename,
                     args.thread,
+                    args.number,
                 )
                 if not create:
                     try_again = input("Something went wrong! Try again? [y/N] > ").strip()
