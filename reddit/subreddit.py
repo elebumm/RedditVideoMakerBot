@@ -72,7 +72,7 @@ def get_subreddit_threads():
 
         response = input("Is this thread acceptable? [yes/no/exit]: ").strip().lower()
         if response == "yes" or response == "y":
-            accept_thread = TRUE
+            accept_thread = True
         elif response == "exit":
             return -1
         else:
