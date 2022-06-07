@@ -1,11 +1,9 @@
-# Imports
 import os
 from os.path import exists
 
 from rich.console import Console
 
 from utils.console import print_markdown
-from utils.console import print_step
 
 
 def setup():
