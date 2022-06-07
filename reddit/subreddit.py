@@ -31,7 +31,7 @@ def get_subreddit_threads():
         passkey = getenv("REDDIT_PASSWORD")
     reddit = praw.Reddit(client_id=getenv("REDDIT_CLIENT_ID"), client_secret=getenv("REDDIT_CLIENT_SECRET"),
                          user_agent="Accessing Reddit threads", username=getenv("REDDIT_USERNAME"),
-                         passkey=passkey, )
+                         passkey=passkey, check_for_async=False,)
     """
     Ask user for subreddit input
     """

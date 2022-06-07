@@ -1,8 +1,6 @@
-import os
 import time
-
 from dotenv import load_dotenv
-
+from os import system, getenv, name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
@@ -36,16 +34,17 @@ def main():
 
 def run_many(times):
     for x in range(times):
+        x = x + 1
         print_step(
-            f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration')  # correct 1st 2nd 3rd 4th 5th....
-        os.system('cls' if os.name == 'nt' else 'clear') # clear terminal
+            f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration of {times}')  # correct 1st 2nd 3rd 4th 5th....
         main()
+        system('cls' if name == 'nt' else 'clear') # clear terminal
 
 
 if __name__ == '__main__':
     try:
-        if os.getenv('TIMES_TO_RUN'):
-            run_many(int(os.getenv('TIMES_TO_RUN')))
+        if getenv('TIMES_TO_RUN'):
+            run_many(int(getenv('TIMES_TO_RUN')))
         else:
             main()
     except KeyboardInterrupt:
