@@ -2,10 +2,10 @@
 import os
 from utils.console import print_step, print_substep
 from tts.engine_wrapper import TTSEngine
-import tts.google_translate_tts
+import tts.google_translate
 
 ## Add your provider here on a new line
-TTSProviders = {"GoogleTranslate": tts.google_translate_tts}
+TTSProviders = {"GoogleTranslate": tts.google_translate}
 
 
 def save_text_to_mp3(reddit_obj):
