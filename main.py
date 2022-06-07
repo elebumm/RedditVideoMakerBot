@@ -41,7 +41,7 @@ def main(subreddit_=None, background=None, filename=None, thread_link_=None):
     if not os.path.exists(".env"):
         shutil.copy(".env.template", ".env")
         console.print(
-            "[bold red] Your .env file is invalid, or was never created. Standby.[/bold red]"
+            "[bold red] The .env file is invalid. Creating .env file.[/bold red]"
         )
 
     console.print("[bold]Checking environment variables...[/bold]")
