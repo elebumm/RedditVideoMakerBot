@@ -5,6 +5,7 @@ import praw
 
 from utils.console import print_step, print_substep
 from utils.videos import check_done
+from utils.subreddit import get_hottest_undone
 
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
@@ -18,7 +19,7 @@ def get_subreddit_threads():
     Returns a list of threads from the AskReddit subreddit.
     """
     global submission
-    print_step("Getting subreddit threads...")
+    print_step("Logging into Reddit.")
 
     content = {}
     if getenv("REDDIT_2FA").casefold() == "yes":
@@ -42,7 +43,8 @@ def get_subreddit_threads():
     """
     Ask user for subreddit input
     """
-    if not getenv("SUBREDDIT"):
+    print_step("Getting subreddit threads...")
+    if not getenv("SUBREDDIT"): # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         subreddit = reddit.subreddit(
             input("What subreddit would you like to pull from? ")
         )  # if the env isnt set, ask user
@@ -58,8 +60,8 @@ def get_subreddit_threads():
         submission = reddit.submission(id=getenv("POST_ID"))
     else:
         threads = subreddit.hot(limit=25)
-        submission = list(threads)[random.randrange(0, 25)]
-    submission = check_done(submission)
+        submission = get_hottest_undone(threads)
+    submission = check_done(submission) # double checking
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
     upvotes = submission.score
