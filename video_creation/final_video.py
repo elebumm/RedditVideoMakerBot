@@ -17,13 +17,26 @@ import os
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips):
+def make_final_video(number_of_clips, indices_of_skipped_comments):
 
     # Calls opacity from the .env
     load_dotenv()
     opacity = os.getenv("OPACITY")
 
     print_step("Creating the final video...")
+    
+
+    # remove longer audio clips and their respective images
+    counter = 0
+    for i in range(0,number_of_clips):
+        if i in indices_of_skipped_comments:
+            os.remove(f"assets/mp3/{i}.mp3")
+            os.remove(f"assets/png/comment_{i}.png")
+        else:
+            os.rename(f"assets/mp3/{i}.mp3", f"assets/mp3/{counter}.mp3")
+            os.rename(f"assets//png/comment_{i}.png", f"assets//png/comment_{counter}.png")
+            counter+=1
+    number_of_clips-=len(indices_of_skipped_comments)
 
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
