@@ -36,7 +36,11 @@ def save_text_to_mp3(reddit_obj):
     except HeaderNotFoundError:  # note to self AudioFileClip
         length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
     if getenv("STORYMODE").casefold() == "true":
-        ttttsw.tts(sanitize_text(reddit_obj["thread_content"]), filename=f"assets/temp/mp3/story_content.mp3", random_speaker=False)
+        ttttsw.tts(
+            sanitize_text(reddit_obj["thread_content"]),
+            filename=f"assets/temp/mp3/story_content.mp3",
+            random_speaker=False,
+        )
         #'story_content'
     com = 0
     for comment in track((reddit_obj["comments"]), "Saving..."):

@@ -2,7 +2,7 @@ import json
 from os import getenv
 from pathlib import Path
 
-#from playwright.async_api import async_playwright
+# from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
 
@@ -55,10 +55,12 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             path="assets/temp/png/title.png"
         )
         if storymode:
-            page.locator('[data-click-id="text"]').screenshot(path="assets/temp/png/story_content.png")
+            page.locator('[data-click-id="text"]').screenshot(
+                path="assets/temp/png/story_content.png"
+            )
         else:
             for idx, comment in track(
-                    enumerate(reddit_object["comments"]), "Downloading screenshots..."
+                enumerate(reddit_object["comments"]), "Downloading screenshots..."
             ):
 
                 # Stop if we have reached the screenshot_num

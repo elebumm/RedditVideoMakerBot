@@ -43,7 +43,9 @@ def get_subreddit_threads():
     Ask user for subreddit input
     """
     print_step("Getting subreddit threads...")
-    if not getenv("SUBREDDIT"): # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
+    if not getenv(
+        "SUBREDDIT"
+    ):  # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         subreddit = reddit.subreddit(
             input("What subreddit would you like to pull from? ")
         )  # if the env isnt set, ask user
@@ -60,7 +62,7 @@ def get_subreddit_threads():
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
-    submission = check_done(submission) # double checking
+    submission = check_done(submission)  # double checking
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
     upvotes = submission.score
@@ -80,7 +82,7 @@ def get_subreddit_threads():
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
-        #ontent["thread_content"] = submission.content
+        # ontent["thread_content"] = submission.content
         content["comments"] = []
 
         for top_level_comment in submission.comments:

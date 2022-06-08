@@ -116,11 +116,9 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
             chunkId = chunkId + 1
 
-        if(len(audio_clips) > 1):
+        if len(audio_clips) > 1:
             cbn.convert(samplerate=44100, n_channels=2)
-            cbn.build(
-                audio_clips, filename, 'concatenate'
-            )
+            cbn.build(audio_clips, filename, "concatenate")
         else:
             os.rename(audio_clips[0], filename)
 
