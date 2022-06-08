@@ -114,7 +114,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
         comment_count = 0
         for top_level_comment in submission.comments:
             if number_of_comments is not None:
-                if comment_count > number_of_comments:
+                if comment_count == number_of_comments:
                     break
 
             if not top_level_comment.stickied:
@@ -125,6 +125,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                         "comment_id": top_level_comment.id,
                     }
                 )
+            count += 1
     except AttributeError:
         pass
 

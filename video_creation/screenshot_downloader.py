@@ -38,9 +38,9 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             page.set_viewport_size(ViewportSize(width=1920, height=1080))
             if page.locator('[data-testid="content-gate"]').is_visible():
                 # This means the post is NSFW and requires to click the proceed button.
-
                 print_substep("Post is NSFW. You are spicy...")
                 page.locator('[data-testid="content-gate"] button').click()
+                page.locator('[data-click-id="text"] button').click() # Remove "Click to see nsfw" Button in Screenshot
 
             page.locator('[data-test-id="post-content"]').screenshot(path="assets/png/title.png")
 
