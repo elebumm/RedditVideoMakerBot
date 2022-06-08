@@ -16,13 +16,13 @@ print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. \n ### This modified version of this tool was created by [@tya.design](https://tya.design) and is available on [GitHub](https://github.com/Tyaaa-aa/RedditVideoMakerBot)."
 )
 
-time.sleep(3)
+time.sleep(10)
 
 # The maximum length of the video in seconds. (This is the length of the video that will be created, but not 100% accurate)
 MAX_LENGTH = 55
 
 # Video speed multiplier (1.0 = normal speed, 2.0 = double speed, 0.5 = half speed)
-VIDEO_SPEED = 1.2
+VIDEO_SPEED = 1.4
 
 # Voice accent https://gtts.readthedocs.io/en/latest/module.html?highlight=accent
 VOICE_ACCENT = "co.uk"

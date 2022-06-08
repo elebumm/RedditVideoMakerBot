@@ -33,7 +33,9 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         page.goto(reddit_object["thread_url"])
         # page.set_viewport_size(ViewportSize(width=1080, height=1920))
         page.set_viewport_size(ViewportSize(width=700, height=1280, device_scale_factor=0.5))
+        # page.set_viewport_size(ViewportSize(width=1080, height=1920, device_scale_factor=0.5))
 
+        print_substep("Browser Launched Successfully!")
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
