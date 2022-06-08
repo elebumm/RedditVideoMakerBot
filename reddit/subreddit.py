@@ -1,11 +1,10 @@
-import random
 from os import getenv, environ
 
 import praw
 
 from utils.console import print_step, print_substep
+from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
-from utils.subreddit import get_hottest_undone
 
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
@@ -60,7 +59,7 @@ def get_subreddit_threads():
         submission = reddit.submission(id=getenv("POST_ID"))
     else:
         threads = subreddit.hot(limit=25)
-        submission = get_hottest_undone(threads)
+        submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission) # double checking
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
@@ -79,9 +78,11 @@ def get_subreddit_threads():
     )  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
     try:
-
+        print(f'{submission.content=}')
+        print(f'{submission.body=}')
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
+        content["thread_content"] = submission.content
         content["comments"] = []
 
         for top_level_comment in submission.comments:
