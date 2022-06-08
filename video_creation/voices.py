@@ -39,7 +39,8 @@ def save_text_to_mp3(reddit_obj):
         # ! Stop creating mp3 files if the length is greater than 50 seconds.
         # ! This can be longer, but this is just a good starting point
         if length > 50:
-            break
+            pass
+
         comment = comment["comment_body"]
         text = re.sub(
             "((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+"
