@@ -3,8 +3,8 @@ import os
 import random
 import re
 
+import sox
 import requests
-from moviepy.editor import AudioFileClip, concatenate_audioclips, CompositeAudioClip
 from requests.adapters import HTTPAdapter, Retry
 
 # from profanity_filter import ProfanityFilter
@@ -88,6 +88,7 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         ]
 
         audio_clips = []
+        cbn = sox.Combiner()
 
         chunkId = 0
         for chunk in chunks:
@@ -108,16 +109,20 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
             vstr = [r.json()["data"]["v_str"]][0]
             b64d = base64.b64decode(vstr)
 
-            with open(f"{filename}-{chunkId}", "wb") as out:
+            with open(filename.replace(".mp3", f"-{chunkId}.mp3"), "wb") as out:
                 out.write(b64d)
 
-            audio_clips.append(AudioFileClip(f"{filename}-{chunkId}"))
+            audio_clips.append(filename.replace(".mp3", f"-{chunkId}.mp3"))
 
             chunkId = chunkId + 1
 
-        audio_concat = concatenate_audioclips(audio_clips)
-        audio_composite = CompositeAudioClip([audio_concat])
-        audio_composite.write_audiofile(filename, 44100, 2, 2000, None)
+        if(len(audio_clips) > 1):
+            cbn.convert(samplerate=44100, n_channels=2)
+            cbn.build(
+                audio_clips, filename, 'concatenate'
+            )
+        else:
+            os.rename(audio_clips[0], filename)
 
     @staticmethod
     def randomvoice():

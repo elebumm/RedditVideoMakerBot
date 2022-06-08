@@ -1,6 +1,5 @@
-import json
 from typing import List
-
+import json
 
 def get_subreddit_undone(submissions: List, subreddit):
     """
