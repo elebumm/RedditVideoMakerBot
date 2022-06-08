@@ -9,7 +9,7 @@ from moviepy.editor import (
 )
 import reddit.subreddit 
 import re
-from utils.console import print_step
+from utils.console import print_step, print_substep
 from dotenv import load_dotenv
 import os
 from rich.console import Console
@@ -92,5 +92,15 @@ def make_final_video(number_of_clips):
     final = CompositeVideoClip([background_clip, image_concat])
     filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
+    final_video_path = "assets/"
+    if os.getenv("FINAL_VIDEO_PATH"):
+        final_video_path = os.getenv("FINAL_VIDEO_PATH")
+        filename = (re.sub('[?\"%*:|<>]', '', (final_video_path + reddit.subreddit.submission.title + ".mp4")))
+    try:
+        final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
+    except:
+        print_substep("Something's wrong with the path you inserted, the video will be saved in the default path (assets/)", style="bold red")
+        filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
+        final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     for i in range(0, number_of_clips):
         pass
