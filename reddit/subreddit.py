@@ -100,6 +100,11 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
         except FileNotFoundError:
             break
 
+        if len(submission.comments) == 0:
+            print_substep(
+                "The thread do not contain any comments. Searching for new one.", style_="bold"
+            )
+
     print_substep(f"Video will be: [cyan]{submission.title}[/cyan] :thumbsup:")
 
     try:
