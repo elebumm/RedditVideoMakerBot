@@ -11,7 +11,7 @@ def get_hottest_undone(submissions: List):
         return submission
     return get_subreddit_undone(subreddit.top(time_filter="hour")) # all of the videos in hot have already been done
 
-def already_done(done_videos: list, submission)
+def already_done(done_videos: list, submission):
 
     for video in done_videos:
         if video["id"] == str(submission):
