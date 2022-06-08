@@ -65,7 +65,7 @@ def get_subreddit_threads():
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
 				
-		upvotes=submission.score
+    upvotes=submission.score
     ratio=submission.upvote_ratio * 100
     num_comments=submission.num_comments
 
