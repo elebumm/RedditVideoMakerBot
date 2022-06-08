@@ -5,7 +5,7 @@ from tts.engine_wrapper import TTSEngine
 import tts.google_translate
 
 
-## Add your provider here on a new line
+## Add your provider here in the dictionary below
 TTSProviders = {"GoogleTranslate": tts.google_translate}
 
 
