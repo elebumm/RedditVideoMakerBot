@@ -1,6 +1,7 @@
 from typing import List
 import json
-def get_hottest_undone(submissions: List):
+
+def get_subreddit_undone(submissions: List, subreddit):
     """
     recursively checks if the top submission in the list was already done.
     """
@@ -10,7 +11,7 @@ def get_hottest_undone(submissions: List):
         if already_done(done_videos, submission):
             continue
         return submission
-    return get_subreddit_undone(subreddit.top(time_filter="hour")) # all of the videos in hot have already been done
+    return get_subreddit_undone(subreddit.top(time_filter="hour"), subreddit) # all of the videos in hot have already been done
 
 def already_done(done_videos: list, submission):
 
