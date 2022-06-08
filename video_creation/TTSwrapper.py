@@ -6,6 +6,7 @@ import re
 import sox
 import requests
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
+from moviepy.audio.io.AudioFileClip import AudioFileClip
 from requests.adapters import HTTPAdapter, Retry
 
 # from profanity_filter import ProfanityFilter
@@ -68,11 +69,11 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
 
     def tts(
-        self,
-        req_text: str = "TikTok Text To Speech",
-        filename: str = "title.mp3",
-        random_speaker: bool = False,
-        censer=False,
+            self,
+            req_text: str = "TikTok Text To Speech",
+            filename: str = "title.mp3",
+            random_speaker: bool = False,
+            censer=False,
     ):
         req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
         if censer:
@@ -90,6 +91,7 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
         audio_clips = []
         cbn = sox.Combiner()
+        cbn.set_input_format(file_type=['mp3'])
 
         chunkId = 0
         for chunk in chunks:
@@ -123,6 +125,10 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
             else:
                 os.rename(audio_clips[0], filename)
         except sox.core.SoxError:
+            for clip in audio_clips:
+                i = audio_clips.index(clip)  # get the index of the clip
+                audio_clips = audio_clips[:i] + [AudioFileClip(clip)] + audio_clips[
+                                                                        i + 1:]  # replace the clip with an AudioFileClip
             audio_concat = concatenate_audioclips(audio_clips)
             audio_composite = CompositeAudioClip([audio_concat])
             audio_composite.write_audiofile(filename, 44100, 2, 2000, None)
