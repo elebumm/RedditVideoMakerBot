@@ -1,4 +1,5 @@
-from typings import List
+from typing import List
+import json
 def get_hottest_undone(submissions: List):
     """
     recursively checks if the top submission in the list was already done.

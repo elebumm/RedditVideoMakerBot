@@ -6,4 +6,4 @@ playwright~=1.22.0
 python-dotenv==0.20.0
 typed-ast~=1.5.4
 requests~=2.27.1
-yt-dlp
+typing~=3.10.0.0
