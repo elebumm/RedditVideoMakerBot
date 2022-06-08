@@ -13,7 +13,7 @@ console = Console()
 def get_subreddit_threads():
     global submission
     """
-    Returns a list of threads from the AskReddit subreddit.
+    Returns a list of threads from the provided subreddit.
     """
 
     load_dotenv()
@@ -33,7 +33,7 @@ def get_subreddit_threads():
     reddit = praw.Reddit(
         client_id=os.getenv("REDDIT_CLIENT_ID"),
         client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-        user_agent="Accessing AskReddit threads",
+        user_agent="Accessing subreddit threads",
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
@@ -64,9 +64,10 @@ def get_subreddit_threads():
 
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
+        
+    print_substep(f"Video will be: {submission.title}")
+    print("Getting video comments...")
 
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
-    console.log("Getting video comments...")
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
