@@ -5,6 +5,7 @@ import re
 
 import sox
 import requests
+from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from requests.adapters import HTTPAdapter, Retry
 
 # from profanity_filter import ProfanityFilter
@@ -115,12 +116,16 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
             audio_clips.append(filename.replace(".mp3", f"-{chunkId}.mp3"))
 
             chunkId = chunkId + 1
-
-        if len(audio_clips) > 1:
-            cbn.convert(samplerate=44100, n_channels=2)
-            cbn.build(audio_clips, filename, "concatenate")
-        else:
-            os.rename(audio_clips[0], filename)
+        try:
+            if len(audio_clips) > 1:
+                cbn.convert(samplerate=44100, n_channels=2)
+                cbn.build(audio_clips, filename, "concatenate")
+            else:
+                os.rename(audio_clips[0], filename)
+        except sox.core.SoxError:
+            audio_concat = concatenate_audioclips(audio_clips)
+            audio_composite = CompositeAudioClip([audio_concat])
+            audio_composite.write_audiofile(filename, 44100, 2, 2000, None)
 
     @staticmethod
     def randomvoice():
