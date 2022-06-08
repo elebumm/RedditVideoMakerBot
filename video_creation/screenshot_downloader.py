@@ -15,7 +15,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         reddit_object: The Reddit Object you received in askreddit.py
         screenshot_num: The number of screenshots you want to download.
     """
-    print_step("Downloading Screenshots of Reddit Posts 📷")
+    print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
@@ -26,10 +26,13 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         browser = p.chromium.launch()
         context = browser.new_context()
 
-        if theme.casefold() == "dark":
-            cookie_file = open("video_creation/cookies.json")
-            cookies = json.load(cookie_file)
-            context.add_cookies(cookies)
+        try:
+            if theme.casefold() == "dark":
+                cookie_file = open('video_creation/cookies.json')
+                cookies = json.load(cookie_file)
+                context.add_cookies(cookies)
+        except AttributeError:
+            pass
 
         # Get the thread screenshot
         page = context.new_page()
