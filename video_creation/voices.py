@@ -15,7 +15,8 @@ def save_text_to_mp3(reddit_obj):
     """
     print_step("Saving Text to MP3 files...")
     length = 0
-
+    skipped_idx = []
+    
     # Create a folder for the mp3 files.
     Path("assets/mp3").mkdir(parents=True, exist_ok=True)
 
@@ -33,6 +34,7 @@ def save_text_to_mp3(reddit_obj):
         tts.save("assets/mp3/posttext.mp3")
         length += MP3("assets/mp3/posttext.mp3").info.length
 
+    max_length_in_seconds = 60
     for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than 50 seconds. This can be longer, but this is just a good starting point
         if length > 50:
@@ -42,7 +44,12 @@ def save_text_to_mp3(reddit_obj):
         tts = gTTS(text, lang="en", slow=False)
         tts.save(f"assets/mp3/{idx}.mp3")
         length += MP3(f"assets/mp3/{idx}.mp3").info.length
+        
+        # doesn't allow length to exceed max_length_in_seconds seconds
+        if length > max_length_in_seconds:
+            length -= MP3(f"assets/mp3/{idx}.mp3").info.length
+            skipped_idx.append(idx)
 
     print_substep("Saved Text to MP3 files successfully.", style="bold green")
     # ! Return the index so we know how many screenshots of comments we need to make.
-    return length, idx
+    return length, idx, skipped_idx
