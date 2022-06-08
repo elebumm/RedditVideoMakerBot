@@ -1,8 +1,6 @@
 # Reddit Video Maker Bot 🎥
 
-https://github.com/JasonLovesDoggo/RedditVideoMakerBot/blob/master/examples/final_video.mp4
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
-
 
 Created by Lewis Menelaws & Heavily modified by [Jason Cameron](https://github.com/JasonLovesDoggo)
 
