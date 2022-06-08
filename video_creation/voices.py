@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import os
-from utils.console import print_step, print_substep
+from utils.console import print_step, print_substep, print_table
 from tts.engine_wrapper import TTSEngine
 import tts.google_translate
+
 
 ## Add your provider here on a new line
 TTSProviders = {"GoogleTranslate": tts.google_translate}
@@ -22,8 +23,7 @@ def save_text_to_mp3(reddit_obj):
         choice = ""
         while not chosen:
             print("Please choose one of the following TTS providers: ")
-            for i in TTSProviders:
-                print(i)
+            print_table(TTSProviders)
             choice = input("\n")
             if choice.casefold() not in map(lambda _: _.casefold(), TTSProviders):
                 print("Unknown Choice")
