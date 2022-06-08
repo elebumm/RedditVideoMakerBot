@@ -17,6 +17,15 @@ import os
 W, H = 1080, 1920
 
 
+def name_normalize(
+        name: str
+) -> str:
+    name = re.sub(r'[?\\"%*:|<>]', '', name)
+    name = re.sub(r'(\D+)/(\D+)', r'\1\ or\ \2', name)
+    name = re.sub(r'(\d+)/(\d+)', r'\1\ of\ \2', name)
+    return name
+
+
 def make_final_video(number_of_clips):
 
     # Calls opacity from the .env
@@ -83,7 +92,7 @@ def make_final_video(number_of_clips):
     final_video_path = "assets/"
     if os.getenv("FINAL_VIDEO_PATH"):
         final_video_path = os.getenv("FINAL_VIDEO_PATH")
-        filename = (re.sub('[?\"%*:|<>]', '', (final_video_path + reddit.subreddit.submission.title + ".mp4")))
+        filename = final_video_path + name_normalize(reddit.subreddit.submission.title) + ".mp4"
     try:
         final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
     except:
