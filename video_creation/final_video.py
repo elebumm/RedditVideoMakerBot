@@ -18,7 +18,6 @@ from utils.console import print_step, print_substep
 
 def make_final_video(number_of_clips, file_name):
     load_dotenv()
-    opacity = os.getenv("OPACITY")
 
     print_step("Creating the final video...")
 

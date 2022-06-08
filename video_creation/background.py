@@ -66,9 +66,9 @@ def download_background(background):
         print_substep("Background video downloaded successfully!", style_="bold green")
         cancel = False
 
-        if cancel:
-            # to prevent further error and processes from happening
-            raise SystemExit()
+    if cancel:
+        # to prevent further error and processes from happening
+        raise SystemExit()
 
 
 def chop_background_video(video_length):

@@ -56,8 +56,7 @@ def program_options():
 
     try:
         if args.create:
-            trial = 0
-            while trial < 3:
+            while True:
                 create = main(
                     args.subreddit,
                     args.background,
@@ -68,7 +67,6 @@ def program_options():
                 if not create:
                     try_again = input("Something went wrong! Try again? [y/N] > ").strip()
                     if try_again in ["y", "Y"]:
-                        trial += 1
                         continue
 
                 break

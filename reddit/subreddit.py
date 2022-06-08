@@ -10,7 +10,6 @@ from prawcore.exceptions import (
     BadRequest
 )
 from dotenv import load_dotenv
-from rich.console import Console
 
 from utils.console import print_step, print_substep
 
@@ -23,8 +22,6 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
 
     Returns a list of threads from the AskReddit subreddit.
     """
-
-    console = Console()
 
     global submission
     load_dotenv()
@@ -54,11 +51,11 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
             RequestException,
             BadRequest
         ):
-        console.print(
+        print_substep(
             "[bold red]There is something wrong with the .env file, kindly check:[/bold red]\n"
             + "1. ClientID\n"
             + "2. ClientSecret\n"
-            + "3. If these variables are fine, kindly check other variables."
+            + "3. If these variables are fine, kindly check other variables.\n"
             + "4. Check if the type of Reddit app created is script (personal use script)."
         )
 
