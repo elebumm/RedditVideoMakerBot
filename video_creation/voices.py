@@ -60,7 +60,7 @@ voices = [
     'en_male_m03_lobby'  # Tenor
 ]
 
-def tts(text_speaker: str = 'en_au_001', req_text: str = 'TikTok Text to Speech', filename: str = 'voice.mp3'):
+def tts(text_speaker: str = 'en_us_010', req_text: str = 'TikTok Text to Speech', filename: str = 'voice.mp3'):
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")
@@ -106,7 +106,7 @@ def save_text_to_mp3(reddit_obj):
             break
         #tts = gTTS(text=comment["comment_body"], lang="en")
         #tts.save(f"assets/mp3/{idx}.mp3")
-        response = tts('en_uk_001', comment[1]["comment_body"], f"assets/mp3/{idx}.mp3")
+        response = tts('en_us_010', comment[1]["comment_body"], f"assets/mp3/{idx}.mp3")
         if response == 'Text too long to create speech audio':
             too_long_comments.append(comment[1])
             continue
