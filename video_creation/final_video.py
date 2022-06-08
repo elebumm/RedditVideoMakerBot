@@ -16,7 +16,6 @@ import os
 W, H = 1080, 1920
 
 
-
 def make_final_video(number_of_clips):
   
     # Calls opacity from the .env
@@ -36,10 +35,8 @@ def make_final_video(number_of_clips):
     )
 
     # Gather all audio clips
-    audio_clips = []
-    for i in range(0, number_of_clips):
-        audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
-    audio_clips.insert(0, AudioFileClip(f"assets/mp3/title.mp3"))
+    audio_clips = [AudioFileClip(f"assets/mp3/{i}.mp3") for i in range(number_of_clips)]
+    audio_clips = [AudioFileClip(f"assets/mp3/title.mp3")] + audio_clips
     try:
         audio_clips.insert(1, AudioFileClip(f"assets/mp3/posttext.mp3"))
     except:
@@ -82,5 +79,3 @@ def make_final_video(number_of_clips):
     final = CompositeVideoClip([background_clip, image_concat])
     filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
     final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
-    for i in range(0, number_of_clips):
-        pass
