@@ -34,6 +34,10 @@ The only original thing being done is the editing and gathering of all materials
 6. Run `python3 main.py`
 7. Enjoy 😎
 
+## Video
+https://user-images.githubusercontent.com/19284904/172727335-7e11c816-3484-4033-a535-4b061751fa3b.mp4
+
+
 ## Contributing & Ways to improve 📈
 
 In its current state, this bot does exactly what it needs to do. However, lots of improvements can be made.
