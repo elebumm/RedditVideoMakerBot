@@ -1,3 +1,4 @@
+from os import getenv
 from pathlib import Path
 
 import sox
@@ -34,6 +35,9 @@ def save_text_to_mp3(reddit_obj):
         length += MP3(f"assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:  # note to self AudioFileClip
         length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
+    if getenv("STORYMODE").casefold() == "true":
+        ttttsw.tts(sanitize_text(reddit_obj["thread_content"]), filename=f"assets/temp/mp3/story_content.mp3", random_speaker=False)
+        #'story_content'
     com = 0
     for comment in track((reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer, but this is just a good_voices starting point
@@ -62,5 +66,5 @@ def save_text_to_mp3(reddit_obj):
                 # remove(f"assets/temp/png/comment_{com}.png")# todo might cause odd un-syncing
 
     print_substep("Saved Text to MP3 files Successfully.", style="bold green")
-    # ! Return the index so we know how many screenshots of comments we need to make.
+    # ! Return the index, so we know how many screenshots of comments we need to make.
     return length, com

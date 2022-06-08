@@ -18,7 +18,7 @@ def get_subreddit_threads():
     Returns a list of threads from the AskReddit subreddit.
     """
     global submission
-    print_step("Logging into Reddit.")
+    print_substep("Logging into Reddit.")
 
     content = {}
     if getenv("REDDIT_2FA").casefold() == "yes":
@@ -78,11 +78,9 @@ def get_subreddit_threads():
     )  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
     try:
-        print(f'{submission.content=}')
-        print(f'{submission.body=}')
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
-        content["thread_content"] = submission.content
+        #ontent["thread_content"] = submission.content
         content["comments"] = []
 
         for top_level_comment in submission.comments:
