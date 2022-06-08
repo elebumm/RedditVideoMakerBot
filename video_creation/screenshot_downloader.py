@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from playwright.sync_api import sync_playwright, ViewportSize
 from pathlib import Path
 from rich.progress import track
@@ -22,7 +23,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
 
         browser = p.chromium.launch()
         context = browser.new_context()
-        
+
         try:
             if theme.casefold() == "dark":
                 cookie_file = open('video_creation/cookies.json')
@@ -40,6 +41,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
 
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
+            page.locator('[data-click-id="text"] button').click() # Remove "Click to see nsfw" Button in Screenshot
 
         page.locator('[data-test-id="post-content"]').screenshot(
             path="assets/png/title.png"
@@ -61,5 +63,4 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
                 path=f"assets/png/comment_{idx}.png"
             )
 
-        print_substep("Screenshots downloaded Successfully.",
-                      style="bold green")
+        print_substep("Screenshots downloaded Successfully.", style="bold green")

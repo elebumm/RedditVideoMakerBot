@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from random import randrange
 
 from yt_dlp import YoutubeDL
@@ -16,6 +17,7 @@ def get_start_and_end_times(video_length, length_of_clip):
     return random_time, random_time + video_length
 
 def download_background(video_length):
+
     """Downloads the background video from youtube.
 
     Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
