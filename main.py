@@ -88,7 +88,7 @@ console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 if configured:
     reddit_object = get_subreddit_threads()
-    length, number_of_comments = save_text_to_mp3(reddit_object)
+    length, number_of_comments, indices_of_skipped_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
     )
@@ -97,4 +97,4 @@ if configured:
         noerror = chop_background_video(length, vidpath)
         if noerror is True:
             break
-    final_video = make_final_video(number_of_comments)
+    final_video = make_final_video(number_of_comments, indices_of_skipped_comments)
