@@ -12,6 +12,7 @@ import re
 from utils.console import print_step
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
 W, H = 1080, 1920
 
@@ -57,7 +58,7 @@ def make_final_video(number_of_clips):
             .resize(width=W - 100)
             .set_opacity(float(opacity)),
         )
-    if os.path.exists(f"assets/mp3/posttext.mp3"):
+    if Path(f"assets/mp3/posttext.mp3").is_file():
         image_clips.insert(
             0,
             ImageClip(f"assets/png/title.png")
@@ -80,7 +81,11 @@ def make_final_video(number_of_clips):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
-    filename = (re.sub('[?\"%*:|<>]', '', ("assets/" + reddit.subreddit.submission.title + ".mp4")))
-    final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
-    for i in range(0, number_of_clips):
-        pass
+
+    if not Path("assets/generated-videos").is_dir():
+        Path.mkdir("assets/generated-videos")
+
+
+    raw_filename = Path("assets", "generated-videos") / (reddit.subreddit.submission.title + ".mp4")
+    cleaned_filename = (re.sub('[?\"%*:|<>]', '', str(raw_filename)))
+    final.write_videofile(cleaned_filename, fps=30, audio_codec="aac", audio_bitrate="192k")
