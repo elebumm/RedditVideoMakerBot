@@ -59,6 +59,14 @@ def make_final_video(number_of_clips, indices_of_skipped_comments):
         OSError()
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
+    
+	 #Get sum of all clip lengths
+    total_length = sum([clip.duration for clip in audio_clips])
+    #round total_length to an integer
+    int_total_length=round(total_length)
+    #Output Length
+    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
+    
 
     # Gather all images
     image_clips = []
