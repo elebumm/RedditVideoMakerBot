@@ -53,8 +53,10 @@ if not Path(".env").is_file():
     configured = False
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
+# Checks to see if all values in .env are provided
+    # If they aren't, then asks to launch setup wizard
 for val in REQUIRED_VALUES:
-    #print(os.getenv(val))
+    # print(os.getenv(val))
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
@@ -65,20 +67,20 @@ for val in REQUIRED_VALUES:
         console.log(
             "[red]We can also launch the easy setup wizard. type yes to launch it, or no to quit the program."
         )
-        setup_ask = input("Launch setup wizard? > ")
-        if setup_ask == "yes":
-            console.log("[bold green]Here goes nothing! Launching setup wizard...")
-            time.sleep(0.5)
-            os.system("python3 setup.py")
+        while True: #Asks user whether they want to launch setup wizard until an understandable input is given
+            setup_ask = input("Launch setup wizard? > ")
+            if setup_ask.casefold() == "yes":
+                console.log("[bold green]Here goes nothing! Launching setup wizard...")
+                time.sleep(0.5)
+                os.system("python3 setup.py")
 
-        elif setup_ask == "no":
-            console.print("[red]Exiting...")
+            elif setup_ask.casefold() == "no":
+                console.print("[red]Exiting...")
+                time.sleep(0.5)
+                exit()
+            
+            console.print("[red]I don't understand that.")
             time.sleep(0.5)
-            exit()
-        else:
-            console.print("[red]I don't understand that. Exiting...")
-            time.sleep(0.5)
-            exit()
 try:
     float(os.getenv("OPACITY"))
 except:
@@ -90,6 +92,7 @@ except:
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 if configured:
+    # Video generation
     reddit_object = get_subreddit_threads()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
