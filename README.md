@@ -1,16 +1,8 @@
 # Reddit Video Maker Bot 🎥
 
-https://user-images.githubusercontent.com/6053155/170525726-2db23ae0-97b8-4bd1-8c95-00da60ce099f.mp4
-
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
 
-Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
-
-[<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
-  <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
-</picture>](https://tmrrwinc.ca)
+Created by Lewis Menelaws & Heavily modified by [Jason Cameron](https://github.com/JasonLovesDoggo)
 
 ## Motivation 🤔
 
@@ -27,7 +19,7 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.6+ (3.10 is recommended tho )
 - Playwright (this should install automatically in installation)
 
 ## Installation 👩‍💻
@@ -41,6 +33,10 @@ The only original thing being done is the editing and gathering of all materials
 5. Run `playwright install` and `playwright install-deps`.
 6. Run `python3 main.py`
 7. Enjoy 😎
+
+## Video
+https://user-images.githubusercontent.com/19284904/172727335-7e11c816-3484-4033-a535-4b061751fa3b.mp4
+
 
 ## Contributing & Ways to improve 📈
 
