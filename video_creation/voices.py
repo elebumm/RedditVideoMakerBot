@@ -4,8 +4,9 @@ from pathlib import Path
 from mutagen.mp3 import MP3
 from utils.console import print_step, print_substep
 from rich.progress import track
+from rich.console import Console
+console = Console()
 import re
-
 
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
@@ -43,6 +44,7 @@ def save_text_to_mp3(reddit_obj):
         tts.save(f"assets/mp3/{idx}.mp3")
         length += MP3(f"assets/mp3/{idx}.mp3").info.length
 
-    print_substep("Saved Text to MP3 files successfully.", style="bold green")
+    #let user know that the MP3 files are saved
+    console.log(f"[bold green]Saved {idx + 1} MP3 Files.")
     # ! Return the index so we know how many screenshots of comments we need to make.
     return length, idx

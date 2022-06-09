@@ -22,6 +22,29 @@ REQUIRED_VALUES = [
     "OPACITY",
 ]
 
+#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
+banner = '''
+
+██████╗░███████╗██████╗░██████╗░██╗████████╗  ██╗░░░██╗██╗██████╗░███████╗░█████╗░
+██╔══██╗██╔════╝██╔══██╗██╔══██╗██║╚══██╔══╝  ██║░░░██║██║██╔══██╗██╔════╝██╔══██╗
+██████╔╝█████╗░░██║░░██║██║░░██║██║░░░██║░░░  ╚██╗░██╔╝██║██║░░██║█████╗░░██║░░██║
+██╔══██╗██╔══╝░░██║░░██║██║░░██║██║░░░██║░░░  ░╚████╔╝░██║██║░░██║██╔══╝░░██║░░██║
+██║░░██║███████╗██████╔╝██████╔╝██║░░░██║░░░  ░░╚██╔╝░░██║██████╔╝███████╗╚█████╔╝
+╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░╚═╝░░░╚═╝░░░  ░░░╚═╝░░░╚═╝╚═════╝░╚══════╝░╚════╝░
+
+███╗░░░███╗░█████╗░██╗░░██╗███████╗██████╗░
+████╗░████║██╔══██╗██║░██╔╝██╔════╝██╔══██╗
+██╔████╔██║███████║█████═╝░█████╗░░██████╔╝
+██║╚██╔╝██║██╔══██║██╔═██╗░██╔══╝░░██╔══██╗
+██║░╚═╝░██║██║░░██║██║░╚██╗███████╗██║░░██║
+╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
+ 
+'''
+print(banner)
+
+#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
+
+time.sleep(.5)
 
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
@@ -43,7 +66,7 @@ reddit2fa = os.getenv("REDDIT_2FA")
 load_dotenv()
 
 console.log("[bold green]Checking environment variables...")
-time.sleep(1)
+time.sleep(.5)
 
 
 if not os.path.exists(".env"):
@@ -92,6 +115,9 @@ if configured:
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
     )
-    download_background()
-    chop_background_video(length)
+    while True:
+        vidpath = download_background(length)
+        noerror = chop_background_video(length, vidpath)
+        if noerror is True:
+            break
     final_video = make_final_video(number_of_comments)

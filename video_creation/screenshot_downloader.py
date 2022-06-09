@@ -4,6 +4,8 @@ from pathlib import Path
 from rich.progress import track
 from utils.console import print_step, print_substep
 import json
+from rich.console import Console
+console = Console()
 
 
 def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
@@ -13,7 +15,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         reddit_object: The Reddit Object you received in askreddit.py
         screenshot_num: The number of screenshots you want to download.
     """
-    print_step("Downloading Screenshots of Reddit Posts 📷")
+    print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
@@ -24,10 +26,13 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
         browser = p.chromium.launch()
         context = browser.new_context()
 
-        if theme.casefold() == "dark":
-            cookie_file = open("video_creation/cookies.json")
-            cookies = json.load(cookie_file)
-            context.add_cookies(cookies)
+        try:
+            if theme.casefold() == "dark":
+                cookie_file = open('video_creation/cookies.json')
+                cookies = json.load(cookie_file)
+                context.add_cookies(cookies)
+        except AttributeError:
+            pass
 
         # Get the thread screenshot
         page = context.new_page()
@@ -48,6 +53,9 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             track(reddit_object["comments"]), "Downloading screenshots..."
         ):
 
+            #allow user to see what comment is being saved
+            print_substep(f"Downloading screenshot {idx + 1}")
+            
             # Stop if we have reached the screenshot_num
             if idx >= screenshot_num:
                 break
@@ -59,5 +67,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             page.locator(f"#t1_{comment['comment_id']}").screenshot(
                 path=f"assets/png/comment_{idx}.png"
             )
-
-        print_substep("Screenshots downloaded Successfully.", style="bold green")
+            
+        #let user know that the screenshots are done
+        console.log(f"[bold green]Saved {idx + 1} screenshots.")
+       
