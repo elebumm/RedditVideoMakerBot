@@ -1,5 +1,7 @@
 from typing import List
 import json
+from os import getenv
+from utils.console import print_substep
 
 def get_subreddit_undone(submissions: List, subreddit):
     """
@@ -10,6 +12,10 @@ def get_subreddit_undone(submissions: List, subreddit):
     for submission in submissions:
         if already_done(done_videos, submission):
             continue
+        if submission.over_18:
+            if getenv("ALLOW_NSFW").casefold() == "false":
+                print_substep("NSFW Post Detected. Skipping...")
+                continue
         return submission
     return get_subreddit_undone(subreddit.top(time_filter="hour"), subreddit) # all of the videos in hot have already been done
 
