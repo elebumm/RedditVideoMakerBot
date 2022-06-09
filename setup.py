@@ -12,10 +12,10 @@ from utils.console import print_step
 from utils.console import print_substep
 from rich.console import Console
 from utils.loader import Loader
-from os.path import exists
+from pathlib import Path
 console = Console()
 
-setup_done = exists(".setup-done-before")
+setup_done = Path(".setup-done-before").is_file()
 
 if setup_done == True:
 	console.log("[red]Setup was already completed! Please make sure you have to run this script again. If you have to, please delete the file .setup-done-before")

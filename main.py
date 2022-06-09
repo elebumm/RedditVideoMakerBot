@@ -11,6 +11,7 @@ from video_creation.screenshot_downloader import download_screenshots_of_reddit_
 from video_creation.final_video import make_final_video
 from utils.loader import Loader
 from dotenv import load_dotenv
+from pathlib import Path
 
 console = Console()
 from dotenv import load_dotenv
@@ -48,8 +49,7 @@ load_dotenv()
 console.log("[bold green]Checking environment variables...")
 time.sleep(1)
 
-
-if not os.path.exists(".env"):
+if not Path(".env").is_file():
     configured = False
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
