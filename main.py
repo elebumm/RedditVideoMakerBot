@@ -53,8 +53,10 @@ if not os.path.exists(".env"):
     configured = False
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
+# Checks to see if all values in .env are provided
+    # If they aren't, then asks to launch setup wizard
 for val in REQUIRED_VALUES:
-    #print(os.getenv(val))
+    # print(os.getenv(val))
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
@@ -90,6 +92,7 @@ except:
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 if configured:
+    # Video generation
     reddit_object = get_subreddit_threads()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
