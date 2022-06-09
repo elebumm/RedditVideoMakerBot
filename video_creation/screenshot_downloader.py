@@ -40,6 +40,12 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
 
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
+            if getenv("ALLOW_NSFW").casefold() == "false":
+                print_substep("NSFW Post Detected. Skipping...")
+                from main import main
+
+                main()
+
             print_substep("Post is NSFW. You are spicy... :fire:")
             page.locator('[data-testid="content-gate"] button').click()
 
