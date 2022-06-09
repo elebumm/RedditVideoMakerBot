@@ -67,20 +67,20 @@ for val in REQUIRED_VALUES:
         console.log(
             "[red]We can also launch the easy setup wizard. type yes to launch it, or no to quit the program."
         )
-        setup_ask = input("Launch setup wizard? > ")
-        if setup_ask == "yes":
-            console.log("[bold green]Here goes nothing! Launching setup wizard...")
-            time.sleep(0.5)
-            os.system("python3 setup.py")
+        while True: #Asks user whether they want to launch setup wizard until an understandable input is given
+            setup_ask = input("Launch setup wizard? > ")
+            if setup_ask.casefold() == "yes":
+                console.log("[bold green]Here goes nothing! Launching setup wizard...")
+                time.sleep(0.5)
+                os.system("python3 setup.py")
 
-        elif setup_ask == "no":
-            console.print("[red]Exiting...")
+            elif setup_ask.casefold() == "no":
+                console.print("[red]Exiting...")
+                time.sleep(0.5)
+                exit()
+            
+            console.print("[red]I don't understand that.")
             time.sleep(0.5)
-            exit()
-        else:
-            console.print("[red]I don't understand that. Exiting...")
-            time.sleep(0.5)
-            exit()
 try:
     float(os.getenv("OPACITY"))
 except:
