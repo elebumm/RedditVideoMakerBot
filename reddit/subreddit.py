@@ -5,7 +5,7 @@ import praw
 
 from utils.console import print_step, print_substep
 from utils.videos import check_done
-from utils.subreddit import get_hottest_undone
+from utils.subreddit import get_subreddit_undone
 
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
@@ -60,7 +60,7 @@ def get_subreddit_threads():
         submission = reddit.submission(id=getenv("POST_ID"))
     else:
         threads = subreddit.hot(limit=25)
-        submission = get_hottest_undone(threads)
+        submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission) # double checking
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
