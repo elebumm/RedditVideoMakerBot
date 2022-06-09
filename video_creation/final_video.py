@@ -86,7 +86,6 @@ def make_final_video(number_of_clips):
         Path.mkdir("assets/generated-videos")
 
 
-    filename = (re.sub('[?\"%*:|<>]', '', ("assets/generated-videos/" + reddit.subreddit.submission.title + ".mp4")))
-    final.write_videofile(filename, fps=30, audio_codec="aac", audio_bitrate="192k")
-    for i in range(0, number_of_clips):
-        pass
+    raw_filename = Path("assets", "generated-videos") / (reddit.subreddit.submission.title + ".mp4")
+    cleaned_filename = (re.sub('[?\"%*:|<>]', '', str(raw_filename)))
+    final.write_videofile(cleaned_filename, fps=30, audio_codec="aac", audio_bitrate="192k")
