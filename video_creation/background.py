@@ -29,7 +29,7 @@ def download_background():
         background_options
     ):  # if there are any background videos not installed
         print_step(
-            "We need to download the backgnrounds videos. they are fairly large but it's only done once. 😎"
+            "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
         )
         print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
         for uri, filename, credit in background_options:
