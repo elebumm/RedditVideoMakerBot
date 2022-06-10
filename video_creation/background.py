@@ -9,6 +9,8 @@ from moviepy.editor import VideoFileClip
 
 from utils.console import print_step, print_substep
 
+import datetime
+
 
 def get_start_and_end_times(video_length, length_of_clip):
     random_time = randrange(180, int(length_of_clip) - int(video_length))
@@ -71,13 +73,16 @@ def download_background(background):
         raise SystemExit()
 
 
-def chop_background_video(video_length):
+def chop_background_video(video_length, vidpath):
     print_step("Finding a spot in the background video to chop...")
-    background = VideoFileClip("assets/mp4/background.mp4")
-
+    background = VideoFileClip(f"assets/mp4/{vidpath}.mp4")
+    if background.duration < video_length + 180:
+        print_substep("This video is too short.", style="red")
+        noerror = False
+        return noerror
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
     ffmpeg_extract_subclip(
-        "assets/mp4/background.mp4",
+        f"assets/mp4/{vidpath}.mp4",
         start_time,
         end_time,
         targetname="assets/mp4/clip.mp4",

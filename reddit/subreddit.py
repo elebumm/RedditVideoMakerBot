@@ -20,7 +20,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     case since it is None, it would raise ValueError, thus defaulting
     to AskReddit.
 
-    Returns a list of threads from the AskReddit subreddit.
+    Returns a list of threads from the provided subreddit.
     """
 
     global submission
@@ -105,7 +105,16 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                 "The thread do not contain any comments. Searching for new one.", style_="bold"
             )
 
-    print_substep(f"Video will be: [cyan]{submission.title}[/cyan] :thumbsup:")
+    upvotes = submission.score
+    ratio = submission.upvote_ratio * 100
+    num_comments = submission.num_comments
+
+    print_substep(
+        f"[bold]Video will be: [cyan]{submission.title}[/cyan] :thumbsup:\n"
+        + f"[blue] Thread has {upvotes} and upvote ratio of {ratio}%\n"
+        + f"And has a {num_comments}[/blue].\n"
+    )
+
 
     try:
         content["thread_url"] = submission.url

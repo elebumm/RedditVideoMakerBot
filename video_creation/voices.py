@@ -7,7 +7,6 @@ from rich.progress import track
 
 from utils.console import print_step, print_substep
 
-
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
 
