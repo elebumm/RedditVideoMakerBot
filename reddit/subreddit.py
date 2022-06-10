@@ -7,23 +7,29 @@ import os, random, praw, re
 
 
 def get_subreddit_threads():
-    global submission
-    """
-    Returns a list of threads from the AskReddit subreddit.
-    """
+    """Selects subreddit threads and returns them 
 
+    Returns:
+        dict[str]: Object of all the selected threads' data:
+            {
+                thread_post : str,
+                thread_title : str,
+                thread_post : str,
+                comments : list[dict],
+            }
+
+            `comments` is structured as follows:
+                {
+                comment_body : str,
+                comment_url : str,
+                comment_id : str,
+                }
+    """    
+
+    global submission
     load_dotenv()
 
-    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
-        print(
-            "\nEnter your two-factor authentication code from your authenticator app.\n"
-        )
-        code = input("> ")
-        print()
-        pw = os.getenv("REDDIT_PASSWORD")
-        passkey = f"{pw}:{code}"
-    else:
-        passkey = os.getenv("REDDIT_PASSWORD")
+    passkey = configurePasskey()
 
     content = {}
     reddit = praw.Reddit(
@@ -34,6 +40,34 @@ def get_subreddit_threads():
         password=passkey,
     )
 
+    pickThread(reddit)
+
+    print_substep(f"Video will be: {submission.title} :thumbsup:")
+    console.log("Getting video comments...")
+    try:
+        content["thread_url"] = submission.url
+        content["thread_title"] = submission.title
+        content["thread_post"] = submission.selftext
+        content["comments"] = []
+
+        for top_level_comment in submission.comments:
+            if not top_level_comment.stickied:
+                content["comments"].append(
+                    {
+                        "comment_body": top_level_comment.body,
+                        "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id,
+                    }
+                )
+
+    except AttributeError as e:
+        pass
+    
+    print_substep("Received AskReddit threads successfully.", style="bold green")
+
+    return content
+
+def pickThread(reddit):
     # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
@@ -57,26 +91,15 @@ def get_subreddit_threads():
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
 
-    print_substep(f"Video will be: {submission.title} :thumbsup:")
-    console.log("Getting video comments...")
-    try:
-        content["thread_url"] = submission.url
-        content["thread_title"] = submission.title
-        content["thread_post"] = submission.selftext
-        content["comments"] = []
-
-        for top_level_comment in submission.comments:
-            if not top_level_comment.stickied:
-                content["comments"].append(
-                    {
-                        "comment_body": top_level_comment.body,
-                        "comment_url": top_level_comment.permalink,
-                        "comment_id": top_level_comment.id,
-                    }
-                )
-
-    except AttributeError as e:
-        pass
-    print_substep("Received AskReddit threads successfully.", style="bold green")
-
-    return content
+def configurePasskey():
+    if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
+        code = input("> ")
+        print()
+        pw = os.getenv("REDDIT_PASSWORD")
+        passkey = f"{pw}:{code}"
+    else:
+        passkey = os.getenv("REDDIT_PASSWORD")
+    return passkey
