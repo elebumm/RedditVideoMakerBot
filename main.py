@@ -97,7 +97,9 @@ def get_thread():
     u_inp = input("Is this a good threads?(Y/N/Stop) :")
     if u_inp.upper() == 'STOP': exit()
     elif u_inp.upper() == 'Y': return reddit_object
-    else: get_thread()
+    else:
+        console.log(f"[red]Searching for a new thread...") 
+        get_thread()
 
 if configured:
     reddit_object = get_thread()
