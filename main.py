@@ -89,20 +89,13 @@ except:
     exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
-def get_thread():
-    '''
-    The user isn't forced to choose the random thread
-    '''
+def main():
     reddit_object = get_subreddit_threads()
-    u_inp = input("Is this a good threads?(Y/N/Stop) :")
+    u_inp = input("Is this a good threads?(Y/N/Stop) :")   #The user isn't forced to choose the random thread
     if u_inp.upper() == 'STOP': exit()
-    elif u_inp.upper() == 'Y': return reddit_object
-    else:
+    elif u_inp.upper() != 'Y': 
         console.log(f"[red]Searching for a new thread...") 
-        get_thread()
-
-if configured:
-    reddit_object = get_thread()
+        main()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
@@ -110,3 +103,8 @@ if configured:
     download_background()
     chop_background_video(length)
     final_video = make_final_video(number_of_comments)
+
+if configured:
+    main()
+
+    
