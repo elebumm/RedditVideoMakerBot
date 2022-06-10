@@ -86,7 +86,7 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if not top_level_comment.stickied and top_level_comment.removed_by_category is None:  # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
+            if not top_level_comment.stickied and top_level_comment.removed_by_category is not None:  # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
                 if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
                     content["comments"].append(
                         {
