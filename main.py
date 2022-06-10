@@ -89,8 +89,18 @@ except:
     exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
-if configured:
+def get_thread():
+    '''
+    The user isn't forced to choose the random thread
+    '''
     reddit_object = get_subreddit_threads()
+    u_inp = input("Is this a good threads?(Y/N/Stop) :")
+    if u_inp.upper() == 'STOP': exit()
+    elif u_inp.upper() == 'Y': return reddit_object
+    else: get_thread()
+
+if configured:
+    reddit_object = get_thread()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
