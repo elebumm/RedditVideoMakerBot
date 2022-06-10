@@ -21,8 +21,11 @@ def name_normalize(
         name: str
 ) -> str:
     name = re.sub(r'[?\\"%*:|<>]', '', name)
-    name = re.sub(r'(\D+)/(\D+)', r'\1 or\ \2', name)
-    name = re.sub(r'(\d+)/(\d+)', r'\1 of\ \2', name)
+    name = re.sub(r'( [w,W]\s?\/\s?[o,O,0])', r' without', name)
+    name = re.sub(r'( [w,W]\s?\/)', r' with', name)
+    name = re.sub(r'([0-9]+)\s?\/\s?([0-9]+)', r'\1 of \2', name)
+    name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
+    name = re.sub(r'\/', r'', name)
     return name
 
 
