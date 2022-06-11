@@ -9,7 +9,6 @@ import os
 import time
 from utils.console import print_markdown
 from utils.console import print_step
-from utils.console import print_substep
 from rich.console import Console
 from utils.loader import Loader
 from os.path import exists
