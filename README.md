@@ -1,3 +1,6 @@
+# Note to anybody who needs support, I am currently on a crap ton of pain killers and my finger is cut in half. I cannot help you or fix any bugs for at least the next week. 
+
+
 # Reddit Video Maker Bot 🎥
 
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
