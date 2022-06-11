@@ -1,7 +1,6 @@
 # Main
 from utils.console import print_markdown
 from utils.console import print_step
-from utils.console import print_substep
 from rich.console import Console
 import time
 from reddit.subreddit import get_subreddit_threads
