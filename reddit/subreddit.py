@@ -2,13 +2,9 @@ from numpy import Infinity
 from rich.console import Console
 from utils.console import print_step, print_substep, print_markdown
 from dotenv import load_dotenv
-import os
-import random
-import praw
-import re
+import os, random, praw, re
 
 console = Console()
-
 
 def get_subreddit_threads():
     global submission
@@ -49,7 +45,7 @@ def get_subreddit_threads():
         if os.getenv("SUBREDDIT"):
             subreddit = reddit.subreddit(re.sub(r"r\/", "", os.getenv("SUBREDDIT")))
         else:
-            # ! Prompt the user to enter a subreddit
+            # Prompt the user to enter a subreddit
             try:
                 subreddit = reddit.subreddit(
                     re.sub(
@@ -64,7 +60,7 @@ def get_subreddit_threads():
 
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
-        
+
     print_substep(f"Video will be: {submission.title}")
     print("Getting video comments...")
 
@@ -76,8 +72,13 @@ def get_subreddit_threads():
 
         for top_level_comment in submission.comments:
             COMMENT_LENGTH_RANGE = [0, Infinity]
-            if os.getenv("COMMENT_LENGTH_RANGE"):
-                COMMENT_LENGTH_RANGE = [int(i) for i in os.getenv("COMMENT_LENGTH_RANGE").split(",")]                
+
+            # Ensure all values are numeric before attempting to cast
+            if os.getenv("COMMENT_LENGTH_RANGE") and (False not in list(map(lambda arg: arg.isnumeric(), os.getenv("COMMENT_LENGTH_RANGE").split(",")))):
+                try:
+                    COMMENT_LENGTH_RANGE = [int(i) for i in os.getenv("COMMENT_LENGTH_RANGE").split(",")]
+                except TypeError:
+                    pass
             if COMMENT_LENGTH_RANGE[0] <= len(top_level_comment.body) <= COMMENT_LENGTH_RANGE[1]:
                 if not top_level_comment.stickied:
                     content["comments"].append(
@@ -87,9 +88,9 @@ def get_subreddit_threads():
                             "comment_id": top_level_comment.id,
                         }
                     )
-
     except AttributeError:
         pass
-    print_substep("Received AskReddit threads successfully.", style="bold green")
 
+    print_substep("Received AskReddit threads successfully.", style="bold green")
+    print(content["comments"])
     return content
