@@ -60,7 +60,7 @@ def get_subreddit_threads():
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     console.log("Getting video comments...")
     try:
-        content["thread_url"] = submission.url
+        content["thread_url"] = submission.permalink
         content["thread_title"] = submission.title
         content["thread_post"] = submission.selftext
         content["comments"] = []
