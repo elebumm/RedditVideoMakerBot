@@ -91,11 +91,14 @@ console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 def main():
     reddit_object = get_subreddit_threads()
-    u_inp = input("Is this a good threads?(Y/N/Stop) :")   #The user isn't forced to choose the random thread
-    if u_inp.upper() == 'STOP': exit()
-    elif u_inp.upper() != 'Y': 
-        console.log(f"[red]Searching for a new thread...") 
-        main()
+
+    if os.getenv("ONE_CLICK") == "yes": #The user isn't forced to choose the random thread
+        u_inp = input("Is this a good threads?(Y/N/Stop) :")   
+        if u_inp.upper() == 'STOP': exit()
+        elif u_inp.upper() != 'Y': 
+            console.log(f"[red]Searching for a new thread...") 
+            main()
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
