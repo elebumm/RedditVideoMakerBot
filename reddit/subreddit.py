@@ -92,5 +92,4 @@ def get_subreddit_threads():
         pass
 
     print_substep("Received AskReddit threads successfully.", style="bold green")
-    print(content["comments"])
     return content
