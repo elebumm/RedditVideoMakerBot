@@ -92,7 +92,7 @@ class TTTTSWrapper:  # TikTok Text-to-Speech Wrapper
 
         audio_clips = []
         cbn = sox.Combiner()
-        cbn.set_input_format(file_type=["mp3" for _ in chunks])
+        #cbn.set_input_format(file_type=["mp3" for _ in chunks])
 
         chunkId = 0
         for chunk in chunks:
