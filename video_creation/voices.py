@@ -7,6 +7,7 @@ from rich.progress import track
 from rich.console import Console
 import re
 
+import os
 from video_creation.profane_list.en import profane_list
 
 console = Console()
@@ -15,7 +16,7 @@ console = Console()
 def profane_filter(text: str, word_list: list) -> str:
     word_list.sort(reverse=True, key=len)
     filtered_text = text
-    if any([word in word_list for word in text.split()]):
+    if any([word in word_list for word in text.split()]) and bool(os.getenv("PROFANE_FILTER", False)):
         for word in word_list:
             if word in text:
                 word_lenght = word.__len__()
