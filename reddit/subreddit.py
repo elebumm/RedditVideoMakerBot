@@ -5,6 +5,7 @@ import praw
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
+from praw.models import MoreComments
 
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
@@ -79,24 +80,24 @@ def get_subreddit_threads():
         textify(submission.title)
     )  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
-    try:
-        content["thread_url"] = f'https://reddit.com{submission.permalink}'
-        content["thread_title"] = submission.title
-        # content["thread_content"] = submission.content
-        content["comments"] = []
-        for top_level_comment in submission.comments:
-            if top_level_comment.body in ["[removed]", "[deleted]"]:
-                continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
-            if not top_level_comment.stickied:
-                if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
-                    content["comments"].append(
-                        {
-                            "comment_body": top_level_comment.body,
-                            "comment_url": top_level_comment.permalink,
-                            "comment_id": top_level_comment.id,
-                        }
-                    )
-    except AttributeError as e:
-        pass
+    
+    content["thread_url"] = f'https://reddit.com{submission.permalink}'
+    content["thread_title"] = submission.title
+    # content["thread_content"] = submission.content
+    content["comments"] = []
+    for top_level_comment in submission.comments:
+        if isinstance(top_level_comment, MoreComments):
+            continue
+        if top_level_comment.body in ["[removed]", "[deleted]"]:
+            continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
+        if not top_level_comment.stickied:
+            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+                content["comments"].append(
+                    {
+                        "comment_body": top_level_comment.body,
+                        "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id,
+                    }
+                )
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content
