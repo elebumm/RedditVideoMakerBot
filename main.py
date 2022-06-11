@@ -109,8 +109,16 @@ except ValueError:
     exit()
 console.log("[bold green]Enviroment Variables are set! Continuing...")
 
-if configured:
+def main():
     reddit_object = get_subreddit_threads()
+
+    if os.getenv("ONE_CLICK") == "yes": #The user isn't forced to choose the random thread
+        u_inp = input("Is this a good threads?(Y/N/Stop) :")   
+        if u_inp.upper() == 'STOP': exit()
+        elif u_inp.upper() != 'Y': 
+            console.log(f"[red]Searching for a new thread...") 
+            main()
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(
         reddit_object, number_of_comments, os.getenv("THEME", "light")
@@ -121,3 +129,7 @@ if configured:
         if noerror is True:
             break
     final_video = make_final_video(number_of_comments)
+
+if configured:
+    main()
+    
