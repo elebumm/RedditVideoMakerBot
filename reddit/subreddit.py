@@ -80,7 +80,7 @@ def get_subreddit_threads():
     )  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
     try:
-        content["thread_url"] = submission.permalink
+        content["thread_url"] = f'https://reddit.com{submission.permalink}'
         content["thread_title"] = submission.title
         # content["thread_content"] = submission.content
         content["comments"] = []
