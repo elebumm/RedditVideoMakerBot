@@ -65,6 +65,8 @@ Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed inf
 
 Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
 
+Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo 
+
 CallumIO - https://github.com/CallumIO
 
 HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
