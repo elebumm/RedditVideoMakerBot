@@ -15,11 +15,15 @@ from utils.loader import Loader
 from os.path import exists
 console = Console()
 
-setup_done = exists(".setup-done-before")
+setup_done = exists(".setup-block.txt")
 
 if setup_done == True:
-	console.log("[red]Setup was already completed! Please make sure you have to run this script again. If you have to, please delete the file .setup-done-before")
-	exit()
+	console.log("[red]Setup was already completed! Do you want to run the script again?")
+	run_again = input("> ")
+	if run_again == "y":
+		os.remove(".setup-block.txt")
+	else:
+		exit()
 
 # These lines ensure the user:
 # - knows they are in setup mode
@@ -71,6 +75,12 @@ else:
 	console.print("[bold green]Alright! Let's get started!")
 	time.sleep(1)
 
+
+console.log("[green]Saving your old .env in .env-save credentials...")
+with open(".env", "r") as f:
+	with open(".env-save", "w") as f2:
+		f2.write(f.read())
+
 """
 
 Begin the setup process.
@@ -88,13 +98,12 @@ subreddit = input("Subreddit (without r/) > ")
 theme = input("Theme? (light or dark) > ")
 console.log("Attempting to save your credentials...")
 loader = Loader("Saving Credentials...", "Done!").start()
- # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
+# you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
 console.log("Removing old .env file...")
-os.remove(".env")
 time.sleep(0.5)
 console.log("Creating new .env file...")
-with open('.env', 'a') as f:
+with open('.env', 'w') as f:
 	f.write(f'REDDIT_CLIENT_ID="{cliID}"\n')
 	time.sleep(0.5)
 	f.write(f'REDDIT_CLIENT_SECRET="{cliSec}"\n')
@@ -111,8 +120,8 @@ with open('.env', 'a') as f:
 	time.sleep(0.5)
 	f.write(f'OPACITY="{opacity}"\n')
 
-with open('.setup-done-before', 'a') as f:
-	f.write("This file blocks the setup assistant from running again. Delete this file to run setup again.")
+with open('.setup-block.txt', 'a') as f:
+	f.write("This file blocks the setup assistant from running again unless you re-run the script.")
 
 loader.stop()
 
