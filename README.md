@@ -6,12 +6,11 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
-[<picture>
-
+[
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
-</picture>](https://tmrrwinc.ca)
+](https://tmrrwinc.ca)
 
 ## Motivation 🤔
 
@@ -32,14 +31,12 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 ## Installation 👩‍💻
 
 1. Clone this repository
-
 2. Run `pip3 install -r requirements.txt`
 3. Run `playwright install` and `playwright install-deps`.
 
 **EXPERIMENTAL**: Run this install script to do steps 1-3 automatically (it also install dependencies!). Supports MacOS and Debian, Arch, CentoOS and fedora.
 
 To run: `sh <(curl -sL https://raw.githubusercontent.com/micziz/RedditVideoMakerBot/master/install.sh)`
-
 4. 
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
@@ -58,11 +55,13 @@ In its current state, this bot does exactly what it needs to do. However, lots o
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 
-- [x] Allowing users to choose a reddit thread instead of being randomized.
-- [ ] Allowing users to choose a background that is picked instead of the Minecraft one.
-- [x] Allowing users to choose between any subreddit.
-- [ ] Allowing users to change voice.
-- [ ] Creating better documentation and adding a command line interface.
+To-Do:
+
+-   [x] Allowing users to choose a reddit thread instead of being randomized.
+-   [x] Allowing users to choose a background that is picked instead of the Minecraft one.
+-   [x] Allowing users to choose between any subreddit.
+-   [ ] Allowing users to change voice.
+-   [ ] Creating better documentation and adding a command line interface.
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 

@@ -6,8 +6,8 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 > And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
 >
-> - ⭐ Star the project 
-> - 📣 Tweet about it 
+> - ⭐ Star the project
+> - 📣 Tweet about it
 > - 🌲  Refer this project in your project's readme
 
 ## Table of Contents
@@ -38,8 +38,7 @@ Additionally, there is a [Discord Server](https://discord.gg/swqtb7AsNQ) for any
 ## I Want To Contribute
 
 ### Reporting Bugs
-
-#### Before Submitting a Bug Report
+<details><summary><h4>Before Submitting a Bug Report</h4></summary>
 
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
 
@@ -53,8 +52,8 @@ A good bug report shouldn't leave others needing to chase you up for more inform
   - Version of the interpreter, compiler, SDK, runtime environment, package manager, depending on what seems relevant.
   - Your input and the output
   - Is the issue reproducable? Does it exist in previous versions?
-
-#### How Do I Submit a Good Bug Report?
+</details>
+<details><summary><h4>How Do I Submit a Good Bug Report?</h4></summary>
 
 We use GitHub issues to track bugs and errors. If you run into an issue with the project:
 
@@ -68,12 +67,13 @@ Once it's filed:
 - The project team will label the issue accordingly.
 - A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will try to support you as best as they can, but you may not recieve an instant.
 - If the team discovers that this is an issue it will be marked `bug` or `error`, as well as possibly other tags relating to the nature of the error), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
+</details>
 
 ### Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestion for Reddit Video Maker Bot, **including completely new features and minor improvements to existing functionality**. Following these guidelines will help maintainers and the community to understand your suggestion and find related suggestions.
 
-#### Before Submitting an Enhancement
+<details><summary><h4>Before Submitting an Enhancement</h4></summary>
 
 - Make sure that you are using the latest version.
 - Read the [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/) carefully and find out if the functionality is already covered, maybe by an individual configuration.
@@ -89,6 +89,8 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/elebum
 - **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
 - You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux. <!-- this should only be included if the project has a GUI -->
 - **Explain why this enhancement would be useful** to most users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
+
+</details>
 
 ### Your First Code Contribution
 
