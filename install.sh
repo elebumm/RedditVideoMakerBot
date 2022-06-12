@@ -194,5 +194,5 @@ function install_main(){
     fi
 }
 
-
+# Run the main function
 install_main
