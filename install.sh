@@ -1,3 +1,5 @@
+#!/bin/sh
+
 function install_fail() {
     echo "Installation failed"
     exit 1
@@ -153,6 +155,8 @@ install_deps(){
             install_fedora || install_fail
         elif [ "$(cat /etc/os-release | grep -i "centos")" ]; then
             install_centos || install_fail
+        else
+            printf "Your OS is not supported\n Please install python3, pip3 and git manually\n After that, run the script again with the -p option to install python and playwright dependencies\n If you want to add support for your OS, please open a pull request on github\n https://github.com/elebumm/RedditVideoMakerBot"
         fi
     fi
 }

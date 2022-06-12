@@ -35,6 +35,9 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 2. Run `pip3 install -r requirements.txt`
 3. Run `playwright install` and `playwright install-deps`.
+
+**EXPERIMENTAL**: Run this install script to do steps 1-3 automatically (it also install dependencies!). Supports MacOS and Debian, Arch, CentoOS and fedora.
+
 4. 
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
