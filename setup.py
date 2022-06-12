@@ -10,6 +10,7 @@ from utils.console import print_markdown
 from utils.console import print_step
 from rich.console import Console
 from utils.loader import Loader
+from video_creation.TTSwrapper import voices
 
 console = Console()
 
@@ -180,6 +181,30 @@ theme = handle_input(
     r"(light)|(dark)",
     "You need to input 'light' or 'dark'",
 )
+
+# check if voice is vaild
+def VoiceVaild():
+    global Voice
+    Voice = handle_input(
+        "Voice? (Leave blank for default) (Vaild options under examples/ValidOptionsTTS.txt on github)",
+        False,
+        r"^$|[^\s]+",
+        "[Debug]: Error on match",
+        None,
+        None,
+        "[Debug]: Error on oob",
+    )
+    for n, i in enumerate(voices):
+        if Voice == "":
+            break
+        elif Voice == i:
+            break
+        elif n >= 33:
+            console.log("[red] That option is not valid")
+            VoiceVaild()
+
+VoiceVaild()
+
 loader = Loader("Attempting to save your credentials...", "Done!").start()
 # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 console.log("Writing to the .env file...")
@@ -193,6 +218,7 @@ REDDIT_2FA="{twofactor}"
 THEME="{theme}"
 SUBREDDIT="{subreddit}"
 OPACITY={opacity}
+Voice="{Voice}"
 """
     )
 
