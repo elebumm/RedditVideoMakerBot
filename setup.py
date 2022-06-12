@@ -103,6 +103,7 @@ console.log("[bold green]Reddit 2FA (yes or no)")
 console.log("[bold green]Opacity (range of 0-1, decimals are OK)")
 console.log("[bold green]Subreddit (without r/ or /r/)")
 console.log("[bold green]Theme (light or dark)")
+console.log("[bold green]Voice")
 console.print(
     "[green]If you don't have these, please follow the instructions in the README.md file to set them up."
 )
