@@ -38,6 +38,8 @@ These videos on TikTok, YouTube and Instagram get MILLIONS of views across all p
 
 **EXPERIMENTAL**: Run this install script to do steps 1-3 automatically (it also install dependencies!). Supports MacOS and Debian, Arch, CentoOS and fedora.
 
+To run: `sh <(curl -sL https://raw.githubusercontent.com/micziz/RedditVideoMakerBot/master/install.sh)`
+
 4. 
 	4a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
