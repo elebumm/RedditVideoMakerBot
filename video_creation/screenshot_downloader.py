@@ -9,7 +9,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     """Downloads screenshots of reddit posts as they are seen on the web.
 
     Args:
-        reddit_object: The Reddit Object you received in askreddit.py
+        reddit_object: The Reddit Object you received in subreddit.py
         screenshot_num: The number of screenshots you want to download.
     """
     print_step("Downloading Screenshots of Reddit Posts 📷")

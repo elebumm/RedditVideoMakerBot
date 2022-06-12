@@ -9,7 +9,7 @@ import os, random, praw, re
 def get_subreddit_threads():
     global submission
     """
-    Returns a list of threads from the AskReddit subreddit.
+    Returns a list of threads from the given subreddit.
     """
 
     load_dotenv()
@@ -77,6 +77,6 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
-    print_substep("Received AskReddit threads successfully.", style="bold green")
+    print_substep("Received subreddit threads successfully.", style="bold green")
 
     return content
