@@ -162,5 +162,5 @@ cython_debug/
 assets/
 out
 .DS_Store
-.setup-done-before
 .env-save
+.setup-done-before
