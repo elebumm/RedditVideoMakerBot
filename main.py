@@ -2,14 +2,13 @@
 # Main
 from utils.console import print_markdown
 from rich.console import Console
-import time
 from reddit.subreddit import get_subreddit_threads
 from video_creation.background import download_background, chop_background_video
 from video_creation.voices import save_text_to_mp3
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.final_video import make_final_video
 from dotenv import load_dotenv
-import os
+import time, os
 
 console = Console()
 
@@ -22,7 +21,7 @@ REQUIRED_VALUES = [
     "OPACITY",
 ]
 
-#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
+# Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
 banner = '''
 
 ██████╗░███████╗██████╗░██████╗░██╗████████╗  ██╗░░░██╗██╗██████╗░███████╗░█████╗░
@@ -41,20 +40,15 @@ banner = '''
  
 '''
 print(banner)
-
-#Banner may look bad or wrong in IDE/Text Editor, but looks perfect in CMD, BASH or ZSH
-
-time.sleep(.5)
+time.sleep(0.5)
 
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
 )
 
 """
-
 Load .env file if exists. If it doesnt exist, print a warning and launch the setup wizard.
 If there is a .env file, check if the required variables are set. If not, print a warning and launch the setup wizard.
-
 """
 
 client_id = os.getenv("REDDIT_CLIENT_ID")
@@ -68,13 +62,11 @@ load_dotenv()
 console.log("[bold green]Checking environment variables...")
 time.sleep(.5)
 
-
 if not os.path.exists(".env"):
     configured = False
     console.log("[red] Your .env file is invalid, or was never created. Standby.")
 
 for val in REQUIRED_VALUES:
-    # print(os.getenv(val))
     if val not in os.environ or not os.getenv(val):
         console.log(f'[bold red]Missing Variable: "{val}"')
         configured = False
