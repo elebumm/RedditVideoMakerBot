@@ -88,7 +88,7 @@ subreddit = input("Subreddit (without r/) > ")
 theme = input("Theme? (light or dark) > ")
 console.log("Attempting to save your credentials...")
 loader = Loader("Saving Credentials...", "Done!").start()
- # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
+# you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 time.sleep(0.5)
 console.log("Removing old .env file...")
 os.remove(".env")
