@@ -46,7 +46,8 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Video
 
-https://user-images.githubusercontent.com/19284904/172727335-7e11c816-3484-4033-a535-4b061751fa3b.mp4
+https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
+
 
 ## Contributing & Ways to improve 📈
 
