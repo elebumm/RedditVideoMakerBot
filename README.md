@@ -8,7 +8,6 @@ Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350" alt="img">
 
-
 ## Motivation 🤔
 
 These videos on TikTok, YouTube and Instagram get MILLIONS of views across all platforms and require very little effort.
@@ -25,30 +24,29 @@ The only original thing being done is the editing and gathering of all materials
 
 - Python 3.6+
 - Playwright (this should install automatically in installation)
-- Sox 
+- Sox
 
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. 
-    2a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
+2. 2a **Automatic Install**: Run `python3 main.py` and type 'yes' to activate the setup assistant.
 
-    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
+   2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
 3. install [SoX](https://sourceforge.net/projects/sox/files/sox/)
-4. 
+4.
 5. Run `pip3 install -r requirements.txt`
 
 6. Run `playwright install` and `playwright install-deps`.
 
 7. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
-   required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
+   required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
    Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 8. Enjoy 😎
 
 ## Video
-https://user-images.githubusercontent.com/19284904/172727335-7e11c816-3484-4033-a535-4b061751fa3b.mp4
 
+https://user-images.githubusercontent.com/19284904/172727335-7e11c816-3484-4033-a535-4b061751fa3b.mp4
 
 ## Contributing & Ways to improve 📈
 

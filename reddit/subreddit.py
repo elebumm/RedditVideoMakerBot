@@ -45,7 +45,7 @@ def get_subreddit_threads():
     """
     print_step("Getting subreddit threads...")
     if not getenv(
-            "SUBREDDIT"
+        "SUBREDDIT"
     ):  # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         subreddit = reddit.subreddit(
             input("What subreddit would you like to pull from? ")
@@ -80,8 +80,8 @@ def get_subreddit_threads():
         textify(submission.title)
     )  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
-    
-    content["thread_url"] = f'https://reddit.com{submission.permalink}'
+
+    content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
     # content["thread_content"] = submission.content
     content["comments"] = []

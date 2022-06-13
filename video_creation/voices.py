@@ -1,10 +1,16 @@
-from os import getenv
+#!/usr/bin/env python3
+from gtts import gTTS
 from pathlib import Path
 
+from os import getenv, name
 import sox
 from mutagen import MutagenError
 from mutagen.mp3 import MP3, HeaderNotFoundError
 from rich.progress import track
+from rich.console import Console
+
+console = Console()
+import re
 
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
@@ -15,11 +21,10 @@ VIDEO_LENGTH: int = 40  # secs
 
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
-
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    print_step("Saving Text to MP3 files 🎶")
+    print_step("Saving Text to MP3 files...")
     length = 0
 
     # Create a folder for the mp3 files.

@@ -1,6 +1,6 @@
 import time
-from subprocess import Popen
 
+from subprocess import Popen
 from dotenv import load_dotenv
 from os import getenv, name
 from reddit.subreddit import get_subreddit_threads
@@ -27,6 +27,12 @@ print_markdown(
 )
 
 time.sleep(2)
+
+client_id = getenv("REDDIT_CLIENT_ID")
+client_secret = getenv("REDDIT_CLIENT_SECRET")
+username = getenv("REDDIT_USERNAME")
+password = getenv("REDDIT_PASSWORD")
+reddit2fa = getenv("REDDIT_2FA")
 
 
 def main():

@@ -7,18 +7,21 @@ from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
 
 from utils.console import print_step, print_substep
+import json
+from rich.console import Console
+
+console = Console()
 
 storymode = False
 
 
 def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
     """Downloads screenshots of reddit posts as they are seen on the web.
-
     Args:
         reddit_object: The Reddit Object you received in askreddit.py
         screenshot_num: The number of screenshots you want to download.
     """
-    print_step("Downloading Screenshots of Reddit Posts 📷")
+    print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
     Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
@@ -37,13 +40,16 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
         page = context.new_page()
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.goto(reddit_object["thread_url"])
-
+        page.set_viewport_size(ViewportSize(width=1920, height=1080))
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
-            print_substep("Post is NSFW. You are spicy... :fire:")
+
+            print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
+            page.locator(
+                '[data-click-id="text"] button'
+            ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
         page.locator('[data-test-id="post-content"]').screenshot(
             path="assets/temp/png/title.png"

@@ -7,6 +7,8 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 from utils.console import print_step, print_substep
 
+import datetime
+
 
 def get_start_and_end_times(video_length, length_of_clip):
     random_time = randrange(180, int(length_of_clip) - int(video_length))
@@ -57,4 +59,6 @@ def chop_background_video(video_length):
         end_time,
         targetname="assets/temp/background.mp4",
     )
-    print_substep("Background video chopped successfully! 🎉", style="bold green")
+    print_substep("Background video chopped successfully!", style="bold green")
+    noerror = True
+    return noerror

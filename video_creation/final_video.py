@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import os
 import time
@@ -12,11 +13,19 @@ from moviepy.editor import (
     CompositeAudioClip,
     CompositeVideoClip,
 )
+import reddit.subreddit
+import re
+from utils.console import print_step, print_substep
+from dotenv import load_dotenv
+import os
 from moviepy.video.io import ffmpeg_tools
 
 from reddit import subreddit
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from rich.console import Console
+
+console = Console()
 
 W, H = 1080, 1920
 
@@ -32,6 +41,7 @@ def make_final_video(number_of_clips, length):
         .resize(height=H)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
+
     # Gather all audio clips
     audio_clips = []
     for i in range(0, number_of_clips):
@@ -39,6 +49,13 @@ def make_final_video(number_of_clips, length):
     audio_clips.insert(0, AudioFileClip(f"assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
+
+    # Get sum of all clip lengths
+    total_length = sum([clip.duration for clip in audio_clips])
+    # round total_length to an integer
+    int_total_length = round(total_length)
+    # Output Length
+    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
 
     # Gather all images
     image_clips = []
@@ -68,12 +85,22 @@ def make_final_video(number_of_clips, length):
             ImageClip(f"assets/temp/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
-            .resize(width=W - 100),
+            .resize(width=W - 100)
+            .set_opacity(float(opacity)),
+        )
+    if os.path.exists("assets/mp3/posttext.mp3"):
+        image_clips.insert(
+            0,
+            ImageClip("assets/png/title.png")
+            .set_duration(audio_clips[0].duration + audio_clips[1].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(float(opacity)),
         )
     else:
         image_clips.insert(
             0,
-            ImageClip(f"assets/temp/png/title.png")
+            ImageClip("assets/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
             .resize(width=W - 100)
