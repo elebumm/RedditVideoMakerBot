@@ -21,9 +21,9 @@ banner = """
 """
 print(banner)
 load_dotenv()
-# base code by elebumm
+# Modified by JasonLovesDoggo
 print_markdown(
-    "### Thanks for using this tool! 😊 Feel free to contribute to this project on GitHub! (JasonLovesDoggo/RedditVideoMakerBot). If you have any questions, feel free to reach out to me on Twitter @JasonLovesDoggo or submit a GitHub issue."
+    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
 )
 
 time.sleep(2)
