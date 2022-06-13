@@ -1,9 +1,9 @@
-praw~=7.6.0
-moviepy~=1.0.3
-rich~=12.4.4
-mutagen~=1.45.1
-playwright~=1.22.0
+moviepy==1.0.3
+mutagen==1.45.1
+playwright==1.22.0
+praw==7.6.0
 python-dotenv==0.20.0
-typed-ast~=1.5.4
-requests~=2.28.0
-pytube~=12.1.0
+pytube==12.1.0
+requests==2.28.0
+rich==12.4.4
+sox==1.4.1
