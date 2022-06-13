@@ -52,7 +52,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
   - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
   - Version of the interpreter, compiler, SDK, runtime environment, package manager, depending on what seems relevant.
   - Your input and the output
-  - Is the issue reproducable? Does it exist in previous versions?
+  - Is the issue reproducible? Does it exist in previous versions?
 
 #### How Do I Submit a Good Bug Report?
 
