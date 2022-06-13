@@ -1,6 +1,6 @@
 from numpy import Infinity
 from rich.console import Console
-from utils.console import print_step, print_substep, print_markdown
+from utils.console import print_step, print_substep
 from dotenv import load_dotenv
 import os, random, praw, re
 

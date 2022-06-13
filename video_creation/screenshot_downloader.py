@@ -49,8 +49,8 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             path="assets/png/title.png"
         )
 
-        for idx, comment in track(
-            enumerate(reddit_object["comments"])
+        for idx, comment in enumerate(
+            track(reddit_object["comments"]), "Downloading screenshots..."
         ):
 
             #allow user to see what comment is being saved
