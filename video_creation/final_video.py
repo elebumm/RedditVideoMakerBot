@@ -100,7 +100,7 @@ def make_final_video(number_of_clips, length):
     else:
         image_clips.insert(
             0,
-            ImageClip("assets/png/title.png")
+            ImageClip("assets/temp/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
             .resize(width=W - 100)

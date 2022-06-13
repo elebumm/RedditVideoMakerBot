@@ -26,7 +26,7 @@ print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue."
 )
 
-time.sleep(2)
+time.sleep(1)
 
 client_id = getenv("REDDIT_CLIENT_ID")
 client_secret = getenv("REDDIT_CLIENT_SECRET")
