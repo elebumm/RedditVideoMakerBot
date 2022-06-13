@@ -66,7 +66,7 @@ We use GitHub issues to track bugs and errors. If you run into an issue with the
 Once it's filed:
 
 - The project team will label the issue accordingly.
-- A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will try to support you as best as they can, but you may not recieve an instant.
+- A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will try to support you as best as they can, but you may not receive an instant.
 - If the team discovers that this is an issue it will be marked `bug` or `error`, as well as possibly other tags relating to the nature of the error), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
 
 ### Suggesting Enhancements
