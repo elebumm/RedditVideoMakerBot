@@ -40,7 +40,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme, t
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
 
-        texts_in_tl = ts.bing(reddit_object["title"], to_language=target_lang)
+        texts_in_tl = ts.bing(reddit_object["thread_title"], to_language=target_lang)
 
         page.locator('[data-test-id="post-content"]').screenshot(
             path="assets/png/title.png"
