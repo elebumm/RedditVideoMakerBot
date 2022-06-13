@@ -91,10 +91,19 @@ console.log("[bold green]Enviroment Variables are set! Continuing...")
 
 if configured:
     reddit_object = get_subreddit_threads()
-    length, number_of_comments = save_text_to_mp3(reddit_object)
-    download_screenshots_of_reddit_posts(
-        reddit_object, number_of_comments, os.getenv("THEME", "light")
-    )
+    get_language = input("Choose a target language to translate the post to (e.g. 'es' for Spanish): ")
+
+    try:
+        length, number_of_comments = save_text_to_mp3(reddit_object, get_language)
+        download_screenshots_of_reddit_posts(
+            reddit_object, number_of_comments, os.getenv("THEME", "light"), get_language
+        )
+    except:
+        print_markdown("## Unfortunately, we don't have a support for that language yet so this thread will not be translated.")
+        
+        length, number_of_comments = save_text_to_mp3(reddit_object, "en")
+        download_screenshots_of_reddit_posts(reddit_object, number_of_comments, "en")
+
     download_background()
     chop_background_video(length)
     final_video = make_final_video(number_of_comments)

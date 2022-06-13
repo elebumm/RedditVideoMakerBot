@@ -3,9 +3,11 @@ from pathlib import Path
 from rich.progress import track
 from utils.console import print_step, print_substep
 import json
+import translators as ts
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
 
-
-def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
+def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme, target_lang):
     """Downloads screenshots of reddit posts as they are seen on the web.
 
     Args:
@@ -38,9 +40,25 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
 
+        texts_in_tl = ts.bing(reddit_object["title"], to_language=target_lang)
+
         page.locator('[data-test-id="post-content"]').screenshot(
             path="assets/png/title.png"
         )
+
+        # rewrite the title in target language
+        img = Image.open("assets/png/title.png")
+        
+        width = img.size[0] 
+        height = img.size[1]
+
+        d1 = ImageDraw.Draw(img)
+        font = ImageFont.truetype("arial.ttf", 22)
+        
+        w, h = font.getsize(new_str)
+        d1.rectangle((9, 25, 20 + width, 55 + h), fill='white')
+        d1.text((10, 25), f"{new_str}", font=font, fill=(0, 0, 0))            
+        img.save("assets/png/title.png")
 
         for idx, comment in track(
             enumerate(reddit_object["comments"]), "Downloading screenshots..."
@@ -57,6 +75,23 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             page.locator(f"#t1_{comment['comment_id']}").screenshot(
                 path=f"assets/png/comment_{idx}.png"
             )
+
+            # translating the comments
+            img_comment = Image.open(f"assets/png/comment_{idx}.png")
+            width = img_comment.size[0] 
+            height = img_comment.size[1]
+            
+            comment_tl = ts.bing(comment["comment_body"], to_language=target_lang)
+        
+            wrapper = textwrap.TextWrapper(width=78)
+            wrapped_str = wrapper.fill(text=comment_tl)
+
+            d2 = ImageDraw.Draw(img_comment)
+            font_comment = ImageFont.truetype("arial.ttf", 16)
+            
+            d2.rectangle((9, 45, width - 10, height - 35), fill='#F5F6F6')
+            d2.text((10, 48), f"{wrapped_str}", font=font_comment, fill=(0, 0, 0))            
+            img_comment.save(f"assets/png/comment_{idx}.png")
 
         print_substep("Screenshots downloaded Successfully.",
                       style="bold green")
