@@ -163,3 +163,10 @@ assets/
 out
 .DS_Store
 .setup-done-before
+assets/
+results/*
+.env
+reddit-bot-351418-5560ebc49cac.json
+/.idea
+*.pyc
+/video_creation/data/videos.json

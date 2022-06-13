@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
-from random import randrange
-
-from yt_dlp import YoutubeDL
-
+import random
+from os import listdir, environ
 from pathlib import Path
+from random import randrange
+from pytube import YouTube
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 from utils.console import print_step, print_substep
@@ -12,63 +11,54 @@ import datetime
 
 
 def get_start_and_end_times(video_length, length_of_clip):
-
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
 def download_background(video_length):
 
-    """Downloads the background video from youtube.
-
-    Shoutout to: bbswitzer (https://www.youtube.com/watch?v=n_Dv4JMiwK8)
-    """
-
-    print_substep("\nPut the URL of the video you want in the background.\nThe default video is a Minecraft parkour video.\n"
-        "Leave the input field blank to use the default.")
-    print_substep(f"Make sure the video is longer than {str(datetime.timedelta(seconds=round(video_length + 180)))}!\n", style="red")
-
-    inp = input("URL: ")
-
-    if not inp:
-        vidurl = "https://www.youtube.com/watch?v=n_Dv4JMiwK8"
-    else:
-        vidurl = inp
-
-    vidpath = vidurl.split("v=")[1]
-
-    if not Path(f"assets/mp4/{vidpath}.mp4").is_file():
+def download_background():
+    """Downloads the backgrounds/s video from youtube."""
+    Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
+    background_options = [  # uri , filename , credit
+        ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", "bbswitzer"),
+        (
+            "https://www.youtube.com/watch?v=2X9QGY__0II",
+            "rocket_league.mp4",
+            "Orbital Gameplay",
+        ),
+    ]
+    # note: make sure the file name doesn't include a - in it
+    if len(listdir("./assets/backgrounds")) != len(
+        background_options
+    ):  # if there are any background videos not installed
         print_step(
-            "We need to download the background video. This may be fairly large but it's only done once per background."
+            "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
+        )
+        print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
+        for uri, filename, credit in background_options:
+            print_substep(f"Downloading {filename} from {uri}")
+            YouTube(uri).streams.filter(res="1080p").first().download(
+                "assets/backgrounds", filename=f"{credit}-{filename}"
+            )
+
+        print_substep(
+            "Background videos downloaded successfully! 🎉", style="bold green"
         )
 
-        print_substep("Downloading the background video... please be patient.")
 
-        ydl_opts = {
-            "outtmpl": f"assets/mp4/{vidpath}.mp4",
-            "merge_output_format": "mp4",
-        }
+def chop_background_video(video_length):
+    print_step("Finding a spot in the backgrounds video to chop...✂️")
+    choice = random.choice(listdir("assets/backgrounds"))
+    environ["background_credit"] = choice.split("-")[0]
 
-        with YoutubeDL(ydl_opts) as ydl:
-            ydl.download(vidurl)
+    background = VideoFileClip(f"assets/backgrounds/{choice}")
 
-        print_substep("Background video downloaded successfully!", style="bold green")
-        
-    return vidpath
-
-
-def chop_background_video(video_length, vidpath):
-    print_step("Finding a spot in the background video to chop...")
-    background = VideoFileClip(f"assets/mp4/{vidpath}.mp4")
-    if background.duration < video_length + 180:
-        print_substep("This video is too short.", style="red")
-        noerror = False
-        return noerror
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
     ffmpeg_extract_subclip(
-        f"assets/mp4/{vidpath}.mp4",
+        f"assets/backgrounds/{choice}",
         start_time,
         end_time,
-        targetname="assets/mp4/clip.mp4",
+        targetname="assets/temp/background.mp4",
     )
     print_substep("Background video chopped successfully!", style="bold green")
     noerror = True
