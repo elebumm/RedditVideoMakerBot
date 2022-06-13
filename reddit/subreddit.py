@@ -67,7 +67,7 @@ def get_subreddit_threads():
 
         for top_level_comment in submission.comments:
             if not top_level_comment.stickied:
-            	if not comment.author == None:
+            	if not top_level_comment.author == None:
                 	content["comments"].append(
                     	{
                         	"comment_body": top_level_comment.body,
