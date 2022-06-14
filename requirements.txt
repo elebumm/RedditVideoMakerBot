@@ -1,8 +1,10 @@
 gTTS==2.2.4
 moviepy==1.0.3
 mutagen==1.45.1
+pillow==9.1.1
 playwright==1.22.0
 praw==7.6.0
 python-dotenv==0.20.0
 rich==12.4.4
+translators=5.2.2
 yt_dlp==2022.5.18
