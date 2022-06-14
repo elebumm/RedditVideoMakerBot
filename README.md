@@ -13,6 +13,10 @@ Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
 </picture>](https://tmrrwinc.ca)
 
+## Video Explainer
+[![lewisthumbnail](https://user-images.githubusercontent.com/6053155/173631669-1d1b14ad-c478-4010-b57d-d79592a789f2.png)
+](https://www.youtube.com/watch?v=3gjcY_00U1w)
+
 ## Motivation 🤔
 
 These videos on TikTok, YouTube and Instagram get MILLIONS of views across all platforms and require very little effort. The only original thing being done is the editing and gathering of all materials...
