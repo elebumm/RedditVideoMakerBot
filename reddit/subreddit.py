@@ -22,7 +22,7 @@ def get_subreddit_threads():
     print_substep("Logging into Reddit.")
 
     content = {}
-    if getenv("REDDIT_2FA").casefold() == "yes":
+    if str(getenv("REDDIT_2FA")).casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"
         )
