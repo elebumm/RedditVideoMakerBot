@@ -119,7 +119,7 @@ function install_centos(){
         echo "Python is already installed"
     fi
     if [ ! command -v pip3 &> /dev/null ]; then
-        sudo yum install python3-pip
+        python3 -m ensurepip --upgrade
     else
         echo "pip is already installed"
     fi
