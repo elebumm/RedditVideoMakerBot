@@ -6,11 +6,15 @@ from rich.progress import track
 
 
 def save_text_to_mp3(reddit_obj):
-    """Saves Text to MP3 files.
+    """Saves Text to MP3 files
 
     Args:
-        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
-    """
+        reddit_obj (dict): Reddit object given by get_subreddit_threads
+
+    Returns:
+        tuple[int,int]: First index is the length of comments used, I don't know what idx is
+    """        
+
     print_step("Saving Text to MP3 files...")
     length = 0
 
