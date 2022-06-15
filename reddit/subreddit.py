@@ -39,8 +39,8 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-
-    pickThread(reddit)
+    
+    submission = pickThread(reddit)
 
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     console.log("Getting video comments...")
@@ -90,6 +90,8 @@ def pickThread(reddit):
 
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
+
+        return submission
 
 def configurePasskey():
     if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
