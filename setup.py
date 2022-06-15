@@ -18,7 +18,7 @@ from pathlib import Path
 console = Console()
 
 
-def main():
+def setup_main():
 	setup_done = Path(".setup-done-before").is_file()
 
 	if setup_done == True:
@@ -142,4 +142,4 @@ def ensureSetup():
 
 
 if __name__ == '__main__':
-	main()
+	setup_main()

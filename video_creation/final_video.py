@@ -97,7 +97,6 @@ def gatherImages(number_of_clips, opacity, audio_clips):
     Returns:
         list[ImageClip]: all the comments with TTS over it
     """
-    # Gather all images
     image_clips = []
     for i in range(0, number_of_clips):
         image_clips.append(
@@ -111,7 +110,14 @@ def gatherImages(number_of_clips, opacity, audio_clips):
     return image_clips
 
 def gatherAudioClips(number_of_clips):
-    # Gather all audio clips
+    """Gathers all audio clips
+
+    Args:
+        number_of_clips (int): Which index to go to in the list of audio files
+
+    Returns:
+        tuple[list,CompositeAudioClip]: First index is the list of audio clips, second is all the audio clips put together
+    """    
     audio_clips = []
     for i in range(0, number_of_clips):
         audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
