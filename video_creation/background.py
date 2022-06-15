@@ -9,6 +9,15 @@ from utils.console import print_step, print_substep
 
 
 def get_start_and_end_times(video_length, length_of_clip):
+    """Generates random start and end times 
+
+    Args:
+        video_length (int): Length of video in seconds
+        length_of_clip (int): Length of the video where the start and end times are to be pulled from
+
+    Returns:
+        tuple[int,int]: Start time of the clip at the first index,end time of the clip at the second
+    """
 
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
@@ -38,6 +47,11 @@ def download_background():
 
 
 def chop_background_video(video_length):
+    """Returns a random section of the background video
+
+    Args:
+        video_length (int): Length of video, in seconds
+    """    
     print_step("Finding a spot in the background video to chop...")
     background = VideoFileClip("assets/mp4/background.mp4")
 
