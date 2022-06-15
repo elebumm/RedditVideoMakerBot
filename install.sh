@@ -52,7 +52,7 @@ function install_macos(){
         echo "Homebrew is already installed"
     fi
     echo "Installing python"
-    if [ ! command -v python3 &> /dev/null ]; then
+    if ! command -v python3 &> /dev/null; then
         brew install python@3.10
     else
         echo "Python is already installed"
