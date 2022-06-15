@@ -15,10 +15,25 @@ import os, time
 """TODO
 - Refactor all .py files
 - Write tests in tests/
-
+"""
 
 """
 
+Load .env file if exists. If it doesnt exist, print a warning and launch the setup wizard.
+If there is a .env file, check if the required variables are set. If not, print a warning and launch the setup wizard.
+
+"""
+load_dotenv()
+
+client_id = os.getenv("REDDIT_CLIENT_ID")
+client_secret = os.getenv("REDDIT_CLIENT_SECRET")
+username = os.getenv("REDDIT_USERNAME")
+password = os.getenv("REDDIT_PASSWORD")
+reddit2fa = os.getenv("REDDIT_2FA")
+
+
+console.log("[bold green]Checking environment variables...")
+time.sleep(1)
 
 
 
