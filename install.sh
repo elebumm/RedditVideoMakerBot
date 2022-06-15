@@ -173,8 +173,8 @@ function install_main(){
         echo "Assuming yes"
     else
         echo "Continue? (y/n)"
-        read answer
-        if [ "$answer" != "y" ]; then
+        read -r -s -n 1 answer
+        if [[ $answer != "" ]]; then
             echo "Aborting"
             exit 1
         fi
