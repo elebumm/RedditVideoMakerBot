@@ -12,7 +12,7 @@ def save_text_to_mp3(reddit_obj):
         reddit_obj (dict): Reddit object given by get_subreddit_threads
 
     Returns:
-        tuple[int,int]: First index is the length of comments used, I don't know what idx is
+        tuple[int,int]: First index is the video length in seconds, I don't know what the second thing is
     """        
 
     print_step("Saving Text to MP3 files...")
@@ -21,6 +21,7 @@ def save_text_to_mp3(reddit_obj):
     # Create a folder for the mp3 files.
     Path("assets/mp3").mkdir(parents=True, exist_ok=True)
 
+    # Generate title audio
     tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)
     tts.save(f"assets/mp3/title.mp3")
     length += MP3(f"assets/mp3/title.mp3").info.length
@@ -30,11 +31,13 @@ def save_text_to_mp3(reddit_obj):
     except OSError as e:
         pass
 
+    # Generates the thread post audio 
     if reddit_obj["thread_post"] != "":
         tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
         tts.save(f"assets/mp3/posttext.mp3")
         length += MP3(f"assets/mp3/posttext.mp3").info.length
 
+    # Generates each comment's audio
     for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than 50 seconds. This can be longer, but this is just a good starting point
         if length > 50:
