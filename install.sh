@@ -152,13 +152,13 @@ install_deps(){
     if [ "$(uname)" == "Darwin" ]; then
         install_macos || install_fail
     elif [ "$(uname)" == "Linux" ]; then
-        if [ "$(cat /etc/os-release | grep -i "arch")" ]; then
+        if [ -n "$(cat /etc/os-release | grep -i "arch")" ]; then
             install_arch || install_fail
-        elif [ "$(cat /etc/os-release | grep -i "debian")" ]; then
+        elif [ -n "$(cat /etc/os-release | grep -i "debian")" ]; then
             install_deb || install_fail
-        elif [ "$(cat /etc/os-release | grep -i "fedora")" ]; then
+        elif [ -n "$(cat /etc/os-release | grep -i "fedora")" ]; then
             install_fedora || install_fail
-        elif [ "$(cat /etc/os-release | grep -i "centos")" ]; then
+        elif [ -n "$(cat /etc/os-release | grep -i "centos")" ]; then
             install_centos || install_fail
         else
             printf "Your OS is not supported\n Please install python3, pip3 and git manually\n After that, run the script again with the -p option to install python and playwright dependencies\n If you want to add support for your OS, please open a pull request on github\n https://github.com/elebumm/RedditVideoMakerBot"
