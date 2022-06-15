@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from dotenv import load_dotenv
 import os, time
-
+console = Console()
 """TODO
 - Refactor all .py files
 - Write tests in tests/
