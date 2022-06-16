@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
-from gtts import gTTS
+from os import getenv
 from pathlib import Path
 
-from os import getenv, name
 import sox
 from mutagen import MutagenError
 from mutagen.mp3 import MP3, HeaderNotFoundError
-from rich.progress import track
 from rich.console import Console
+from rich.progress import track
+
+from TTS.swapper import TTS
 
 console = Console()
-import re
 
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
-from video_creation.TTSwrapper import TTTTSWrapper
 
 VIDEO_LENGTH: int = 40  # secs
 
@@ -29,9 +28,8 @@ def save_text_to_mp3(reddit_obj):
 
     # Create a folder for the mp3 files.
     Path("assets/temp/mp3").mkdir(parents=True, exist_ok=True)
-
-    ttttsw = TTTTSWrapper()  # tiktok text to speech wrapper
-    ttttsw.tts(
+    TextToSpeech = TTS()
+    TextToSpeech.tts(
         sanitize_text(reddit_obj["thread_title"]),
         filename=f"assets/temp/mp3/title.mp3",
         random_speaker=False,
@@ -41,19 +39,19 @@ def save_text_to_mp3(reddit_obj):
     except HeaderNotFoundError:  # note to self AudioFileClip
         length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
     if getenv("STORYMODE").casefold() == "true":
-        ttttsw.tts(
+        TextToSpeech.tts(
             sanitize_text(reddit_obj["thread_content"]),
             filename=f"assets/temp/mp3/story_content.mp3",
             random_speaker=False,
         )
-        #'story_content'
+        # 'story_content'
     com = 0
     for comment in track((reddit_obj["comments"]), "Saving..."):
         # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer, but this is just a good_voices starting point
         if length > VIDEO_LENGTH:
             break
 
-        ttttsw.tts(
+        TextToSpeech.tts(
             sanitize_text(comment["comment_body"]),
             filename=f"assets/temp/mp3/{com}.mp3",
             random_speaker=False,
