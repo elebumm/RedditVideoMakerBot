@@ -68,7 +68,7 @@ class POLLY:
         except KeyError:
             if response.json()['error'] == 'Text length is too long!':
                 chunks = [
-                    m.group().strip() for m in re.finditer(r" *((.{0,299})(\.|.$))", req_text)
+                    m.group().strip() for m in re.finditer(r" *((.{0,540})(\.|.$))", req_text)
                 ]
 
                 audio_clips = []
