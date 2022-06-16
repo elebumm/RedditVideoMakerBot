@@ -125,8 +125,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
                 cbn.build(audio_clips, filename, "concatenate")
             else:
                 os.rename(audio_clips[0], filename)
-
-        except sox.core.SoxError:  # https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/67#issuecomment-1150466339
+        except (sox.core.SoxError, FileNotFoundError):  # https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/67#issuecomment-1150466339
             for clip in audio_clips:
                 i = audio_clips.index(clip)  # get the index of the clip
                 audio_clips = (
