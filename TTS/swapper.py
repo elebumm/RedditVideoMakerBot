@@ -3,9 +3,10 @@ from os import getenv
 from dotenv import load_dotenv
 
 from TTS.GTTS import GTTS
+from TTS.POLLY import POLLY
 from TTS.TikTok import TikTok
 
-CHOICE_DIR = {"tiktok": TikTok, "gtts": GTTS}
+CHOICE_DIR = {"tiktok": TikTok, "gtts": GTTS, 'polly': POLLY}
 
 
 class TTS:

@@ -14,7 +14,7 @@ def get_start_and_end_times(video_length, length_of_clip):
 
 
 def download_background():
-    """Downloads the backgrounds/s video from youtube."""
+    """Downloads the backgrounds/s video from YouTube."""
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", "bbswitzer"),
@@ -25,7 +25,7 @@ def download_background():
         # ),
     ]
     # note: make sure the file name doesn't include an - in it
-    if not len(listdir("./assets/backgrounds")) <= len(
+    if not len(listdir("./assets/backgrounds")) >= len(
         background_options
     ):  # if there are any background videos not installed
         print_step(
