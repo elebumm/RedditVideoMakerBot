@@ -3,6 +3,7 @@ import json
 from os import getenv
 from utils.console import print_substep
 
+
 def get_subreddit_undone(submissions: List, subreddit):
     """
     recursively checks if the top submission in the list was already done.
