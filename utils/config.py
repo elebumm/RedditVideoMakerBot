@@ -2,8 +2,18 @@
 
 from dotenv import dotenv_values
 
-DEFAULTS = {'SUBREDDIT': "AskReddit", 'ALLOW_NSFW': "False", 'POST_ID': "", 'THEME': "DARK", 'REDDIT_2FA': "no",
-    'TIMES_TO_RUN': "", 'MAX_COMMENT_LENGTH': "500", 'OPACITY': "1", 'VOICE': "en_us_001", 'STORYMODE': "False"}
+DEFAULTS = {
+    "SUBREDDIT": "AskReddit",
+    "ALLOW_NSFW": "False",
+    "POST_ID": "",
+    "THEME": "DARK",
+    "REDDIT_2FA": "no",
+    "TIMES_TO_RUN": "",
+    "MAX_COMMENT_LENGTH": "500",
+    "OPACITY": "1",
+    "VOICE": "en_us_001",
+    "STORYMODE": "False",
+}
 
 
 class Config:

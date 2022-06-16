@@ -7,6 +7,7 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 from utils.console import print_step, print_substep
 
+
 def get_start_and_end_times(video_length, length_of_clip):
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
@@ -17,11 +18,11 @@ def download_background():
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", "bbswitzer"),
-        #(
+        # (
         #    "https://www.youtube.com/watch?v=2X9QGY__0II",
         #    "rocket_league.mp4",
         #    "Orbital Gameplay",
-        #),
+        # ),
     ]
     # note: make sure the file name doesn't include an - in it
     if not len(listdir("./assets/backgrounds")) <= len(
@@ -32,7 +33,7 @@ def download_background():
         )
         print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
         for uri, filename, credit in background_options:
-            if Path(f'assets/backgrounds/{credit}-{filename}').is_file():
+            if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
                 continue  # adds check to see if file exists before downloading
             print_substep(f"Downloading {filename} from {uri}")
             YouTube(uri).streams.filter(res="1080p").first().download(

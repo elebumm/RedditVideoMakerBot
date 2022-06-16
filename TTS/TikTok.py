@@ -70,11 +70,11 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
 
     def tts(
-            self,
-            req_text: str = "TikTok Text To Speech",
-            filename: str = "title.mp3",
-            random_speaker: bool = False,
-            censer=False,
+        self,
+        req_text: str = "TikTok Text To Speech",
+        filename: str = "title.mp3",
+        random_speaker: bool = False,
+        censer=False,
     ):
         req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
         if censer:
@@ -92,7 +92,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
 
         audio_clips = []
         cbn = sox.Combiner()
-        #cbn.set_input_format(file_type=["mp3" for _ in chunks])
+        # cbn.set_input_format(file_type=["mp3" for _ in chunks])
 
         chunkId = 0
         for chunk in chunks:
@@ -130,7 +130,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             for clip in audio_clips:
                 i = audio_clips.index(clip)  # get the index of the clip
                 audio_clips = (
-                        audio_clips[:i] + [AudioFileClip(clip)] + audio_clips[i + 1:]
+                    audio_clips[:i] + [AudioFileClip(clip)] + audio_clips[i + 1 :]
                 )  # replace the clip with an AudioFileClip
             audio_concat = concatenate_audioclips(audio_clips)
             audio_composite = CompositeAudioClip([audio_concat])
