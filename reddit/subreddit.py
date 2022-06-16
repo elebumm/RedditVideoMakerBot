@@ -77,6 +77,6 @@ def get_subreddit_threads():
 
     except AttributeError as e:
         pass
-    print_substep("Received AskReddit threads successfully.", style="bold green")
+    print_substep(f"Received {subreddit} threads successfully.", style="bold green")
 
     return content
