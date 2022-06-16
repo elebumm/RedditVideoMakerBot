@@ -142,6 +142,3 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         if ok_or_good == 1:  # 1/10 chance of ok voice
             return random.choice(voices)
         return random.choice(human)  # 9/10 chance of good voice
-
-
-TikTok().tts('Hello World', '../TTS/hello.mp3')
