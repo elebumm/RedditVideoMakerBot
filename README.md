@@ -72,10 +72,10 @@ Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
 
 Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo
 
-CallumIO - https://github.com/CallumIO
+CallumIO (c.#6837) - https://github.com/CallumIO
 
 HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
 
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
-Freebiell - https://github.com/FreebieII
+Freebiell (Freebie#6429) - https://github.com/FreebieII
