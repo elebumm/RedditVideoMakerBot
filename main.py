@@ -14,17 +14,16 @@ import os, time
 console = Console()
 """TODO
 - Refactor all .py files
-    - Done:
+    - Add function typing:
         - main
         - final_video
         - console
-    - Not done
         - background
         - screenshot_downloader
         - voices
-    - Need docs
         - setup (ADD DOCS)
         - subreddit (ADD DOCS)
+    - Need docs
         - loader (ADD DOCS)
 
 - Write tests in tests/

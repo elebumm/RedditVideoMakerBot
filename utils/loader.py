@@ -11,9 +11,10 @@ from time import sleep
 
 
 class Loader:
-    def __init__(self, desc="Loading...", end="Done!", timeout=0.1):
+    
+    def __init__(self, desc="Loading...", end="Done!", timeout=0.1):        
         """
-        A loader-like context manager
+        A loader-like context manager, used to generate the loading wheel.
 
         Args:
             desc (str, optional): The loader's description. Defaults to "Loading...".

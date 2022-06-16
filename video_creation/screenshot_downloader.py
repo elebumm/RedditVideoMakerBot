@@ -17,6 +17,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
     # ! Make sure the reddit screenshots folder exists
     Path("assets/png").mkdir(parents=True, exist_ok=True)
 
+    
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
@@ -42,6 +43,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num, theme):
             path="assets/png/title.png"
         )
 
+        # Get comment screenshots
         for idx, comment in track(
             enumerate(reddit_object["comments"]), "Downloading screenshots..."
         ):

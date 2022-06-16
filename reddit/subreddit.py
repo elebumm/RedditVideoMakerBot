@@ -67,7 +67,15 @@ def get_subreddit_threads():
 
     return content
 
-def pickThread(reddit):
+def pickThread(reddit:praw.Reddit):
+    """Picks the reddit thread based on whether the user wants a random one, and then from the chosen subreddit
+
+    Args:
+        reddit (Reddit): The praw.Reddit object
+
+    Returns:
+       praw.models.reddit.submission.Submission : The chosen thread 
+    """
     # If the user specifies that he doesnt want a random thread, or if he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
     if not os.getenv("RANDOM_THREAD") or os.getenv("RANDOM_THREAD") == "no":
         print_substep("Insert the full thread link:", style="bold green")
@@ -91,9 +99,14 @@ def pickThread(reddit):
         threads = subreddit.hot(limit=25)
         submission = list(threads)[random.randrange(0, 25)]
 
-        return submission
+    return submission
 
 def configurePasskey():
+    """Asks for 2FA code if needed, otherwise configures password
+
+    Returns:
+        str: Password
+    """    
     if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n"

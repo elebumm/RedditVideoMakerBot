@@ -19,6 +19,8 @@ console = Console()
 
 
 def setup_main():
+	"""Asks user if they want to run the setup script, then runs the setup script if the user is sure they want to run it.
+	"""
 	setup_done = Path(".setup-done-before").is_file()
 
 	if setup_done == True:
@@ -35,23 +37,10 @@ def setup_main():
 		"### You're in the setup wizard. Ensure you're supposed to be here, then type yes to continue. If you're not sure, type no to quit."
 	)
 
-
 	ensureSetup()
 
-	console.log("Ensure you have the following ready to enter:")
-	console.log("[bold green]Reddit Client ID")
-	console.log("[bold green]Reddit Client Secret")
-	console.log("[bold green]Reddit Username")
-	console.log("[bold green]Reddit Password")
-	console.log("[bold green]Reddit 2FA (yes or no)")
-	console.log("[bold green]Opacity (range of 0-1, decimals are OK)")
-	console.log("[bold green]Subreddit (without r/ or /r/)")
-	console.log("[bold green]Theme (light or dark)")
-	time.sleep(0.5)
-	console.print(
-	"[green]If you don't have these, please follow the instructions in the README.md file to set them up.")
-	console.print(
-	"[green]If you do have these, type yes to continue. If you dont, go ahead and grab those quickly and come back.")
+	print_setup_criteria()
+
 	confirmUserHasCredentials = input(
 	"Are you sure you have the credentials? > ").casefold()
 	if confirmUserHasCredentials != "yes":
@@ -69,9 +58,42 @@ def setup_main():
 	# Post-Setup: send message and try to run main.py again.
 	os.system("python3 main.py")
 
+
+def print_setup_criteria():
+	"""Prints the following:
+	
+	Ensure you have the following ready to enter:                                                                                                                                  setup.py:43
+           Reddit Client ID                                                                                                                                                               setup.py:44
+           Reddit Client Secret                                                                                                                                                           setup.py:45
+           Reddit Username                                                                                                                                                                setup.py:46
+           Reddit Password                                                                                                                                                                setup.py:47
+           Reddit 2FA (yes or no)                                                                                                                                                         setup.py:48
+           Opacity (range of 0-1, decimals are OK)                                                                                                                                        setup.py:49
+           Subreddit (without r/ or /r/)                                                                                                                                                  setup.py:50
+           Theme (light or dark)                                                                                                                                                          setup.py:51
+If you don't have these, please follow the instructions in the README.md file to set them up.
+If you do have these, type yes to continue. If you dont, go ahead and grab those quickly and come back.
+	"""
+
+
+	console.log("Ensure you have the following ready to enter:")
+	console.log("[bold green]Reddit Client ID")
+	console.log("[bold green]Reddit Client Secret")
+	console.log("[bold green]Reddit Username")
+	console.log("[bold green]Reddit Password")
+	console.log("[bold green]Reddit 2FA (yes or no)")
+	console.log("[bold green]Opacity (range of 0-1, decimals are OK)")
+	console.log("[bold green]Subreddit (without r/ or /r/)")
+	console.log("[bold green]Theme (light or dark)")
+	time.sleep(0.5)
+	console.print(
+	"[green]If you don't have these, please follow the instructions in the README.md file to set them up.")
+	console.print(
+	"[green]If you do have these, type yes to continue. If you dont, go ahead and grab those quickly and come back.")
+
 def setup():
 	"""
-	Begin the setup process.
+	Takes in user input for .env fields
 	"""
 
 	console.log("Enter your credentials now.")
@@ -116,6 +138,8 @@ def setup():
 
 
 def ensureSetup():
+	"""Makes sure the user intends to proceed with the setup process, which overwrites the present .env file
+	"""
 	# This Input is used to ensure the user is sure they want to continue.
 	ensureSetupIsRequired = input(
 		"Are you sure you want to continue? > ").casefold()
