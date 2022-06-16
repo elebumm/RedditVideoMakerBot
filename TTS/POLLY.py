@@ -58,7 +58,7 @@ class POLLY:
         else:
             if not os.getenv('VOICE'):
                 return ValueError('Please set the environment variable VOICE to a valid voice. options are: {}'.format(voices))
-            voice = (os.getenv("VOICE"))
+            voice = str(os.getenv("VOICE")).capitalize()
         body = {'voice': voice, 'text': req_text}
         response = requests.post(self.url, data=body)
         try:
