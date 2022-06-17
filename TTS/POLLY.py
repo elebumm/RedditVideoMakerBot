@@ -76,7 +76,7 @@ class POLLY:
 
                 chunkId = 0
                 for chunk in chunks:
-                    body = {'voice': 'Brian', 'text': chunk}
+                    body = {'voice': voice, 'text': chunk}
                     resp = requests.post(self.url, data=body)
                     voice_data = requests.get(resp.json()['speak_url'])
                     with open(filename.replace(".mp3", f"-{chunkId}.mp3"), "wb") as out:
