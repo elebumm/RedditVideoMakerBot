@@ -6,37 +6,7 @@ import requests
 import sox
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
-voices = {'neural': [
-    'Ivy',
-    'Joanna',
-    'Kendra',
-    'Kimberly',
-    'Salli',
-    'Joey',
-    'Justin',
-    'Matthew',
-    'Amy',
-    'Emma',
-    'Brian'
-
-], 'standard': [
-    'Ivy',
-    'Joanna',
-    'Kendra',
-    'Kimberly',
-    'Salli',
-    'Joey',
-    'Justin',
-    'Matthew',
-    "Russell",
-    "Nicole",
-    "Amy",
-    "Emma",
-    "Brian",
-    "Aditi",
-    "Raveena",
-    "Geraint"
-]}
+voices = ['Brian', 'Emma', 'Russell', 'Joey', 'Matthew', 'Joanna', 'Kimberly', 'Amy', 'Geraint', 'Nicole', 'Justin', 'Ivy', 'Kendra', 'Salli', 'Raveena']
 
 
 # valid voices https://lazypy.ro/tts/
@@ -59,7 +29,7 @@ class POLLY:
             if not os.getenv('VOICE'):
                 return ValueError('Please set the environment variable VOICE to a valid voice. options are: {}'.format(voices))
             voice = str(os.getenv("VOICE")).capitalize()
-        body = {'voice': voice, 'text': req_text}
+        body = {'voice': voice, 'text': req_text, 'service': 'polly'}
         response = requests.post(self.url, data=body)
         try:
             voice_data = requests.get(response.json()['speak_url'])
@@ -76,7 +46,7 @@ class POLLY:
 
                 chunkId = 0
                 for chunk in chunks:
-                    body = {'voice': voice, 'text': chunk}
+                    body = {'voice': voice, 'text': chunk, 'service': 'polly'}
                     resp = requests.post(self.url, data=body)
                     voice_data = requests.get(resp.json()['speak_url'])
                     with open(filename.replace(".mp3", f"-{chunkId}.mp3"), "wb") as out:
@@ -111,5 +81,4 @@ class POLLY:
         return text
 
     def randomvoice(self):
-        valid = voices['neural'] + voices['standard']
-        return random.choice(valid)
+        return random.choice(voices)
