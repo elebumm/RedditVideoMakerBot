@@ -4,9 +4,19 @@ All done WITHOUT video editing or asset compiling. Just pure ✨programming magi
 
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
+<a target="_blank" href="https://tmrrwinc.ca">
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
-  <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350" alt="img">
+  <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
+</picture>
+
+</a>
+
+## Video Explainer
+
+[![lewisthumbnail](https://user-images.githubusercontent.com/6053155/173631669-1d1b14ad-c478-4010-b57d-d79592a789f2.png)
+](https://www.youtube.com/watch?v=3gjcY_00U1w)
 
 ## Motivation 🤔
 
@@ -47,7 +57,6 @@ The only original thing being done is the editing and gathering of all materials
 ## Video
 
 https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
-
 
 ## Contributing & Ways to improve 📈
 
