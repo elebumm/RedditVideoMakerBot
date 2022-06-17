@@ -6,6 +6,8 @@ import requests
 import sox
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
+from requests.exceptions import JSONDecodeError
+
 voices = ['Brian', 'Emma', 'Russell', 'Joey', 'Matthew', 'Joanna', 'Kimberly', 'Amy', 'Geraint', 'Nicole', 'Justin', 'Ivy', 'Kendra', 'Salli', 'Raveena']
 
 
@@ -35,10 +37,10 @@ class POLLY:
             voice_data = requests.get(response.json()['speak_url'])
             with open(filename, 'wb') as f:
                 f.write(voice_data.content)
-        except KeyError:
+        except (KeyError, JSONDecodeError):
             if response.json()['error'] == 'Text length is too long!':
                 chunks = [
-                    m.group().strip() for m in re.finditer(r" *((.{0,530})(\.|.$))", req_text)
+                    m.group().strip() for m in re.finditer(r" *((.{0,499})(\.|.$))", req_text)
                 ]
 
                 audio_clips = []
