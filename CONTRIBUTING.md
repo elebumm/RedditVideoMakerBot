@@ -8,16 +8,22 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 >
 > - ⭐ Star the project
 > - 📣 Tweet about it
-> - 🌲  Refer this project in your project's readme
+> - 🌲 Refer this project in your project's readme
 
 ## Table of Contents
 
-- [I Have a Question](#i-have-a-question)
-- [I Want To Contribute](#i-want-to-contribute)
-- [Reporting Bugs](#reporting-bugs)
-- [Suggesting Enhancements](#suggesting-enhancements)
-- [Your First Code Contribution](#your-first-code-contribution)
-- [Improving The Documentation](#improving-the-documentation)
+- [Contributing to Reddit Video Maker Bot 🎥](#contributing-to-reddit-video-maker-bot-)
+  - [Table of Contents](#table-of-contents)
+  - [I Have a Question](#i-have-a-question)
+  - [I Want To Contribute](#i-want-to-contribute)
+    - [Reporting Bugs](#reporting-bugs)
+      - [How Do I Submit a Good Bug Report?](#how-do-i-submit-a-good-bug-report)
+    - [Suggesting Enhancements](#suggesting-enhancements)
+      - [How Do I Submit a Good Enhancement Suggestion?](#how-do-i-submit-a-good-enhancement-suggestion)
+    - [Your First Code Contribution](#your-first-code-contribution)
+      - [Your environment](#your-environment)
+      - [Making your first PR](#making-your-first-pr)
+    - [Improving The Documentation](#improving-the-documentation)
 
 ## I Have a Question
 
@@ -38,6 +44,7 @@ Additionally, there is a [Discord Server](https://discord.gg/swqtb7AsNQ) for any
 ## I Want To Contribute
 
 ### Reporting Bugs
+
 <details><summary><h4>Before Submitting a Bug Report</h4></summary>
 
 A good bug report shouldn't leave others needing to chase you up for more information. Therefore, we ask you to investigate carefully, collect information and describe the issue in detail in your report. Please complete the following steps in advance to help us fix any potential bug as fast as possible.
@@ -51,9 +58,9 @@ A good bug report shouldn't leave others needing to chase you up for more inform
   - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
   - Version of the interpreter, compiler, SDK, runtime environment, package manager, depending on what seems relevant.
   - Your input and the output
-  - Is the issue reproducable? Does it exist in previous versions?
-</details>
-<details><summary><h4>How Do I Submit a Good Bug Report?</h4></summary>
+  - Is the issue reproducible? Does it exist in previous versions?
+
+#### How Do I Submit a Good Bug Report?
 
 We use GitHub issues to track bugs and errors. If you run into an issue with the project:
 
@@ -65,7 +72,7 @@ We use GitHub issues to track bugs and errors. If you run into an issue with the
 Once it's filed:
 
 - The project team will label the issue accordingly.
-- A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will try to support you as best as they can, but you may not recieve an instant.
+- A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will try to support you as best as they can, but you may not receive an instant.
 - If the team discovers that this is an issue it will be marked `bug` or `error`, as well as possibly other tags relating to the nature of the error), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
 </details>
 

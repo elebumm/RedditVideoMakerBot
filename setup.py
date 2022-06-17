@@ -100,7 +100,7 @@ if input("Are you sure you want to continue? > ").strip().casefold() != "yes":
 # Once they confirm, move on with the script.
 console.print("[bold green]Alright! Let's get started!")
 
-print("\n")
+print()
 console.log("Ensure you have the following ready to enter:")
 console.log("[bold green]Reddit Client ID")
 console.log("[bold green]Reddit Client Secret")
