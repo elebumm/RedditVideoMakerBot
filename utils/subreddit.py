@@ -18,6 +18,7 @@ def get_subreddit_undone(submissions: List, subreddit):
                 print_substep("NSFW Post Detected. Skipping...")
                 continue
         return submission
+    print('all submissions have been done going by top submission order')
     return get_subreddit_undone(
         subreddit.top(time_filter="hour"), subreddit
     )  # all of the videos in hot have already been done
