@@ -164,3 +164,4 @@ out
 .DS_Store
 .env-save
 .setup-done-before
+/results
