@@ -1,3 +1,4 @@
+import re
 from os import getenv, environ
 
 import praw
@@ -44,10 +45,14 @@ def get_subreddit_threads():
     print_step("Getting subreddit threads...")
     if not getenv(
         "SUBREDDIT"
-    ):  # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
-        subreddit = reddit.subreddit(
-            input("What subreddit would you like to pull from? ")
-        )  # if the env isnt set, ask user
+    ):  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
+        try:
+            subreddit = reddit.subreddit(
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? ")) # removes the r/ from the input
+            )
+        except ValueError:
+            subreddit = reddit.subreddit("askreddit")
+            print_substep("Subreddit not defined. Using AskReddit.")
     else:
         print_substep(f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config")
         subreddit = reddit.subreddit(
