@@ -11,13 +11,13 @@ log = logging.getLogger(__name__)
 def envUpdate():
     if path.exists(".env.template"):
         if platform == "win32" or platform == "cygwin":
-            #envTemplate = subprocess.run(
-            #    [r'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe',
-            #    r'.\envUpdateWin.ps1'],
-            #    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            #    shell=True
-            #)
-            print("Updating is not yet supported on Windows.")
+            envTemplate = subprocess.run(
+                [r'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe',
+                r'.\envUpdateWin.ps1'],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                shell=True
+                print("Updating .env is unsupported on Windows.")
+            )
             return
         elif platform == "darwin" or platform == "linux":
             envTemplate = subprocess.check_output(
