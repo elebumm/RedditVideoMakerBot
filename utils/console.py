@@ -9,19 +9,19 @@ console = Console()
 
 
 def print_markdown(text):
-    """Prints a rich info message. Support Markdown syntax."""
+	"""Prints a rich info message. Support Markdown syntax."""
 
-    md = Padding(Markdown(text), 2)
-    console.print(md)
+	md = Padding(Markdown(text), 2)
+	console.print(md)
 
 
 def print_step(text):
-    """Prints a rich info message."""
+	"""Prints a rich info message."""
 
-    panel = Panel(Text(text, justify="left"))
-    console.print(panel)
+	panel = Panel(Text(text, justify="left"))
+	console.print(panel)
 
 
 def print_substep(text, style=""):
-    """Prints a rich info message without the panelling."""
-    console.print(text, style=style)
+	"""Prints a rich info message without the panelling."""
+	console.print(text, style=style)
