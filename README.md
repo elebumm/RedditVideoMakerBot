@@ -43,16 +43,16 @@ The only original thing being done is the editing and gathering of all materials
 
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
-3. install [SoX](https://sourceforge.net/projects/sox/files/sox/)
-4.
-5. Run `pip3 install -r requirements.txt`
+3. Install [SoX](https://sourceforge.net/projects/sox/files/sox/)
+   
+4. Run `pip3 install -r requirements.txt`
 
-6. Run `playwright install` and `playwright install-deps`.
+5. Run `playwright install` and `playwright install-deps`.
 
-7. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+6. Run `python3 main.py` (unless you chose automatic install, then the installer will automatically run main.py)
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
    Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-8. Enjoy 😎
+7. Enjoy 😎
 
 ## Video
 
@@ -71,7 +71,7 @@ I have tried to simplify the code so anyone can read it and start contributing a
 - [x] Allowing users to change voice.
 - [x] Checks if a video has already been created
 - [x] Light and Dark modes
-- [x] Nsfw post filter
+- [x] NSFW post filter
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
