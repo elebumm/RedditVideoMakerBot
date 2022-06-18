@@ -15,6 +15,13 @@ def textify(text):
     return "".join(filter(TEXT_WHITELIST.__contains__, text))
 
 
+def try_env(param, backup):
+    try:
+        return environ[param]
+    except KeyError:
+        return backup
+
+
 def get_subreddit_threads():
     """
     Returns a list of threads from the AskReddit subreddit.
@@ -89,7 +96,7 @@ def get_subreddit_threads():
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
-            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+            if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,
