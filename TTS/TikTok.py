@@ -74,21 +74,17 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         req_text: str = "TikTok Text To Speech",
         filename: str = "title.mp3",
         random_speaker: bool = False,
-        censer=False,
+        censor=False,
     ):
         req_text = req_text.replace("+", "plus").replace(" ", "+").replace("&", "and")
-        if censer:
+        if censor:
             # req_text = pf.censor(req_text)
             pass
         voice = (
-            self.randomvoice()
-            if random_speaker
-            else (os.getenv("VOICE") or random.choice(human))
+            self.randomvoice() if random_speaker else (os.getenv("VOICE") or random.choice(human))
         )
 
-        chunks = [
-            m.group().strip() for m in re.finditer(r" *((.{0,299})(\.|.$))", req_text)
-        ]
+        chunks = [m.group().strip() for m in re.finditer(r" *((.{0,299})(\.|.$))", req_text)]
 
         audio_clips = []
         cbn = sox.Combiner()
@@ -97,9 +93,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         chunkId = 0
         for chunk in chunks:
             try:
-                r = requests.post(
-                    f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0"
-                )
+                r = requests.post(f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0")
             except requests.exceptions.SSLError:
                 # https://stackoverflow.com/a/47475019/18516611
                 session = requests.Session()
@@ -107,9 +101,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
                 adapter = HTTPAdapter(max_retries=retry)
                 session.mount("http://", adapter)
                 session.mount("https://", adapter)
-                r = session.post(
-                    f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0"
-                )
+                r = session.post(f"{self.URI_BASE}{voice}&req_text={chunk}&speaker_map_type=0")
             print(r.text)
             vstr = [r.json()["data"]["v_str"]][0]
             b64d = base64.b64decode(vstr)
@@ -126,7 +118,10 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
                 cbn.build(audio_clips, filename, "concatenate")
             else:
                 os.rename(audio_clips[0], filename)
-        except (sox.core.SoxError, FileNotFoundError):  # https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/67#issuecomment-1150466339
+        except (
+            sox.core.SoxError,
+            FileNotFoundError,
+        ):  # https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/67#issuecomment-1150466339
             for clip in audio_clips:
                 i = audio_clips.index(clip)  # get the index of the clip
                 audio_clips = (

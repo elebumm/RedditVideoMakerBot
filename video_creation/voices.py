@@ -10,10 +10,11 @@ from rich.progress import track
 
 from TTS.swapper import TTS
 
-console = Console()
-
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
+
+console = Console()
+
 
 VIDEO_LENGTH: int = 40  # secs
 
@@ -31,23 +32,24 @@ def save_text_to_mp3(reddit_obj):
     TextToSpeech = TTS()
     TextToSpeech.tts(
         sanitize_text(reddit_obj["thread_title"]),
-        filename=f"assets/temp/mp3/title.mp3",
+        filename="assets/temp/mp3/title.mp3",
         random_speaker=False,
     )
     try:
-        length += MP3(f"assets/temp/mp3/title.mp3").info.length
+        length += MP3("assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:  # note to self AudioFileClip
-        length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
+        length += sox.file_info.duration("assets/temp/mp3/title.mp3")
     if getenv("STORYMODE").casefold() == "true":
         TextToSpeech.tts(
             sanitize_text(reddit_obj["thread_content"]),
-            filename=f"assets/temp/mp3/story_content.mp3",
+            filename="assets/temp/mp3/story_content.mp3",
             random_speaker=False,
         )
         # 'story_content'
     com = 0
     for comment in track((reddit_obj["comments"]), "Saving..."):
-        # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer, but this is just a good_voices starting point
+        # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer
+        # but this is just a good_voices starting point
         if length > VIDEO_LENGTH:
             break
 
