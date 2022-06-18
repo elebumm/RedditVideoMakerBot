@@ -10,6 +10,27 @@ from praw.models import MoreComments
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
 
+def check_if_in_file(name_of_thread):
+    nameThread = str(name_of_thread)
+    isInList = False
+    with open("ListOfUsedThreads", "r") as rFile:
+        for line in rFile:
+            lineText = line.replace("\n", "")
+            if lineText == nameThread:
+                isInList = True
+                break
+    
+    if isInList == False:
+        with open("ListOfUsedThreads", "a") as wFile:
+            print("Thread not in list. Adding to list.")
+            wFile.write(nameThread + '\n')
+            return False
+
+    elif isInList == True:
+        print("Thread in list. Finding new Thread.")
+        return True
+
+
 def textify(text):
     return "".join(filter(TEXT_WHITELIST.__contains__, text))
 
@@ -59,6 +80,9 @@ def get_subreddit_threads():
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
+        while(check_if_in_file(textify(submission.title))):
+            print("Looking for new Thread.")
+            submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double checking
     if submission is None:
         return get_subreddit_threads()  # submission already done. rerun
