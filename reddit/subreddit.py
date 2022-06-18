@@ -48,7 +48,8 @@ def get_subreddit_threads():
     ):  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         try:
             subreddit = reddit.subreddit(
-                re.sub(r"r\/", "", input("What subreddit would you like to pull from? ")) # removes the r/ from the input
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+                # removes the r/ from the input
             )
         except ValueError:
             subreddit = reddit.subreddit("askreddit")
