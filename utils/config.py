@@ -3,36 +3,36 @@
 from dotenv import dotenv_values
 
 DEFAULTS = {
-    "SUBREDDIT": "AskReddit",
-    "ALLOW_NSFW": "False",
-    "POST_ID": "",
-    "THEME": "DARK",
-    "REDDIT_2FA": "no",
-    "TIMES_TO_RUN": "",
-    "MAX_COMMENT_LENGTH": "500",
-    "OPACITY": "1",
-    "VOICE": "en_us_001",
-    "STORYMODE": "False",
+	"SUBREDDIT": "AskReddit",
+	"ALLOW_NSFW": "False",
+	"POST_ID": "",
+	"THEME": "DARK",
+	"REDDIT_2FA": "no",
+	"TIMES_TO_RUN": "",
+	"MAX_COMMENT_LENGTH": "500",
+	"OPACITY": "1",
+	"VOICE": "en_us_001",
+	"STORYMODE": "False",
 }
 
 
 class Config:
-    def __init__(self):
-        self.raw = dotenv_values("../.env")
-        self.load_attrs()
+	def __init__(self):
+		self.raw = dotenv_values("../.env")
+		self.load_attrs()
 
-    def __getattr__(self, attr):  # code completion for attributes fix.
-        return getattr(self, attr)
+	def __getattr__(self, attr):  # code completion for attributes fix.
+		return getattr(self, attr)
 
-    def load_attrs(self):
-        for key, value in self.raw.items():
-            self.add_attr(key, value)
+	def load_attrs(self):
+		for key, value in self.raw.items():
+			self.add_attr(key, value)
 
-    def add_attr(self, key, value):
-        if value is None or value == "":
-            setattr(self, key, DEFAULTS[key])
-        else:
-            setattr(self, key, str(value))
+	def add_attr(self, key, value):
+		if value is None or value == "":
+			setattr(self, key, DEFAULTS[key])
+		else:
+			setattr(self, key, str(value))
 
 
 config = Config()
