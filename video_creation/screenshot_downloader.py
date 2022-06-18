@@ -40,7 +40,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
         page = context.new_page()
-        page.goto(reddit_object["thread_url"])
+        page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
@@ -68,7 +68,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f'https://reddit.com{comment["comment_url"]}')
+                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
                 page.locator(f"#t1_{comment['comment_id']}").screenshot(
                     path=f"assets/temp/png/comment_{idx}.png"
                 )
