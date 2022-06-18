@@ -12,7 +12,11 @@ CHOICE_DIR = {"tiktok": TikTok, "gtts": GTTS, 'polly': POLLY}
 class TTS:
     def __new__(cls):
         load_dotenv()
-        CHOICE = getenv("TTsChoice").casefold()
+        try:
+            CHOICE = getenv("TTsChoice").casefold()
+        except AttributeError:
+            print_substep("None defined. Defaulting to 'polly.'")
+            CHOICE = "polly"
         valid_keys = [key.lower() for key in CHOICE_DIR.keys()]
         if CHOICE not in valid_keys:
             raise ValueError(

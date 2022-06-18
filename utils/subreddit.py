@@ -14,8 +14,12 @@ def get_subreddit_undone(submissions: List, subreddit):
         if already_done(done_videos, submission):
             continue
         if submission.over_18:
-            if getenv("ALLOW_NSFW").casefold() == "false":
-                print_substep("NSFW Post Detected. Skipping...")
+            try:
+                if getenv("ALLOW_NSFW").casefold() == "false":
+                    print_substep("NSFW Post Detected. Skipping...")
+                    continue
+            except AttributeError:
+                print_substep("NSFW settings not defined. Skipping NSFW post...")
                 continue
         return submission
     print('all submissions have been done going by top submission order')

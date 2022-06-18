@@ -169,4 +169,4 @@ results/*
 reddit-bot-351418-5560ebc49cac.json
 /.idea
 *.pyc
-/video_creation/data/videos.json
+video_creation/data/videos.json
