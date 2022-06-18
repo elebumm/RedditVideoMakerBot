@@ -6,7 +6,7 @@ from os import getenv, name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
-from utils.envUpdate import envUpdate
+from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
