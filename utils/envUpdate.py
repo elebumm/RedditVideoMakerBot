@@ -4,21 +4,16 @@ import tempfile
 import logging
 
 from os import path
-from sys import platform
+from sys import platform, stderr
 
 log = logging.getLogger(__name__)
 
 def envUpdate():
     if path.exists(".env.template"):
         if platform == "win32" or platform == "cygwin":
-            envTemplate = subprocess.run(
-                [r'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe',
-                r'.\envUpdateWin.ps1'],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                shell=True
-                print("Updating .env is unsupported on Windows.")
-            )
-            return
+            runPS('utils\envUpdateWin.ps1')
+            f = open("envVars.txt", "rb")
+            envTemplate = f.read()
         elif platform == "darwin" or platform == "linux":
             envTemplate = subprocess.check_output(
                 "awk -F '=' 'NF {print $1}' .env.template | grep --regexp=^[a-zA-Z]",
@@ -47,3 +42,7 @@ def envUpdate():
             f"[ERROR] The following environment variables are missing: {missing}.)"
         )
         exit(-1)
+
+def runPS(cmd):
+    completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
+    return completed
