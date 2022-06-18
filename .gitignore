@@ -170,3 +170,5 @@ reddit-bot-351418-5560ebc49cac.json
 /.idea
 *.pyc
 /video_creation/data/videos.json
+utils/envUpdate.py.old
+envVars.txt
