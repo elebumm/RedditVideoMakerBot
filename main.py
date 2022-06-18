@@ -6,7 +6,7 @@ from os import getenv, name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
-from utils.envUpdate import checkUpdate
+from utils.envUpdate import envUpdate
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
@@ -23,7 +23,6 @@ print(
 """
 )
 load_dotenv()
-envUpdate()
 # Modified by JasonLovesDoggo
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
@@ -39,7 +38,7 @@ reddit2fa = getenv("REDDIT_2FA")
 
 
 def main():
-    checkUpdate()
+    envUpdate()
     cleanup()
 
     def get_obj():
