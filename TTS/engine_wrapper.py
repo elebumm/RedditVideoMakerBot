@@ -28,7 +28,7 @@ class TTSEngine:
         self,
         tts_module,
         reddit_object: dict,
-        path: str = "assets/mp3",
+        path: str = "assets/temp/mp3",
         max_length: int = 50,
     ):
         self.tts_module = tts_module()
@@ -54,7 +54,6 @@ class TTSEngine:
             self.reddit_object["thread_post"] != ""
             and getenv("STORYMODE", "").casefold() == "true"
         ):
-
             self.call_tts("posttext", sanitize_text(self.reddit_object["thread_post"]))
 
         idx = None
