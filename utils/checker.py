@@ -16,7 +16,7 @@ def checkforEnv():
 
 def envUpdate():
 
-	if path.exists(".env.template"):  # if .env.template exists
+	if path.exists(".env.template"):
 		if platform == "win32" or platform == "cygwin":
 			runPS("utils/scripts/envValidator.ps1")
 			with open(".\\video_creation\\data\\envvars.txt", "rb") as f:
