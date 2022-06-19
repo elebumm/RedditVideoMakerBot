@@ -67,7 +67,9 @@ noneng = [
 
 class TikTok:  # TikTok Text-to-Speech Wrapper
     def __init__(self):
-        self.URI_BASE = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+        self.URI_BASE = (
+            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+        )
 
     def tts(
         self,

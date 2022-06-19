@@ -22,7 +22,7 @@ VIDEO_LENGTH: int = 40  # secs
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
     Args:
-        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
+            reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
     print_step("Saving Text to MP3 files...")
     length = 0

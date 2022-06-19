@@ -59,9 +59,7 @@ class POLLY:
                 f.write(voice_data.content)
         except (KeyError, JSONDecodeError):
             if response.json()["error"] == "Text length is too long!":
-                chunks = [
-                    m.group().strip() for m in re.finditer(r" *((.{0,499})(\.|.$))", req_text)
-                ]
+                chunks = [m.group().strip() for m in re.finditer(r" *((.{0,499})(\.|.$))", req_text)]
 
                 audio_clips = []
                 cbn = sox.Combiner()
