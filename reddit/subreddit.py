@@ -1,3 +1,4 @@
+import re
 from os import getenv, environ
 
 import praw
@@ -14,6 +15,13 @@ def textify(text):
     return "".join(filter(TEXT_WHITELIST.__contains__, text))
 
 
+def try_env(param, backup):
+    try:
+        return environ[param]
+    except KeyError:
+        return backup
+
+
 def get_subreddit_threads():
     """
     Returns a list of threads from the AskReddit subreddit.
@@ -23,9 +31,7 @@ def get_subreddit_threads():
 
     content = {}
     if str(getenv("REDDIT_2FA")).casefold() == "yes":
-        print(
-            "\nEnter your two-factor authentication code from your authenticator app.\n"
-        )
+        print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
         print()
         pw = getenv("REDDIT_PASSWORD")
@@ -41,19 +47,22 @@ def get_subreddit_threads():
         check_for_async=False,
     )
     """
-    Ask user for subreddit input
-    """
+	Ask user for subreddit input
+	"""
     print_step("Getting subreddit threads...")
     if not getenv(
         "SUBREDDIT"
-    ):  # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
-        subreddit = reddit.subreddit(
-            input("What subreddit would you like to pull from? ")
-        )  # if the env isnt set, ask user
+    ):  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
+        try:
+            subreddit = reddit.subreddit(
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+                # removes the r/ from the input
+            )
+        except ValueError:
+            subreddit = reddit.subreddit("askreddit")
+            print_substep("Subreddit not defined. Using AskReddit.")
     else:
-        print_substep(
-            f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config"
-        )
+        print_substep(f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config")
         subreddit = reddit.subreddit(
             getenv("SUBREDDIT")
         )  # Allows you to specify in .env. Done for automation purposes.
@@ -71,14 +80,10 @@ def get_subreddit_threads():
     num_comments = submission.num_comments
 
     print_substep(f"Video will be: {submission.title} :thumbsup:", style="bold green")
-    print_substep(f"Thread has " + str(upvotes) + " upvotes", style="bold blue")
-    print_substep(
-        f"Thread has a upvote ratio of " + str(ratio) + "%", style="bold blue"
-    )
-    print_substep(f"Thread has " + str(num_comments) + " comments", style="bold blue")
-    environ["VIDEO_TITLE"] = str(
-        textify(submission.title)
-    )  # todo use global instend of env vars
+    print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
+    print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
+    print_substep(f"Thread has {num_comments} comments", style="bold blue")
+    environ["VIDEO_TITLE"] = str(textify(submission.title))  # todo use global instend of env vars
     environ["VIDEO_ID"] = str(textify(submission.id))
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
@@ -91,7 +96,7 @@ def get_subreddit_threads():
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
-            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+            if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,
