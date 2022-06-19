@@ -11,7 +11,7 @@ from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
-
+VERSION = 2.1
 print(
     """
 ██████╗ ███████╗██████╗ ██████╗ ██╗████████╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗     ███╗   ███╗ █████╗ ██╗  ██╗███████╗██████╗
