@@ -17,6 +17,6 @@ def sanitize_text(text):
     # note: not removing apostrophes
     regex_expr = r"\s['|’]|['|’]\s|[\^_~@!&;#:\-%“”‘\"%\*/{}\[\]\(\)\\|<>=+]"
     result = re.sub(regex_expr, " ", result)
-
+    result = result.replace("+", "plus").replace(" ", "+").replace("&", "and")
     # remove extra whitespace
     return " ".join(result.split())
