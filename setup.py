@@ -40,14 +40,10 @@ def handle_input(
                 except ValueError:
                     console.log("[red]" + err_message)  # Type conversion failed
                     continue
-            if (
-                nmin is not None and len(user_input) < nmin
-            ):  # Check if string is long enough
+            if nmin is not None and len(user_input) < nmin:  # Check if string is long enough
                 console.log("[red]" + oob_error)
                 continue
-            if (
-                nmax is not None and len(user_input) > nmax
-            ):  # Check if string is not too long
+            if nmax is not None and len(user_input) > nmax:  # Check if string is not too long
                 console.log("[red]" + oob_error)
                 continue
             break

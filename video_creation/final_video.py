@@ -61,8 +61,7 @@ def make_final_video(number_of_clips, length):
             ImageClip("assets/temp/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
-            .resize(width=W - 100)
-            .set_opacity(float(opacity)),
+            .resize(width=W - 100),
         )
     else:
         image_clips.insert(
@@ -70,7 +69,8 @@ def make_final_video(number_of_clips, length):
             ImageClip("assets/temp/png/title.png")
             .set_duration(audio_clips[0].duration)
             .set_position("center")
-            .resize(width=W - 100),
+            .resize(width=W - 100)
+            .set_opacity(float(opacity)),
         )
 
     for i in range(0, number_of_clips):

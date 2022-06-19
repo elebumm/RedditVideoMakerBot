@@ -1,3 +1,4 @@
+import re
 from os import getenv, environ
 
 import praw
@@ -12,6 +13,13 @@ TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234
 
 def textify(text):
     return "".join(filter(TEXT_WHITELIST.__contains__, text))
+
+
+def try_env(param, backup):
+    try:
+        return environ[param]
+    except KeyError:
+        return backup
 
 
 def get_subreddit_threads():
@@ -39,15 +47,20 @@ def get_subreddit_threads():
         check_for_async=False,
     )
     """
-    Ask user for subreddit input
-    """
+	Ask user for subreddit input
+	"""
     print_step("Getting subreddit threads...")
     if not getenv(
         "SUBREDDIT"
-    ):  # note to self. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
-        subreddit = reddit.subreddit(
-            input("What subreddit would you like to pull from? ")
-        )  # if the env isnt set, ask user
+    ):  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
+        try:
+            subreddit = reddit.subreddit(
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+                # removes the r/ from the input
+            )
+        except ValueError:
+            subreddit = reddit.subreddit("askreddit")
+            print_substep("Subreddit not defined. Using AskReddit.")
     else:
         print_substep(f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config")
         subreddit = reddit.subreddit(
@@ -83,7 +96,7 @@ def get_subreddit_threads():
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
-            if len(top_level_comment.body) <= int(environ["MAX_COMMENT_LENGTH"]):
+            if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,
