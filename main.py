@@ -5,13 +5,13 @@ from dotenv import load_dotenv
 from os import getenv, name, path
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step, print_substep
-from utils.checker import checkforEnv, envUpdate
+from utils.console import print_markdown, print_step
+from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
-
+VERSION = 2.1
 print(
 	"""
 ██████╗ ███████╗██████╗ ██████╗ ██╗████████╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗     ███╗   ███╗ █████╗ ██╗  ██╗███████╗██████╗
