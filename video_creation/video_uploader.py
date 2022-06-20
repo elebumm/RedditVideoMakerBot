@@ -71,6 +71,10 @@ async def upload_video_to_tiktok(videofile):
         await asyncio.sleep(10)
         
         title = os.getenv("VIDEO_TITLE") or videofile.split(".")[0]
+        is_nsfw = os.getenv("nsfw") or "false"
+        if is_nsfw:
+            title = "#nsfw " + title
+        
         tags = os.getenv("TIKTOK_TAGS") or "#AskReddit"
         
         if len(title) + len(tags) > 150:

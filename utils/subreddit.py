@@ -1,6 +1,6 @@
 from typing import List
 import json
-from os import getenv
+from os import environ, getenv
 from utils.console import print_substep
 
 
@@ -20,6 +20,7 @@ def get_subreddit_undone(submissions: List, subreddit):
                     continue
             except AttributeError:
                 print_substep("NSFW settings not defined. Skipping NSFW post...")
+        environ["nsfw"] = str(submission.over_18)
         return submission
     print("all submissions have been done going by top submission order")
     return get_subreddit_undone(
