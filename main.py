@@ -1,3 +1,4 @@
+import asyncio
 import time
 
 from subprocess import Popen
@@ -5,11 +6,12 @@ from dotenv import load_dotenv
 from os import getenv, name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step
+from utils.console import print_markdown, print_step, print_substep
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
+from video_creation.video_uploader import upload_video_to_tiktok
 from video_creation.voices import save_text_to_mp3
 VERSION = 2.1
 print(
@@ -35,6 +37,8 @@ client_secret = getenv("REDDIT_CLIENT_SECRET")
 username = getenv("REDDIT_USERNAME")
 password = getenv("REDDIT_PASSWORD")
 reddit2fa = getenv("REDDIT_2FA")
+tiktok_email = getenv("TIKTOK_EMAIL")
+tiktok_password = getenv("TIKTOK_PASSWORD")
 
 
 def main():
@@ -50,7 +54,10 @@ def main():
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
     chop_background_video(length)
-    make_final_video(number_of_comments, length)
+    video_file_name = make_final_video(number_of_comments, length)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(upload_video_to_tiktok(video_file_name))
+    loop.close()
 
 
 def run_many(times):

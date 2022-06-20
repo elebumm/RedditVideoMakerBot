@@ -148,3 +148,4 @@ def make_final_video(number_of_clips, length):
     print_step(
         f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
     )
+    return filename

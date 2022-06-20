@@ -39,7 +39,7 @@ The only original thing being done is the editing and gathering of all materials
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. 2a **Automatic Install**: Run `python main.py` and type 'yes' to activate the setup assistant.
+2. 2a **Automatic Install**: Run `python setup.py` and type 'yes' to activate the setup assistant.
 
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
@@ -89,3 +89,5 @@ HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
 Freebiell (Freebie#6429) - https://github.com/FreebieII
+
+CoasterFreakDE (CoasterFreak | Benni#3306) - https://github.com/CoasterFreakDE (Automatic Upload)
