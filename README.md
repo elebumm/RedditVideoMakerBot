@@ -27,8 +27,15 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Disclaimers 🚨
 
-- **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that
-  you will then have to upload manually. This is for the sake of avoiding any sort of community guideline issues.
+Please use chromedriver.exe provided as its source code has been edited to avoid bot detection on tiktok website.
+
+Use only tiktok accounts that can be accessed through email password on browser, OAuth2.0 may not work, slightly probable.
+
+Do not spam upload videos as tiktok will most likely ban you after this or during the act.
+
+I am not responsible/ liable for any damages or problems or resulting effects you face using this tool or in relation with this tool, use at own risk. 
+
+Webdriver selected classes that are most likely not going to change in a while, looking for alternatives.
 
 ## Requirements
 
@@ -73,6 +80,7 @@ I have tried to simplify the code so anyone can read it and start contributing a
 - [x] Checks if a video has already been created
 - [x] Light and Dark modes
 - [x] NSFW post filter
+- [x] Automatic upload to TikTok
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
