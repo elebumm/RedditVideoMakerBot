@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import re
@@ -7,6 +8,8 @@ import sox
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from requests.exceptions import JSONDecodeError
+
+from utils.console import print_substep
 
 voices = [
     "Brian",
@@ -58,6 +61,22 @@ class POLLY:
             with open(filename, "wb") as f:
                 f.write(voice_data.content)
         except (KeyError, JSONDecodeError):
+            def save_data():
+                with open("./video_creation/data/videos.json", "r+") as raw_vids:
+                    done_vids = json.load(raw_vids)
+                    payload = {
+                        "id": str(os.getenv("VIDEO_ID")),
+                        "background_credit": str(os.getenv("background_credit")),
+                        "reddit_title": str(os.getenv("VIDEO_TITLE")),
+                        "filename": filename,
+                        "status": "skipped"
+                    }
+                    done_vids.append(payload)
+                    raw_vids.seek(0)
+                    json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
+
+            save_data()
+            print_substep("Error while creating video. Skipping this thread... please restart.")
             if response.json()["error"] == "Text length is too long!":
                 chunks = [m.group().strip() for m in re.finditer(r" *((.{0,499})(\.|.$))", req_text)]
 
