@@ -45,7 +45,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
         page = context.new_page()
-        page.goto(reddit_object["thread_url"])
+        page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
@@ -77,8 +77,15 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             wrapper = textwrap.TextWrapper(width=60)
             wrapped_str = wrapper.fill(text=texts_in_tl)
 
-            d1.rectangle((7, 25, width - 20, height - 35), fill='white')
-            d1.text((10, 30), f"{wrapped_str}", font=font, fill=(0, 0, 0))            
+            if (getenv("THEME").upper() == "DARK"):
+                fillmode = "#1a1a1b"
+                textmode = (255, 255, 255)
+            else:
+                fillmode = "whiite"
+                textmode = (0, 0, 0)
+
+            d1.rectangle((7, 25, width - 20, height - 35), fill=fillmode)
+            d1.text((10, 30), f"{wrapped_str}", font=font, fill=textmode)            
             img.save("assets/temp/png/title.png")
         else:
             print_substep("Skipping translation...")
@@ -98,7 +105,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f'https://reddit.com{comment["comment_url"]}')
+                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
                 page.locator(f"#t1_{comment['comment_id']}").screenshot(
                     path=f"assets/temp/png/comment_{idx}.png"
                 )
@@ -116,7 +123,14 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                     d2 = ImageDraw.Draw(img_comment)
                     font_comment = ImageFont.truetype("arial.ttf", 16)
 
-                    d2.rectangle((30, 40, width2 - 5, height2 - 35), fill='#F5F6F6')
-                    d2.text((40, 50), f"{wrapped_str1}", font=font_comment, fill=(0, 0, 0))            
+                    if (getenv("THEME").upper() == "DARK"):
+                        fillmode1 = "#242426"
+                        textmode1 = (255, 255, 255)
+                    else:
+                        fillmode1 = "#F5F6F6"
+                        textmode1 = (0, 0, 0)
+
+                    d2.rectangle((30, 40, width2 - 5, height2 - 35), fill=fillmode1)
+                    d2.text((40, 50), f"{wrapped_str1}", font=font_comment, fill=textmode1)            
                     img_comment.save(f"assets/temp/png/comment_{idx}.png")
         print_substep("Screenshots downloaded Successfully.", style="bold green")
