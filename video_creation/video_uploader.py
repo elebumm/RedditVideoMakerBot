@@ -34,12 +34,20 @@ async def upload_video_to_tiktok(videofile):
     Path("results").mkdir(parents=True, exist_ok=True)
 
     
-    async with async_playwright() as p:
-        print_substep("Launching Headless Browser...")
-
+    async with async_playwright() as p:        
         options = uc.ChromeOptions()
         options.add_argument("--user-agent=" + UserAgent().random)
-        options.add_argument("--headless")
+        
+        cookie_path = "./video_creation/data/tiktok.cookie"
+        has_cookie = False
+        try:
+            cookie_file = open(cookie_path, "rb")
+            has_cookie = True
+            options.add_argument("--headless")
+            print_substep("Launching Headless Browser...")
+        except FileNotFoundError:
+            print_substep("Launching Browser to manually log you in (only first time).")
+      
         browser = uc.Chrome(options=options)
         browser.delete_all_cookies()
         
@@ -48,7 +56,14 @@ async def upload_video_to_tiktok(videofile):
         
         await asyncio.sleep(3)
         
-        cookie_file = open("./video_creation/data/tiktok.cookie", "rb")
+        if not has_cookie:
+            print("Your browser currently shows the tiktok login page, please login in.")
+            input("After you have logged in fully, please press any button to continue...")
+            print("#####")
+            pickle.dump(browser.get_cookies(), open(cookie_path, "wb+"))
+            print("Cookie has been created successfully, resuming upload!")
+            cookie_file = open(cookie_path, "rb")
+            
         cookie_data = pickle.load(cookie_file)
         for cookie in cookie_data:
             if 'sameSite' in cookie:
@@ -67,6 +82,7 @@ async def upload_video_to_tiktok(videofile):
         browser.switch_to.frame(0)
         browser.implicitly_wait(1)
         browser.find_elements(By.XPATH, '//*[@id="root"]/div/div/div/div/div[2]/div[1]/div/input')[0].send_keys(abs_path)
+        
         print_substep("Uploading video...")
         await asyncio.sleep(10)
         
