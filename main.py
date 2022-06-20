@@ -50,13 +50,12 @@ def main():
         reddit_obj = get_subreddit_threads()
         return reddit_obj
 
-    # reddit_object = get_obj()
-    # length, number_of_comments = save_text_to_mp3(reddit_object)
-    # download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    # download_background()
-    # chop_background_video(length)
-    # video_file_name = make_final_video(number_of_comments, length)
-    video_file_name = "Whats something people in this....mp4"
+    reddit_object = get_obj()
+    length, number_of_comments = save_text_to_mp3(reddit_object)
+    download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
+    download_background()
+    chop_background_video(length)
+    video_file_name = make_final_video(number_of_comments, length)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(upload_video_to_tiktok(video_file_name))
     loop.close()
