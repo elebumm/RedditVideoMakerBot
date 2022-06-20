@@ -1,6 +1,6 @@
 from asyncio import sleep
 import asyncio
-import json
+import imp
 from os import getenv
 import os
 from pathlib import Path
@@ -9,14 +9,13 @@ import pickle
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import selenium.common
+from selenium.webdriver.common.keys import Keys
 
 from playwright.async_api import async_playwright
 import undetected_chromedriver.v2 as uc
-from fake_useragent import UserAgent, FakeUserAgentError
+from fake_useragent import UserAgent
 
 from utils.console import print_step, print_substep
-import json
 from rich.console import Console
 
 console = Console()
@@ -70,6 +69,27 @@ async def upload_video_to_tiktok(videofile):
         browser.find_elements(By.XPATH, '//*[@id="root"]/div/div/div/div/div[2]/div[1]/div/input')[0].send_keys(abs_path)
         print_substep("Uploading video...")
         await asyncio.sleep(10)
+        
+        title = os.getenv("VIDEO_TITLE") or videofile.split(".")[0]
+        tags = os.getenv("TIKTOK_TAGS") or "#AskReddit"
+        
+        if len(title) + len(tags) > 150:
+            if len(tags) > 150:
+                print_substep("Tags are too long, please shorten them.")
+                return
+            
+            remove = 149 - len(tags)
+            title = title[:remove] + " " + tags
+        else:
+            title = title + " " + tags
+        
+        title_input = browser.find_elements(By.XPATH, '//*[@id="root"]/div/div/div/div/div[2]/div[2]/div[1]/div/div[1]/div[2]/div/div[1]/div/div/div/div/div/div')[0]
+        title_input.send_keys(Keys.CONTROL, "a")
+        title_input.send_keys(Keys.BACKSPACE)
+        title_input.send_keys(title)
+        
+        await asyncio.sleep(1)
+        
         browser.find_elements(By.XPATH, '//*[@id="root"]/div/div/div/div/div[2]/div[2]/div[7]/div[2]/button')[0].click()
         await asyncio.sleep(5)
         
