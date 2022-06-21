@@ -26,7 +26,7 @@ def download_background():
         ("https://www.youtube.com/watch?v=8L0HHaxfRmM", "diving.mp4", "SlowTV RelaxBackground"),
         ("https://www.youtube.com/watch?v=dQiYnFQX3Qg", "driving.mp4", "SUJANSHETTY"),
         ("https://www.youtube.com/watch?v=OhBo1A8atuA", "space.mp4", "SUJANSHETTY"),
-        ("https://www.youtube.com/watch?v=ps20zN1ZqUo", "parkour3.mp4", "plop")
+        ("https://www.youtube.com/watch?v=ps20zN1ZqUo", "parkour3.mp4", "plop"),
         # (
         #    "https://www.youtube.com/watch?v=2X9QGY__0II",
         #    "rocket_league.mp4",
