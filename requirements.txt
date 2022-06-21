@@ -10,4 +10,3 @@ rich==12.4.4
 sox==1.4.1
 selenium
 undetected-chromedriver
-fake_useragent

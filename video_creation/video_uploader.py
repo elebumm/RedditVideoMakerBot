@@ -13,7 +13,6 @@ from selenium.webdriver.common.keys import Keys
 
 from playwright.async_api import async_playwright
 import undetected_chromedriver.v2 as uc
-from fake_useragent import UserAgent
 
 from utils.console import print_step, print_substep
 from rich.console import Console
@@ -36,7 +35,7 @@ async def upload_video_to_tiktok(videofile):
     
     async with async_playwright() as p:        
         options = uc.ChromeOptions()
-        options.add_argument("--user-agent=" + UserAgent().random)
+        options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
         
         cookie_path = "./video_creation/data/tiktok.cookie"
         has_cookie = False
