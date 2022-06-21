@@ -91,7 +91,6 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
 
                 if getenv("POSTLANG"):
                     comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
-                    print_substep("comment_tl: " + comment_tl)
                     page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content', [comment_tl, comment['comment_id']]
                     )
