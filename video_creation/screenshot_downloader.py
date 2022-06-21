@@ -74,7 +74,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             d1 = ImageDraw.Draw(img)
             font = ImageFont.truetype("arial.ttf", 22)
         
-            wrapper = textwrap.TextWrapper(width=60)
+            wrapper = textwrap.TextWrapper(width=50)
             wrapped_str = wrapper.fill(text=texts_in_tl)
 
             if (getenv("THEME").upper() == "DARK"):
@@ -117,7 +117,7 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             
                     comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
         
-                    wrapper1 = textwrap.TextWrapper(width=78)
+                    wrapper1 = textwrap.TextWrapper(width=70)
                     wrapped_str1 = wrapper1.fill(text=comment_tl)
 
                     d2 = ImageDraw.Draw(img_comment)
@@ -131,6 +131,6 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                         textmode1 = (0, 0, 0)
 
                     d2.rectangle((30, 40, width2 - 5, height2 - 35), fill=fillmode1)
-                    d2.text((40, 50), f"{wrapped_str1}", font=font_comment, fill=textmode1)            
+                    d2.text((35, 45), f"{wrapped_str1}", font=font_comment, fill=textmode1)            
                     img_comment.save(f"assets/temp/png/comment_{idx}.png")
         print_substep("Screenshots downloaded Successfully.", style="bold green")
