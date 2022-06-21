@@ -22,6 +22,10 @@ def download_background():
         ("https://www.youtube.com/watch?v=p4jroQX6Hwk", "witcher.mp4", "loopylongplays"),
         ("https://www.youtube.com/watch?v=c03fwcx1fEQ", "valheim.mp4", "loopylongplays"),
         ("https://www.youtube.com/watch?v=GTaXbH6iSFA", "parkour2.mp4", "siswizz"),
+        ("https://www.youtube.com/watch?v=-pj9hvEQLA0", "rollercoaster.mp4", "SlowTV RelaxBackground"),
+        ("https://www.youtube.com/watch?v=8L0HHaxfRmM", "diving.mp4", "SlowTV RelaxBackground"),
+        ("https://www.youtube.com/watch?v=dQiYnFQX3Qg", "driving.mp4", "SUJANSHETTY"),
+        ("https://www.youtube.com/watch?v=OhBo1A8atuA", "space.mp4", "SUJANSHETTY"),
         # (
         #    "https://www.youtube.com/watch?v=2X9QGY__0II",
         #    "rocket_league.mp4",
