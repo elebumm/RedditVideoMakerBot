@@ -2,11 +2,11 @@ import asyncio
 import time
 
 from subprocess import Popen
-from dotenv import load_dotenv
 from os import getenv, name
+from dotenv import load_dotenv
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step, print_substep
+from utils.console import print_markdown, print_step
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
 from video_creation.final_video import make_final_video

@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 from playwright.async_api import async_playwright
-import undetected_chromedriver as uc
+import undetected_chromedriver.v2 as uc
 
 from rich.console import Console
 from utils.console import print_step, print_substep
