@@ -12,8 +12,6 @@ import json
 from rich.console import Console
 
 import translators as ts
-from PIL import Image, ImageDraw, ImageFont
-import textwrap
 
 console = Console()
 
@@ -56,39 +54,21 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 '[data-click-id="text"] button'
             ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
-        page.locator('[data-test-id="post-content"]').screenshot(
-            path="assets/temp/png/title.png"
-        )
-
         # translate code
 
         if getenv("POSTLANG"):
             print_substep("Translating post...")
             texts_in_tl = ts.google(reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
 
-            img = Image.open("assets/temp/png/title.png")
-        
-            width = img.size[0] 
-            height = img.size[1]
-
-            d1 = ImageDraw.Draw(img)
-            font = ImageFont.truetype("arial.ttf", 22)
-        
-            wrapper = textwrap.TextWrapper(width=50)
-            wrapped_str = wrapper.fill(text=texts_in_tl)
-
-            if (getenv("THEME").upper() == "DARK"):
-                fillmode = "#1a1a1b"
-                textmode = (255, 255, 255)
-            else:
-                fillmode = "whiite"
-                textmode = (0, 0, 0)
-
-            d1.rectangle((7, 25, width - 20, height - 35), fill=fillmode)
-            d1.text((10, 30), f"{wrapped_str}", font=font, fill=textmode)            
-            img.save("assets/temp/png/title.png")
+            page.evaluate(
+                'tl_content => document.querySelector(\'[data-test-id="post-content"] > div:nth-child(3) > div > div\').textContent = tl_content', texts_in_tl
+            )
         else:
             print_substep("Skipping translation...")
+
+        page.locator('[data-test-id="post-content"]').screenshot(
+            path="assets/temp/png/title.png"
+        )
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
@@ -106,31 +86,18 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                     page.locator('[data-testid="content-gate"] button').click()
 
                 page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+
+                # translate code
+
+                if getenv("POSTLANG"):
+                    comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
+                    print_substep("comment_tl: " + comment_tl)
+                    page.evaluate(
+                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content', [comment_tl, comment['comment_id']]
+                    )
+
                 page.locator(f"#t1_{comment['comment_id']}").screenshot(
                     path=f"assets/temp/png/comment_{idx}.png"
                 )
 
-                if getenv("POSTLANG"):
-                    img_comment = Image.open(f"assets/temp/png/comment_{idx}.png")
-                    width2 = img_comment.size[0] 
-                    height2 = img_comment.size[1]
-            
-                    comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
-        
-                    wrapper1 = textwrap.TextWrapper(width=70)
-                    wrapped_str1 = wrapper1.fill(text=comment_tl)
-
-                    d2 = ImageDraw.Draw(img_comment)
-                    font_comment = ImageFont.truetype("arial.ttf", 16)
-
-                    if (getenv("THEME").upper() == "DARK"):
-                        fillmode1 = "#242426"
-                        textmode1 = (255, 255, 255)
-                    else:
-                        fillmode1 = "#F5F6F6"
-                        textmode1 = (0, 0, 0)
-
-                    d2.rectangle((30, 40, width2 - 5, height2 - 35), fill=fillmode1)
-                    d2.text((35, 45), f"{wrapped_str1}", font=font_comment, fill=textmode1)            
-                    img_comment.save(f"assets/temp/png/comment_{idx}.png")
         print_substep("Screenshots downloaded Successfully.", style="bold green")
