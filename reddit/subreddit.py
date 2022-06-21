@@ -8,7 +8,7 @@ from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from praw.models import MoreComments
 
-TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyzäüö ABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖß 1234567890")
+TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyzäüö ABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖß(),;.:? 1234567890")
 
 
 def textify(text):
