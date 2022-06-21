@@ -63,6 +63,7 @@ def get_subreddit_threads():
             print_substep("Subreddit not defined. Using AskReddit.")
     else:
         subreddit1 = reddit.subreddit(getenv("SUBREDDIT"))
+	subreddit1 = str(subreddit1)
         subreddits_list=subreddit1.split(" ")
 
         formatted_subreddits_list=""
@@ -76,7 +77,7 @@ def get_subreddit_threads():
             randomsubreddit=random.choice(subreddits_list)
             subreddit=reddit.subreddit(randomsubreddit)
             print_substep(f"Chose r/{subreddit}.", style="bold yellow")
-        else: # single sunreddit
+        else: # single subreddit
             subreddit=reddit.subreddit(getenv("SUBREDDIT"))
             print_substep(f"Using r/{subreddit}", style="bold yellow")
 
