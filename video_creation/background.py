@@ -18,15 +18,15 @@ def download_background():
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
     background_options = [  # uri , filename , credit
         ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", "bbswitzer"),
-        ("https://www.youtube.com/watch?v=hf3r9TNSsyY", "sailing.mp4", "loopylongplays"),
-        ("https://www.youtube.com/watch?v=p4jroQX6Hwk", "witcher.mp4", "loopylongplays"),
-        ("https://www.youtube.com/watch?v=c03fwcx1fEQ", "valheim.mp4", "loopylongplays"),
-        ("https://www.youtube.com/watch?v=GTaXbH6iSFA", "parkour2.mp4", "siswizz"),
-        ("https://www.youtube.com/watch?v=-pj9hvEQLA0", "rollercoaster.mp4", "SlowTV RelaxBackground"),
-        ("https://www.youtube.com/watch?v=8L0HHaxfRmM", "diving.mp4", "SlowTV RelaxBackground"),
-        ("https://www.youtube.com/watch?v=dQiYnFQX3Qg", "driving.mp4", "SUJANSHETTY"),
-        ("https://www.youtube.com/watch?v=OhBo1A8atuA", "space.mp4", "SUJANSHETTY"),
-        ("https://www.youtube.com/watch?v=ps20zN1ZqUo", "parkour3.mp4", "plop"),
+        # ("https://www.youtube.com/watch?v=hf3r9TNSsyY", "sailing.mp4", "loopylongplays"),
+        # ("https://www.youtube.com/watch?v=p4jroQX6Hwk", "witcher.mp4", "loopylongplays"),
+        # ("https://www.youtube.com/watch?v=c03fwcx1fEQ", "valheim.mp4", "loopylongplays"),
+        # ("https://www.youtube.com/watch?v=GTaXbH6iSFA", "parkour2.mp4", "siswizz"),
+        # ("https://www.youtube.com/watch?v=-pj9hvEQLA0", "rollercoaster.mp4", "SlowTV RelaxBackground"),
+        # ("https://www.youtube.com/watch?v=8L0HHaxfRmM", "diving.mp4", "SlowTV RelaxBackground"),
+        # ("https://www.youtube.com/watch?v=dQiYnFQX3Qg", "driving.mp4", "SUJANSHETTY"),
+        # ("https://www.youtube.com/watch?v=OhBo1A8atuA", "space.mp4", "SUJANSHETTY"),
+        # ("https://www.youtube.com/watch?v=ps20zN1ZqUo", "parkour3.mp4", "plop"),
         # (
         #    "https://www.youtube.com/watch?v=2X9QGY__0II",
         #    "rocket_league.mp4",
@@ -59,6 +59,7 @@ def chop_background_video(video_length):
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
+    # adding 1 second to video length to prevent hard cut
     start_time, end_time = get_start_and_end_times(video_length + 1, background.duration)
     ffmpeg_extract_subclip(
         f"assets/backgrounds/{choice}",

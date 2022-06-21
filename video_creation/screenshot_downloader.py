@@ -2,13 +2,12 @@ import json
 from os import getenv
 from pathlib import Path
 
-from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright, ViewportSize
+
 from rich.progress import track
+from rich.console import Console
 
 from utils.console import print_step, print_substep
-import json
-from rich.console import Console
 
 console = Console()
 

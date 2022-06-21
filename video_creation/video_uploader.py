@@ -1,7 +1,4 @@
-from asyncio import sleep
 import asyncio
-import imp
-from os import getenv
 import os
 from pathlib import Path
 import pickle
@@ -12,10 +9,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 from playwright.async_api import async_playwright
-import undetected_chromedriver.v2 as uc
+import undetected_chromedriver as uc
 
-from utils.console import print_step, print_substep
 from rich.console import Console
+from utils.console import print_step, print_substep
 
 console = Console()
 
