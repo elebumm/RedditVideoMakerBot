@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import time
 
 from subprocess import Popen
 from dotenv import load_dotenv
@@ -26,23 +25,16 @@ print(
 ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═════╝ ╚═╝   ╚═╝         ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 """
 )
-load_dotenv()
 # Modified by JasonLovesDoggo
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
 )
 
 
-client_id = getenv("REDDIT_CLIENT_ID")
-client_secret = getenv("REDDIT_CLIENT_SECRET")
-username = getenv("REDDIT_USERNAME")
-password = getenv("REDDIT_PASSWORD")
-reddit2fa = getenv("REDDIT_2FA")
-
-
 def main():
     if check_env() is not True:
         exit()
+    load_dotenv()
     cleanup()
 
     def get_obj():
@@ -58,8 +50,7 @@ def main():
 
 
 def run_many(times):
-    for x in range(times):
-        x = x + 1
+    for x in range(1, times + 1):
         print_step(
             f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration of {times}'
         )  # correct 1st 2nd 3rd 4th 5th....

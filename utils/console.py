@@ -36,10 +36,13 @@ def handle_input(
     nmin=None,
     nmax=None,
     oob_error="",
+    extra_info="",
 ):
     match = re.compile(match + "$")
+    console.print(extra_info, no_wrap=True)
     while True:
-        user_input = input(message + "\n> ").strip()
+        console.print(message, end="")
+        user_input = input("").strip()
         if re.match(match, user_input) is not None:
             if check_type is not False:
                 try:
