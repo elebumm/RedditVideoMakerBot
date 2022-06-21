@@ -18,6 +18,7 @@ def check_env() -> bool:
         console.print("[red]Couldn't find the .env file, creating one now.")
         with open(".env", "x") as file:
             file.write("")
+    success = True
     with open(".env.template", "r") as template:
         # req_envs = [env.split("=")[0] for env in template.readlines() if "=" in env]
         matching = {}
@@ -25,11 +26,14 @@ def check_env() -> bool:
         bounds = {}
         types = {}
         oob_errors = {}
+        examples = {}
         req_envs = []
         var_optional = False
         for line in template.readlines():
             if line.startswith("#") is not True and "=" in line and var_optional is not True:
                 req_envs.append(line.split("=")[0])
+                if "#" in line:
+                    examples[line.split("=")[0]] = "#".join(line.split("#")[1:]).strip()
             elif "#OPTIONAL" in line:
                 var_optional = True
             elif line.startswith("#MATCH_REGEX "):
@@ -92,14 +96,14 @@ def check_env() -> bool:
         )
         table.add_column("Variable", justify="left", style="#7AA2F7 bold", no_wrap=True)
         table.add_column("Explanation", justify="left", style="#BB9AF7", no_wrap=False)
-        table.add_column("Type", justify="center", style="#F7768E", no_wrap=True)
+        table.add_column("Example", justify="center", style="#F7768E", no_wrap=True)
         table.add_column("Min", justify="right", style="#F7768E", no_wrap=True)
         table.add_column("Max", justify="left", style="#F7768E", no_wrap=True)
         for env in missing:
             table.add_row(
                 env,
                 explanations[env] if env in explanations.keys() else "No explanation given",
-                str(types[env].__name__) if env in types.keys() else "str",
+                examples[env] if env in examples.keys() else "",
                 str(bounds[env][0]) if env in bounds.keys() and bounds[env][1] is not None else "",
                 str(bounds[env][1])
                 if env in bounds.keys() and len(bounds[env]) > 1 and bounds[env][1] is not None
@@ -121,7 +125,7 @@ def check_env() -> bool:
         table.add_column("Variable", justify="left", style="#7AA2F7 bold", no_wrap=True)
         table.add_column("Current value", justify="left", style="#F7768E", no_wrap=False)
         table.add_column("Explanation", justify="left", style="#BB9AF7", no_wrap=False)
-        table.add_column("Type", justify="center", style="#F7768E", no_wrap=True)
+        table.add_column("Example", justify="center", style="#F7768E", no_wrap=True)
         table.add_column("Min", justify="right", style="#F7768E", no_wrap=True)
         table.add_column("Max", justify="left", style="#F7768E", no_wrap=True)
         for env in incorrect:
@@ -135,6 +139,7 @@ def check_env() -> bool:
             )
             missing.add(env)
         console.print(table)
+        success = False
     if success is True:
         return True
     console.print(
