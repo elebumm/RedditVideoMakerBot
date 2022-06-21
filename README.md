@@ -27,21 +27,17 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Disclaimers 🚨
 
-Please use chromedriver.exe provided as its source code has been edited to avoid bot detection on tiktok website.
-
 Use only tiktok accounts that can be accessed through email password on browser, OAuth2.0 may not work, slightly probable.
-
 Do not spam upload videos as tiktok will most likely ban you after this or during the act.
 
 I am not responsible/ liable for any damages or problems or resulting effects you face using this tool or in relation with this tool, use at own risk. 
-
-Webdriver selected classes that are most likely not going to change in a while, looking for alternatives.
 
 ## Requirements
 
 - Python 3.6+
 - Playwright (this should install automatically in installation)
-- Sox
+- Sox (optional)
+- Google Chrome installed
 
 ## Installation 👩‍💻
 
@@ -62,6 +58,12 @@ Webdriver selected classes that are most likely not going to change in a while, 
 7. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
+
+## Changing background videos
+
+1. Open the [background.py](/video_creation/background.py) file
+2. Add or remove videos with the background_options variable
+
 ## Video
 
 https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4

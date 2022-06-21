@@ -37,8 +37,6 @@ client_secret = getenv("REDDIT_CLIENT_SECRET")
 username = getenv("REDDIT_USERNAME")
 password = getenv("REDDIT_PASSWORD")
 reddit2fa = getenv("REDDIT_2FA")
-tiktok_email = getenv("TIKTOK_EMAIL")
-tiktok_password = getenv("TIKTOK_PASSWORD")
 tiktok_tags = getenv("TIKTOK_TAGS")
 
 
