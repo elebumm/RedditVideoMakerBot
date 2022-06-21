@@ -10,51 +10,14 @@ from utils.console import print_markdown
 from utils.console import print_step
 from rich.console import Console
 from utils.loader import Loader
+from utils.console import handle_input
 
 console = Console()
 
 
-def handle_input(
-    message: str = "",
-    check_type=False,
-    match: str = "",
-    err_message: str = "",
-    nmin=None,
-    nmax=None,
-    oob_error="",
-):
-    match = re.compile(match + "$")
-    while True:
-        user_input = input(message + "\n> ").strip()
-        if re.match(match, user_input) is not None:
-            if check_type is not False:
-                try:
-                    user_input = check_type(user_input)
-                    if nmin is not None and user_input < nmin:
-                        console.log("[red]" + oob_error)  # Input too low failstate
-                        continue
-                    if nmax is not None and user_input > nmax:
-                        console.log("[red]" + oob_error)  # Input too high
-                        continue
-                    break  # Successful type conversion and number in bounds
-                except ValueError:
-                    console.log("[red]" + err_message)  # Type conversion failed
-                    continue
-            if nmin is not None and len(user_input) < nmin:  # Check if string is long enough
-                console.log("[red]" + oob_error)
-                continue
-            if nmax is not None and len(user_input) > nmax:  # Check if string is not too long
-                console.log("[red]" + oob_error)
-                continue
-            break
-        console.log("[red]" + err_message)
-
-    return user_input
-
-
 if os.path.isfile(".setup-done-before"):
-    console.log(
-        "[red]Setup was already completed! Please make sure you have to run this script again. If that is such, delete the file .setup-done-before"
+    console.print(
+        "[red]WARNING: Setup was already completed! Please make sure you have to run this script again. If that is such, delete the file .setup-done-before"
     )
     exit()
 
@@ -89,15 +52,15 @@ if input("Are you sure you want to continue? > ").strip().casefold() != "yes":
 console.print("[bold green]Alright! Let's get started!")
 
 print()
-console.log("Ensure you have the following ready to enter:")
-console.log("[bold green]Reddit Client ID")
-console.log("[bold green]Reddit Client Secret")
-console.log("[bold green]Reddit Username")
-console.log("[bold green]Reddit Password")
-console.log("[bold green]Reddit 2FA (yes or no)")
-console.log("[bold green]Opacity (range of 0-1, decimals are OK)")
-console.log("[bold green]Subreddit (without r/ or /r/)")
-console.log("[bold green]Theme (light or dark)")
+console.print("Ensure you have the following ready to enter:")
+console.print("[bold green]Reddit Client ID")
+console.print("[bold green]Reddit Client Secret")
+console.print("[bold green]Reddit Username")
+console.print("[bold green]Reddit Password")
+console.print("[bold green]Reddit 2FA (yes or no)")
+console.print("[bold green]Opacity (range of 0-1, decimals are OK)")
+console.print("[bold green]Subreddit (without r/ or /r/)")
+console.print("[bold green]Theme (light or dark)")
 console.print(
     "[green]If you don't have these, please follow the instructions in the README.md file to set them up."
 )
@@ -117,7 +80,7 @@ console.print("[bold green]Alright! Let's get started!")
 
 # Begin the setup process.
 
-console.log("Enter your credentials now.")
+console.print("Enter your credentials now.")
 client_id = handle_input(
     "Client ID > ",
     False,
@@ -178,7 +141,7 @@ theme = handle_input(
 )
 loader = Loader("Attempting to save your credentials...", "Done!").start()
 # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
-console.log("Writing to the .env file...")
+console.print("Writing to the .env file...")
 with open(".env", "w") as f:
     f.write(
         f"""REDDIT_CLIENT_ID="{client_id}"
@@ -199,7 +162,7 @@ with open(".setup-done-before", "w") as f:
 
 loader.stop()
 
-console.log("[bold green]Setup Complete! Returning...")
+console.print("[bold green]Setup Complete! Returning...")
 
 # Post-Setup: send message and try to run main.py again.
 subprocess.call("python3 main.py", shell=True)
