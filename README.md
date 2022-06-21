@@ -44,15 +44,18 @@ The only original thing being done is the editing and gathering of all materials
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
 3. Install [SoX](https://sourceforge.net/projects/sox/files/sox/)
+
+4. Add the directory of your SoX installation to the Path system variables (see https://github.com/elebumm/RedditVideoMakerBot/issues/613)
+   and move the added directory all the way to the top of the list of directories.
    
-4. Run `pip install -r requirements.txt`
+5. Run `pip install -r requirements.txt`
 
-5. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
+6. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
-6. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+7. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
    Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-7. Enjoy 😎
+8. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 ## Video
