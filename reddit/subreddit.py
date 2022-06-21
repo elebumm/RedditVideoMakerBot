@@ -62,10 +62,23 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
     else:
-        print_substep(f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config")
-        subreddit = reddit.subreddit(
-            getenv("SUBREDDIT")
-        )  # Allows you to specify in .env. Done for automation purposes.
+        subreddit1 = reddit.subreddit(getenv("SUBREDDIT"))
+        subreddits_list=subreddit1.split(" ")
+
+        formatted_subreddits_list=""
+        for subreddit in subreddits_list:
+            formatted_subreddits_list=formatted_subreddits_list+f"r/{subreddit}\n"
+
+        if len(subreddits_list)>2: # check if multiple subreddits
+            print_substep(f"Choosing random subreddit from below:", style="bold green")
+            print_substep(formatted_subreddits_list, style="bold green")
+
+            randomsubreddit=random.choice(subreddits_list)
+            subreddit=reddit.subreddit(randomsubreddit)
+            print_substep(f"Chose r/{subreddit}.", style="bold yellow")
+        else: # single sunreddit
+            subreddit=reddit.subreddit(getenv("SUBREDDIT"))
+            print_substep(f"Using r/{subreddit}", style="bold yellow")
 
     if getenv("POST_ID"):
         submission = reddit.submission(id=getenv("POST_ID"))
