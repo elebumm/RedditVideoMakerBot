@@ -87,7 +87,7 @@ async def upload_video_to_tiktok(videofile):
         
         title = os.getenv("VIDEO_TITLE") or videofile.split(".")[0]
         is_nsfw = os.getenv("nsfw") or "false"
-        if is_nsfw:
+        if is_nsfw == 'true':
             title = "#nsfw " + title
         
         tags = os.getenv("TIKTOK_TAGS") or "#AskReddit"

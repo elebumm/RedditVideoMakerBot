@@ -20,6 +20,7 @@ def get_subreddit_undone(submissions: List, subreddit):
                     continue
             except AttributeError:
                 print_substep("NSFW settings not defined. Skipping NSFW post...")
+        print_substep(f"Submission: {submission} is {str(submission.over_18)}")
         environ["nsfw"] = str(submission.over_18)
         return submission
     print("all submissions have been done going by top submission order")
