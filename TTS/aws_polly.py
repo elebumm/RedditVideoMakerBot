@@ -39,7 +39,7 @@ class AWSPolly:
                 return ValueError(
                     f"Please set the environment variable VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(os.getenv("VOICE")).capitalize()
+            voice = str(os.getenv("AWS_VOICE")).capitalize()
         try:
             # Request speech synthesis
             response = polly.synthesize_speech(

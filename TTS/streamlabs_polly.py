@@ -39,7 +39,7 @@ class StreamlabsPolly:
                 return ValueError(
                     f"Please set the environment variable VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(os.getenv("VOICE")).capitalize()
+            voice = str(os.getenv("STREAMLABS_VOICE")).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
         try:

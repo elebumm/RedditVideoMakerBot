@@ -73,7 +73,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         voice = (
             self.randomvoice()
             if random_voice
-            else (os.getenv("VOICE") or random.choice(self.voices["human"]))
+            else (os.getenv("TIKTOK_VOICE") or random.choice(self.voices["human"]))
         )
         try:
             r = requests.post(

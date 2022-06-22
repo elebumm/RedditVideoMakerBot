@@ -29,9 +29,11 @@ def save_text_to_mp3(reddit_obj):
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    env = os.getenv("TTS_PROVIDER", "")
-    if env in TTSProviders:
-        text_to_mp3 = TTSEngine(env, reddit_obj)
+    env = os.getenv("TTSCHOICE", "")
+    if env.casefold in map(lambda _: _.casefold(), TTSProviders):
+        text_to_mp3 = TTSEngine(
+            get_case_insensitive_key_value(TTSProviders, env), reddit_obj
+        )
     else:
         chosen = False
         choice = ""
