@@ -1,5 +1,5 @@
 from gtts import gTTS
-
+import os
 
 class GTTS:
     def tts(
@@ -9,5 +9,5 @@ class GTTS:
         random_speaker=False,
         censor=False,
     ):
-        tts = gTTS(text=req_text, lang="en", slow=False)
+        tts = gTTS(text=req_text, lang=os.getenv("POSTLANG") or "en", slow=False)
         tts.save(f"{filename}")

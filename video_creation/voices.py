@@ -10,11 +10,13 @@ from rich.progress import track
 
 from TTS.swapper import TTS
 
+console = Console()
+
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
-console = Console()
-
+import translators as ts
+import os
 
 VIDEO_LENGTH: int = 40  # secs
 
@@ -22,39 +24,51 @@ VIDEO_LENGTH: int = 40  # secs
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
     Args:
-            reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
+        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
     print_step("Saving Text to MP3 files...")
     length = 0
 
     # Create a folder for the mp3 files.
     Path("assets/temp/mp3").mkdir(parents=True, exist_ok=True)
+
+    if os.getenv("POSTLANG"):
+        print_substep("Translating Texts...")
+        tl_title = ts.google(reddit_obj["thread_title"], to_language=os.getenv("POSTLANG"))
+    else:
+        print_substep("Skipping Translation...")
+        tl_title = reddit_obj["thread_title"]
+    
     TextToSpeech = TTS()
     TextToSpeech.tts(
-        sanitize_text(reddit_obj["thread_title"]),
-        filename="assets/temp/mp3/title.mp3",
+        sanitize_text(tl_title),
+        filename=f"assets/temp/mp3/title.mp3",
         random_speaker=False,
     )
     try:
-        length += MP3("assets/temp/mp3/title.mp3").info.length
+        length += MP3(f"assets/temp/mp3/title.mp3").info.length
     except HeaderNotFoundError:  # note to self AudioFileClip
-        length += sox.file_info.duration("assets/temp/mp3/title.mp3")
+        length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
     if getenv("STORYMODE").casefold() == "true":
         TextToSpeech.tts(
             sanitize_text(reddit_obj["thread_content"]),
-            filename="assets/temp/mp3/story_content.mp3",
+            filename=f"assets/temp/mp3/story_content.mp3",
             random_speaker=False,
         )
         # 'story_content'
     com = 0
     for comment in track((reddit_obj["comments"]), "Saving..."):
-        # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer
-        # but this is just a good_voices starting point
+        # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer, but this is just a good_voices starting point
         if length > VIDEO_LENGTH:
             break
 
+        if os.getenv("POSTLANG"):
+            tl_comment = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
+        else:
+            tl_comment = comment["comment_body"]
+
         TextToSpeech.tts(
-            sanitize_text(comment["comment_body"]),
+            sanitize_text(tl_comment),
             filename=f"assets/temp/mp3/{com}.mp3",
             random_speaker=False,
         )
