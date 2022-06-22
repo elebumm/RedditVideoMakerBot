@@ -3,7 +3,7 @@ import json
 import os
 import time
 from os.path import exists
-
+from better_profanity import profanity
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -111,8 +111,8 @@ def make_final_video(number_of_clips, length):
         else:
             return title[0:30] + "..."
 
-    filename = f"{get_video_title()}.mp4"
-
+    uncensored_filename = f"{get_video_title()}.mp4"
+    filename = profanity.censor(uncensored_filename)
     def save_data():
         with open("./video_creation/data/videos.json", "r+") as raw_vids:
             done_vids = json.load(raw_vids)
