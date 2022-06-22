@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -20,9 +19,10 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **System (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - App version [e.g. 22]
+
+- Python Version: [e.g. Python 3.6]
+- OS: [e.g. Windows 11]
+- App version / Branch [e.g. latest, V2.0, master, develop ]
 
 **Additional context**
 Add any other context about the problem here.
