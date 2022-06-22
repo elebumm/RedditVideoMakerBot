@@ -23,7 +23,7 @@ def save_text_to_mp3(reddit_obj):
     """Saves text to MP3 files. Goes through the reddit_obj and generates the title MP3 file and a certain number of comments until the total amount of time exceeds VIDEO_LENGTH seconds.
 
     Args:
-        reddit_obj (dict[str]): Reddit object received from reddit API in askreddit.py
+        reddit_obj (dict[str]): Reddit object received from reddit API in subreddit.py
 
     Returns:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)

@@ -15,12 +15,14 @@ console = Console()
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
-    """Downloads screenshots of reddit posts as they are seen on the web.
+def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num:int):
+    """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
+
     Args:
-            reddit_object: The Reddit Object you received in askreddit.py
-            screenshot_num: The number of screenshots you want to download.
-    """
+        reddit_object (dict[str]): Reddit object received from subreddit.py
+        screenshot_num (int): Number of screenshots to downlaod
+    """    
+
     print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
