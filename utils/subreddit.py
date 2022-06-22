@@ -13,6 +13,14 @@ def get_subreddit_undone(submissions: List, subreddit):
     for submission in submissions:
         if already_done(done_videos, submission):
             continue
+        if submission.stickied:
+            try:
+                if getenv("ALLOW_PINNED").casefold() == "false":
+                    print_substep("This post was pinned by moderators. Skipping...")
+                    continue
+            except AttributeError:
+                print_substep("Stickied post settings not defined. Skipping pinned post...")
+            return submission
         if submission.over_18:
             try:
                 if getenv("ALLOW_NSFW").casefold() == "false":
