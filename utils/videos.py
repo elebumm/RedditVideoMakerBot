@@ -5,10 +5,17 @@ from utils.console import print_step
 
 
 def check_done(
-    redditobj,
-):  # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
-    """params:
-    reddit_object: The Reddit Object you received in askreddit.py"""
+    redditobj:dict[str],
+)->dict[str]|None:  # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
+    """Checks if the chosen post has already been generated
+
+    Args:
+        redditobj (dict[str]): Reddit object gotten from reddit/subreddit.py
+
+    Returns:
+        dict[str]|None: Reddit object in args
+    """
+
     with open("./video_creation/data/videos.json", "r") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:

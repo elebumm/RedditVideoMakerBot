@@ -34,7 +34,6 @@ The only original thing being done is the editing and gathering of all materials
 
 - Python 3.6+
 - Playwright (this should install automatically in installation)
-- Sox
 
 ## Installation 👩‍💻
 
@@ -43,18 +42,17 @@ The only original thing being done is the editing and gathering of all materials
 
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
-3. Install [SoX](https://sourceforge.net/projects/sox/files/sox/)
-   
-4. Run `pip install -r requirements.txt`
+3. Run `pip install -r requirements.txt`
 
-5. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
+4. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
-6. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+5. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
    Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-7. Enjoy 😎
+6. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
+
 ## Video
 
 https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
