@@ -37,11 +37,9 @@ def main():
     load_dotenv()
     cleanup()
 
-    def get_obj():
-        reddit_obj = get_subreddit_threads()
-        return reddit_obj
 
-    reddit_object = get_obj()
+
+    reddit_object = get_subreddit_threads()
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
