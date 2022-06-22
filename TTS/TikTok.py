@@ -89,7 +89,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             r = session.post(
                 f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0"
             )
-        print(r.text)
+        # print(r.text)
         vstr = [r.json()["data"]["v_str"]][0]
         b64d = base64.b64decode(vstr)
 

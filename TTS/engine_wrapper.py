@@ -83,7 +83,7 @@ class TTSEngine:
 
         idy = None
         for idy, text_cut in enumerate(split_text):
-            print(f"{idx}-{idy}: {text_cut}\n")
+            # print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
             split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
@@ -91,7 +91,7 @@ class TTSEngine:
         )
 
         for i in range(0, idy + 1):
-            print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+            # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
             Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
