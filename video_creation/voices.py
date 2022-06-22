@@ -19,7 +19,7 @@ console = Console()
 VIDEO_LENGTH: int = 40  # secs
 
 
-def save_text_to_mp3(reddit_obj):
+def save_text_to_mp3(reddit_obj:dict[str])->tuple[int,int]:
     """Saves text to MP3 files. Goes through the reddit_obj and generates the title MP3 file and a certain number of comments until the total amount of time exceeds VIDEO_LENGTH seconds.
 
     Args:
