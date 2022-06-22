@@ -55,7 +55,9 @@ def make_final_video(number_of_clips, length):
     # add title to video
     image_clips = []
     # Gather all images
-    if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
+    if (
+        opacity is None or float(opacity) >= 1
+    ):  # opacity not set or is set to one OR MORE
         image_clips.insert(
             0,
             ImageClip("assets/temp/png/title.png")
@@ -74,7 +76,9 @@ def make_final_video(number_of_clips, length):
         )
 
     for i in range(0, number_of_clips):
-        if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
+        if (
+            opacity is None or float(opacity) >= 1
+        ):  # opacity not set or is set to one OR MORE
             image_clips.append(
                 ImageClip(f"assets/temp/png/comment_{i}.png")
                 .set_duration(audio_clips[i + 1].duration)
@@ -100,7 +104,9 @@ def make_final_video(number_of_clips, length):
     #        .set_opacity(float(opacity)),
     #    )
     # else:
-    image_concat = concatenate_videoclips(image_clips).set_position(("center", "center"))
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        ("center", "center")
+    )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
 
@@ -134,7 +140,13 @@ def make_final_video(number_of_clips, length):
         print_substep("the results folder didn't exist so I made it")
         os.mkdir("./results")
 
-    final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k")
+    final.write_videofile(
+        "assets/temp/temp.mp4",
+        fps=30,
+        audio_codec="aac",
+        audio_bitrate="192k",
+        verbose=False,
+    )
     ffmpeg_tools.ffmpeg_extract_subclip(
         "assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}"
     )

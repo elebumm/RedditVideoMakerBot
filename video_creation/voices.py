@@ -1,22 +1,26 @@
-#!/usr/bin/env python3
-from os import getenv
-from pathlib import Path
+#!/usr/bin/env python
 
-import sox
-from mutagen import MutagenError
-from mutagen.mp3 import MP3, HeaderNotFoundError
+import os
+
 from rich.console import Console
-from rich.progress import track
 
-from TTS.swapper import TTS
+from TTS.engine_wrapper import TTSEngine
+from TTS.GTTS import GTTS
+from TTS.streamlabs_polly import StreamlabsPolly
+from TTS.aws_polly import AWSPolly
+from TTS.TikTok import TikTok
+
+from utils.console import print_table, print_step
+
 
 console = Console()
 
-from utils.console import print_step, print_substep
-from utils.voice import sanitize_text
-
-import translators as ts
-import os
+TTSProviders = {
+    "GoogleTranslate": GTTS,
+    "AWSPolly": AWSPolly,
+    "StreamlabsPolly": StreamlabsPolly,
+    "TikTok": TikTok,
+}
 
 VIDEO_LENGTH: int = 40  # secs
 
@@ -26,68 +30,33 @@ def save_text_to_mp3(reddit_obj):
     Args:
         reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
     """
-    print_step("Saving Text to MP3 files...")
-    length = 0
-
-    # Create a folder for the mp3 files.
-    Path("assets/temp/mp3").mkdir(parents=True, exist_ok=True)
-
-    if os.getenv("POSTLANG"):
-        print_substep("Translating Texts...")
-        tl_title = ts.google(reddit_obj["thread_title"], to_language=os.getenv("POSTLANG"))
+    env = os.getenv("TTSCHOICE", "")
+    if env.casefold() in map(lambda _: _.casefold(), TTSProviders):
+        text_to_mp3 = TTSEngine(
+            get_case_insensitive_key_value(TTSProviders, env), reddit_obj
+        )
     else:
-        print_substep("Skipping Translation...")
-        tl_title = reddit_obj["thread_title"]
-    
-    TextToSpeech = TTS()
-    TextToSpeech.tts(
-        sanitize_text(tl_title),
-        filename=f"assets/temp/mp3/title.mp3",
-        random_speaker=False,
+        choice = ""
+        while True:
+            print_step("Please choose one of the following TTS providers: ")
+            print_table(TTSProviders)
+            choice = input("\n")
+            if choice.casefold() in map(lambda _: _.casefold(), TTSProviders):
+                break
+            print("Unknown Choice")
+        text_to_mp3 = TTSEngine(
+            get_case_insensitive_key_value(TTSProviders, choice), reddit_obj
+        )
+
+    return text_to_mp3.run()
+
+
+def get_case_insensitive_key_value(input_dict, key):
+    return next(
+        (
+            value
+            for dict_key, value in input_dict.items()
+            if dict_key.lower() == key.lower()
+        ),
+        None,
     )
-    try:
-        length += MP3(f"assets/temp/mp3/title.mp3").info.length
-    except HeaderNotFoundError:  # note to self AudioFileClip
-        length += sox.file_info.duration(f"assets/temp/mp3/title.mp3")
-    if getenv("STORYMODE").casefold() == "true":
-        TextToSpeech.tts(
-            sanitize_text(reddit_obj["thread_content"]),
-            filename=f"assets/temp/mp3/story_content.mp3",
-            random_speaker=False,
-        )
-        # 'story_content'
-    com = 0
-    for comment in track((reddit_obj["comments"]), "Saving..."):
-        # ! Stop creating mp3 files if the length is greater than VIDEO_LENGTH seconds. This can be longer, but this is just a good_voices starting point
-        if length > VIDEO_LENGTH:
-            break
-
-        if os.getenv("POSTLANG"):
-            tl_comment = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
-        else:
-            tl_comment = comment["comment_body"]
-
-        TextToSpeech.tts(
-            sanitize_text(tl_comment),
-            filename=f"assets/temp/mp3/{com}.mp3",
-            random_speaker=False,
-        )
-        try:
-            length += MP3(f"assets/temp/mp3/{com}.mp3").info.length
-            com += 1
-        except (HeaderNotFoundError, MutagenError, Exception):
-            try:
-                length += sox.file_info.duration(f"assets/temp/mp3/{com}.mp3")
-                com += 1
-            except (OSError, IOError):
-                print(
-                    "would have removed"
-                    f"assets/temp/mp3/{com}.mp3"
-                    f"assets/temp/png/comment_{com}.png"
-                )
-                # remove(f"assets/temp/mp3/{com}.mp3")
-                # remove(f"assets/temp/png/comment_{com}.png")# todo might cause odd un-syncing
-
-    print_substep("Saved Text to MP3 files Successfully.", style="bold green")
-    # ! Return the index, so we know how many screenshots of comments we need to make.
-    return length, com
