@@ -11,6 +11,11 @@ console = Console()
 
 
 def check_env() -> bool:
+    """Checks to see what's been put in .env
+
+    Returns:
+        bool: Whether or not everything was put in properly
+    """    
     if not os.path.exists(".env.template"):
         console.print("[red]Couldn't find .env.template. Unable to check variables.")
         return True
