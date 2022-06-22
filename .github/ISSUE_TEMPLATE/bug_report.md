@@ -20,9 +20,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **System (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - App version [e.g. 22]
+ - Device: [e.g. Surface Pro]
+ - OS: [e.g. Windows 10]
+ - Tool version [e.g. 2.4]
 
 **Additional context**
 Add any other context about the problem here.
