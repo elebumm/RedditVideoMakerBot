@@ -3,7 +3,7 @@ import json
 import os
 import time
 from os.path import exists
-
+from better_profanity import profanity
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -106,13 +106,13 @@ def make_final_video(number_of_clips, length):
 
     def get_video_title() -> str:
         title = os.getenv("VIDEO_TITLE") or "final_video"
-        if len(title) <= 35:
+        if len(title) <= 33:
             return title
         else:
             return title[0:30] + "..."
 
-    filename = f"{get_video_title()}.mp4"
-
+    uncensored_filename = f"{get_video_title()}.mp4"
+    filename = profanity.censor(uncensored_filename)
     def save_data():
         with open("./video_creation/data/videos.json", "r+") as raw_vids:
             done_vids = json.load(raw_vids)
@@ -148,3 +148,9 @@ def make_final_video(number_of_clips, length):
     print_step(
         f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
     )
+
+    if len(os.listdir(r'C:\Users\sanya\Downloads\RedditVideoMakerBot-2.1\RedditVideoMakerBot-2.1\env')) == 0:
+        Path(r"C:\Users\sanya\Downloads\RedditVideoMakerBot-2.1\RedditVideoMakerBot-2.1\.env").rename(r"C:\Users\sanya\Downloads\RedditVideoMakerBot-2.1\RedditVideoMakerBot-2.1\env\.env")
+        Path(r"C:\Users\sanya\Downloads\RedditVideoMakerBot-2.1\RedditVideoMakerBot-2.1\envs\.env").rename(r"C:\Users\sanya\Downloads\RedditVideoMakerBot-2.1\RedditVideoMakerBot-2.1\.env")
+    else:    
+        None
