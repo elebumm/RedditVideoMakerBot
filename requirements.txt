@@ -9,3 +9,4 @@ python-dotenv==0.20.0
 pytube==12.1.0
 requests==2.28.0
 rich==12.4.4
+translators==5.2.2
