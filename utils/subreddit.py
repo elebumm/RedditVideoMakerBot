@@ -4,7 +4,16 @@ from os import getenv
 from utils.console import print_substep
 
 
-def get_subreddit_undone(submissions: List, subreddit):
+def get_subreddit_undone(submissions: list, subreddit):
+    """_summary_
+
+    Args:
+        submissions (list): List of posts that are going to potentially be generated into a video
+        subreddit (praw.Reddit.SubredditHelper): Chosen subreddit 
+
+    Returns:
+        Any: The submission that has not been done
+    """    
     """
     recursively checks if the top submission in the list was already done.
     """
@@ -27,7 +36,16 @@ def get_subreddit_undone(submissions: List, subreddit):
     )  # all of the videos in hot have already been done
 
 
-def already_done(done_videos: list, submission):
+def already_done(done_videos: list, submission)->bool:
+    """Checks to see if the given submission is in the list of videos 
+
+    Args:
+        done_videos (list): Finished videos
+        submission (Any): The submission
+
+    Returns:
+        Boolean: Whether the video was found in the list
+    """    
 
     for video in done_videos:
         if video["id"] == str(submission):
