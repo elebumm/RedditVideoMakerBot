@@ -2,9 +2,11 @@ import random
 from os import listdir, environ
 from pathlib import Path
 from random import randrange
-from pytube import YouTube
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 from moviepy.editor import VideoFileClip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from pytube import YouTube
+
 from utils.console import print_step, print_substep
 
 
@@ -26,7 +28,7 @@ def download_background():
     ]
     # note: make sure the file name doesn't include an - in it
     if not len(listdir("./assets/backgrounds")) >= len(
-        background_options
+            background_options
     ):  # if there are any background videos not installed
         print_step(
             "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
@@ -51,11 +53,17 @@ def chop_background_video(video_length):
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
-    ffmpeg_extract_subclip(
-        f"assets/backgrounds/{choice}",
-        start_time,
-        end_time,
-        targetname="assets/temp/background.mp4",
-    )
+    try:
+        ffmpeg_extract_subclip(
+            f"assets/backgrounds/{choice}",
+            start_time,
+            end_time,
+            targetname="assets/temp/background.mp4",
+        )
+    except (OSError, IOError):  # ffmpeg issue see #348
+        print_substep("FFMPEG issue. Trying again...")
+        with VideoFileClip(f"assets/backgrounds/{choice}") as video:
+            new = video.subclip(start_time, end_time)
+            new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
     return True
