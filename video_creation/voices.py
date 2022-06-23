@@ -25,11 +25,16 @@ TTSProviders = {
 VIDEO_LENGTH: int = 40  # secs
 
 
-def save_text_to_mp3(reddit_obj):
-    """Saves Text to MP3 files.
+def save_text_to_mp3(reddit_obj:dict[str])->tuple[int,int]:
+    """Saves text to MP3 files. Goes through the reddit_obj and generates the title MP3 file and a certain number of comments until the total amount of time exceeds VIDEO_LENGTH seconds.
+
     Args:
-        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
+        reddit_obj (dict[str]): Reddit object received from reddit API in reddit/subreddit.py
+
+    Returns:
+        tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
+    
     env = os.getenv("TTSCHOICE", "")
     if env.casefold() in map(lambda _: _.casefold(), TTSProviders):
         text_to_mp3 = TTSEngine(

@@ -1,12 +1,17 @@
 import re
 
 
-def sanitize_text(text):
-    """
-    Sanitizes the text for tts.
-       What gets removed:
-    - following characters`^_~@!&;#:-%“”‘"%*/{}[]()\|<>?=+`
-    - any http or https links
+def sanitize_text(text: str) -> str:
+    """Sanitizes the text for tts.
+        What gets removed:
+     - following characters`^_~@!&;#:-%“”‘"%*/{}[]()\|<>?=+`
+     - any http or https links
+
+    Args:
+        text (str): Text to be sanitized
+
+    Returns:
+        str: Sanitized text
     """
 
     # remove any urls from the text
