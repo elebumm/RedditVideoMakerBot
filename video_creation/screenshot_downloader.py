@@ -3,7 +3,7 @@ from os import getenv
 import os
 from pathlib import Path
 
-from playwright.async_api import async_playwright
+from playwright.async_api import async_playwright # do not remove this line
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
 
