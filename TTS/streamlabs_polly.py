@@ -28,7 +28,7 @@ voices = [
 class StreamlabsPolly:
     def __init__(self):
         self.url = "https://streamlabs.com/polly/speak"
-        self.max_chars = 550
+        self.max_chars = 349
         self.voices = voices
 
     def run(self, text, filepath, random_voice: bool = False):
