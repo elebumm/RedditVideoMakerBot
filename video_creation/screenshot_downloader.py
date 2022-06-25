@@ -1,5 +1,6 @@
 import json
 from os import getenv
+import os
 from pathlib import Path
 
 from playwright.async_api import async_playwright
@@ -10,17 +11,21 @@ from utils.console import print_step, print_substep
 import json
 from rich.console import Console
 
+import translators as ts
+
 console = Console()
 
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
-    """Downloads screenshots of reddit posts as they are seen on the web.
+def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num:int):
+    """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
+
     Args:
-            reddit_object: The Reddit Object you received in askreddit.py
-            screenshot_num: The number of screenshots you want to download.
-    """
+        reddit_object (dict[str]): Reddit object received from reddit/subreddit.py
+        screenshot_num (int): Number of screenshots to downlaod
+    """    
+    
     print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
@@ -51,7 +56,22 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 '[data-click-id="text"] button'
             ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
-        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
+        # translate code
+
+        if getenv("POSTLANG"):
+            print_substep("Translating post...")
+            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
+
+            page.evaluate(
+                'tl_content => document.querySelector(\'[data-test-id="post-content"] > div:nth-child(3) > div > div\').textContent = tl_content', texts_in_tl
+            )
+        else:
+            print_substep("Skipping translation...")
+
+        page.locator('[data-test-id="post-content"]').screenshot(
+            path="assets/temp/png/title.png"
+        )
+
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
                 path="assets/temp/png/story_content.png"
@@ -60,7 +80,6 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
             for idx, comment in track(
                 enumerate(reddit_object["comments"]), "Downloading screenshots..."
             ):
-
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
                     break
@@ -69,7 +88,17 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                     page.locator('[data-testid="content-gate"] button').click()
 
                 page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+
+                # translate code
+
+                if getenv("POSTLANG"):
+                    comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
+                    page.evaluate(
+                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content', [comment_tl, comment['comment_id']]
+                    )
+
                 page.locator(f"#t1_{comment['comment_id']}").screenshot(
                     path=f"assets/temp/png/comment_{idx}.png"
                 )
+
         print_substep("Screenshots downloaded Successfully.", style="bold green")
