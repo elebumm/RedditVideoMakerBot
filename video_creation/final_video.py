@@ -2,6 +2,7 @@
 import json
 import os
 import time
+import multiprocessing
 from os.path import exists
 
 from moviepy.editor import (
@@ -132,6 +133,7 @@ def make_final_video(number_of_clips:int, length:int):
         audio_codec="aac",
         audio_bitrate="192k",
         verbose=False,
+        threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
         "assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}"
