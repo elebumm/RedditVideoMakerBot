@@ -154,7 +154,7 @@ def save_data(filename: str):
     Args:
         filename (str): The finished video title name
     """
-    with open("./video_creation/data/videos.json", "r+") as raw_vids:
+    with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
         done_vids = json.load(raw_vids)
         if str(subreddit.submission.id) in [video["id"] for video in done_vids]:
             return  # video already done but was specified to continue anyway in the .env file

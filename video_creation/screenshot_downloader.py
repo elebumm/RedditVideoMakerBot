@@ -38,9 +38,13 @@ def download_screenshots_of_reddit_posts(reddit_object: dict[str], screenshot_nu
         context = browser.new_context()
 
         if getenv("THEME").upper() == "DARK":
-            cookie_file = open("./video_creation/data/cookie-dark-mode.json")
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
         else:
-            cookie_file = open("./video_creation/data/cookie-light-mode.json")
+            cookie_file = open(
+                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
+            )
         cookies = json.load(cookie_file)
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot

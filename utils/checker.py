@@ -21,10 +21,10 @@ def check_env() -> bool:
         return True
     if not os.path.exists(".env"):
         console.print("[red]Couldn't find the .env file, creating one now.")
-        with open(".env", "x") as file:
+        with open(".env", "x", encoding="utf-8") as file:
             file.write("")
     success = True
-    with open(".env.template", "r") as template:
+    with open(".env.template", "r", encoding="utf-8") as template:
         # req_envs = [env.split("=")[0] for env in template.readlines() if "=" in env]
         matching = {}
         explanations = {}
@@ -172,7 +172,7 @@ def check_env() -> bool:
         console.print("[red]Aborting: Unresolved missing variables")
         return False
     if len(incorrect):
-        with open(".env", "r+") as env_file:
+        with open(".env", "r+", encoding="utf-8") as env_file:
             lines = []
             for line in env_file.readlines():
                 line.split("=")[0].strip() not in incorrect and lines.append(line)
@@ -180,7 +180,7 @@ def check_env() -> bool:
             env_file.write("\n".join(lines))
             env_file.truncate()
         console.print("[green]Successfully removed incorrectly set variables from .env")
-    with open(".env", "a") as env_file:
+    with open(".env", "a", encoding="utf-8") as env_file:
         for env in missing:
             env_file.write(
                 env
