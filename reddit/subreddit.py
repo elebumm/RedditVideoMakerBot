@@ -105,6 +105,7 @@ def get_subreddit_threads():
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
             if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
+              if not top_level_comment.author == None:
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,
