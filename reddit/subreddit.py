@@ -1,5 +1,5 @@
 import re
-from os import getenv, environ
+from os import getenv
 
 import praw
 from praw.models import MoreComments
@@ -7,19 +7,6 @@ from praw.models import MoreComments
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
-
-TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
-
-
-def textify(text):
-    return "".join(filter(TEXT_WHITELIST.__contains__, text))
-
-
-def try_env(param, backup):
-    try:
-        return environ[param]
-    except KeyError:
-        return backup
 
 
 def get_subreddit_threads():
@@ -90,20 +77,20 @@ def get_subreddit_threads():
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
-    environ["VIDEO_TITLE"] = str(textify(submission.title))
-    environ["VIDEO_ID"] = str(textify(submission.id))
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
     content["thread_post"] = submission.selftext
+    content["thread_id"] = submission.id
     content["comments"] = []
+
     for top_level_comment in submission.comments:
         if isinstance(top_level_comment, MoreComments):
             continue
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
-            if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
+            if len(top_level_comment.body) <= int(getenv("MAX_COMMENT_LENGTH", "500")):
                 if not top_level_comment.author is None:
                     content["comments"].append(
                         {

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import json
-import os
 import time
 import multiprocessing
+import re
+import os
 from os.path import exists
 
 from moviepy.editor import (
@@ -17,7 +18,6 @@ from moviepy.editor import (
 from moviepy.video.io import ffmpeg_tools
 from rich.console import Console
 
-from reddit import subreddit
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 
@@ -26,7 +26,7 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
@@ -116,13 +116,14 @@ def make_final_video(number_of_clips: int, length: int):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
+    title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+    idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    filename = f"{title}.mp4"
 
-    filename = f"{get_video_title()}.mp4"
-
-    save_data(filename)
+    save_data(filename, title, idx)
 
     if not exists("./results"):
-        print_substep("the results folder didn't exist so I made it")
+        print_substep("The results folder didn't exist so I made it")
         os.mkdir("./results")
 
     final.write_videofile(
@@ -144,11 +145,11 @@ def make_final_video(number_of_clips: int, length: int):
     print_substep("See result in the results folder!")
 
     print_step(
-        f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
+        f'Reddit title: { reddit_obj["thread_title"] } \n Background Credit: {os.getenv("background_credit")}'
     )
 
 
-def save_data(filename: str):
+def save_data(filename: str, reddit_title: str, reddit_id: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
@@ -156,28 +157,15 @@ def save_data(filename: str):
     """
     with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
         done_vids = json.load(raw_vids)
-        if str(subreddit.submission.id) in [video["id"] for video in done_vids]:
+        if reddit_id in [video["id"] for video in done_vids]:
             return  # video already done but was specified to continue anyway in the .env file
         payload = {
-            "id": str(os.getenv("VIDEO_ID")),
+            "id": reddit_id,
             "time": str(int(time.time())),
             "background_credit": str(os.getenv("background_credit")),
-            "reddit_title": str(os.getenv("VIDEO_TITLE")),
+            "reddit_title": reddit_title,
             "filename": filename,
         }
         done_vids.append(payload)
         raw_vids.seek(0)
         json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
-
-
-def get_video_title() -> str:
-    """Gets video title from env variable or gives it the name "final_video"
-
-    Returns:
-        str: Video title
-    """
-    title = os.getenv("VIDEO_TITLE") or "final_video"
-    if len(title) <= 35:
-        return title
-    else:
-        return title[0:30] + "..."

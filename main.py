@@ -42,7 +42,7 @@ def main():
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
     chop_background_video(length)
-    make_final_video(number_of_comments, length)
+    make_final_video(number_of_comments, length, reddit_object)
 
 
 def run_many(times):
