@@ -2,7 +2,7 @@ import re
 
 
 def sanitize_text(text: str) -> str:
-    """Sanitizes the text for tts.
+    r"""Sanitizes the text for tts.
         What gets removed:
      - following characters`^_~@!&;#:-%“”‘"%*/{}[]()\|<>?=+`
      - any http or https links

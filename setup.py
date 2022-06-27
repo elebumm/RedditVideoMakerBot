@@ -5,11 +5,10 @@
 # Imports
 import os
 import subprocess
-import re
-from utils.console import print_markdown
-from utils.console import print_step
 from rich.console import Console
 from utils.loader import Loader
+from utils.console import print_markdown
+from utils.console import print_step
 from utils.console import handle_input
 
 console = Console()

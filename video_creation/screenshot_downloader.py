@@ -1,19 +1,17 @@
 import json
-from os import getenv
 import os
+from os import getenv
 from pathlib import Path
 
-from playwright.async_api import async_playwright  # do not remove this line
+from playwright.async_api import async_playwright  # pylint: disable=unused-import
+
+# do not remove the above line
+
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
-
-from utils.console import print_step, print_substep
-import json
-from rich.console import Console
-
 import translators as ts
 
-console = Console()
+from utils.console import print_step, print_substep
 
 storymode = False
 

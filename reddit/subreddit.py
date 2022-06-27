@@ -2,11 +2,11 @@ import re
 from os import getenv, environ
 
 import praw
+from praw.models import MoreComments
 
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
-from praw.models import MoreComments
 
 TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
@@ -26,7 +26,9 @@ def get_subreddit_threads():
     """
     Returns a list of threads from the AskReddit subreddit.
     """
-    global submission
+
+    submission = None
+
     print_substep("Logging into Reddit.")
 
     content = {}
@@ -48,9 +50,8 @@ def get_subreddit_threads():
         passkey=passkey,
         check_for_async=False,
     )
-    """
-	Ask user for subreddit input
-	"""
+
+    # Ask user for subreddit input
     print_step("Getting subreddit threads...")
     if not getenv(
         "SUBREDDIT"
@@ -89,9 +90,7 @@ def get_subreddit_threads():
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
-    environ["VIDEO_TITLE"] = str(
-        textify(submission.title)
-    )  # todo use global instend of env vars
+    environ["VIDEO_TITLE"] = str(textify(submission.title))
     environ["VIDEO_ID"] = str(textify(submission.id))
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
@@ -105,7 +104,7 @@ def get_subreddit_threads():
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
             if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
-                if not top_level_comment.author == None:
+                if not top_level_comment.author is None:
                     content["comments"].append(
                         {
                             "comment_body": top_level_comment.body,
