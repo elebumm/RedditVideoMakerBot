@@ -26,13 +26,13 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips:int, length:int):
+def make_final_video(number_of_clips: int, length: int):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
         number_of_clips (int): Index to end at when going through the screenshots
         length (int): Length of the video
-    """    
+    """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
@@ -117,9 +117,7 @@ def make_final_video(number_of_clips:int, length:int):
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
 
-
     filename = f"{get_video_title()}.mp4"
-
 
     save_data(filename)
 
@@ -149,12 +147,13 @@ def make_final_video(number_of_clips:int, length:int):
         f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
     )
 
-def save_data(filename:str):
+
+def save_data(filename: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
         filename (str): The finished video title name
-    """    
+    """
     with open("./video_creation/data/videos.json", "r+") as raw_vids:
         done_vids = json.load(raw_vids)
         if str(subreddit.submission.id) in [video["id"] for video in done_vids]:
@@ -170,12 +169,13 @@ def save_data(filename:str):
         raw_vids.seek(0)
         json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
 
+
 def get_video_title() -> str:
     """Gets video title from env variable or gives it the name "final_video"
 
     Returns:
         str: Video title
-    """        
+    """
     title = os.getenv("VIDEO_TITLE") or "final_video"
     if len(title) <= 35:
         return title

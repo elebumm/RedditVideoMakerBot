@@ -5,8 +5,10 @@ from utils.console import print_step
 
 
 def check_done(
-    redditobj:dict[str],
-)->dict[str]|None:  # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
+    redditobj: dict[str],
+) -> dict[
+    str
+] | None:  # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
     """Checks if the chosen post has already been generated
 
     Args:

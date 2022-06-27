@@ -10,7 +10,7 @@ from pytube import YouTube
 from utils.console import print_step, print_substep
 
 
-def get_start_and_end_times(video_length:int, length_of_clip:int)->tuple[int,int]:
+def get_start_and_end_times(video_length: int, length_of_clip: int) -> tuple[int, int]:
     """Generates a random interval of time to be used as the beckground of the video.
 
     Args:
@@ -19,7 +19,7 @@ def get_start_and_end_times(video_length:int, length_of_clip:int)->tuple[int,int
 
     Returns:
         tuple[int,int]: Start and end time of the randomized interval
-    """    
+    """
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
@@ -37,7 +37,7 @@ def download_background():
     ]
     # note: make sure the file name doesn't include an - in it
     if not len(listdir("./assets/backgrounds")) >= len(
-            background_options
+        background_options
     ):  # if there are any background videos not installed
         print_step(
             "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
@@ -56,12 +56,12 @@ def download_background():
         )
 
 
-def chop_background_video(video_length:int):
+def chop_background_video(video_length: int):
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
         video_length (int): Length of the clip where the background footage is to be taken out of
-    """    
+    """
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = random.choice(listdir("assets/backgrounds"))
     environ["background_credit"] = choice.split("-")[0]

@@ -9,11 +9,11 @@ def get_subreddit_undone(submissions: list, subreddit):
 
     Args:
         submissions (list): List of posts that are going to potentially be generated into a video
-        subreddit (praw.Reddit.SubredditHelper): Chosen subreddit 
+        subreddit (praw.Reddit.SubredditHelper): Chosen subreddit
 
     Returns:
         Any: The submission that has not been done
-    """    
+    """
     """
     recursively checks if the top submission in the list was already done.
     """
@@ -36,8 +36,8 @@ def get_subreddit_undone(submissions: list, subreddit):
     )  # all of the videos in hot have already been done
 
 
-def already_done(done_videos: list, submission)->bool:
-    """Checks to see if the given submission is in the list of videos 
+def already_done(done_videos: list, submission) -> bool:
+    """Checks to see if the given submission is in the list of videos
 
     Args:
         done_videos (list): Finished videos
@@ -45,7 +45,7 @@ def already_done(done_videos: list, submission)->bool:
 
     Returns:
         Boolean: Whether the video was found in the list
-    """    
+    """
 
     for video in done_videos:
         if video["id"] == str(submission):
