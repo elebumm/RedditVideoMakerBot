@@ -5,11 +5,10 @@
 # Imports
 import os
 import subprocess
-import re
-from utils.console import print_markdown
-from utils.console import print_step
 from rich.console import Console
 from utils.loader import Loader
+from utils.console import print_markdown
+from utils.console import print_step
 from utils.console import handle_input
 
 console = Console()
@@ -142,7 +141,7 @@ theme = handle_input(
 loader = Loader("Attempting to save your credentials...", "Done!").start()
 # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 console.print("Writing to the .env file...")
-with open(".env", "w") as f:
+with open(".env", "w", encoding="utf-8") as f:
     f.write(
         f"""REDDIT_CLIENT_ID="{client_id}"
 REDDIT_CLIENT_SECRET="{client_sec}"
@@ -155,7 +154,7 @@ OPACITY={opacity}
 """
     )
 
-with open(".setup-done-before", "w") as f:
+with open(".setup-done-before", "w", encoding="utf-8") as f:
     f.write(
         "This file blocks the setup assistant from running again. Delete this file to run setup again."
     )

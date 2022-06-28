@@ -1,12 +1,14 @@
 import json
+from typing import Union
 from os import getenv
 
 from utils.console import print_step
 
 
 def check_done(
-    redditobj:dict[str],
-)->dict[str]|None:  # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
+    redditobj: dict[str],
+) -> Union[dict[str], None]:
+    # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
     """Checks if the chosen post has already been generated
 
     Args:
@@ -16,7 +18,9 @@ def check_done(
         dict[str]|None: Reddit object in args
     """
 
-    with open("./video_creation/data/videos.json", "r") as done_vids_raw:
+    with open(
+        "./video_creation/data/videos.json", "r", encoding="utf-8"
+    ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):

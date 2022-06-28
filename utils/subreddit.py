@@ -1,4 +1,3 @@
-from typing import List
 import json
 from os import getenv
 from utils.console import print_substep
@@ -9,15 +8,16 @@ def get_subreddit_undone(submissions: list, subreddit):
 
     Args:
         submissions (list): List of posts that are going to potentially be generated into a video
-        subreddit (praw.Reddit.SubredditHelper): Chosen subreddit 
+        subreddit (praw.Reddit.SubredditHelper): Chosen subreddit
 
     Returns:
         Any: The submission that has not been done
-    """    
     """
-    recursively checks if the top submission in the list was already done.
-    """
-    with open("./video_creation/data/videos.json", "r") as done_vids_raw:
+    # recursively checks if the top submission in the list was already done.
+
+    with open(
+        "./video_creation/data/videos.json", "r", encoding="utf-8"
+    ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for submission in submissions:
         if already_done(done_videos, submission):
@@ -36,8 +36,8 @@ def get_subreddit_undone(submissions: list, subreddit):
     )  # all of the videos in hot have already been done
 
 
-def already_done(done_videos: list, submission)->bool:
-    """Checks to see if the given submission is in the list of videos 
+def already_done(done_videos: list, submission) -> bool:
+    """Checks to see if the given submission is in the list of videos
 
     Args:
         done_videos (list): Finished videos
@@ -45,7 +45,7 @@ def already_done(done_videos: list, submission)->bool:
 
     Returns:
         Boolean: Whether the video was found in the list
-    """    
+    """
 
     for video in done_videos:
         if video["id"] == str(submission):
