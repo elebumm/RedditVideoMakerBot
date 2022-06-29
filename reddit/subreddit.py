@@ -157,11 +157,10 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                         "comment_id": top_level_comment.id,
                     }
                 )
-            count += 1
     except AttributeError:
         pass
 
-    print_substep("AskReddit threads retrieved successfully.", style_="bold green")
+    print_substep("AskReddit threads retrieved successfully.", style="bold green")
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title

@@ -24,11 +24,9 @@ def print_step(text):
     console.print(panel)
 
 
-def print_substep(text, style_=None):
+def print_substep(text, style=None):
     """Prints a rich info message without the panelling."""
-    if style_ is not None:
-        console.print(text, style=style_)
-    console.print(text)
+    console.print(text, style)
 
 def print_table(items):
     """Prints items in a table."""
