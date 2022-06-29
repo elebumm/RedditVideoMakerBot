@@ -43,13 +43,16 @@ The only original thing being done is the editing and gathering of all materials
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
 3. Run `pip install -r requirements.txt`
+4. Enjoy 😎
 
-4. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
+5. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
-5. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+6. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
    Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-6. Enjoy 😎
+7. Enjoy 😎
+
+There's also now also a CLI! Run `python3 cli.py [OPTIONS (arguments)]` to do the task, do `python3 cli.py -h` for help.
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 

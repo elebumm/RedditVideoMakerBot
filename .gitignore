@@ -233,6 +233,7 @@ fabric.properties
 
 assets/
 out
+venv
 .DS_Store
 .setup-done-before
 results/*

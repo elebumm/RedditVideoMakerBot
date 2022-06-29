@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.padding import Padding
@@ -6,6 +5,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.columns import Columns
 import re
+
 
 console = Console()
 
@@ -24,10 +24,11 @@ def print_step(text):
     console.print(panel)
 
 
-def print_substep(text, style=""):
+def print_substep(text, style_=None):
     """Prints a rich info message without the panelling."""
-    console.print(text, style=style)
-
+    if style_ is not None:
+        console.print(text, style=style_)
+    console.print(text)
 
 def print_table(items):
     """Prints items in a table."""
@@ -74,3 +75,5 @@ def handle_input(
         console.print("[red]" + err_message)
 
     return user_input
+
+

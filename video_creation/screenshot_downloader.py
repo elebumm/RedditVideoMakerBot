@@ -9,11 +9,16 @@ from rich.progress import track
 
 from utils.console import print_step, print_substep
 import json
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright, ViewportSize
+from rich.progress import track
 from rich.console import Console
 
 import translators as ts
 
 console = Console()
+from utils.console import print_step, print_substep
 
 storymode = False
 
@@ -31,11 +36,11 @@ def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num
     # ! Make sure the reddit screenshots folder exists
     Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as p:
-        print_substep("Launching Headless Browser...")
+    with console.status("[bold]Launching Headless Browser ...", spinner="simpleDots"):
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            context = browser.new_context()
 
-        browser = p.chromium.launch()
-        context = browser.new_context()
 
         if getenv("THEME").upper() == "DARK":
             cookie_file = open("./video_creation/data/cookie-dark-mode.json")

@@ -4,6 +4,9 @@ import os
 import time
 from os.path import exists
 
+import os
+import re
+
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -25,7 +28,7 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips:int, length:int):
+def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
@@ -39,17 +42,39 @@ def make_final_video(number_of_clips:int, length:int):
     background_clip = (
         VideoFileClip("assets/temp/background.mp4")
         .without_audio()
-        .resize(height=H)
+        .resize(height=1920)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
+
+    try:
+        opacity = float(os.getenv("OPACITY"))
+    except (
+            ValueError,
+            FloatingPointError,
+            TypeError
+        ):
+        print_substep(
+            "Please ensure that OPACITY is between 0 and 1 in .env file", style_="bold red"
+        )
 
     # Gather all audio clips
     audio_clips = []
     for i in range(0, number_of_clips):
-        audio_clips.append(AudioFileClip(f"assets/temp/mp3/{i}.mp3"))
-    audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
-    audio_concat = concatenate_audioclips(audio_clips)
-    audio_composite = CompositeAudioClip([audio_concat])
+        audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
+
+    audio_clips.insert(0, AudioFileClip("assets/mp3/title.mp3"))
+    try:
+        audio_clips.insert(1, AudioFileClip("assets/mp3/posttext.mp3"))
+    except (
+            OSError,
+            FileNotFoundError,
+        ):
+        print_substep("An error occured! Aborting.", style_="bold red")
+        raise SystemExit()
+    else:
+        audio_concat = concatenate_audioclips(audio_clips)
+        audio_composite = CompositeAudioClip([audio_concat])
+
 
     # Get sum of all clip lengths
     total_length = sum([clip.duration for clip in audio_clips])
@@ -116,11 +141,16 @@ def make_final_video(number_of_clips:int, length:int):
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
 
+    if final_vid_path is None:
+        final_vid_path =  re.sub(
+            "[?\"%*:|<>]/", "", (f"assets/{subreddit.submission.title}.mp4")
+        )
 
-    filename = f"{get_video_title()}.mp4"
+    final.write_videofile(final_vid_path, fps=30, audio_codec="aac", audio_bitrate="192k")
 
 
-    save_data(filename)
+
+    save_data(final_vid_path)
 
     if not exists("./results"):
         print_substep("the results folder didn't exist so I made it")
@@ -134,7 +164,7 @@ def make_final_video(number_of_clips:int, length:int):
         verbose=False,
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}"
+        "assets/temp/temp.mp4", 0, length, targetname=f"results/{final_vid_path}"
     )
     # os.remove("assets/temp/temp.mp4")
 
