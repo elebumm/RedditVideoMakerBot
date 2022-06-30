@@ -22,10 +22,10 @@ def check_env() -> bool:
         return True
     if not os.path.exists(".env"):
         console.print("[red]Couldn't find the .env file, creating one now.")
-        with open(".env", "x") as file:
+        with open(".env", "x", encoding="utf-8") as file:
             file.write("")
     success = True
-    with open(".env.template", "r") as template:
+    with open(".env.template", "r", encoding="utf-8") as template:
         # req_envs = [env.split("=")[0] for env in template.readlines() if "=" in env]
         matching = {}
         explanations = {}
@@ -36,7 +36,11 @@ def check_env() -> bool:
         req_envs = []
         var_optional = False
         for line in template.readlines():
-            if line.startswith("#") is not True and "=" in line and var_optional is not True:
+            if (
+                line.startswith("#") is not True
+                and "=" in line
+                and var_optional is not True
+            ):
                 req_envs.append(line.split("=")[0])
                 if "#" in line:
                     examples[line.split("=")[0]] = "#".join(
@@ -60,8 +64,10 @@ def check_env() -> bool:
                 )
                 var_optional = False
             elif line.startswith("#MATCH_TYPE "):
+
                 types[req_envs[-1]
                       ] = eval(line.removeprefix("#MATCH_TYPE ")[:-1].split()[0])
+
                 var_optional = False
             elif line.startswith("#EXPLANATION "):
                 explanations[req_envs[-1]
@@ -88,9 +94,9 @@ def check_env() -> bool:
             try:
                 temp = types[env](value)
                 if env in bounds.keys():
-                    (bounds[env][0] <= temp or incorrect.add(env)) and len(bounds[env]) > 1 and (
-                        bounds[env][1] >= temp or incorrect.add(env)
-                    )
+                    (bounds[env][0] <= temp or incorrect.add(env)) and len(
+                        bounds[env]
+                    ) > 1 and (bounds[env][1] >= temp or incorrect.add(env))
             except ValueError:
                 incorrect.add(env)
 
@@ -116,13 +122,17 @@ def check_env() -> bool:
         for env in missing:
             table.add_row(
                 env,
+
                 explanations[env] if env in explanations.keys(
                 ) else "No explanation given",
                 examples[env] if env in examples.keys() else "",
                 str(bounds[env][0]) if env in bounds.keys(
                 ) and bounds[env][1] is not None else "",
+
                 str(bounds[env][1])
-                if env in bounds.keys() and len(bounds[env]) > 1 and bounds[env][1] is not None
+                if env in bounds.keys()
+                and len(bounds[env]) > 1
+                and bounds[env][1] is not None
                 else "",
             )
         console.print(table)
@@ -138,6 +148,7 @@ def check_env() -> bool:
             title_justify="left",
             title_style="#C0CAF5 bold",
         )
+
         table.add_column("Variable", justify="left",
                          style="#7AA2F7 bold", no_wrap=True)
         table.add_column("Current value", justify="left",
@@ -146,18 +157,21 @@ def check_env() -> bool:
                          style="#BB9AF7", no_wrap=False)
         table.add_column("Example", justify="center",
                          style="#F7768E", no_wrap=True)
+
         table.add_column("Min", justify="right", style="#F7768E", no_wrap=True)
         table.add_column("Max", justify="left", style="#F7768E", no_wrap=True)
         for env in incorrect:
             table.add_row(
                 env,
                 os.getenv(env),
+
                 explanations[env] if env in explanations.keys(
                 ) else "No explanation given",
                 str(types[env].__name__) if env in types.keys() else "str",
                 str(bounds[env][0]) if env in bounds.keys() else "None",
                 str(bounds[env][1]) if env in bounds.keys() and len(
                     bounds[env]) > 1 else "None",
+
             )
             missing.add(env)
         console.print(table)
@@ -171,7 +185,7 @@ def check_env() -> bool:
         console.print("[red]Aborting: Unresolved missing variables")
         return False
     if len(incorrect):
-        with open(".env", "r+") as env_file:
+        with open(".env", "r+", encoding="utf-8") as env_file:
             lines = []
             for line in env_file.readlines():
                 line.split("=")[0].strip(
@@ -179,9 +193,10 @@ def check_env() -> bool:
             env_file.seek(0)
             env_file.write("\n".join(lines))
             env_file.truncate()
-        console.print(
-            "[green]Successfully removed incorrectly set variables from .env")
-    with open(".env", "a") as env_file:
+
+        console.print("[green]Successfully removed incorrectly set variables from .env")
+    with open(".env", "a", encoding="utf-8") as env_file:
+
         for env in missing:
             env_file.write(
                 env
@@ -196,6 +211,7 @@ def check_env() -> bool:
                         if env in explanations.keys()
                         else "Incorrect input. Try again.",
                         bounds[env][0] if env in bounds.keys() else None,
+
                         bounds[env][1] if env in bounds.keys() and len(
                             bounds[env]) > 1 else None,
                         oob_errors[env] if env in oob_errors.keys(
@@ -204,6 +220,7 @@ def check_env() -> bool:
                         + (
                             explanations[env] if env in explanations.keys(
                             ) else "No info available"
+
                         ),
                     )
                 )

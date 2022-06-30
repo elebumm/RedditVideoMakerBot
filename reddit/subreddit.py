@@ -8,13 +8,15 @@ from prawcore.exceptions import (
 import random
 import os
 import re
-from os import getenv, environ
+from os import getenv
 
 import praw
+from praw.models import MoreComments
 
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
+
 from praw.models import MoreComments
 
 TEXT_WHITELIST = set(
@@ -32,6 +34,7 @@ def try_env(param, backup):
         return backup
 
 
+
 def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     """
     Takes subreddit_ as parameter which defaults to None, but in this
@@ -44,6 +47,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     global submission
     load_dotenv()
 
+
     if os.getenv("REDDIT_2FA", default="no").casefold() == "yes":
         print(
             "\nEnter your two-factor authentication code from your authenticator app.\n", end=" "
@@ -52,6 +56,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
         pw = os.getenv("REDDIT_PASSWORD")
         passkey = f"{pw}:{code}"
     else:
+
         passkey = os.getenv("REDDIT_PASSWORD")
 
     content = {}
@@ -126,6 +131,7 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     ratio = submission.upvote_ratio * 100
     num_comments = submission.num_comments
 
+
     print_substep(
         f"[bold]Video will be: [cyan]{submission.title}[/cyan] :thumbsup:\n"
         + f"[blue] Thread has {upvotes} and upvote ratio of {ratio}%\n"
@@ -158,16 +164,20 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     print_substep("AskReddit threads retrieved successfully.",
                   style="bold green")
 
+
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
     content["thread_post"] = submission.selftext
+    content["thread_id"] = submission.id
     content["comments"] = []
+
     for top_level_comment in submission.comments:
         if isinstance(top_level_comment, MoreComments):
             continue
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
+
             if len(top_level_comment.body) <= int(try_env("MAX_COMMENT_LENGTH", 500)):
                 content["comments"].append(
                     {
@@ -178,4 +188,5 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                 )
     print_substep("Received subreddit threads Successfully.",
                   style="bold green")
+
     return content

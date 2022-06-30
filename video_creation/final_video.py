@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import json
-import os
 import time
+import multiprocessing
+import re
+import os
 from os.path import exists
 
 import os
@@ -19,7 +21,6 @@ from moviepy.editor import (
 from moviepy.video.io import ffmpeg_tools
 from rich.console import Console
 
-from reddit import subreddit
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 
@@ -28,7 +29,9 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int, final_vid_path: str):
+
+def make_final_video(number_of_clips: int, length: int, final_vid_path: str, reddit_obj: dict[str]):
+
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
@@ -139,6 +142,11 @@ def make_final_video(number_of_clips: int, length: int, final_vid_path: str):
     )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
+    title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+    idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    filename = f"{title}.mp4"
+    subreddit = os.getenv("SUBREDDIT");
+
 
     if final_vid_path is None:
         final_vid_path = re.sub(
@@ -154,15 +162,19 @@ def make_final_video(number_of_clips: int, length: int, final_vid_path: str):
         print_substep("the results folder didn't exist so I made it")
         os.mkdir("./results")
 
+
     final.write_videofile(
         "assets/temp/temp.mp4",
         fps=30,
         audio_codec="aac",
         audio_bitrate="192k",
         verbose=False,
+        threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
+
         "assets/temp/temp.mp4", 0, length, targetname=f"results/{final_vid_path}"
+
     )
     # os.remove("assets/temp/temp.mp4")
 
@@ -172,30 +184,35 @@ def make_final_video(number_of_clips: int, length: int, final_vid_path: str):
     print_substep("See result in the results folder!")
 
     print_step(
-        f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
+        f'Reddit title: { reddit_obj["thread_title"] } \n Background Credit: {os.getenv("background_credit")}'
     )
 
 
+
 def save_data(filename: str):
+
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
         filename (str): The finished video title name
     """
-    with open("./video_creation/data/videos.json", "r+") as raw_vids:
+
+    with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
+
         done_vids = json.load(raw_vids)
-        if str(subreddit.submission.id) in [video["id"] for video in done_vids]:
+        if reddit_id in [video["id"] for video in done_vids]:
             return  # video already done but was specified to continue anyway in the .env file
         payload = {
-            "id": str(os.getenv("VIDEO_ID")),
+            "id": reddit_id,
             "time": str(int(time.time())),
             "background_credit": str(os.getenv("background_credit")),
-            "reddit_title": str(os.getenv("VIDEO_TITLE")),
+            "reddit_title": reddit_title,
             "filename": filename,
         }
         done_vids.append(payload)
         raw_vids.seek(0)
         json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
+
 
 
 def get_video_title() -> str:
@@ -209,3 +226,4 @@ def get_video_title() -> str:
         return title
     else:
         return title[0:30] + "..."
+

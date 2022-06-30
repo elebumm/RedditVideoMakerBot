@@ -32,7 +32,7 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.7+
 - Playwright (this should install automatically in installation)
 
 ## Installation 👩‍💻

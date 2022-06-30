@@ -5,11 +5,10 @@
 # Imports
 import os
 import subprocess
-import re
-from utils.console import print_markdown
-from utils.console import print_step
 from rich.console import Console
 from utils.loader import Loader
+from utils.console import print_markdown
+from utils.console import print_step
 from utils.console import handle_input
 
 console = Console()
@@ -61,6 +60,7 @@ console.print("[bold green]Reddit 2FA (yes or no)")
 console.print("[bold green]Opacity (range of 0-1, decimals are OK)")
 console.print("[bold green]Subreddit (without r/ or /r/)")
 console.print("[bold green]Theme (light or dark)")
+console.print("[bold green]Random Thread (yes or no)")
 console.print(
     "[green]If you don't have these, please follow the instructions in the README.md file to set them up."
 )
@@ -140,23 +140,34 @@ theme = handle_input(
     r"(light)|(dark)",
     "You need to input 'light' or 'dark'",
 )
+Random_thread = handle_input(
+    "Random Thread?  (yes/no)",
+     False,
+    r"(yes)|(no)",
+    "You need to input either yes or no",
+)
+
 loader = Loader("Attempting to save your credentials...", "Done!").start()
 # you can also put a while loop here, e.g. while VideoIsBeingMade == True: ...
 console.print("Writing to the .env file...")
-with open(".env", "w") as f:
+with open(".env", "w", encoding="utf-8") as f:
     f.write(
         f"""REDDIT_CLIENT_ID="{client_id}"
 REDDIT_CLIENT_SECRET="{client_sec}"
 REDDIT_USERNAME="{user}"
 REDDIT_PASSWORD="{passw}"
 REDDIT_2FA="{twofactor}"
+RANDOM_THREAD="{Random_thread}"
 THEME="{theme}"
 SUBREDDIT="{subreddit}"
 OPACITY={opacity}
+VOICE="Matthew"
+TTsChoice="polly"
+STORYMODE="False"
 """
     )
 
-with open(".setup-done-before", "w") as f:
+with open(".setup-done-before", "w", encoding="utf-8") as f:
     f.write(
         "This file blocks the setup assistant from running again. Delete this file to run setup again."
     )

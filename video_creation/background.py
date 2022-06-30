@@ -9,6 +9,10 @@ import os
 from random import randrange
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from pytube import YouTube
+
 
 from utils.console import print_step, print_substep
 
@@ -90,12 +94,18 @@ def chop_background_video(video_length: int):
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
-    start_time, end_time = get_start_and_end_times(
-        video_length, background.duration)
-    ffmpeg_extract_subclip(
-        f"assets/backgrounds/{choice}",
-        start_time,
-        end_time,
-        targetname="assets/temp/background.mp4",
-    )
+
+    start_time, end_time = get_start_and_end_times(video_length, background.duration)
+    try:
+        ffmpeg_extract_subclip(
+            f"assets/backgrounds/{choice}",
+            start_time,
+            end_time,
+            targetname="assets/temp/background.mp4",
+        )
+    except (OSError, IOError):  # ffmpeg issue see #348
+        print_substep("FFMPEG issue. Trying again...")
+        with VideoFileClip(f"assets/backgrounds/{choice}") as video:
+            new = video.subclip(start_time, end_time)
+            new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
