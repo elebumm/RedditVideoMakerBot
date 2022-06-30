@@ -18,19 +18,18 @@ from rich.console import Console
 import translators as ts
 
 console = Console()
-from utils.console import print_step, print_substep
 
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num:int):
+def download_screenshots_of_reddit_posts(reddit_object: dict[str], screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
         reddit_object (dict[str]): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to downlaod
-    """    
-    
+    """
+
     print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists
@@ -40,7 +39,6 @@ def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num
         with sync_playwright() as p:
             browser = p.chromium.launch()
             context = browser.new_context()
-
 
         if getenv("THEME").upper() == "DARK":
             cookie_file = open("./video_creation/data/cookie-dark-mode.json")
@@ -65,7 +63,8 @@ def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num
 
         if getenv("POSTLANG"):
             print_substep("Translating post...")
-            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
+            texts_in_tl = ts.google(
+                reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
 
             page.evaluate(
                 'tl_content => document.querySelector(\'[data-test-id="post-content"] > div:nth-child(3) > div > div\').textContent = tl_content', texts_in_tl
@@ -83,7 +82,8 @@ def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num
             )
         else:
             for idx, comment in track(
-                enumerate(reddit_object["comments"]), "Downloading screenshots..."
+                enumerate(reddit_object["comments"]
+                          ), "Downloading screenshots..."
             ):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
@@ -92,18 +92,22 @@ def download_screenshots_of_reddit_posts(reddit_object:dict[str], screenshot_num
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+                page.goto(
+                    f'https://reddit.com{comment["comment_url"]}', timeout=0)
 
                 # translate code
 
                 if getenv("POSTLANG"):
-                    comment_tl = ts.google(comment["comment_body"], to_language=os.getenv("POSTLANG"))
+                    comment_tl = ts.google(
+                        comment["comment_body"], to_language=os.getenv("POSTLANG"))
                     page.evaluate(
-                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content', [comment_tl, comment['comment_id']]
+                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content', [
+                            comment_tl, comment['comment_id']]
                     )
 
                 page.locator(f"#t1_{comment['comment_id']}").screenshot(
                     path=f"assets/temp/png/comment_{idx}.png"
                 )
 
-        print_substep("Screenshots downloaded Successfully.", style="bold green")
+        print_substep("Screenshots downloaded Successfully.",
+                      style="bold green")
