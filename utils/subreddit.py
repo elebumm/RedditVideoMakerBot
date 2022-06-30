@@ -13,7 +13,7 @@ def get_subreddit_undone(submissions: list, subreddit):
 
     Returns:
         Any: The submission that has not been done
-    """    
+    """
     """
     recursively checks if the top submission in the list was already done.
     """
@@ -28,7 +28,8 @@ def get_subreddit_undone(submissions: list, subreddit):
                     print_substep("NSFW Post Detected. Skipping...")
                     continue
             except AttributeError:
-                print_substep("NSFW settings not defined. Skipping NSFW post...")
+                print_substep(
+                    "NSFW settings not defined. Skipping NSFW post...")
         return submission
     print("all submissions have been done going by top submission order")
     return get_subreddit_undone(
@@ -36,7 +37,7 @@ def get_subreddit_undone(submissions: list, subreddit):
     )  # all of the videos in hot have already been done
 
 
-def already_done(done_videos: list, submission)->bool:
+def already_done(done_videos: list, submission) -> bool:
     """Checks to see if the given submission is in the list of videos 
 
     Args:
@@ -45,7 +46,7 @@ def already_done(done_videos: list, submission)->bool:
 
     Returns:
         Boolean: Whether the video was found in the list
-    """    
+    """
 
     for video in done_videos:
         if video["id"] == str(submission):

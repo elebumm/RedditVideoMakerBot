@@ -28,13 +28,13 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
+def make_final_video(number_of_clips: int, length: int, final_vid_path: str):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
         number_of_clips (int): Index to end at when going through the screenshots
         length (int): Length of the video
-    """    
+    """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
@@ -49,10 +49,10 @@ def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
     try:
         opacity = float(os.getenv("OPACITY"))
     except (
-            ValueError,
-            FloatingPointError,
-            TypeError
-        ):
+        ValueError,
+        FloatingPointError,
+        TypeError
+    ):
         print_substep(
             "Please ensure that OPACITY is between 0 and 1 in .env file", style_="bold red"
         )
@@ -66,15 +66,14 @@ def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
     try:
         audio_clips.insert(1, AudioFileClip("assets/mp3/posttext.mp3"))
     except (
-            OSError,
-            FileNotFoundError,
-        ):
+        OSError,
+        FileNotFoundError,
+    ):
         print_substep("An error occured! Aborting.", style_="bold red")
         raise SystemExit()
     else:
         audio_concat = concatenate_audioclips(audio_clips)
         audio_composite = CompositeAudioClip([audio_concat])
-
 
     # Get sum of all clip lengths
     total_length = sum([clip.duration for clip in audio_clips])
@@ -142,13 +141,12 @@ def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
     final = CompositeVideoClip([background_clip, image_concat])
 
     if final_vid_path is None:
-        final_vid_path =  re.sub(
+        final_vid_path = re.sub(
             "[?\"%*:|<>]/", "", (f"assets/{subreddit.submission.title}.mp4")
         )
 
-    final.write_videofile(final_vid_path, fps=30, audio_codec="aac", audio_bitrate="192k")
-
-
+    final.write_videofile(final_vid_path, fps=30,
+                          audio_codec="aac", audio_bitrate="192k")
 
     save_data(final_vid_path)
 
@@ -177,12 +175,13 @@ def make_final_video(number_of_clips:int, length:int,final_vid_path:str):
         f"Reddit title: {os.getenv('VIDEO_TITLE')} \n Background Credit: {os.getenv('background_credit')}"
     )
 
-def save_data(filename:str):
+
+def save_data(filename: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
         filename (str): The finished video title name
-    """    
+    """
     with open("./video_creation/data/videos.json", "r+") as raw_vids:
         done_vids = json.load(raw_vids)
         if str(subreddit.submission.id) in [video["id"] for video in done_vids]:
@@ -198,12 +197,13 @@ def save_data(filename:str):
         raw_vids.seek(0)
         json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
 
+
 def get_video_title() -> str:
     """Gets video title from env variable or gives it the name "final_video"
 
     Returns:
         str: Video title
-    """        
+    """
     title = os.getenv("VIDEO_TITLE") or "final_video"
     if len(title) <= 35:
         return title

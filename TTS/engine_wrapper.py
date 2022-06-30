@@ -69,7 +69,8 @@ class TTSEngine:
             else:
                 self.split_post(comment["comment_body"], idx)
 
-        print_substep("Saved Text to MP3 files successfully.", style="bold green")
+        print_substep("Saved Text to MP3 files successfully.",
+                      style="bold green")
         return self.length, idx
 
     def split_post(self, text: str, idx: int) -> str:
@@ -85,7 +86,8 @@ class TTSEngine:
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
+            split_files.append(AudioFileClip(
+                f"{self.path}/{idx}-{idy}.part.mp3"))
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
         )

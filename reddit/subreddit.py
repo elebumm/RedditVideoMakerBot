@@ -1,3 +1,10 @@
+from dotenv import load_dotenv
+from prawcore.exceptions import (
+    OAuthException,
+    ResponseException,
+    RequestException,
+    BadRequest
+)
 import random
 import os
 import re
@@ -10,7 +17,8 @@ from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from praw.models import MoreComments
 
-TEXT_WHITELIST = set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
+TEXT_WHITELIST = set(
+    "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890")
 
 
 def textify(text):
@@ -22,17 +30,6 @@ def try_env(param, backup):
         return environ[param]
     except KeyError:
         return backup
-
-
-from prawcore.exceptions import (
-    OAuthException,
-    ResponseException,
-    RequestException,
-    BadRequest
-)
-from dotenv import load_dotenv
-
-from utils.console import print_step, print_substep
 
 
 def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
@@ -67,11 +64,11 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
             password=passkey.strip(),
         )
     except (
-            OAuthException,
-            ResponseException,
-            RequestException,
-            BadRequest
-        ):
+        OAuthException,
+        ResponseException,
+        RequestException,
+        BadRequest
+    ):
         print_substep(
             "[bold red]There is something wrong with the .env file, kindly check:[/bold red]\n"
             + "1. ClientID\n"
@@ -79,7 +76,6 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
             + "3. If these variables are fine, kindly check other variables.\n"
             + "4. Check if the type of Reddit app created is script (personal use script)."
         )
-
 
     # If the user specifies that he doesnt want a random thread, or if
     # he doesn't insert the "RANDOM_THREAD" variable at all, ask the thread link
@@ -136,7 +132,6 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
         + f"And has a {num_comments}[/blue].\n"
     )
 
-
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = submission.title
@@ -160,7 +155,8 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
     except AttributeError:
         pass
 
-    print_substep("AskReddit threads retrieved successfully.", style="bold green")
+    print_substep("AskReddit threads retrieved successfully.",
+                  style="bold green")
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
@@ -180,5 +176,6 @@ def get_subreddit_threads(subreddit_, thread_link_, number_of_comments):
                         "comment_id": top_level_comment.id,
                     }
                 )
-    print_substep("Received subreddit threads Successfully.", style="bold green")
+    print_substep("Received subreddit threads Successfully.",
+                  style="bold green")
     return content

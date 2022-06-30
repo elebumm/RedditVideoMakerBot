@@ -32,29 +32,27 @@ print_markdown(
 
 
 def main(
-        subreddit_=None,
-        background=None,
-        filename=None,
-        thread_link_=None,
-        number_of_comments=None
-    ):
+    subreddit_=None,
+    background=None,
+    filename=None,
+    thread_link_=None,
+    number_of_comments=None
+):
     if check_env() is not True:
         exit()
     load_dotenv()
     cleanup()
 
-
-
     reddit_object = get_subreddit_threads(
-            subreddit_,
-            thread_link_,
-            number_of_comments
-        )
+        subreddit_,
+        thread_link_,
+        number_of_comments
+    )
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background(background)
     chop_background_video(length)
-    make_final_video(number_of_comments, length,filename)
+    make_final_video(number_of_comments, length, filename)
 
 
 def run_many(times):

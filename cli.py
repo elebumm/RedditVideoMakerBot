@@ -12,7 +12,7 @@ def program_options():
     """
 
     parser = argparse.ArgumentParser(
-        prog="RedditVideoMakerBot", # can be renamed, just a base
+        prog="RedditVideoMakerBot",  # can be renamed, just a base
         usage="RedditVideoMakerBot [OPTIONS]",
         description=description
     )
@@ -21,7 +21,7 @@ def program_options():
         help="Create a video (uses the defaults).",
         action="store_true"
     )
-    parser.add_argument( # only accepts the name of subreddit, not links.
+    parser.add_argument(  # only accepts the name of subreddit, not links.
         "-s", "--subreddit",
         help="Specify a subreddit.",
         action="store"
@@ -65,7 +65,8 @@ def program_options():
                     args.number,
                 )
                 if not create:
-                    try_again = input("Something went wrong! Try again? [y/N] > ").strip()
+                    try_again = input(
+                        "Something went wrong! Try again? [y/N] > ").strip()
                     if try_again in ["y", "Y"]:
                         continue
 

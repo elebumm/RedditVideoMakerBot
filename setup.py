@@ -108,7 +108,8 @@ user = handle_input(
     20,
     "A username HAS to be between 3 and 20 characters",
 )
-passw = handle_input("Password > ", False, ".*", "", 8, None, "Password too short")
+passw = handle_input("Password > ", False, ".*", "",
+                     8, None, "Password too short")
 twofactor = handle_input(
     "2fa Enabled? (yes/no) > ",
     False,
