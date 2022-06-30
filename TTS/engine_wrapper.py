@@ -106,5 +106,6 @@ def process_text(text: str):
     new_text = sanitize_text(text)
     if lang:
         print_substep("Translating Text...")
-        new_text = ts.google(text, to_language=lang)
+        translated_text = ts.google(text, to_language=lang)
+        new_text = sanitize_text(translated_text)
     return new_text
