@@ -5,6 +5,6 @@ playwright==1.22.0
 praw==7.6.0
 python-dotenv==0.20.0
 pytube==12.1.0
-requests==2.28.0
+requests==2.28.1
 rich==12.4.4
 sox==1.4.1
