@@ -24,6 +24,8 @@ from utils.console import print_step, print_substep
 
 storymode = False
 
+console = Console()
+
 
 def download_screenshots_of_reddit_posts(reddit_object: dict[str], screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png

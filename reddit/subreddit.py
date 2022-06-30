@@ -9,6 +9,7 @@ import random
 import os
 import re
 from os import getenv
+from os import environ
 
 import praw
 from praw.models import MoreComments

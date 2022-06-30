@@ -51,7 +51,7 @@ def main(
     )
 
 
-  length, number_of_comments = save_text_to_mp3(reddit_object)
+    length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background(background)
     chop_background_video(length)
