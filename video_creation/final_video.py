@@ -119,12 +119,13 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     filename = f"{title}.mp4"
+    subreddit = os.getenv("SUBREDDIT");
 
     save_data(filename, title, idx)
 
-    if not exists("./results"):
+    if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
-        os.mkdir("./results")
+        os.mkdir(f"./results/{subreddit}")
 
     final.write_videofile(
         "assets/temp/temp.mp4",
@@ -135,7 +136,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, length, targetname=f"results/{filename}"
+        "assets/temp/temp.mp4", 0, length, targetname=f"results/{subreddit}/{filename}"
     )
     # os.remove("assets/temp/temp.mp4")
 
