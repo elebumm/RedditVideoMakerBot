@@ -47,7 +47,7 @@ class StreamlabsPolly:
             with open(filepath, "wb") as f:
                 f.write(voice_data.content)
         except (KeyError, JSONDecodeError):
-            print("Error occured calling Streamlabs Polly")
+            print("Error occurred calling Streamlabs Polly")
 
     def randomvoice(self):
         return random.choice(self.voices)
