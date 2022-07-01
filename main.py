@@ -32,9 +32,6 @@ print_markdown(
 
 
 def main():
-    if check_env() is not True:
-        exit()
-    load_dotenv()
     cleanup()
 
     reddit_object = get_subreddit_threads()
@@ -55,6 +52,9 @@ def run_many(times):
 
 
 if __name__ == "__main__":
+    if check_env() is not True:
+        exit()
+    load_dotenv()
     try:
         if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
             run_many(int(getenv("TIMES_TO_RUN")))
