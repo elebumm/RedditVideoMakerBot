@@ -29,6 +29,9 @@ def get_subreddit_undone(submissions: list, subreddit):
                     continue
             except AttributeError:
                 print_substep("NSFW settings not defined. Skipping NSFW post...")
+        if submission.stickied:
+            print_substep("This post was pinned by moderators. Skipping...")
+            continue
         return submission
     print("all submissions have been done going by top submission order")
     return get_subreddit_undone(
