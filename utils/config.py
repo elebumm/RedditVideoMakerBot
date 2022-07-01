@@ -1,5 +1,4 @@
 # write a class that takes .env file and parses it into a dictionary
-
 from dotenv import dotenv_values
 
 DEFAULTS = {
@@ -38,3 +37,10 @@ class Config:
 config = Config()
 
 print(config.SUBREDDIT)
+# def temp():
+#    root = ''
+#    if isinstance(root, praw.models.Submission):
+#        root_type = 'submission'
+#    elif isinstance(root, praw.models.Comment):
+#        root_type = 'comment'
+#

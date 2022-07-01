@@ -49,9 +49,12 @@ class StreamlabsPolly:
         except (KeyError, JSONDecodeError):
             try:
                 if response.json()["error"] == "No text specified!":
-                    raise ValueError('Please specify a text to convert to speech.')
+                    raise ValueError("Please specify a text to convert to speech.")
             except (KeyError, JSONDecodeError):
                 print("Error occurred calling Streamlabs Polly")
+
     def randomvoice(self):
         return random.choice(self.voices)
-#StreamlabsPolly().run(text=str('hi hi ' * 92)[1:], filepath='hello.mp3', random_voice=True)
+
+
+# StreamlabsPolly().run(text=str('hi hi ' * 92)[1:], filepath='hello.mp3', random_voice=True)

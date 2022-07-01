@@ -58,10 +58,12 @@ if __name__ == "__main__":
         if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
             run_many(int(getenv("TIMES_TO_RUN")))
 
-        elif len(getenv("POST_ID", '').split('+')) > 1:
-            for index, post_id in enumerate(getenv("POST_ID", '').split('+')):
+        elif len(getenv("POST_ID", "").split("+")) > 1:
+            for index, post_id in enumerate(getenv("POST_ID", "").split("+")):
                 index += 1
-                print_step(f'on the {index}{("st" if index == 1 else ("nd" if index == 2 else ("rd" if index == 3 else "th")))} post of {len(getenv("POST_ID", "").split("+"))}')
+                print_step(
+                    f'on the {index}{("st" if index == 1 else ("nd" if index == 2 else ("rd" if index == 3 else "th")))} post of {len(getenv("POST_ID", "").split("+"))}'
+                )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         else:

@@ -53,7 +53,7 @@ def handle_input(
         if re.match(match, user_input) is not None:
             if check_type is not False:
                 try:
-                    user_input = check_type(user_input)
+                    user_input = check_type(user_input) # this line is fine
                     if nmin is not None and user_input < nmin:
                         console.print("[red]" + oob_error)  # Input too low failstate
                         continue
@@ -64,14 +64,10 @@ def handle_input(
                 except ValueError:
                     console.print("[red]" + err_message)  # Type conversion failed
                     continue
-            if (
-                nmin is not None and len(user_input) < nmin
-            ):  # Check if string is long enough
+            if nmin is not None and len(user_input) < nmin:  # Check if string is long enough
                 console.print("[red]" + oob_error)
                 continue
-            if (
-                nmax is not None and len(user_input) > nmax
-            ):  # Check if string is not too long
+            if nmax is not None and len(user_input) > nmax:  # Check if string is not too long
                 console.print("[red]" + oob_error)
                 continue
             break

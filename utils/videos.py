@@ -19,9 +19,7 @@ def check_done(
         dict[str]|None: Reddit object in args
     """
 
-    with open(
-        "./video_creation/data/videos.json", "r", encoding="utf-8"
-    ) as done_vids_raw:
+    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):
