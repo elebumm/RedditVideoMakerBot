@@ -38,9 +38,7 @@ The only original thing being done is the editing and gathering of all materials
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. 2a **Automatic Install**: Run `python main.py` and type 'yes' to activate the setup assistant.
-
-   2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
+2. **Automatic Install**: Run `python main.py` and type 'yes' to activate the setup assistant.
 
 3. Run `pip install -r requirements.txt`
 
@@ -48,7 +46,6 @@ The only original thing being done is the editing and gathering of all materials
 
 5. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
-   Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 6. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
