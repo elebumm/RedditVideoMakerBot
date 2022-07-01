@@ -9,7 +9,7 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
-DEFUALT_MAX_LENGTH: int = 50
+DEFUALT_MAX_LENGTH: int = 50 # video length variable
 
 class TTSEngine:
 
