@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import time
 
 import requests
 import sox
@@ -52,7 +53,12 @@ class POLLY:
                 )
             voice = str(os.getenv("VOICE")).capitalize()
         body = {"voice": voice, "text": req_text, "service": "polly"}
-        response = requests.post(self.url, data=body)
+        while True:
+            response = requests.post(self.url, data=body)
+            print(response.status_code)
+            if response.status_code != 429:
+                break
+            time.sleep(20)
         try:
             voice_data = requests.get(response.json()["speak_url"])
             with open(filename, "wb") as f:
