@@ -57,8 +57,11 @@ def get_subreddit_threads():
         print_substep(
             f"Using subreddit: r/{getenv('SUBREDDIT')} from environment variable config"
         )
+        subreddit_choice = getenv("SUBREDDIT")
+        if subreddit_choice.casefold().startswith('r/'): # removes the r/ from the input
+            subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(
-            getenv("SUBREDDIT")
+            subreddit_choice
         )  # Allows you to specify in .env. Done for automation purposes.
 
     if getenv("POST_ID"):
