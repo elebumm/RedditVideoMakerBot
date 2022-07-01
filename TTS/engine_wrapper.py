@@ -9,7 +9,7 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
-
+DEFUALT_MAX_LENGTH: int = 50
 
 class TTSEngine:
 
@@ -30,7 +30,7 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = 50,
+        max_length: int = DEFUALT_MAX_LENGTH,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object

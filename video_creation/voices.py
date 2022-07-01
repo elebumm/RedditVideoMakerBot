@@ -22,11 +22,8 @@ TTSProviders = {
     "TikTok": TikTok,
 }
 
-VIDEO_LENGTH: int = 40  # secs
-
-
 def save_text_to_mp3(reddit_obj: dict[str]) -> tuple[int, int]:
-    """Saves text to MP3 files. Goes through the reddit_obj and generates the title MP3 file and a certain number of comments until the total amount of time exceeds VIDEO_LENGTH seconds.
+    """Saves text to MP3 files.
 
     Args:
         reddit_obj (dict[str]): Reddit object received from reddit API in reddit/subreddit.py
@@ -41,7 +38,6 @@ def save_text_to_mp3(reddit_obj: dict[str]) -> tuple[int, int]:
             get_case_insensitive_key_value(TTSProviders, env), reddit_obj
         )
     else:
-        choice = ""
         while True:
             print_step("Please choose one of the following TTS providers: ")
             print_table(TTSProviders)
