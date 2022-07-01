@@ -57,8 +57,8 @@ def download_screenshots_of_reddit_posts(reddit_object, screenshot_num):
                 path="assets/temp/png/story_content.png"
             )
         else:
-            for idx, comment in track(
-                enumerate(reddit_object["comments"]), "Downloading screenshots..."
+            for idx, comment in enumerate(
+                track(reddit_object["comments"], "Downloading screenshots...")
             ):
 
                 # Stop if we have reached the screenshot_num
