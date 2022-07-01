@@ -47,7 +47,11 @@ class StreamlabsPolly:
             with open(filepath, "wb") as f:
                 f.write(voice_data.content)
         except (KeyError, JSONDecodeError):
-            print("Error occurred calling Streamlabs Polly")
-
+            try:
+                if response.json()["error"] == "No text specified!":
+                    raise ValueError('Please specify a text to convert to speech.')
+            except (KeyError, JSONDecodeError):
+                print("Error occurred calling Streamlabs Polly")
     def randomvoice(self):
         return random.choice(self.voices)
+#StreamlabsPolly().run(text=str('hi hi ' * 92)[1:], filepath='hello.mp3', random_voice=True)
