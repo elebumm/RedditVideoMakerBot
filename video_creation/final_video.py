@@ -125,7 +125,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
-        os.mkdir(f"./results/{subreddit}")
+        os.makedirs(f"./results/{subreddit}")
 
     final.write_videofile(
         "assets/temp/temp.mp4",
