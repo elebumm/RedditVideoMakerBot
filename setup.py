@@ -139,7 +139,7 @@ client_sec = handle_input(
 user = handle_input(
     "Username > ",
     False,
-    r"[_0-9a-zA-Z]+",
+    r"[-_0-9a-zA-Z]+",
     "That is not a valid user",
     3,
     20,
