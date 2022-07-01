@@ -53,7 +53,7 @@ def handle_input(
         if re.match(match, user_input) is not None:
             if check_type is not False:
                 try:
-                    user_input = check_type(user_input) # this line is fine
+                    user_input = check_type(user_input)  # this line is fine
                     if nmin is not None and user_input < nmin:
                         console.print("[red]" + oob_error)  # Input too low failstate
                         continue
