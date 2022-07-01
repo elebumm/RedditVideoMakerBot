@@ -57,8 +57,8 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     # round total_length to an integer
     int_total_length = round(total_length)
     # Output Length
-    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
 
+    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
     # add title to video
     image_clips = []
     # Gather all images

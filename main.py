@@ -31,10 +31,9 @@ print_markdown(
 )
 
 
-def main():
+def main(POST_ID=None):
     cleanup()
-
-    reddit_object = get_subreddit_threads()
+    reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
@@ -58,6 +57,13 @@ if __name__ == "__main__":
     try:
         if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
             run_many(int(getenv("TIMES_TO_RUN")))
+
+        elif len(getenv("POST_ID", '').split('+')) > 1:
+            for index, post_id in enumerate(getenv("POST_ID", '').split('+')):
+                index += 1
+                print_step(f'on the {index}{("st" if index == 1 else ("nd" if index == 2 else ("rd" if index == 3 else "th")))} post of {len(getenv("POST_ID", "").split("+"))}')
+                main(post_id)
+                Popen("cls" if name == "nt" else "clear", shell=True).wait()
         else:
             main()
     except KeyboardInterrupt:
