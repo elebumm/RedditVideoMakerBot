@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-import json
 import multiprocessing
 import os
 import re
-import time
 from os.path import exists
 
 from moviepy.editor import (
@@ -20,6 +18,7 @@ from rich.console import Console
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from utils.videos import save_data
 
 console = Console()
 
@@ -142,25 +141,3 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     print_step(
         f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {os.getenv("background_credit")}'
     )
-
-
-def save_data(filename: str, reddit_title: str, reddit_id: str):
-    """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
-
-    Args:
-        filename (str): The finished video title name
-    """
-    with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
-        done_vids = json.load(raw_vids)
-        if reddit_id in [video["id"] for video in done_vids]:
-            return  # video already done but was specified to continue anyway in the .env file
-        payload = {
-            "id": reddit_id,
-            "time": str(int(time.time())),
-            "background_credit": str(os.getenv("background_credit")),
-            "reddit_title": reddit_title,
-            "filename": filename,
-        }
-        done_vids.append(payload)
-        raw_vids.seek(0)
-        json.dump(done_vids, raw_vids, ensure_ascii=False, indent=4)
