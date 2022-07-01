@@ -39,7 +39,7 @@ The only original thing being done is the editing and gathering of all materials
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. 2a **Automatic Install**: Run `python main.py` and type 'yes' to activate the setup assistant.
+2. 2a **Automatic Install**: Run `python setup.py` and type 'yes' to activate the setup assistant.
 
    2b **Manual Install**: Rename `.env.template` to `.env` and replace all values with the appropriate fields. To get Reddit keys (**required**), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script". Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
 
