@@ -3,6 +3,9 @@ from pathlib import Path
 from typing import Tuple
 import re
 from os import getenv
+
+import sox
+from mutagen import MutagenError
 from mutagen.mp3 import MP3
 import translators as ts
 from rich.progress import track
@@ -91,8 +94,10 @@ class TTSEngine:
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
-        self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-
+        try:
+            self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+        except MutagenError:
+            self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
 
 def process_text(text: str):
     lang = getenv("POSTLANG", "")
