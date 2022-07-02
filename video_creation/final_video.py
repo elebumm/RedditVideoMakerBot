@@ -44,7 +44,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     )
 
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f"assets/mp3/{i}.mp3") for i in range(number_of_clips)]
+    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
