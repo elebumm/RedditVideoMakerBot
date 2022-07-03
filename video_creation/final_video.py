@@ -61,40 +61,25 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     # add title to video
     image_clips = []
     # Gather all images
-    if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100),
-        )
-    else:
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100)
-            .set_opacity(float(opacity)),
-        )
+    new_opacity = 1 if opacity is None or float(opacity) >= 1 else opacity
+
+    image_clips.insert(
+        0,
+        ImageClip("assets/temp/png/title.png")
+        .set_duration(audio_clips[0].duration)
+        .set_position("center")
+        .resize(width=W - 100)
+        .set_opacity(new_opacity)
+    )
 
     for i in range(0, number_of_clips):
-        if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100),
-            )
-        else:
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100)
-                .set_opacity(float(opacity)),
-            )
+        image_clips.append(
+            ImageClip(f"assets/temp/png/comment_{i}.png")
+            .set_duration(audio_clips[i + 1].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(new_opacity)
+        )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
