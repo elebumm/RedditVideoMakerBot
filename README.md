@@ -38,15 +38,13 @@ The only original thing being done is the editing and gathering of all materials
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. **Automatic Install**: Run `python main.py` and type 'yes' to activate the setup assistant.
+2. Run `pip install -r requirements.txt`
 
-3. Run `pip install -r requirements.txt`
+3. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
-4. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
-
-5. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+4. Run `python main.py`
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
-6. Enjoy 😎
+5. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 
