@@ -61,7 +61,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     # add title to video
     image_clips = []
     # Gather all images
-    new_opacity = 1 if opacity is None or float(opacity) >= 1 else opacity
+    new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
 
     image_clips.insert(
         0,
