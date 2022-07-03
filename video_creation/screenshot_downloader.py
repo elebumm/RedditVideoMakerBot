@@ -17,14 +17,13 @@ from utils.console import print_step, print_substep
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object: Dict[str], screenshot_num: int):
+def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
         reddit_object (Dict[str]): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to downlaod
     """
-
     print_step("Downloading screenshots of reddit posts...")
 
     # ! Make sure the reddit screenshots folder exists

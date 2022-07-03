@@ -24,7 +24,7 @@ TTSProviders = {
 }
 
 
-def save_text_to_mp3(reddit_obj: Dict[str]) -> Tuple[int, int]:
+def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
     """Saves text to MP3 files.
 
     Args:
