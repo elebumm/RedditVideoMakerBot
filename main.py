@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import math
 from subprocess import Popen
 from os import getenv, name
 from dotenv import load_dotenv
@@ -35,6 +35,7 @@ def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
+    length = math.ceil(length)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     download_background()
     chop_background_video(length)
