@@ -3,6 +3,8 @@ import multiprocessing
 import os
 import re
 from os.path import exists
+from typing import Dict
+
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -24,12 +26,13 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
         number_of_clips (int): Index to end at when going through the screenshots
         length (int): Length of the video
+        reddit_obj (dict): The reddit object that contains the posts to read.
     """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -52,40 +55,25 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
     # add title to video
     image_clips = []
     # Gather all images
-    if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100),
-        )
-    else:
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100)
-            .set_opacity(float(opacity)),
-        )
+    new_opacity = 1 if opacity is None or float(opacity) >= 1 else opacity
+
+    image_clips.insert(
+        0,
+        ImageClip("assets/temp/png/title.png")
+        .set_duration(audio_clips[0].duration)
+        .set_position("center")
+        .resize(width=W - 100)
+        .set_opacity(new_opacity)
+    )
 
     for i in range(0, number_of_clips):
-        if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100),
-            )
-        else:
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100)
-                .set_opacity(float(opacity)),
-            )
+        image_clips.append(
+            ImageClip(f"assets/temp/png/comment_{i}.png")
+            .set_duration(audio_clips[i + 1].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(new_opacity)
+        )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(

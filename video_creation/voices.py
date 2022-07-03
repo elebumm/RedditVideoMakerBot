@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from typing import Dict, Tuple
 
 from rich.console import Console
 
@@ -23,7 +24,7 @@ TTSProviders = {
 }
 
 
-def save_text_to_mp3(reddit_obj: dict[str]) -> tuple[int, int]:
+def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
     """Saves text to MP3 files.
 
     Args:
