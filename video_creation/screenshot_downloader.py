@@ -2,6 +2,7 @@ import json
 import os
 from os import getenv
 from pathlib import Path
+from typing import Dict
 
 from playwright.async_api import async_playwright  # pylint: disable=unused-import
 
@@ -16,11 +17,11 @@ from utils.console import print_step, print_substep
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object: dict[str], screenshot_num: int):
+def download_screenshots_of_reddit_posts(reddit_object: Dict[str], screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
-        reddit_object (dict[str]): Reddit object received from reddit/subreddit.py
+        reddit_object (Dict[str]): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to downlaod
     """
 

@@ -3,6 +3,7 @@ import multiprocessing
 import os
 import re
 from os.path import exists
+from typing import Dict
 
 from moviepy.editor import (
     VideoFileClip,
@@ -25,12 +26,13 @@ console = Console()
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict[str]):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: Dict[str]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
         number_of_clips (int): Index to end at when going through the screenshots
         length (int): Length of the video
+        reddit_obj (Dict[str]): The reddit object that contains the posts to read.
     """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)

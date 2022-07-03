@@ -2,6 +2,7 @@ import json
 import os
 import time
 from os import getenv
+from typing import Dict
 
 from praw.models import Submission
 
@@ -9,16 +10,16 @@ from utils.console import print_step
 
 
 def check_done(
-    redditobj: dict[str],
+    redditobj: Dict[str],
 ) -> Submission:
     # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
     """Checks if the chosen post has already been generated
 
     Args:
-        redditobj (dict[str]): Reddit object gotten from reddit/subreddit.py
+        redditobj (Dict[str]): Reddit object gotten from reddit/subreddit.py
 
     Returns:
-        dict[str]|None: Reddit object in args
+        Dict[str]|None: Reddit object in args
     """
 
     with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
