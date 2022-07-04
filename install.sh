@@ -158,6 +158,11 @@ install_deps(){
             install_fedora || install_fail 
         elif [ -x "$(command -v yum)" ]; then 
             install_centos || install_fail
+        elif [ -x "$(command -v apk)" ]; then
+            apk add --update python3 && ln -sf python3 /usr/bin/python
+            python3 -m ensurepip
+            pip3 install --no-cache --upgrade pip setuptools
+            apk add git
         else
             printf "Your OS is not supported\n Please install python3, pip3 and git manually\n After that, run the script again with the -p option to install python and playwright dependencies\n If you want to add support for your OS, please open a pull request on github\n https://github.com/elebumm/RedditVideoMakerBot"
         fi
