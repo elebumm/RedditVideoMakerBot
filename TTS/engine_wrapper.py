@@ -72,7 +72,7 @@ class TTSEngine:
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
 
-    def split_post(self, text: str, idx: int) -> str:
+    def split_post(self, text: str, idx: int):
         split_files = []
         split_text = [
             x.group().strip()
