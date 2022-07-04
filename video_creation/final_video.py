@@ -51,13 +51,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
-    # Get sum of all clip lengths
-    total_length = sum([clip.duration for clip in audio_clips])
-    # round total_length to an integer
-    int_total_length = round(total_length)
-    # Output Length
-
-    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
+    console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # add title to video
     image_clips = []
     # Gather all images
@@ -114,7 +108,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, length, targetname=f"results/{subreddit}/{filename}"
+        "assets/temp/temp.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}"
     )
     # os.remove("assets/temp/temp.mp4")
 

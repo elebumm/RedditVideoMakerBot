@@ -4,9 +4,9 @@ from typing import Tuple
 import re
 from os import getenv
 
-import sox
-from mutagen import MutagenError
-from mutagen.mp3 import MP3, HeaderNotFoundError
+# import sox
+# from mutagen import MutagenError
+# from mutagen.mp3 import MP3, HeaderNotFoundError
 import translators as ts
 from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
@@ -94,14 +94,12 @@ class TTSEngine:
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
-        try:
-            try:
-                self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-            except (MutagenError, HeaderNotFoundError):
-                self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
-        except Exception: # last resort backup
-            clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            self.length += clip.duration
+        # try:
+        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+        # except (MutagenError, HeaderNotFoundError):
+        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
+        clip = AudioFileClip(f"{self.path}/{filename}.mp3")
+        self.length += clip.duration
 
 def process_text(text: str):
     lang = getenv("POSTLANG", "")
