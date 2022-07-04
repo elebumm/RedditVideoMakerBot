@@ -100,6 +100,7 @@ class TTSEngine:
         #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         clip = AudioFileClip(f"{self.path}/{filename}.mp3")
         self.length += clip.duration
+        clip.close()
 
 def process_text(text: str):
     lang = getenv("POSTLANG", "")
