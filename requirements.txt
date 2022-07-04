@@ -10,3 +10,4 @@ pytube==12.1.0
 requests==2.28.1
 rich==12.4.4
 translators==5.3.1
+sox==1.4.1
