@@ -51,50 +51,29 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
-    # Get sum of all clip lengths
-    total_length = sum([clip.duration for clip in audio_clips])
-    # round total_length to an integer
-    int_total_length = round(total_length)
-    # Output Length
-
-    console.log(f"[bold green] Video Will Be: {int_total_length} Seconds Long")
+    console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # add title to video
     image_clips = []
     # Gather all images
-    if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100),
-        )
-    else:
-        image_clips.insert(
-            0,
-            ImageClip("assets/temp/png/title.png")
-            .set_duration(audio_clips[0].duration)
-            .set_position("center")
-            .resize(width=W - 100)
-            .set_opacity(float(opacity)),
-        )
+    new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
+
+    image_clips.insert(
+        0,
+        ImageClip("assets/temp/png/title.png")
+        .set_duration(audio_clips[0].duration)
+        .set_position("center")
+        .resize(width=W - 100)
+        .set_opacity(new_opacity)
+    )
 
     for i in range(0, number_of_clips):
-        if opacity is None or float(opacity) >= 1:  # opacity not set or is set to one OR MORE
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100),
-            )
-        else:
-            image_clips.append(
-                ImageClip(f"assets/temp/png/comment_{i}.png")
-                .set_duration(audio_clips[i + 1].duration)
-                .set_position("center")
-                .resize(width=W - 100)
-                .set_opacity(float(opacity)),
-            )
+        image_clips.append(
+            ImageClip(f"assets/temp/png/comment_{i}.png")
+            .set_duration(audio_clips[i + 1].duration)
+            .set_position("center")
+            .resize(width=W - 100)
+            .set_opacity(new_opacity)
+        )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
@@ -129,7 +108,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, length, targetname=f"results/{subreddit}/{filename}"
+        "assets/temp/temp.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}"
     )
     # os.remove("assets/temp/temp.mp4")
 
