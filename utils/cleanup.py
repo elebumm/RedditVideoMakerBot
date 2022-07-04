@@ -3,6 +3,11 @@ from os.path import exists
 
 
 def cleanup() -> int:
+    """Deletes all temporary assets in assets/temp
+
+    Returns:
+        int: How many files were deleted
+    """
     if exists("./assets/temp"):
         count = 0
         files = [f for f in os.listdir(".") if f.endswith(".mp4") and "temp" in f.lower()]

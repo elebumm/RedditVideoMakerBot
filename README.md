@@ -32,33 +32,31 @@ The only original thing being done is the editing and gathering of all materials
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.9+
 - Playwright (this should install automatically in installation)
-- Sox
 
 ## Installation 👩‍💻
 
 1. Clone this repository
 
-2. Install [SoX](https://sourceforge.net/projects/sox/files/sox/)
-   
-3. Run `pip install -r requirements.txt`
+2. Run `pip install -r requirements.txt`
 
-4. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
+3. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
 **EXPERIMENTAL**: Run this install script to do steps 1-4 automatically (it also install dependencies!). Supports MacOS and Debian, Arch, CentoOS and fedora.
 
 To run: `sh <(curl -sL https://raw.githubusercontent.com/micziz/RedditVideoMakerBot/master/install.sh)`
 
-6. Run `python main.py` (unless you chose automatic install, then the installer will automatically run main.py)
+4. Run `python main.py`
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
-   Copy your keys into the `.env` file, along with whether your account uses two-factor authentication.
-7. Enjoy 😎
+
+5. Enjoy 😎
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
+
 ## Video
 
-https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
+<https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4>
 
 ## Contributing & Ways to improve 📈
 
@@ -77,16 +75,16 @@ I have tried to simplify the code so anyone can read it and start contributing a
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
-## Developers and maintainers.
+## Developers and maintainers
 
-Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+Elebumm (Lewis#6305) - <https://github.com/elebumm> (Founder)
 
-Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo
+Jason (JasonLovesDoggo#1904) - <https://github.com/JasonLovesDoggo>
 
-CallumIO (c.#6837) - https://github.com/CallumIO
+CallumIO (c.#6837) - <https://github.com/CallumIO>
 
-HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+HarryDaDev (hrvyy#9677) - <https://github.com/ImmaHarry>
 
-LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+LukaHietala (Pix.#0001) - <https://github.com/LukaHietala>
 
-Freebiell (Freebie#6429) - https://github.com/FreebieII
+Freebiell (Freebie#6429) - <https://github.com/FreebieII>

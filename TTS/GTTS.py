@@ -1,13 +1,19 @@
+#!/usr/bin/env python3
+import random
+import os
 from gtts import gTTS
+
+max_chars = 0
 
 
 class GTTS:
-    def tts(
-        self,
-        req_text: str = "Google Text To Speech",
-        filename: str = "title.mp3",
-        random_speaker=False,
-        censor=False,
-    ):
-        tts = gTTS(text=req_text, lang="en", slow=False)
-        tts.save(f"{filename}")
+    def __init__(self):
+        self.max_chars = 0
+        self.voices = []
+
+    def run(self, text, filepath):
+        tts = gTTS(text=text, lang=os.getenv("POSTLANG") or "en", slow=False)
+        tts.save(filepath)
+
+    def randomvoice(self):
+        return random.choice(self.voices)
