@@ -88,9 +88,15 @@ class TTSEngine:
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
         )
 
-        for i in range(0, idy + 1):
+        for i in split_files:
+            name = i.filename
+            i.close()
+            Path(name).unlink()
+
+        # for i in range(0, idy + 1):
             # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
-            Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+
+            # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
