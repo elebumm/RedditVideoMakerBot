@@ -43,6 +43,10 @@ The only original thing being done is the editing and gathering of all materials
 
 3. Run `playwright install` and `playwright install-deps`. (if this fails try adding python -m to the front of the command)
 
+**EXPERIMENTAL**: Run this install script to do steps 1-4 automatically (it also install dependencies!). Supports MacOS and Debian, Arch, CentoOS and fedora.
+
+To run: `sh <(curl -sL https://raw.githubusercontent.com/micziz/RedditVideoMakerBot/master/install.sh)`
+
 4. Run `python main.py`
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
 
