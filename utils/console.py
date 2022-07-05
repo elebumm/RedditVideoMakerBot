@@ -46,7 +46,12 @@ def handle_input(
     extra_info="",
     options: list = None,
     default=NotImplemented,
+    optional=False,
 ):
+    if optional:
+        console.print(message + "\n[green]This is an optional value. Do you want to skip it? (y/n)")
+        if input().casefold().startswith("y"):
+            return None
     if default is not NotImplemented:
         console.print(
             "[green]"

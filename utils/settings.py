@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # import os
 import toml
-from rich import pretty
 from rich.console import Console
 import re
 
@@ -25,6 +24,8 @@ def check(value, checks, name):
 
     incorrect = False
     if value == {}:
+        if skip_opt and "optional" in checks and checks["optional"] is True:
+            return None
         incorrect = True
     if not incorrect and "type" in checks:
         try:
@@ -88,6 +89,7 @@ def check(value, checks, name):
             if "oob_error" in checks
             else "Input out of bounds(Value too high/low/long/short)",
             options=checks["options"] if "options" in checks else None,
+            optional=checks["optional"] if "optional" in checks else False,
         )
     return value
 
@@ -103,10 +105,13 @@ def crawl_and_check(obj: dict, path: list, checks: dict = {}, name=""):
 
 def check_vars(path, checks):
     global config
+    global skip_opt
+    skip_opt = "skip_opt" in config
     crawl_and_check(config, path, checks)
 
 
-def check_toml(template_file, config_file) -> bool:
+def check_toml(template_file, config_file) -> (bool, dict):
+    global config
     try:
         template = toml.load(template_file)
     except Exception as error:
@@ -115,7 +120,6 @@ def check_toml(template_file, config_file) -> bool:
         )
         return False
     try:
-        global config
         config = toml.load(config_file)
     except (toml.TomlDecodeError):
         console.print(
@@ -160,11 +164,15 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 """
     )
     crawl(template, check_vars)
-    # pretty.pprint(config)
+    config["skip_opt"] = True
     with open(config_file, "w") as f:
         toml.dump(config, f)
     return config
 
 
 if __name__ == "__main__":
+    check_toml(".config.template.toml", "config.toml")
+
+if __name__ == "__main__":
+    check_toml(".config.template.toml", "config.toml")
     check_toml(".config.template.toml", "config.toml")

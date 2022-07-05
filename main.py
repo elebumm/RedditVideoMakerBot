@@ -5,7 +5,7 @@ from os import name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
-from utils.tomlchecker import check_toml
+from utils.settings import check_toml
 
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
