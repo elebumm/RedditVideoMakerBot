@@ -1,5 +1,4 @@
 import json
-import os
 
 from pathlib import Path
 from typing import Dict
@@ -58,7 +57,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
         if settings.config["reddit"]["thread"]["post_lang"]:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
+            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=settings.config["reddit"]["thread"]["post_lang"])
 
             page.evaluate(
                 "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
