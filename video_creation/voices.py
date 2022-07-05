@@ -1,48 +1,57 @@
-#!/usr/bin/env python3
-from gtts import gTTS
-from pathlib import Path
-from mutagen.mp3 import MP3
-from utils.console import print_step, print_substep
-from rich.progress import track
-import re
+#!/usr/bin/env python
+
+import os
+from typing import Dict, Tuple
+
+from rich.console import Console
+
+from TTS.engine_wrapper import TTSEngine
+from TTS.GTTS import GTTS
+from TTS.streamlabs_polly import StreamlabsPolly
+from TTS.aws_polly import AWSPolly
+from TTS.TikTok import TikTok
+
+from utils.console import print_table, print_step
 
 
-def save_text_to_mp3(reddit_obj):
-    """Saves Text to MP3 files.
+console = Console()
+
+TTSProviders = {
+    "GoogleTranslate": GTTS,
+    "AWSPolly": AWSPolly,
+    "StreamlabsPolly": StreamlabsPolly,
+    "TikTok": TikTok,
+}
+
+
+def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
+    """Saves text to MP3 files.
 
     Args:
-        reddit_obj : The reddit object you received from the reddit API in the askreddit.py file.
+        reddit_obj (dict[str]): Reddit object received from reddit API in reddit/subreddit.py
+
+    Returns:
+        tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
-    print_step("Saving Text to MP3 files...")
-    length = 0
 
-    # Create a folder for the mp3 files.
-    Path("assets/mp3").mkdir(parents=True, exist_ok=True)
+    env = os.getenv("TTSCHOICE", "")
+    if env.casefold() in map(lambda _: _.casefold(), TTSProviders):
+        text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, env), reddit_obj)
+    else:
+        while True:
+            print_step("Please choose one of the following TTS providers: ")
+            print_table(TTSProviders)
+            choice = input("\n")
+            if choice.casefold() in map(lambda _: _.casefold(), TTSProviders):
+                break
+            print("Unknown Choice")
+        text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, choice), reddit_obj)
 
-    tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)
-    tts.save("assets/mp3/title.mp3")
-    length += MP3("assets/mp3/title.mp3").info.length
+    return text_to_mp3.run()
 
-    try:
-        Path("assets/mp3/posttext.mp3").unlink()
-    except OSError:
-        pass
 
-    if reddit_obj["thread_post"] != "":
-        tts = gTTS(text=reddit_obj["thread_post"], lang="en", slow=False)
-        tts.save("assets/mp3/posttext.mp3")
-        length += MP3("assets/mp3/posttext.mp3").info.length
-
-    for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
-        # ! Stop creating mp3 files if the length is greater than 50 seconds. This can be longer, but this is just a good starting point
-        if length > 50:
-            break
-        comment=comment["comment_body"]
-        text=re.sub('((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', '', comment)
-        tts = gTTS(text, lang="en", slow=False)
-        tts.save(f"assets/mp3/{idx}.mp3")
-        length += MP3(f"assets/mp3/{idx}.mp3").info.length
-
-    print_substep("Saved Text to MP3 files successfully.", style="bold green")
-    # ! Return the index so we know how many screenshots of comments we need to make.
-    return length, idx
+def get_case_insensitive_key_value(input_dict, key):
+    return next(
+        (value for dict_key, value in input_dict.items() if dict_key.lower() == key.lower()),
+        None,
+    )

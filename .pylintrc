@@ -149,7 +149,7 @@ disable=raw-checker-failed,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
-        use-symbolic-message-instead
+        use-symbolic-message-instead,
         attribute-defined-outside-init,
         invalid-name,
         missing-docstring,
