@@ -35,9 +35,9 @@ class AWSPolly:
         if random_voice:
             voice = self.randomvoice()
         else:
-            if not os.getenv("VOICE"):
+            if not os.getenv("AWS_VOICE"):
                 return ValueError(
-                    f"Please set the environment variable VOICE to a valid voice. options are: {voices}"
+                    f"Please set the environment variable AWS_VOICE to a valid voice. options are: {voices}"
                 )
             voice = str(os.getenv("AWS_VOICE")).capitalize()
         try:

@@ -2,6 +2,7 @@ import random
 from os import listdir, environ
 from pathlib import Path
 from random import randrange
+from typing import Tuple
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -10,7 +11,7 @@ from pytube import YouTube
 from utils.console import print_step, print_substep
 
 
-def get_start_and_end_times(video_length: int, length_of_clip: int) -> tuple[int, int]:
+def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
 
     Args:
