@@ -1,0 +1,15 @@
+[package]
+name = "reddit_video_maker"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "reddit_bot_cli"
+path = "src/lib/mod.rs"
+
+[dependencies]
+clap = "3.2.8"
+execute = "0.2.11"
+thiserror = "1.0.31"
