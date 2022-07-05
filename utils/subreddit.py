@@ -1,5 +1,5 @@
 import json
-from os import getenv
+from utils import settings
 from utils.console import print_substep
 
 
@@ -22,7 +22,7 @@ def get_subreddit_undone(submissions: list, subreddit):
             continue
         if submission.over_18:
             try:
-                if getenv("ALLOW_NSFW").casefold() == "false":
+                if settings.config["settings"]["allow_nsfw"] == "false":
                     print_substep("NSFW Post Detected. Skipping...")
                     continue
             except AttributeError:
