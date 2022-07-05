@@ -7,7 +7,7 @@ edition = "2021"
 
 [lib]
 name = "reddit_bot_cli"
-path = "src/lib/mod.rs"
+path = "src/cli-lib/mod.rs"
 
 [dependencies]
 clap = "3.2.8"
