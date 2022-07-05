@@ -2,7 +2,6 @@
 from pathlib import Path
 from typing import Tuple
 import re
-from os import getenv
 
 # import sox
 # from mutagen import MutagenError
@@ -12,6 +11,7 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
+from utils import settings
 
 DEFUALT_MAX_LENGTH: int = 50  # video length variable
 
@@ -56,7 +56,7 @@ class TTSEngine:
         print_step("Saving Text to MP3 files...")
 
         self.call_tts("title", self.reddit_object["thread_title"])
-        if self.reddit_object["thread_post"] != "" and getenv("STORYMODE", "").casefold() == "true":
+        if self.reddit_object["thread_post"] != "" and settings.config["settings"]["storymode"] == True:
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
         idx = None
@@ -109,7 +109,7 @@ class TTSEngine:
         clip.close()
 
 def process_text(text: str):
-    lang = getenv("POSTLANG", "")
+    lang = settings.config["reddit"]["thread"]["post_lang"]
     new_text = sanitize_text(text)
     if lang:
         print_substep("Translating Text...")

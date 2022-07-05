@@ -2,7 +2,7 @@
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError
 import sys
-import os
+from utils import settings
 import random
 
 voices = [
@@ -35,11 +35,11 @@ class AWSPolly:
         if random_voice:
             voice = self.randomvoice()
         else:
-            if not os.getenv("AWS_VOICE"):
+            if not settings.config["settings"]["tts"]["aws_polly_voice"]:
                 return ValueError(
                     f"Please set the environment variable AWS_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(os.getenv("AWS_VOICE")).capitalize()
+            voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
         try:
             # Request speech synthesis
             response = polly.synthesize_speech(
