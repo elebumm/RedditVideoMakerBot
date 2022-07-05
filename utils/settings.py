@@ -4,6 +4,8 @@ import toml
 from rich.console import Console
 import re
 
+from typing import Tuple, Dict
+
 from utils.console import handle_input
 
 # from console import handle_input
@@ -110,8 +112,9 @@ def check_vars(path, checks):
     crawl_and_check(config, path, checks)
 
 
-def check_toml(template_file, config_file) -> (bool, dict):
+def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     global config
+    config = None
     try:
         template = toml.load(template_file)
     except Exception as error:
@@ -171,8 +174,4 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 
 
 if __name__ == "__main__":
-    check_toml(".config.template.toml", "config.toml")
-
-if __name__ == "__main__":
-    check_toml(".config.template.toml", "config.toml")
     check_toml(".config.template.toml", "config.toml")
