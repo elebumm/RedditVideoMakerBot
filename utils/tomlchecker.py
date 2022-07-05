@@ -5,14 +5,12 @@ from rich import pretty
 from rich.console import Console
 import re
 
-# from utils.console import handle_input
-from console import handle_input
+from utils.console import handle_input
+
+# from console import handle_input
 
 
 console = Console()
-
-
-printed = False
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path: list = []):
@@ -24,99 +22,50 @@ def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path: list = []):
 
 
 def check(value, checks, name):
-    global printed
-    if printed is False:
-        console.print(
-            """\
-[blue bold]###############################
-#                             #
-# Checking TOML configuration #
-#                             #
-###############################
-If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
-"""
-        )
-        printed = True
-    if "type" in checks:
+
+    incorrect = False
+    if value == {}:
+        incorrect = True
+    if not incorrect and "type" in checks:
         try:
             value = eval(checks["type"])(value)
         except:
-            value = handle_input(
-                message=(
-                    (
-                        ("[blue]Example: " + str(checks["example"]) + "\n")
-                        if "example" in checks
-                        else ""
-                    )
-                    + "[red]"
-                    + ("Non-optional ", "Optional ")[
-                        "optional" in checks and checks["optional"] is True
-                    ]
-                )
-                + " [#C0CAF5 bold]"
-                + str(name)
-                + "[#F7768E bold]=",
-                check_type=eval(checks["type"]),
-                extra_info=checks["explanation"] if "explanation" in checks else "",
-                default=checks["default"] if "default" in checks else NotImplemented,
-                match=checks["regex"] if "regex" in checks else "",
-                err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
-                nmin=checks["nmin"] if "nmin" in checks else None,
-                nmax=checks["nmax"] if "nmax" in checks else None,
-                oob_error=checks["oob_error"]
-                if "oob_error" in checks
-                else "Input out of bounds(Value too high/low/long/short)",
-            )
+            incorrect = True
 
     if (
-        "options" in checks and value not in checks["options"]
+        not incorrect and "options" in checks and value not in checks["options"]
     ):  # FAILSTATE Value is not one of the options
-        value = handle_input(
-            message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
-                + "[red]"
-                + ("Non-optional ", "Optional ")[
-                    "optional" in checks and checks["optional"] is True
-                ]
-            )
-            + "[#C0CAF5 bold]"
-            + str(name)
-            + "[#F7768E bold]=",
-            extra_info=checks["explanation"] if "explanation" in checks else "",
-            err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
-            default=checks["default"] if "default" in checks else NotImplemented,
-            options=checks["options"],
+        incorrect = True
+    if (
+        not incorrect
+        and "regex" in checks
+        and (
+            (isinstance(value, str) and re.match(checks["regex"], value) is None)
+            or not isinstance(value, str)
         )
-    if "regex" in checks and (
-        (isinstance(value, str) and re.match(checks["regex"], value) is None)
-        or not isinstance(value, str)
     ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
-        value = handle_input(
-            message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
-                + "[red]"
-                + ("Non-optional ", "Optional ")[
-                    "optional" in checks and checks["optional"] is True
-                ]
-            )
-            + "[#C0CAF5 bold]"
-            + str(name)
-            + "[#F7768E bold]=",
-            extra_info=checks["explanation"] if "explanation" in checks else "",
-            match=checks["regex"],
-            err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
-            default=checks["default"] if "default" in checks else NotImplemented,
-            nmin=checks["nmin"] if "nmin" in checks else None,
-            nmax=checks["nmax"] if "nmax" in checks else None,
-            oob_error=checks["oob_error"]
-            if "oob_error" in checks
-            else "Input out of bounds(Value too high/low/long/short)",
-        )
+        incorrect = True
 
-    if not hasattr(value, "__iter__") and (
-        ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-        or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+    if (
+        not incorrect
+        and not hasattr(value, "__iter__")
+        and (
+            ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
+            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+        )
     ):
+        incorrect = True
+    if (
+        not incorrect
+        and hasattr(value, "__iter__")
+        and (
+            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
+            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+        )
+    ):
+        incorrect = True
+
+    if incorrect:
         value = handle_input(
             message=(
                 (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
@@ -129,6 +78,7 @@ If you see any prompts, that means that you have unset/incorrectly set variables
             + str(name)
             + "[#F7768E bold]=",
             extra_info=checks["explanation"] if "explanation" in checks else "",
+            check_type=eval(checks["type"]) if "type" in checks else False,
             default=checks["default"] if "default" in checks else NotImplemented,
             match=checks["regex"] if "regex" in checks else "",
             err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
@@ -137,53 +87,7 @@ If you see any prompts, that means that you have unset/incorrectly set variables
             oob_error=checks["oob_error"]
             if "oob_error" in checks
             else "Input out of bounds(Value too high/low/long/short)",
-        )
-    if hasattr(value, "__iter__") and (
-        ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-        or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
-    ):
-        value = handle_input(
-            message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
-                + "[red]"
-                + ("Non-optional ", "Optional ")[
-                    "optional" in checks and checks["optional"] is True
-                ]
-            )
-            + "[#C0CAF5 bold]"
-            + str(name)
-            + "[#F7768E bold]=",
-            extra_info=checks["explanation"] if "explanation" in checks else "",
-            default=checks["default"] if "default" in checks else NotImplemented,
-            match=checks["regex"] if "regex" in checks else "",
-            err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
-            nmin=checks["nmin"] if "nmin" in checks else None,
-            nmax=checks["nmax"] if "nmax" in checks else None,
-            oob_error=checks["oob_error"]
-            if "oob_error" in checks
-            else "Input out of bounds(Value too high/low/long/short)",
-        )
-    if value == {}:
-        handle_input(
-            message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
-                + "[red]"
-                + ("Non-optional ", "Optional ")[
-                    "optional" in checks and checks["optional"] is True
-                ]
-            )
-            + "[#C0CAF5 bold]"
-            + str(name)
-            + "[#F7768E bold]=",
-            extra_info=checks["explanation"] if "explanation" in checks else "",
-            default=checks["default"] if "default" in checks else NotImplemented,
-            match=checks["regex"] if "regex" in checks else "",
-            err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
-            nmin=checks["nmin"] if "nmin" in checks else None,
-            nmax=checks["nmax"] if "nmax" in checks else None,
-            oob_error=checks["oob_error"]
-            if "oob_error" in checks
-            else "Input out of bounds(Value too high/low/long/short)",
+            options=checks["options"] if "options" in checks else None,
         )
     return value
 
@@ -244,11 +148,22 @@ Creating it now."""
                 f"[red bold]Failed to write to {config_file}. Giving up.\nSuggestion: check the folder's permissions for the user."
             )
             return False
+
+    console.print(
+        """\
+[blue bold]###############################
+#                             #
+# Checking TOML configuration #
+#                             #
+###############################
+If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
+"""
+    )
     crawl(template, check_vars)
     # pretty.pprint(config)
     with open(config_file, "w") as f:
         toml.dump(config, f)
-    return True
+    return config
 
 
 if __name__ == "__main__":

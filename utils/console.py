@@ -23,14 +23,13 @@ def print_step(text):
     panel = Panel(Text(text, justify="left"))
     console.print(panel)
 
-    
+
 def print_table(items):
     """Prints items in a table."""
 
     console.print(Columns([Panel(f"[yellow]{item}", expand=True) for item in items]))
 
 
-    
 def print_substep(text, style=""):
     """Prints a rich info message without the panelling."""
     console.print(text, style=style)
@@ -80,8 +79,7 @@ def handle_input(
                     continue
             elif match != "" and re.match(match, user_input) is None:
                 console.print(
-                    "[red]" + err_message +
-                    "\nAre you absolutely sure it's correct?(y/n)"
+                    "[red]" + err_message + "\nAre you absolutely sure it's correct?(y/n)"
                 )
                 if input().casefold().startswith("y"):
                     break
@@ -99,13 +97,25 @@ def handle_input(
     while True:
         console.print(message, end="")
         user_input = input("").strip()
-        if user_input not in options:
-            console.print(
-                "[red bold]"
-                + err_message
-                + "\nValid options are: "
-                + ", ".join(map(str, options))
-                + "."
-            )
-            continue
-        return user_input
+        if check_type is not False:
+            try:
+                isinstance(eval(user_input), check_type)
+                return check_type(user_input)
+            except:
+                console.print(
+                    "[red bold]"
+                    + err_message
+                    + "\nValid options are: "
+                    + ", ".join(map(str, options))
+                    + "."
+                )
+                continue
+        if user_input in options:
+            return user_input
+        console.print(
+            "[red bold]"
+            + err_message
+            + "\nValid options are: "
+            + ", ".join(map(str, options))
+            + "."
+        )
