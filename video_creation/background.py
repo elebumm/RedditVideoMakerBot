@@ -1,5 +1,5 @@
 import random
-from os import listdir, environ
+from os import listdir
 from pathlib import Path
 from random import randrange
 from typing import Tuple
@@ -55,7 +55,7 @@ def download_background():
         print_substep("Background videos downloaded successfully! 🎉", style="bold green")
 
 
-def chop_background_video(video_length: int):
+def chop_background_video(video_length: int) -> str:
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
@@ -63,7 +63,7 @@ def chop_background_video(video_length: int):
     """
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = random.choice(listdir("assets/backgrounds"))
-    environ["background_credit"] = choice.split("-")[0]
+    credit = choice.split("-")[0]
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
@@ -81,3 +81,4 @@ def chop_background_video(video_length: int):
             new = video.subclip(start_time, end_time)
             new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
+    return credit

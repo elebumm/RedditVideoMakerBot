@@ -34,7 +34,7 @@ def check_done(
     return redditobj
 
 
-def save_data(filename: str, reddit_title: str, reddit_id: str):
+def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
@@ -50,9 +50,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str):
         payload = {
             "id": reddit_id,
             "time": str(int(time.time())),
-            "background_credit": settings.config["settings"]["background_credit"]
-            if "background_credit" in settings.config["settings"]
-            else "",
+            "background_credit": credit,
             "reddit_title": reddit_title,
             "filename": filename,
         }

@@ -20,13 +20,13 @@ from rich.console import Console
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.videos import save_data
-
+from utils import settings
 console = Console()
 
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_credit: str):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
@@ -37,7 +37,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
-    opacity = os.getenv("OPACITY")
+    opacity = settings.config["settings"]["opacity"]
     background_clip = (
         VideoFileClip("assets/temp/background.mp4")
         .without_audio()
@@ -91,9 +91,9 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     filename = f"{title}.mp4"
-    subreddit = os.getenv("SUBREDDIT")
+    subreddit = settings.config["reddit"]["thread"]["subreddit"] 
 
-    save_data(filename, title, idx)
+    save_data(filename, title, idx, credit)
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
@@ -118,5 +118,5 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
     print_substep("See result in the results folder!")
 
     print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {os.getenv("background_credit")}'
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_credit}'
     )
