@@ -73,8 +73,7 @@ If you see any prompts, that means that you have unset/incorrectly set variables
     ):  # FAILSTATE Value is not one of the options
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n")
-                 if "example" in checks else "")
+                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -94,8 +93,7 @@ If you see any prompts, that means that you have unset/incorrectly set variables
     ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n")
-                 if "example" in checks else "")
+                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -116,14 +114,12 @@ If you see any prompts, that means that you have unset/incorrectly set variables
         )
 
     if not hasattr(value, "__iter__") and (
-        ("nmin" in checks and checks["nmin"]
-         is not None and value < checks["nmin"])
+        ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
         or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
     ):
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n")
-                 if "example" in checks else "")
+                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -143,14 +139,12 @@ If you see any prompts, that means that you have unset/incorrectly set variables
             else "Input out of bounds(Value too high/low/long/short)",
         )
     if hasattr(value, "__iter__") and (
-        ("nmin" in checks and checks["nmin"]
-         is not None and len(value) < checks["nmin"])
+        ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
         or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
     ):
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n")
-                 if "example" in checks else "")
+                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -172,8 +166,7 @@ If you see any prompts, that means that you have unset/incorrectly set variables
     if value == {}:
         handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n")
-                 if "example" in checks else "")
+                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -252,7 +245,7 @@ Creating it now."""
             )
             return False
     crawl(template, check_vars)
-    pretty.pprint(config)
+    # pretty.pprint(config)
     with open(config_file, "w") as f:
         toml.dump(config, f)
     return True
