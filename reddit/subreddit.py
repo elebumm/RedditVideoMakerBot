@@ -17,7 +17,7 @@ def get_subreddit_threads(POST_ID: str):
     print_substep("Logging into Reddit.")
 
     content = {}
-    if settings.config["reddit"]["creds"]["2fa"] == "true":
+    if settings.config["reddit"]["creds"]["2fa"] == True:
         print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
         print()

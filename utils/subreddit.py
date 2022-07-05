@@ -22,7 +22,7 @@ def get_subreddit_undone(submissions: list, subreddit):
             continue
         if submission.over_18:
             try:
-                if settings.config["settings"]["allow_nsfw"] == "false":
+                if settings.config["settings"]["allow_nsfw"] == False:
                     print_substep("NSFW Post Detected. Skipping...")
                     continue
             except AttributeError:
