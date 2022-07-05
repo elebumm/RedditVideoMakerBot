@@ -1,11 +1,11 @@
 import json
 import os
 import time
-from os import getenv
 from typing import Dict
 
 from praw.models import Submission
 
+from utils import settings
 from utils.console import print_step
 
 
@@ -25,7 +25,7 @@ def check_done(
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):
-            if getenv("POST_ID"):
+            if settings.config["reddit"]["thread"]["post_id"]:
                 print_step(
                     "You already have done this video but since it was declared specifically in the .env file the program will continue"
                 )
