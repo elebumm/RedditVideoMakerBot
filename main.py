@@ -5,7 +5,7 @@ from os import name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
-from utils.settings import check_toml
+from utils import settings
 
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
@@ -52,7 +52,7 @@ def run_many(times):
 
 
 if __name__ == "__main__":
-    config = check_toml(".config.template.toml", "config.toml")
+    config = settings.check_toml(".config.template.toml", "config.toml")
     config is False and exit()
     try:
         if config["settings"]["times_to_run"]:
