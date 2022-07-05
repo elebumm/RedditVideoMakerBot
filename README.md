@@ -48,6 +48,8 @@ On MacOS and Linux (debian, arch, fedora and centos, and based on those), you ca
 
 `bash <(curl -sL https://raw.githubusercontent.com/micziz/RedditVideoMakerBot/master/install.sh)`
 
+This can also be used to update the installation
+
 4. Run `python main.py`
    required\*\*), visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps) TL;DR set up an app that is a "script".
 5. Enjoy 😎
