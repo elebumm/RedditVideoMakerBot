@@ -1,5 +1,4 @@
 import json
-import os
 import time
 from typing import Dict
 
@@ -51,7 +50,9 @@ def save_data(filename: str, reddit_title: str, reddit_id: str):
         payload = {
             "id": reddit_id,
             "time": str(int(time.time())),
-            "background_credit": str(os.getenv("background_credit")),
+            "background_credit": settings.config["settings"]["background_credit"]
+            if "background_credit" in settings.config["settings"]
+            else "",
             "reddit_title": reddit_title,
             "filename": filename,
         }
