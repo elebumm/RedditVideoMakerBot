@@ -50,7 +50,7 @@ def run_many(times):
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
-if __name__ == "__main__":
+def process():
     if check_env() is not True:
         exit()
     load_dotenv()
@@ -72,3 +72,7 @@ if __name__ == "__main__":
         print_markdown("## Clearing temp files")
         cleanup()
         exit()
+
+
+if __name__ == "__main__":
+    process()
