@@ -1,4 +1,3 @@
-
 # Okay, have to admit. This code is from StackOverflow. It's so efficient, that it's probably the best way to do it.
 # Although, it is edited to use less threads.
 
@@ -15,9 +14,9 @@ class Loader:
         A loader-like context manager
 
         Args:
-            desc (str, optional): The loader's description. Defaults to "Loading...".
-            end (str, optional): Final print. Defaults to "Done!".
-            timeout (float, optional): Sleep time between prints. Defaults to 0.1.
+                desc (str, optional): The loader's description. Defaults to "Loading...".
+                end (str, optional): Final print. Defaults to "Done!".
+                timeout (float, optional): Sleep time between prints. Defaults to 0.1.
         """
         self.desc = desc
         self.end = end
