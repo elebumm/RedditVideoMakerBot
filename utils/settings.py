@@ -54,7 +54,11 @@ def check(value, checks, name):
         and not hasattr(value, "__iter__")
         and (
             ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and value > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -62,8 +66,16 @@ def check(value, checks, name):
         not incorrect
         and hasattr(value, "__iter__")
         and (
-            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+            (
+                "nmin" in checks
+                and checks["nmin"] is not None
+                and len(value) < checks["nmin"]
+            )
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and len(value) > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -71,7 +83,11 @@ def check(value, checks, name):
     if incorrect:
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
+                (
+                    ("[blue]Example: " + str(checks["example"]) + "\n")
+                    if "example" in checks
+                    else ""
+                )
                 + "[red]"
                 + ("Non-optional ", "Optional ")[
                     "optional" in checks and checks["optional"] is True
@@ -84,7 +100,9 @@ def check(value, checks, name):
             check_type=eval(checks["type"]) if "type" in checks else False,
             default=checks["default"] if "default" in checks else NotImplemented,
             match=checks["regex"] if "regex" in checks else "",
-            err_message=checks["input_error"] if "input_error" in checks else "Incorrect input",
+            err_message=checks["input_error"]
+            if "input_error" in checks
+            else "Incorrect input",
             nmin=checks["nmin"] if "nmin" in checks else None,
             nmax=checks["nmax"] if "nmax" in checks else None,
             oob_error=checks["oob_error"]

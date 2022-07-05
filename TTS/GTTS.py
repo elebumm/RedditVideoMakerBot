@@ -12,7 +12,11 @@ class GTTS:
         self.voices = []
 
     def run(self, text, filepath):
-        tts = gTTS(text=text, lang=settings.config["reddit"]["thread"]["post_lang"] or "en", slow=False)
+        tts = gTTS(
+            text=text,
+            lang=settings.config["reddit"]["thread"]["post_lang"] or "en",
+            slow=False,
+        )
         tts.save(filepath)
 
     def randomvoice(self):

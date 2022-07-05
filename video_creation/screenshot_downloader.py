@@ -35,9 +35,13 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         context = browser.new_context()
 
         if settings.config["settings"]["theme"] == "dark":
-            cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
         else:
-            cookie_file = open("./video_creation/data/cookie-light-mode.json", encoding="utf-8")
+            cookie_file = open(
+                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
+            )
         cookies = json.load(cookie_file)
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
@@ -57,7 +61,10 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
         if settings.config["reddit"]["thread"]["post_lang"]:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=settings.config["reddit"]["thread"]["post_lang"])
+            texts_in_tl = ts.google(
+                reddit_object["thread_title"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
+            )
 
             page.evaluate(
                 "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
@@ -66,7 +73,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         else:
             print_substep("Skipping translation...")
 
-        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
+        page.locator('[data-test-id="post-content"]').screenshot(
+            path="assets/temp/png/title.png"
+        )
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
@@ -89,7 +98,8 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
                     comment_tl = ts.google(
-                        comment["comment_body"], to_language=settings.config["reddit"]["thread"]["post_lang"]
+                        comment["comment_body"],
+                        to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
                     page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',

@@ -18,7 +18,9 @@ def get_subreddit_threads(POST_ID: str):
 
     content = {}
     if settings.config["reddit"]["creds"]["2fa"] == True:
-        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
         code = input("> ")
         print()
         pw = settings.config["reddit"]["creds"]["password"]
@@ -29,7 +31,7 @@ def get_subreddit_threads(POST_ID: str):
     if username.casefold().startswith("u/"):
         username = username[2:]
     reddit = praw.Reddit(
-        client_id= settings.config["reddit"]["creds"]["client_id"],
+        client_id=settings.config["reddit"]["creds"]["client_id"],
         client_secret=settings.config["reddit"]["creds"]["client_secret"],
         user_agent="Accessing Reddit threads",
         username=username,
@@ -39,10 +41,14 @@ def get_subreddit_threads(POST_ID: str):
 
     # Ask user for subreddit input
     print_step("Getting subreddit threads...")
-    if not settings.config["reddit"]["thread"]["subreddit"]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
+    if not settings.config["reddit"]["thread"][
+        "subreddit"
+    ]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         try:
             subreddit = reddit.subreddit(
-                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+                re.sub(
+                    r"r\/", "", input("What subreddit would you like to pull from? ")
+                )
                 # removes the r/ from the input
             )
         except ValueError:
@@ -52,7 +58,9 @@ def get_subreddit_threads(POST_ID: str):
         sub = settings.config["reddit"]["thread"]["subreddit"]
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
-        if subreddit_choice.casefold().startswith("r/"):  # removes the r/ from the input
+        if subreddit_choice.casefold().startswith(
+            "r/"
+        ):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(
             subreddit_choice
@@ -60,8 +68,13 @@ def get_subreddit_threads(POST_ID: str):
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
-    elif settings.config["reddit"]["thread"]["post_id"] and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1:
-        submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
+    elif (
+        settings.config["reddit"]["thread"]["post_id"]
+        and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
+    ):
+        submission = reddit.submission(
+            id=settings.config["reddit"]["thread"]["post_id"]
+        )
     else:
 
         threads = subreddit.hot(limit=25)
@@ -90,7 +103,9 @@ def get_subreddit_threads(POST_ID: str):
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
-            if len(top_level_comment.body) <= int(settings.config["reddit"]["thread"]["max_comment_length"]):
+            if len(top_level_comment.body) <= int(
+                settings.config["reddit"]["thread"]["max_comment_length"]
+            ):
                 if (
                     top_level_comment.author is not None
                 ):  # if errors occur with this change to if not.

@@ -52,7 +52,9 @@ def download_background():
                 "assets/backgrounds", filename=f"{credit}-{filename}"
             )
 
-        print_substep("Background videos downloaded successfully! 🎉", style="bold green")
+        print_substep(
+            "Background videos downloaded successfully! 🎉", style="bold green"
+        )
 
 
 def chop_background_video(video_length: int) -> str:

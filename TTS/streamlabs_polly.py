@@ -39,7 +39,9 @@ class StreamlabsPolly:
                 return ValueError(
                     f"Please set the environment variable STREAMLABS_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
+            voice = str(
+                settings.config["settings"]["tts"]["streamlabs_polly_voice"]
+            ).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
         try:
@@ -55,4 +57,3 @@ class StreamlabsPolly:
 
     def randomvoice(self):
         return random.choice(self.voices)
-

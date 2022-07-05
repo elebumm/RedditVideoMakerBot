@@ -21,12 +21,15 @@ from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.videos import save_data
 from utils import settings
+
 console = Console()
 
 W, H = 1080, 1920
 
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_credit: str):
+def make_final_video(
+    number_of_clips: int, length: int, reddit_obj: dict, background_credit: str
+):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
@@ -46,7 +49,9 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     )
 
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
+    audio_clips = [
+        AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)
+    ]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -63,7 +68,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         .set_duration(audio_clips[0].duration)
         .set_position("center")
         .resize(width=W - 100)
-        .set_opacity(new_opacity)
+        .set_opacity(new_opacity),
     )
 
     for i in range(0, number_of_clips):
@@ -85,13 +90,15 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #        .set_opacity(float(opacity)),
     #    )
     # else:
-    image_concat = concatenate_videoclips(image_clips).set_position(("center", "center"))
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        ("center", "center")
+    )
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     filename = f"{title}.mp4"
-    subreddit = settings.config["reddit"]["thread"]["subreddit"] 
+    subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     save_data(filename, title, idx, background_credit)
 
@@ -108,7 +115,10 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}"
+        "assets/temp/temp.mp4",
+        0,
+        final.duration,
+        targetname=f"results/{subreddit}/{filename}",
     )
     # os.remove("assets/temp/temp.mp4")
 
