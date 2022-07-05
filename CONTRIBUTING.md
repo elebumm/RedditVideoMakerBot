@@ -111,7 +111,8 @@ When making your PR, follow these guidelines:
 
 - Your branch has a base of _develop_, **not** _master_
 - You are merging your branch into the _develop_ branch
-- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request.
+- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request
+- Where possible, you have used `git pull --rebase`, to avoid creating unnecessary merge commits
 
 ### Improving The Documentation
 
