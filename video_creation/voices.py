@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 from typing import Dict, Tuple
 
 from rich.console import Console
@@ -10,7 +9,7 @@ from TTS.GTTS import GTTS
 from TTS.streamlabs_polly import StreamlabsPolly
 from TTS.aws_polly import AWSPolly
 from TTS.TikTok import TikTok
-
+from utils import settings
 from utils.console import print_table, print_step
 
 
@@ -34,9 +33,9 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
 
-    env = os.getenv("TTSCHOICE", "")
-    if env.casefold() in map(lambda _: _.casefold(), TTSProviders):
-        text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, env), reddit_obj)
+    voice = settings.config["tts"]["choice"]
+    if voice.casefold() in map(lambda _: _.casefold(), TTSProviders):
+        text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, voice), reddit_obj)
     else:
         while True:
             print_step("Please choose one of the following TTS providers: ")
