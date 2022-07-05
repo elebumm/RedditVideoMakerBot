@@ -6,7 +6,7 @@ password = { optional = false, nmin = 8, explanation = "the password of your red
 2fa = { optional = true, type = "bool", options = [
   true,
   false,
-], default = false, explanation = "Whether you have Reddit 2FA enabled, Valid options are True and Talse", example = true }
+], default = false, explanation = "Whether you have Reddit 2FA enabled, Valid options are True and False", example = true }
 
 
 [reddit.thread]
