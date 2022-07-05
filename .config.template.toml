@@ -36,6 +36,8 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 ] }
 
 
-# [settings.tts]
-# voice = { optional = true, example = "en_us_002", explanation = "sets the voice used by TTS" }
-# choice = { optional = true, example = "polly", explanation = "the backend used " }
+[settings.tts]
+aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
+streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
+tiktok_voice = { optional = false, default = "en_us_006", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
+choice = { optional = true, example = "streamlabspolly", explanation = "The backend used for TTS generation" }
