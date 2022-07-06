@@ -7,6 +7,7 @@ from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
 from utils.checker import check_env
+from utils import settings
 
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video
@@ -51,18 +52,19 @@ def run_many(times):
 
 
 def process():
-    if check_env() is not True:
-        exit()
-    load_dotenv()
+    config = settings.check_toml(".config.template.toml", "config.toml")
+    config is False and exit()
     try:
-        if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
-            run_many(int(getenv("TIMES_TO_RUN")))
+        if config["settings"]["times_to_run"]:
+            run_many(config["settings"]["times_to_run"])
 
-        elif len(getenv("POST_ID", "").split("+")) > 1:
-            for index, post_id in enumerate(getenv("POST_ID", "").split("+")):
+        elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+            for index, post_id in enumerate(
+                config["reddit"]["thread"]["post_id"].split("+")
+            ):
                 index += 1
                 print_step(
-                    f'on the {index}{("st" if index == 1 else ("nd" if index == 2 else ("rd" if index == 3 else "th")))} post of {len(getenv("POST_ID", "").split("+"))}'
+                    f'on the {index}{("st" if index%10 == 1 else ("nd" if index%10 == 2 else ("rd" if index%10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
