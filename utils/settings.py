@@ -25,6 +25,7 @@ def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path: list = []):
 def check(value, checks, name):
     def get_check_value(key, default_result):
         return checks[key] if key in checks else default_result
+
     incorrect = False
     if value == {}:
         incorrect = True
@@ -102,7 +103,9 @@ def check(value, checks, name):
             err_message=get_check_value("input_error", "Incorrect input"),
             nmin=get_check_value("nmin", None),
             nmax=get_check_value("nmax", None),
-            oob_error=get_check_value("oob_error", "Input out of bounds(Value too high/low/long/short)"),
+            oob_error=get_check_value(
+                "oob_error", "Input out of bounds(Value too high/low/long/short)"
+            ),
             options=get_check_value("options", None),
             optional=get_check_value("optional", False),
         )
