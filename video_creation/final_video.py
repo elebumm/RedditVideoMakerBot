@@ -35,11 +35,11 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"([0-9]+)\s?\/\s?([0-9]+)", r"\1 of \2", name)
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
-    
+
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         print_substep("Translating filename...")
-        translated_name = ts.google(name, to_language = lang)
+        translated_name = ts.google(name, to_language=lang)
         return translated_name
 
     else:
