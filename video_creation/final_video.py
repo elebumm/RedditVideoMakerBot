@@ -4,7 +4,6 @@ import os
 import re
 from os.path import exists
 from typing import Dict
-import translators as ts
 
 from moviepy.editor import (
     VideoFileClip,
@@ -36,14 +35,7 @@ def name_normalize(
     name = re.sub(r'([0-9]+)\s?\/\s?([0-9]+)', r'\1 of \2', name)
     name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
     name = re.sub(r'\/', r'', name)
-
-    if os.getenv("POSTLANG") != "":
-        print_substep("Translating filename...")
-        translated_name = ts.google(name, to_language=os.getenv("POSTLANG"))
-        return translated_name
-
-    else:
-        return name
+    return name
 
 
 def make_final_video(number_of_clips: int, length: int, reddit_obj: dict):
