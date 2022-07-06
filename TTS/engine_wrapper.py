@@ -12,8 +12,20 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
+from video_creation.profane_list.en import profane_list
+
 
 DEFUALT_MAX_LENGTH: int = 50  # video length variable
+
+
+def profane_filter(text: str, word_list: list) -> str:
+    word_list.sort(reverse=True, key=len)
+    filtered_text = text
+    if any([word in word_list for word in text.split()]) and bool(getenv("PROFANE_FILTER", False)):
+        for word in word_list:
+            if word in text:
+                filtered_text = re.sub(word, word[:1], filtered_text)
+    return filtered_text
 
 
 class TTSEngine:
@@ -108,9 +120,11 @@ class TTSEngine:
         self.length += clip.duration
         clip.close()
 
+
 def process_text(text: str):
     lang = getenv("POSTLANG", "")
     new_text = sanitize_text(text)
+    new_text = profane_filter(new_text, profane_list)
     if lang:
         print_substep("Translating Text...")
         translated_text = ts.google(text, to_language=lang)
