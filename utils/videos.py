@@ -15,10 +15,10 @@ def check_done(
     """Checks if the chosen post has already been generated
 
     Args:
-        redditobj (Dict[str]): Reddit object gotten from reddit/subreddit.py
+        redditobj (Submission): Reddit object gotten from reddit/subreddit.py
 
     Returns:
-        Dict[str]|None: Reddit object in args
+        Submission|None: Reddit object in args
     """
     with open(
         "./video_creation/data/videos.json", "r", encoding="utf-8"

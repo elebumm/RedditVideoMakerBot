@@ -27,7 +27,7 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
     """Saves text to MP3 files.
 
     Args:
-        reddit_obj (dict[str]): Reddit object received from reddit API in reddit/subreddit.py
+        reddit_obj (): Reddit object received from reddit API in reddit/subreddit.py
 
     Returns:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)

@@ -20,8 +20,8 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
-        reddit_object (Dict[str]): Reddit object received from reddit/subreddit.py
-        screenshot_num (int): Number of screenshots to downlaod
+        reddit_object (Dict): Reddit object received from reddit/subreddit.py
+        screenshot_num (int): Number of screenshots to download
     """
     print_step("Downloading screenshots of reddit posts...")
 

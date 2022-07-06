@@ -1,7 +1,7 @@
 [reddit.creds]
 client_id = { optional = false, nmin = 12, nmax = 30, explanation = "the ID of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The ID should be over 12 and under 30 characters, double check your input." }
 client_secret = { optional = false, nmin = 20, nmax = 40, explanation = "the SECRET of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The secret should be over 20 and under 40 characters, double check your input." }
-username = { optional = false, nmin = 3, nmax = 20, explanation = "the username of your reddit account", example = "asdfghjkl", regex = "^[-_0-9a-zA-Z]+$", oob_error = "A username HAS to be between 3 and 20 characters" }
+username = { optional = false, nmin = 3, nmax = 20, explanation = "the username of your reddit account", example = "JasonLovesDoggo", regex = "^[-_0-9a-zA-Z]+$", oob_error = "A username HAS to be between 3 and 20 characters" }
 password = { optional = false, nmin = 8, explanation = "the password of your reddit account", example = "fFAGRNJru1FTz70BzhT3Zg", oob_error = "Password too short" }
 2fa = { optional = true, type = "bool", options = [
   true,
@@ -15,7 +15,7 @@ random = { optional = true, options = [
   false,
 ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
 subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, nmax = 21, explanation = "what subreddit to pull posts from, the name of the sub, not the URL", example = "AskReddit", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
-post_id = { optional = true, default = "", regex = "^((?!://|://).)*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
+post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
 max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr"}
 
@@ -24,7 +24,7 @@ allow_nsfw = { optional = false, type = "bool", default = false, example = false
   true,
   false,
 ], explanation = "Whether to allow NSFW content, True or False" }
-theme = { optional = false, default = "light", example = "dark", options = [
+theme = { optional = false, default = "dark", example = "light", options = [
   "dark",
   "light",
 ], explanation = "sets the Reddit theme, either LIGHT or DARK" }
@@ -37,7 +37,7 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 
 
 [settings.tts]
+choice = { optional = false, default = "", options = [ "streamlabspolly", "tiktok", "googletranslate", "awspolly",], example = "streamlabspolly", explanation = "The backend used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = false, default = "en_us_006", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
-choice = { optional = false, default = "", options = [ "streamlabspolly", "tiktok", "googletranslate", "awspolly", ""], example = "streamlabspolly", explanation = "The backend used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }

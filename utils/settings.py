@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# import os
 import toml
 from rich.console import Console
 import re
@@ -8,13 +7,13 @@ from typing import Tuple, Dict
 
 from utils.console import handle_input
 
-# from console import handle_input
-
 
 console = Console()
+config = dict  # autocomplete
 
-
-def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path: list = []):
+def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
+    if path is None: # path Default argument value is mutable
+        path = []
     for key in obj.keys():
         if type(obj[key]) is dict:
             crawl(obj[key], func, path + [key])
@@ -138,7 +137,7 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
         return False
     try:
         config = toml.load(config_file)
-    except (toml.TomlDecodeError):
+    except toml.TomlDecodeError:
         console.print(
             f"""[blue]Couldn't read {config_file}.
 Overwrite it?(y/n)"""
@@ -155,7 +154,7 @@ Overwrite it?(y/n)"""
                     f"[red bold]Failed to overwrite {config_file}. Giving up.\nSuggestion: check {config_file} permissions for the user."
                 )
                 return False
-    except (FileNotFoundError):
+    except FileNotFoundError:
         console.print(
             f"""[blue]Couldn't find {config_file}
 Creating it now."""
