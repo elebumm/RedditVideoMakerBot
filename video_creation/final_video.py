@@ -37,7 +37,7 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"\/", r"", name)
     
     lang = settings.config["reddit"]["thread"]["post_lang"]
-    if lang != "":
+    if lang:
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language = lang)
         return translated_name
