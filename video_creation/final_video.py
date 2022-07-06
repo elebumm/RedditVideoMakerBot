@@ -27,6 +27,19 @@ console = Console()
 W, H = 1080, 1920
 
 
+
+def name_normalize(
+        name: str
+) -> str:
+    name = re.sub(r'[?\\"%*:|<>]', '', name)
+    name = re.sub(r'( [w,W]\s?\/\s?[o,O,0])', r' without', name)
+    name = re.sub(r'( [w,W]\s?\/)', r' with', name)
+    name = re.sub(r'([0-9]+)\s?\/\s?([0-9]+)', r'\1 of \2', name)
+    name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
+    name = re.sub(r'\/', r'', name)
+    return name
+
+
 def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
@@ -90,7 +103,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
-    filename = f"{title}.mp4"
+    filename = f"{name_normalize(title)}.mp4"
     subreddit = os.getenv("SUBREDDIT")
 
     save_data(filename, title, idx)
