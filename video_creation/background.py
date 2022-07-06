@@ -1,7 +1,8 @@
 import random
-from os import listdir, environ
+from os import listdir
 from pathlib import Path
 from random import randrange
+from typing import Tuple
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -10,7 +11,7 @@ from pytube import YouTube
 from utils.console import print_step, print_substep
 
 
-def get_start_and_end_times(video_length: int, length_of_clip: int) -> tuple[int, int]:
+def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
 
     Args:
@@ -51,10 +52,12 @@ def download_background():
                 "assets/backgrounds", filename=f"{credit}-{filename}"
             )
 
-        print_substep("Background videos downloaded successfully! 🎉", style="bold green")
+        print_substep(
+            "Background videos downloaded successfully! 🎉", style="bold green"
+        )
 
 
-def chop_background_video(video_length: int):
+def chop_background_video(video_length: int) -> str:
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
@@ -62,7 +65,7 @@ def chop_background_video(video_length: int):
     """
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = random.choice(listdir("assets/backgrounds"))
-    environ["background_credit"] = choice.split("-")[0]
+    credit = choice.split("-")[0]
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
@@ -80,3 +83,4 @@ def chop_background_video(video_length: int):
             new = video.subclip(start_time, end_time)
             new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
+    return credit

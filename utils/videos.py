@@ -1,11 +1,10 @@
 import json
-import os
 import time
-from os import getenv
 from typing import Dict
 
 from praw.models import Submission
 
+from utils import settings
 from utils.console import print_step
 
 
@@ -21,11 +20,13 @@ def check_done(
     Returns:
         Dict[str]|None: Reddit object in args
     """
-    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
+    with open(
+        "./video_creation/data/videos.json", "r", encoding="utf-8"
+    ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):
-            if getenv("POST_ID"):
+            if settings.config["reddit"]["thread"]["post_id"]:
                 print_step(
                     "You already have done this video but since it was declared specifically in the .env file the program will continue"
                 )
@@ -35,7 +36,7 @@ def check_done(
     return redditobj
 
 
-def save_data(filename: str, reddit_title: str, reddit_id: str):
+def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
@@ -51,7 +52,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str):
         payload = {
             "id": reddit_id,
             "time": str(int(time.time())),
-            "background_credit": str(os.getenv("background_credit")),
+            "background_credit": credit,
             "reddit_title": reddit_title,
             "filename": filename,
         }
