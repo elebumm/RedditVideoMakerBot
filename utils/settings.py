@@ -23,11 +23,10 @@ def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path: list = []):
 
 
 def check(value, checks, name):
-
+    def get_check_value(key, default_result):
+        return checks[key] if key in checks else default_result
     incorrect = False
     if value == {}:
-        if skip_opt and "optional" in checks and checks["optional"] is True:
-            return None
         incorrect = True
     if not incorrect and "type" in checks:
         try:
@@ -96,20 +95,16 @@ def check(value, checks, name):
             + "[#C0CAF5 bold]"
             + str(name)
             + "[#F7768E bold]=",
-            extra_info=checks["explanation"] if "explanation" in checks else "",
-            check_type=eval(checks["type"]) if "type" in checks else False,
-            default=checks["default"] if "default" in checks else NotImplemented,
-            match=checks["regex"] if "regex" in checks else "",
-            err_message=checks["input_error"]
-            if "input_error" in checks
-            else "Incorrect input",
-            nmin=checks["nmin"] if "nmin" in checks else None,
-            nmax=checks["nmax"] if "nmax" in checks else None,
-            oob_error=checks["oob_error"]
-            if "oob_error" in checks
-            else "Input out of bounds(Value too high/low/long/short)",
-            options=checks["options"] if "options" in checks else None,
-            optional=checks["optional"] if "optional" in checks else False,
+            extra_info=get_check_value("explanation", ""),
+            check_type=eval(get_check_value("type", "False")),
+            default=get_check_value("default", NotImplemented),
+            match=get_check_value("regex", ""),
+            err_message=get_check_value("input_error", "Incorrect input"),
+            nmin=get_check_value("nmin", None),
+            nmax=get_check_value("nmax", None),
+            oob_error=get_check_value("oob_error", "Input out of bounds(Value too high/low/long/short)"),
+            options=get_check_value("options", None),
+            optional=get_check_value("optional", False),
         )
     return value
 
@@ -125,8 +120,6 @@ def crawl_and_check(obj: dict, path: list, checks: dict = {}, name=""):
 
 def check_vars(path, checks):
     global config
-    global skip_opt
-    skip_opt = "skip_opt" in config
     crawl_and_check(config, path, checks)
 
 
@@ -185,7 +178,6 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 """
     )
     crawl(template, check_vars)
-    config["skip_opt"] = True
     with open(config_file, "w") as f:
         toml.dump(config, f)
     return config
