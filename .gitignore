@@ -241,3 +241,5 @@ reddit-bot-351418-5560ebc49cac.json
 *.pyc
 video_creation/data/videos.json
 video_creation/data/envvars.txt
+
+config.toml

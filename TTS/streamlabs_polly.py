@@ -1,7 +1,7 @@
 import random
-import os
 import requests
 from requests.exceptions import JSONDecodeError
+from utils import settings
 
 voices = [
     "Brian",
@@ -35,11 +35,13 @@ class StreamlabsPolly:
         if random_voice:
             voice = self.randomvoice()
         else:
-            if not os.getenv("VOICE"):
+            if not settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
                 return ValueError(
-                    f"Please set the environment variable VOICE to a valid voice. options are: {voices}"
+                    f"Please set the environment variable STREAMLABS_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(os.getenv("STREAMLABS_VOICE")).capitalize()
+            voice = str(
+                settings.config["settings"]["tts"]["streamlabs_polly_voice"]
+            ).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
         try:
@@ -55,6 +57,3 @@ class StreamlabsPolly:
 
     def randomvoice(self):
         return random.choice(self.voices)
-
-
-# StreamlabsPolly().run(text=str('hi hi ' * 92)[1:], filepath='hello.mp3', random_voice=True)
