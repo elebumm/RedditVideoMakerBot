@@ -36,7 +36,6 @@ def main(POST_ID=None):
     reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    bg_config = get_background_config()
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
     download_background(bg_config)

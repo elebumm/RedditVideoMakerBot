@@ -75,12 +75,10 @@ Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed inf
 
 Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
 
-Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo
+Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo (Maintainer)
 
 CallumIO (c.#6837) - https://github.com/CallumIO
 
-HarryDaDev (hrvyy#9677) - https://github.com/ImmaHarry
+Verq (Verq#2338) - https://github.com/CordlessCoder 
 
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
-
-Freebiell (Freebie#6429) - https://github.com/FreebieII
