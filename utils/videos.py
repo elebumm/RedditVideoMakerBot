@@ -34,11 +34,12 @@ def check_done(
     return redditobj
 
 
-def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
+def save_data(subreddit: str, filename: str, reddit_title: str, reddit_id: str, credit: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
         filename (str): The finished video title name
+        @param subreddit:
         @param filename:
         @param reddit_id:
         @param reddit_title:
@@ -48,6 +49,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
         if reddit_id in [video["id"] for video in done_vids]:
             return  # video already done but was specified to continue anyway in the config file
         payload = {
+            "subreddit": subreddit,
             "id": reddit_id,
             "time": str(int(time.time())),
             "background_credit": credit,
