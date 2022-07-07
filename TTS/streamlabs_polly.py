@@ -37,7 +37,7 @@ class StreamlabsPolly:
         else:
             if not settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
                 return ValueError(
-                    f"Please set the environment variable STREAMLABS_VOICE to a valid voice. options are: {voices}"
+                    f"Please set the config variable STREAMLABS_VOICE to a valid voice. options are: {voices}"
                 )
             voice = str(
                 settings.config["settings"]["tts"]["streamlabs_polly_voice"]

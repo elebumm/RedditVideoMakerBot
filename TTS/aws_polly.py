@@ -37,7 +37,7 @@ class AWSPolly:
         else:
             if not settings.config["settings"]["tts"]["aws_polly_voice"]:
                 return ValueError(
-                    f"Please set the environment variable AWS_VOICE to a valid voice. options are: {voices}"
+                    f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
                 )
             voice = str(
                 settings.config["settings"]["tts"]["aws_polly_voice"]

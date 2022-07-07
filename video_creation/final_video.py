@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import re
 from os.path import exists
-from typing import Dict
+from typing import Dict, Tuple, Any
 import translators as ts
 
 from moviepy.editor import (
@@ -23,6 +23,7 @@ from utils.console import print_step, print_substep
 from utils.videos import save_data
 from utils import settings
 
+
 console = Console()
 
 W, H = 1080, 1920
@@ -32,7 +33,7 @@ def name_normalize(name: str) -> str:
     name = re.sub(r'[?\\"%*:|<>]', "", name)
     name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
     name = re.sub(r"( [w,W]\s?\/)", r" with", name)
-    name = re.sub(r"([0-9]+)\s?\/\s?([0-9]+)", r"\1 of \2", name)
+    name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
 
@@ -45,16 +46,13 @@ def name_normalize(name: str) -> str:
     else:
         return name
 
-
-def make_final_video(
-    number_of_clips: int, length: int, reddit_obj: dict, background_credit: str
-):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
-
     Args:
-        number_of_clips (int): Index to end at when going through the screenshots
+        number_of_clips (int): Index to end at when going through the screenshots'
         length (int): Length of the video
         reddit_obj (dict): The reddit object that contains the posts to read.
+        background_config (Tuple[str, str, str, Any]): The background config to use.
     """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -80,12 +78,10 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")
         .set_duration(audio_clips[0].duration)
-        .set_position("center")
         .resize(width=W - 100)
         .set_opacity(new_opacity),
     )
@@ -94,7 +90,6 @@ def make_final_video(
         image_clips.append(
             ImageClip(f"assets/temp/png/comment_{i}.png")
             .set_duration(audio_clips[i + 1].duration)
-            .set_position("center")
             .resize(width=W - 100)
             .set_opacity(new_opacity)
         )
@@ -108,10 +103,10 @@ def make_final_video(
     #        .resize(width=W - 100)
     #        .set_opacity(float(opacity)),
     #    )
-    # else:
-    image_concat = concatenate_videoclips(image_clips).set_position(
-        ("center", "center")
-    )
+    # else: story mode stuff
+    img_clip_pos = background_config[3]
+    image_concat = concatenate_videoclips(
+        image_clips).set_position(img_clip_pos)
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -120,7 +115,7 @@ def make_final_video(
     filename = f"{name_normalize(title)}.mp4"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    save_data(filename, title, idx, background_credit)
+    save_data(filename, title, idx, background_config[2])
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
@@ -148,5 +143,5 @@ def make_final_video(
     print_substep("See result in the results folder!")
 
     print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_credit}'
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
     )
