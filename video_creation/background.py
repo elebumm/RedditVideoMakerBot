@@ -1,11 +1,8 @@
-import random
-from os import listdir
 from pathlib import Path
 import random
 from random import randrange
 from typing import Any, Tuple
 
-from dotenv import load_dotenv
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -48,21 +45,7 @@ background_options = {
         lambda t: ('center', 480 + t)
     )
 }
-def get_background_config():
-    """Fetch the background/s configuration"""
-    try:
-        choice = str(settings.config['settings']['background_choice']).casefold()
-    except AttributeError:
-        print_substep("No background selected. Picking random background'")
-        choice = None
 
-    # Handle default / not supported background using default option.
-    # Default : pick random from supported background.
-    if not choice or choice not in background_options:
-        choice = random.choice(list(background_options.keys()))
-
-    return background_options[choice]
-    
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
 
@@ -76,12 +59,10 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
-
 def get_background_config():
     """Fetch the background/s configuration"""
-    load_dotenv()
     try:
-        choice = getenv("BackgroundChoice").casefold()
+        choice = str(settings.config['settings']['background_choice']).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None
@@ -123,8 +104,6 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
 
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = f"{background_config[2]}-{background_config[1]}"
-    environ["background_credit"] = choice.split("-")[0]
-
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
@@ -143,4 +122,4 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
             new = video.subclip(start_time, end_time)
             new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
-    return credit
+    return background_config[2]

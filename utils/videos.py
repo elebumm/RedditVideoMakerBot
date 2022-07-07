@@ -28,7 +28,7 @@ def check_done(
         if video["id"] == str(redditobj):
             if settings.config["reddit"]["thread"]["post_id"]:
                 print_step(
-                    "You already have done this video but since it was declared specifically in the .env file the program will continue"
+                    "You already have done this video but since it was declared specifically in the config file the program will continue"
                 )
                 return redditobj
             print_step("Getting new post as the current one has already been done")
@@ -48,7 +48,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
     with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
         done_vids = json.load(raw_vids)
         if reddit_id in [video["id"] for video in done_vids]:
-            return  # video already done but was specified to continue anyway in the .env file
+            return  # video already done but was specified to continue anyway in the config file
         payload = {
             "id": reddit_id,
             "time": str(int(time.time())),
