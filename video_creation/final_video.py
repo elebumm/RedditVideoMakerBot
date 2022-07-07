@@ -23,6 +23,7 @@ from utils.console import print_step, print_substep
 from utils.videos import save_data
 from utils import settings
 
+
 console = Console()
 
 W, H = 1080, 1920
@@ -45,14 +46,13 @@ def name_normalize(name: str) -> str:
     else:
         return name
 
-
 def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
-        number_of_clips (int): Index to end at when going through the screenshots
+        number_of_clips (int): Index to end at when going through the screenshots'
         length (int): Length of the video
         reddit_obj (dict): The reddit object that contains the posts to read.
-        background_config Tuple[str, str, str, Any]: The background config to use.
+        background_config (Tuple[str, str, str, Any]): The background config to use.
     """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -78,7 +78,6 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")
@@ -104,7 +103,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #        .resize(width=W - 100)
     #        .set_opacity(float(opacity)),
     #    )
-    # else:
+    # else: story mode stuff
     img_clip_pos = background_config[3]
     image_concat = concatenate_videoclips(
         image_clips).set_position(img_clip_pos)
