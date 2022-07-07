@@ -1,4 +1,4 @@
-boto3==1.24.23
+boto3==1.24.24
 botocore==1.27.23
 gTTS==2.2.4
 moviepy==1.0.3
