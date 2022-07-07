@@ -28,9 +28,11 @@ times_to_run = { optional = false, default = 1, example = 2, explanation = "used
 opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true,
     false,
-] }
+], explanation = "not yet implemented" }
 background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta"], explanation = "Sets the background for the video" }
-
+background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
+    false,
+], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
 [settings.tts]
 choice = { optional = false, default = "", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", ], example = "streamlabspolly", explanation = "The backend used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }

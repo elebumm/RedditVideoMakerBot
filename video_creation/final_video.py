@@ -4,6 +4,7 @@ import os
 import re
 from os.path import exists
 from typing import Dict, Tuple, Any
+
 import translators as ts
 
 from moviepy.editor import (
@@ -15,7 +16,7 @@ from moviepy.editor import (
     CompositeAudioClip,
     CompositeVideoClip,
 )
-from moviepy.video.io import ffmpeg_tools
+from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio, ffmpeg_extract_subclip
 from rich.console import Console
 
 from utils.cleanup import cleanup
@@ -46,7 +47,10 @@ def name_normalize(name: str) -> str:
     else:
         return name
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
+
+def make_final_video(
+    number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]
+):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
         number_of_clips (int): Index to end at when going through the screenshots'
@@ -66,9 +70,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     )
 
     # Gather all audio clips
-    audio_clips = [
-        AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)
-    ]
+    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -105,8 +107,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #    )
     # else: story mode stuff
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(
-        image_clips).set_position(img_clip_pos)
+    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -129,14 +130,30 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         verbose=False,
         threads=multiprocessing.cpu_count(),
     )
-    ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4",
-        0,
-        final.duration,
-        targetname=f"results/{subreddit}/{filename}",
-    )
-    # os.remove("assets/temp/temp.mp4")
-
+    if settings.config["settings"]["background_audio"]: # background.mp3
+        if not exists(f"assets/mp3/background.mp3"):
+            print_substep("optional background audio file didn't so skipping.")
+            ffmpeg_extract_subclip(
+                "assets/temp/temp.mp4",
+                0,
+                final.duration,
+                targetname=f"results/{subreddit}/{filename}",
+            )
+        else:
+            ffmpeg_merge_video_audio("assets/temp/temp.mp4", "assets/backgrounds/background.mp3", "assets/temp/temp_audio.mp4")
+            ffmpeg_extract_subclip(
+                "assets/temp/temp_audio.mp4",
+                0,
+                final.duration,
+                targetname=f"results/{subreddit}/{filename}",
+            )
+    else:
+        ffmpeg_extract_subclip(
+            "assets/temp/temp.mp4",
+            0,
+            final.duration,
+            targetname=f"results/{subreddit}/{filename}",
+        )
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
