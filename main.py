@@ -38,9 +38,10 @@ def main(POST_ID=None):
     length = math.ceil(length)
     bg_config = get_background_config()
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    download_background()
-    credit = chop_background_video(length)
-    make_final_video(number_of_comments, length, reddit_object, credit)
+    bg_config = get_background_config()
+    download_background(bg_config)
+    chop_background_video(bg_config, length)
+    make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 
 def run_many(times):

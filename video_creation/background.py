@@ -1,12 +1,16 @@
 import random
 from os import listdir
 from pathlib import Path
+import random
 from random import randrange
-from typing import Tuple
+from typing import Any, Tuple
+
+from dotenv import load_dotenv
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
+from pytube.cli import on_progress
 
 from utils import settings
 from utils.console import print_step, print_substep
@@ -58,7 +62,7 @@ def get_background_config():
         choice = random.choice(list(background_options.keys()))
 
     return background_options[choice]
-
+    
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
 
@@ -73,51 +77,59 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
     return random_time, random_time + video_length
 
 
-def download_background():
-    """Downloads the backgrounds/s video from YouTube."""
+def get_background_config():
+    """Fetch the background/s configuration"""
+    load_dotenv()
+    try:
+        choice = getenv("BackgroundChoice").casefold()
+    except AttributeError:
+        print_substep("No background selected. Picking random background'")
+        choice = None
+
+    # Handle default / not supported background using default option.
+    # Default : pick random from supported background.
+    if not choice or choice not in background_options:
+        choice = random.choice(list(background_options.keys()))
+
+    return background_options[choice]
+
+
+def download_background(background_config: Tuple[str, str, str, Any]):
+    """Downloads the background/s video from YouTube."""
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
-    background_options = [  # uri , filename , credit
-        ("https://www.youtube.com/watch?v=n_Dv4JMiwK8", "parkour.mp4", "bbswitzer"),
-        # (
-        #    "https://www.youtube.com/watch?v=2X9QGY__0II",
-        #    "rocket_league.mp4",
-        #    "Orbital Gameplay",
-        # ),
-    ]
     # note: make sure the file name doesn't include an - in it
-    if not len(listdir("./assets/backgrounds")) >= len(
-        background_options
-    ):  # if there are any background videos not installed
-        print_step(
-            "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
-        )
-        print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
-        for uri, filename, credit in background_options:
-            if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
-                continue  # adds check to see if file exists before downloading
-            print_substep(f"Downloading {filename} from {uri}")
-            YouTube(uri).streams.filter(res="1080p").first().download(
-                "assets/backgrounds", filename=f"{credit}-{filename}"
-            )
-
-        print_substep(
-            "Background videos downloaded successfully! 🎉", style="bold green"
-        )
+    uri, filename, credit, _ = background_config
+    if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
+        return
+    print_step(
+        "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
+    )
+    print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
+    print_substep(f"Downloading {filename} from {uri}")
+    YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
+        "assets/backgrounds", filename=f"{credit}-{filename}"
+    )
+    print_substep("Background videos downloaded successfully! 🎉",
+                  style="bold green")
 
 
-def chop_background_video(video_length: int) -> str:
+def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
+        background_config (Tuple[str, str, str, Any]) : Current background configuration
         video_length (int): Length of the clip where the background footage is to be taken out of
     """
+
     print_step("Finding a spot in the backgrounds video to chop...✂️")
-    choice = random.choice(listdir("assets/backgrounds"))
-    credit = choice.split("-")[0]
+    choice = f"{background_config[2]}-{background_config[1]}"
+    environ["background_credit"] = choice.split("-")[0]
+
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
-    start_time, end_time = get_start_and_end_times(video_length, background.duration)
+    start_time, end_time = get_start_and_end_times(
+        video_length, background.duration)
     try:
         ffmpeg_extract_subclip(
             f"assets/backgrounds/{choice}",

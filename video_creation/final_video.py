@@ -23,6 +23,7 @@ from utils.console import print_step, print_substep
 from utils.videos import save_data
 from utils import settings
 
+
 console = Console()
 
 W, H = 1080, 1920
@@ -44,7 +45,6 @@ def name_normalize(name: str) -> str:
 
     else:
         return name
-
 
 def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
@@ -78,7 +78,6 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")
