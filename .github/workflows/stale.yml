@@ -22,7 +22,7 @@ jobs:
           exempt-all-issue-milestones: true
           operations-per-run: 300
           remove-stale-when-updated: true
-          
+
       - uses: actions/stale@main
         id: stale-pr
         name: stale-pr
@@ -37,4 +37,3 @@ jobs:
           exempt-all-pr-milestones: true
           operations-per-run: 300
           remove-stale-when-updated: true
-

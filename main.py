@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 import math
 from subprocess import Popen
-from os import getenv, name
-from dotenv import load_dotenv
+from os import name
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
-from utils.checker import check_env
+from utils import settings
 
 # from utils.checker import envUpdate
 from video_creation.background import download_background, chop_background_video, get_background_config
@@ -14,7 +13,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-VERSION = "2.2.2"
+VERSION = "2.2.8"
 print(
     """
 ██████╗ ███████╗██████╗ ██████╗ ██╗████████╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗     ███╗   ███╗ █████╗ ██╗  ██╗███████╗██████╗
@@ -31,11 +30,13 @@ print_markdown(
 )
 print_step(f"You are using V{VERSION} of the bot")
 
+
 def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
+    bg_config = get_background_config()
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
     download_background(bg_config)
@@ -46,25 +47,26 @@ def main(POST_ID=None):
 def run_many(times):
     for x in range(1, times + 1):
         print_step(
-            f'on the {x}{("st" if x == 1 else ("nd" if x == 2 else ("rd" if x == 3 else "th")))} iteration of {times}'
+            f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th","th", "th")[x%10]} iteration of {times}'
         )  # correct 1st 2nd 3rd 4th 5th....
         main()
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
 if __name__ == "__main__":
-    if check_env() is not True:
-        exit()
-    load_dotenv()
+    config = settings.check_toml(".config.template.toml", "config.toml")
+    config is False and exit()
     try:
-        if getenv("TIMES_TO_RUN") and isinstance(int(getenv("TIMES_TO_RUN")), int):
-            run_many(int(getenv("TIMES_TO_RUN")))
+        if config["settings"]["times_to_run"]:
+            run_many(config["settings"]["times_to_run"])
 
-        elif len(getenv("POST_ID", "").split("+")) > 1:
-            for index, post_id in enumerate(getenv("POST_ID", "").split("+")):
+        elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+            for index, post_id in enumerate(
+                config["reddit"]["thread"]["post_id"].split("+")
+            ):
                 index += 1
                 print_step(
-                    f'on the {index}{("st" if index == 1 else ("nd" if index == 2 else ("rd" if index == 3 else "th")))} post of {len(getenv("POST_ID", "").split("+"))}'
+                    f'on the {index}{("st" if index%10 == 1 else ("nd" if index%10 == 2 else ("rd" if index%10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()

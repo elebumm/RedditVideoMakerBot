@@ -2,7 +2,6 @@
 from pathlib import Path
 from typing import Tuple
 import re
-from os import getenv
 
 # import sox
 # from mutagen import MutagenError
@@ -12,6 +11,7 @@ from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
+from utils import settings
 
 DEFUALT_MAX_LENGTH: int = 50  # video length variable
 
@@ -56,11 +56,16 @@ class TTSEngine:
         print_step("Saving Text to MP3 files...")
 
         self.call_tts("title", self.reddit_object["thread_title"])
-        if self.reddit_object["thread_post"] != "" and getenv("STORYMODE", "").casefold() == "true":
+        if (
+            self.reddit_object["thread_post"] != ""
+            and settings.config["settings"]["storymode"] == True
+        ):
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
         idx = None
-        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+        for idx, comment in track(
+            enumerate(self.reddit_object["comments"]), "Saving..."
+        ):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
                 break
@@ -76,7 +81,9 @@ class TTSEngine:
         split_files = []
         split_text = [
             x.group().strip()
-            for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
+            for x in re.finditer(
+                rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text
+            )
         ]
 
         idy = None
@@ -94,12 +101,14 @@ class TTSEngine:
             Path(name).unlink()
 
         # for i in range(0, idy + 1):
-            # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+        # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
 
-            # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+        # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
+        self.tts_module.run(
+            text=process_text(text), filepath=f"{self.path}/{filename}.mp3"
+        )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
@@ -108,8 +117,9 @@ class TTSEngine:
         self.length += clip.duration
         clip.close()
 
+
 def process_text(text: str):
-    lang = getenv("POSTLANG", "")
+    lang = settings.config["reddit"]["thread"]["post_lang"]
     new_text = sanitize_text(text)
     if lang:
         print_substep("Translating Text...")

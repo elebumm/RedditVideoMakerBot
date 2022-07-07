@@ -3,7 +3,8 @@ import multiprocessing
 import os
 import re
 from os.path import exists
-from typing import Tuple, Any
+from typing import Dict, Tuple, Any
+import translators as ts
 
 from moviepy.editor import (
     VideoFileClip,
@@ -20,6 +21,7 @@ from rich.console import Console
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.videos import save_data
+from utils import settings
 
 
 console = Console()
@@ -27,31 +29,35 @@ console = Console()
 W, H = 1080, 1920
 
 
+def name_normalize(name: str) -> str:
+    name = re.sub(r'[?\\"%*:|<>]', "", name)
+    name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
+    name = re.sub(r"( [w,W]\s?\/)", r" with", name)
+    name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
+    name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
+    name = re.sub(r"\/", r"", name)
 
-def name_normalize(
-        name: str
-) -> str:
-    name = re.sub(r'[?\\"%*:|<>]', '', name)
-    name = re.sub(r'( [w,W]\s?\/\s?[o,O,0])', r' without', name)
-    name = re.sub(r'( [w,W]\s?\/)', r' with', name)
-    name = re.sub(r'([0-9]+)\s?\/\s?([0-9]+)', r'\1 of \2', name)
-    name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
-    name = re.sub(r'\/', r'', name)
-    return name
+    lang = settings.config["reddit"]["thread"]["post_lang"]
+    if lang:
+        print_substep("Translating filename...")
+        translated_name = ts.google(name, to_language=lang)
+        return translated_name
 
+    else:
+        return name
 
 def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
-
     Args:
         number_of_clips (int): Index to end at when going through the screenshots
         length (int): Length of the video
         reddit_obj (dict): The reddit object that contains the posts to read.
+        background_config Tuple[str, str, str, Any]: The background config to use.
     """
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
-    opacity = os.getenv("OPACITY")
+    opacity = settings.config["settings"]["opacity"]
     background_clip = (
         VideoFileClip("assets/temp/background.mp4")
         .without_audio()
@@ -60,7 +66,9 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     )
 
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
+    audio_clips = [
+        AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)
+    ]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -75,7 +83,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         ImageClip("assets/temp/png/title.png")
         .set_duration(audio_clips[0].duration)
         .resize(width=W - 100)
-        .set_opacity(new_opacity)
+        .set_opacity(new_opacity),
     )
 
     for i in range(0, number_of_clips):
@@ -103,10 +111,11 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
-    filename = f"{name_normalize(title)}.mp4"
-    subreddit = os.getenv("SUBREDDIT")
 
-    save_data(filename, title, idx)
+    filename = f"{name_normalize(title)}.mp4"
+    subreddit = settings.config["reddit"]["thread"]["subreddit"]
+
+    save_data(filename, title, idx, background_config[2])
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
@@ -121,7 +130,10 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_tools.ffmpeg_extract_subclip(
-        "assets/temp/temp.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}"
+        "assets/temp/temp.mp4",
+        0,
+        final.duration,
+        targetname=f"results/{subreddit}/{filename}",
     )
     # os.remove("assets/temp/temp.mp4")
 
@@ -131,5 +143,5 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     print_substep("See result in the results folder!")
 
     print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {os.getenv("background_credit")}'
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
     )

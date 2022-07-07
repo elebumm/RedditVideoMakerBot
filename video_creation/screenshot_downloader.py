@@ -1,9 +1,8 @@
 import json
-import os
-from os import getenv
+
 from pathlib import Path
 from typing import Dict
-
+from utils import settings
 from playwright.async_api import async_playwright  # pylint: disable=unused-import
 
 # do not remove the above line
@@ -21,8 +20,8 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
-        reddit_object (Dict[str]): Reddit object received from reddit/subreddit.py
-        screenshot_num (int): Number of screenshots to downlaod
+        reddit_object (Dict): Reddit object received from reddit/subreddit.py
+        screenshot_num (int): Number of screenshots to download
     """
     print_step("Downloading screenshots of reddit posts...")
 
@@ -35,10 +34,14 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         browser = p.chromium.launch()
         context = browser.new_context()
 
-        if getenv("THEME").upper() == "DARK":
-            cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
+        if settings.config["settings"]["theme"] == "dark":
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
         else:
-            cookie_file = open("./video_creation/data/cookie-light-mode.json", encoding="utf-8")
+            cookie_file = open(
+                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
+            )
         cookies = json.load(cookie_file)
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
@@ -56,9 +59,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
         # translate code
 
-        if getenv("POSTLANG"):
+        if settings.config["reddit"]["thread"]["post_lang"]:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(reddit_object["thread_title"], to_language=os.getenv("POSTLANG"))
+            texts_in_tl = ts.google(
+                reddit_object["thread_title"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
+            )
 
             page.evaluate(
                 "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
@@ -67,7 +73,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         else:
             print_substep("Skipping translation...")
 
-        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
+        page.locator('[data-test-id="post-content"]').screenshot(
+            path="assets/temp/png/title.png"
+        )
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
@@ -88,9 +96,10 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
                 # translate code
 
-                if getenv("POSTLANG"):
+                if settings.config["reddit"]["thread"]["post_lang"]:
                     comment_tl = ts.google(
-                        comment["comment_body"], to_language=os.getenv("POSTLANG")
+                        comment["comment_body"],
+                        to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
                     page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
