@@ -8,8 +8,56 @@ from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 
+from utils import settings
 from utils.console import print_step, print_substep
 
+# Supported Background. Can add/remove background video here....
+# <key>-<value> : key -> used as keyword for TOML file. value -> background configuration
+# Format (value):
+# 1. Youtube URI
+# 2. filename
+# 3. Citation (owner of the video)
+# 4. Position of image clips in the background. See moviepy reference for more information. (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
+background_options = {
+    "motor-gta": (  # Motor-GTA Racing
+        "https://www.youtube.com/watch?v=vw5L4xCPy9Q",
+        "bike-parkour-gta.mp4",
+        "Achy Gaming",
+        lambda t: ('center', 480 + t)
+    ),
+    "rocket-league": (  # Rocket League
+        "https://www.youtube.com/watch?v=2X9QGY__0II",
+        "rocket_league.mp4",
+        "Orbital Gameplay",
+        "top"
+    ),
+    "minecraft": (  # Minecraft parkour
+        "https://www.youtube.com/watch?v=n_Dv4JMiwK8",
+        "parkour.mp4",
+        "bbswitzer",
+        "center"
+    ),
+    "gta": (  # GTA Stunt Race
+        "https://www.youtube.com/watch?v=qGa9kWREOnE",
+        "gta-stunt-race.mp4",
+        "Achy Gaming",
+        lambda t: ('center', 480 + t)
+    )
+}
+def get_background_config():
+    """Fetch the background/s configuration"""
+    try:
+        choice = str(settings.config['settings']['background_choice']).casefold()
+    except AttributeError:
+        print_substep("No background selected. Picking random background'")
+        choice = None
+
+    # Handle default / not supported background using default option.
+    # Default : pick random from supported background.
+    if not choice or choice not in background_options:
+        choice = random.choice(list(background_options.keys()))
+
+    return background_options[choice]
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
