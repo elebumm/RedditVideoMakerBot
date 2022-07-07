@@ -46,7 +46,10 @@ def name_normalize(name: str) -> str:
     else:
         return name
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
+
+def make_final_video(
+    number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]
+):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
         number_of_clips (int): Index to end at when going through the screenshots'
@@ -66,9 +69,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     )
 
     # Gather all audio clips
-    audio_clips = [
-        AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)
-    ]
+    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -105,8 +106,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #    )
     # else: story mode stuff
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(
-        image_clips).set_position(img_clip_pos)
+    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
