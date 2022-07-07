@@ -18,9 +18,7 @@ def get_subreddit_threads(POST_ID: str):
 
     content = {}
     if settings.config["reddit"]["creds"]["2fa"] == True:
-        print(
-            "\nEnter your two-factor authentication code from your authenticator app.\n"
-        )
+        print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
         print()
         pw = settings.config["reddit"]["creds"]["password"]
@@ -46,9 +44,7 @@ def get_subreddit_threads(POST_ID: str):
     ]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         try:
             subreddit = reddit.subreddit(
-                re.sub(
-                    r"r\/", "", input("What subreddit would you like to pull from? ")
-                )
+                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
                 # removes the r/ from the input
             )
         except ValueError:
@@ -58,9 +54,7 @@ def get_subreddit_threads(POST_ID: str):
         sub = settings.config["reddit"]["thread"]["subreddit"]
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
-        if subreddit_choice.casefold().startswith(
-            "r/"
-        ):  # removes the r/ from the input
+        if subreddit_choice.casefold().startswith("r/"):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(
             subreddit_choice
@@ -72,9 +66,7 @@ def get_subreddit_threads(POST_ID: str):
         settings.config["reddit"]["thread"]["post_id"]
         and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
     ):
-        submission = reddit.submission(
-            id=settings.config["reddit"]["thread"]["post_id"]
-        )
+        submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
     else:
 
         threads = subreddit.hot(limit=25)

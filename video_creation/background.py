@@ -24,27 +24,28 @@ background_options = {
         "https://www.youtube.com/watch?v=vw5L4xCPy9Q",
         "bike-parkour-gta.mp4",
         "Achy Gaming",
-        lambda t: ('center', 480 + t)
+        lambda t: ("center", 480 + t),
     ),
     "rocket-league": (  # Rocket League
         "https://www.youtube.com/watch?v=2X9QGY__0II",
         "rocket_league.mp4",
         "Orbital Gameplay",
-        "top"
+        "top",
     ),
     "minecraft": (  # Minecraft parkour
         "https://www.youtube.com/watch?v=n_Dv4JMiwK8",
         "parkour.mp4",
         "bbswitzer",
-        "center"
+        "center",
     ),
     "gta": (  # GTA Stunt Race
         "https://www.youtube.com/watch?v=qGa9kWREOnE",
         "gta-stunt-race.mp4",
         "Achy Gaming",
-        lambda t: ('center', 480 + t)
-    )
+        lambda t: ("center", 480 + t),
+    ),
 }
+
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
@@ -59,10 +60,11 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
     random_time = randrange(180, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
+
 def get_background_config():
     """Fetch the background/s configuration"""
     try:
-        choice = str(settings.config['settings']['background_choice']).casefold()
+        choice = str(settings.config["settings"]["background_choice"]).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None
@@ -90,8 +92,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
         "assets/backgrounds", filename=f"{credit}-{filename}"
     )
-    print_substep("Background videos downloaded successfully! 🎉",
-                  style="bold green")
+    print_substep("Background videos downloaded successfully! 🎉", style="bold green")
 
 
 def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
@@ -107,8 +108,7 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
 
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
-    start_time, end_time = get_start_and_end_times(
-        video_length, background.duration)
+    start_time, end_time = get_start_and_end_times(video_length, background.duration)
     try:
         ffmpeg_extract_subclip(
             f"assets/backgrounds/{choice}",

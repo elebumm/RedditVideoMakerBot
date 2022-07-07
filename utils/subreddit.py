@@ -15,9 +15,7 @@ def get_subreddit_undone(submissions: list, subreddit):
     """
     # recursively checks if the top submission in the list was already done.
 
-    with open(
-        "./video_creation/data/videos.json", "r", encoding="utf-8"
-    ) as done_vids_raw:
+    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for submission in submissions:
         if already_done(done_videos, submission):

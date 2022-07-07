@@ -8,7 +8,11 @@ from utils.console import print_markdown, print_step
 from utils import settings
 
 # from utils.checker import envUpdate
-from video_creation.background import download_background, chop_background_video, get_background_config
+from video_creation.background import (
+    download_background,
+    chop_background_video,
+    get_background_config,
+)
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
@@ -60,9 +64,7 @@ if __name__ == "__main__":
             run_many(config["settings"]["times_to_run"])
 
         elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
-            for index, post_id in enumerate(
-                config["reddit"]["thread"]["post_id"].split("+")
-            ):
+            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index%10 == 1 else ("nd" if index%10 == 2 else ("rd" if index%10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'

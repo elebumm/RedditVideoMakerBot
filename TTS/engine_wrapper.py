@@ -63,9 +63,7 @@ class TTSEngine:
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
         idx = None
-        for idx, comment in track(
-            enumerate(self.reddit_object["comments"]), "Saving..."
-        ):
+        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
                 break
@@ -81,9 +79,7 @@ class TTSEngine:
         split_files = []
         split_text = [
             x.group().strip()
-            for x in re.finditer(
-                rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text
-            )
+            for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
         ]
 
         idy = None
@@ -106,9 +102,7 @@ class TTSEngine:
         # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(
-            text=process_text(text), filepath=f"{self.path}/{filename}.mp3"
-        )
+        self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):

@@ -39,9 +39,7 @@ class AWSPolly:
                 return ValueError(
                     f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(
-                settings.config["settings"]["tts"]["aws_polly_voice"]
-            ).capitalize()
+            voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
         try:
             # Request speech synthesis
             response = polly.synthesize_speech(
