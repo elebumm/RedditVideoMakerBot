@@ -119,7 +119,7 @@ def make_final_video(
     filename = f"{name_normalize(title)}.mp4"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    save_data(filename, title, idx, background_config[2], nsfw)
+    save_data(subreddit, filename, title, idx, background_config[2], nsfw)
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
