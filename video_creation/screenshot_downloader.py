@@ -12,6 +12,7 @@ from rich.progress import track
 import translators as ts
 
 from utils.console import print_step, print_substep
+from video_creation.final_video import isNSFW
 
 storymode = False
 
@@ -47,6 +48,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         if page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
+            isNSFW()
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
             page.locator(

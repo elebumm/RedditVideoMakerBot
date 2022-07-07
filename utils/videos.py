@@ -34,7 +34,7 @@ def check_done(
     return redditobj
 
 
-def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
+def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str, NSFW: bool):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
@@ -42,6 +42,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
         @param filename:
         @param reddit_id:
         @param reddit_title:
+        @param NSFW:
     """
     with open("./video_creation/data/videos.json", "r+", encoding="utf-8") as raw_vids:
         done_vids = json.load(raw_vids)
@@ -53,6 +54,7 @@ def save_data(filename: str, reddit_title: str, reddit_id: str, credit: str):
             "background_credit": credit,
             "reddit_title": reddit_title,
             "filename": filename,
+            "nsfw": NSFW,
         }
         done_vids.append(payload)
         raw_vids.seek(0)
