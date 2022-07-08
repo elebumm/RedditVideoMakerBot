@@ -32,7 +32,7 @@ print(
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
 )
-print_step(f"You are using V{VERSION} of the bot")
+print_step(f"You are using v{VERSION} of the bot")
 
 
 def main(POST_ID=None):

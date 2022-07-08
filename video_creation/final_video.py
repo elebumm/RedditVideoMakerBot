@@ -3,30 +3,22 @@ import multiprocessing
 import os
 import re
 from os.path import exists
-from typing import Dict, Tuple, Any
-
+from typing import Tuple, Any
 import translators as ts
 
-from moviepy.editor import (
-    VideoFileClip,
-    AudioFileClip,
-    ImageClip,
-    concatenate_videoclips,
-    concatenate_audioclips,
-    CompositeAudioClip,
-    CompositeVideoClip,
-)
+from moviepy.editor import (VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips,
+                            CompositeAudioClip, CompositeVideoClip, )
 from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio, ffmpeg_extract_subclip
 from rich.console import Console
+import moviepy.editor as mpe
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.videos import save_data
 from utils import settings
 
-
 console = Console()
-
+VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
 W, H = 1080, 1920
 
 
@@ -48,9 +40,7 @@ def name_normalize(name: str) -> str:
         return name
 
 
-def make_final_video(
-    number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]
-):
+def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
         number_of_clips (int): Index to end at when going through the screenshots'
@@ -63,11 +53,8 @@ def make_final_video(
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
     opacity = settings.config["settings"]["opacity"]
     background_clip = (
-        VideoFileClip("assets/temp/background.mp4")
-        .without_audio()
-        .resize(height=H)
-        .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
-    )
+        VideoFileClip("assets/temp/background.mp4").without_audio().resize(height=H).crop(x1=1166.6, y1=0, x2=2246.6,
+                                                                                          y2=1920))
 
     # Gather all audio clips
     audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
@@ -80,21 +67,13 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    image_clips.insert(
-        0,
-        ImageClip("assets/temp/png/title.png")
-        .set_duration(audio_clips[0].duration)
-        .resize(width=W - 100)
-        .set_opacity(new_opacity),
-    )
+    image_clips.insert(0, ImageClip("assets/temp/png/title.png").set_duration(audio_clips[0].duration).resize(
+        width=W - 100).set_opacity(new_opacity), )
 
     for i in range(0, number_of_clips):
         image_clips.append(
-            ImageClip(f"assets/temp/png/comment_{i}.png")
-            .set_duration(audio_clips[i + 1].duration)
-            .resize(width=W - 100)
-            .set_opacity(new_opacity)
-        )
+            ImageClip(f"assets/temp/png/comment_{i}.png").set_duration(audio_clips[i + 1].duration).resize(
+                width=W - 100).set_opacity(new_opacity))
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
@@ -122,51 +101,32 @@ def make_final_video(
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
 
-    final.write_videofile(
-        "assets/temp/temp.mp4",
-        fps=30,
-        audio_codec="aac",
-        audio_bitrate="192k",
-        verbose=False,
-        threads=multiprocessing.cpu_count(),
-    )
-    if settings.config["settings"]["background_audio"]:
-        print("[bold green] Merging background audio with video")
-        if not exists(f"assets/backgrounds/background.mp3"):
-            print_substep(
-                "Cannot find assets/backgrounds/background.mp3 audio file didn't so skipping."
-            )
-            ffmpeg_extract_subclip(
-                "assets/temp/temp.mp4",
-                0,
-                final.duration,
-                targetname=f"results/{subreddit}/{filename}",
-            )
-        else:
-            ffmpeg_merge_video_audio(
-                "assets/temp/temp.mp4",
-                "assets/backgrounds/background.mp3",
-                "assets/temp/temp_audio.mp4",
-            )
-            ffmpeg_extract_subclip(  # check if this gets run
-                "assets/temp/temp_audio.mp4",
-                0,
-                final.duration,
-                targetname=f"results/{subreddit}/{filename}",
-            )
+    final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k", verbose=False,
+                          threads=multiprocessing.cpu_count(), )
+    if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+        if not isinstance(VOLUME_MULTIPLIER, float):
+            print("No background audio volume set, using default of .3 set it in the config.toml file")
+            assert VOLUME_MULTIPLIER == float(0.3)
+        print('Merging background audio with video')
+        my_clip = mpe.VideoFileClip('assets/temp/temp.mp4')
+        audio_background = AudioFileClip("assets/backgrounds/background.mp3")
+        lowered_audio = audio_background.multiply_volume(
+            VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
+        lowered_audio = lowered_audio.subclip(0, my_clip.duration)  # trim the audio to the length of the video
+        lowered_audio.set_duration(my_clip.duration)  # set the duration of the audio to the length of the video
+        final_audio = mpe.CompositeAudioClip([my_clip.audio, lowered_audio])
+        final_clip = my_clip.set_audio(final_audio)
+
+        final_clip.write_videofile("assets/temp/temp_audio.mp4", fps=30, audio_codec="aac", audio_bitrate="192k",
+                                   verbose=False, threads=multiprocessing.cpu_count())
+        ffmpeg_extract_subclip(  # check if this gets run
+            "assets/temp/temp_audio.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}", )
     else:
-        print("debug duck")
-        ffmpeg_extract_subclip(
-            "assets/temp/temp.mp4",
-            0,
-            final.duration,
-            targetname=f"results/{subreddit}/{filename}",
-        )
+        ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, final.duration,
+                               targetname=f"results/{subreddit}/{filename}", )
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
-    )
+    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')

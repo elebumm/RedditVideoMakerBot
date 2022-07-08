@@ -29,10 +29,15 @@ opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets 
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true,
     false,
 ], explanation = "not yet implemented" }
+
+[settings.background]
 background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video" }
 background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
     false,
 ], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
+background_audio_volume = { optional = true, type = "float", default = 0.3, example = 0.1, explanation="Sets the volume of the background audio. only used if the background_audio is also set to true" }
+
+
 [settings.tts]
 choice = { optional = false, default = "", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", ], example = "streamlabspolly", explanation = "The backend used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }

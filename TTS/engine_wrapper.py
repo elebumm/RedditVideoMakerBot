@@ -47,7 +47,7 @@ class TTSEngine:
 
         Path(self.path).mkdir(parents=True, exist_ok=True)
 
-        # This file needs to be removed in case this post does not use post text, so that it wont appear in the final video
+        # This file needs to be removed in case this post does not use post text, so that it won't appear in the final video
         try:
             Path(f"{self.path}/posttext.mp3").unlink()
         except OSError:
@@ -67,10 +67,12 @@ class TTSEngine:
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
                 break
-            if not self.tts_module.max_chars:
+            if (
+                len(comment["comment_body"]) > self.tts_module.max_chars
+            ):  # Split the comment if it is too long
+                self.split_post(comment["comment_body"], idx)  # Split the comment
+            else:  # If the comment is not too long, just call the tts engine
                 self.call_tts(f"{idx}", comment["comment_body"])
-            else:
-                self.split_post(comment["comment_body"], idx)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
@@ -84,9 +86,12 @@ class TTSEngine:
             )
         ]
 
-        idy = None
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
+            if text_cut == "":
+                print("Empty text cut: tell the devs about this")
+                continue
+
             self.call_tts(f"{idx}-{idy}.part", text_cut)
             split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
