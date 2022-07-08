@@ -5,8 +5,12 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
+
   stale:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/stale@v4
         id: stale-issue
@@ -23,11 +27,9 @@ jobs:
           exempt-issue-labels: 'enhancement,keep,blocked'
           exempt-all-issue-milestones: true
           operations-per-run: 300
-          ascending: true
-
-          # debug
           remove-stale-when-updated: true
-          debug-only: true
+          ascending: true
+          #debug-only: true
 
       - uses: actions/stale@v4
         id: stale-pr
@@ -44,6 +46,5 @@ jobs:
           exempt-pr-labels: 'keep,blocked,before next release,after next release'
           exempt-all-pr-milestones: true
           operations-per-run: 300
-          # debug
           remove-stale-when-updated: true
-          debug-only: true
+          #debug-only: true
