@@ -114,8 +114,8 @@ function install_playwright(){
     # cd into the directory where the script is downloaded
     cd RedditVideoMakerBot
     # run the install script
-    playwright install 
-    playwright install-deps 
+    python3 -m playwright install 
+    python3 -m playwright install-deps 
     # give a note
     printf "Note, if these gave any errors, please run this command This will (maybe) fix the issue with playwright.\npython -m playwright install && python -m playwright install-deps"
     cd ..
