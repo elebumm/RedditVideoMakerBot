@@ -9,3 +9,5 @@ requests==2.28.1
 rich==12.4.4
 toml==0.10.2
 translators==5.3.1
+ffmpeg-python~= 0.2.0
+numpy~=1.23.0

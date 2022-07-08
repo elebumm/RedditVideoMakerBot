@@ -2,10 +2,21 @@
 from pathlib import Path
 from typing import Tuple
 import re
+<<<<<<< Updated upstream
 
 # import sox
 # from mutagen import MutagenError
 # from mutagen.mp3 import MP3, HeaderNotFoundError
+=======
+import os
+from os import getenv
+
+import numpy as np
+import ffmpeg
+from moviepy.audio.AudioClip import AudioClip
+from moviepy.audio.fx.volumex import volumex
+from mutagen.mp3 import MP3
+>>>>>>> Stashed changes
 import translators as ts
 from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
@@ -82,11 +93,17 @@ class TTSEngine:
             for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
         ]
 
+        silence_long = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=int(getenv("COMMENT_GAP")), fps=44100)
+        silence_long_new = volumex(silence_long, 0)
+        silence_long_new.write_audiofile(f"{self.path}/long_silence.mp3", fps=44100, verbose=False, logger=None)
+
+        bruz = []
         idy = None
         for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
+        #    print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
             split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
+<<<<<<< Updated upstream
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
         )
@@ -100,6 +117,147 @@ class TTSEngine:
         # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
 
         # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+=======
+            bruz.append(ffmpeg.input(f"{self.path}/{idx}-{idy}.part.mp3"))
+            if idy == len(split_text)-1:
+                split_files.append(AudioFileClip(f"{self.path}/long_silence.mp3"))
+            #    print("long silence added")
+                bruz.append(ffmpeg.input(f"{self.path}/long_silence.mp3"))
+
+        #   with open(f"{self.path}/list.txt", 'w') as f:
+        #       for newy in range(0, len(split_text)):
+        #       f.write(f"{self.path}/{idx}-{newy}.part.mp3"+"\n")
+        #       f.write(f"{self.path}/long_silence.mp3")
+
+        if len(bruz) == 1:
+            stupid0 = bruz[0]
+        if len(bruz) == 2:
+            stupid0 = bruz[0]
+            stupid1 = bruz[1]
+        if len(bruz) == 3:
+            stupid0 = bruz[0]
+            stupid1 = bruz[1]
+            stupid2 = bruz[2]
+        if len(bruz) == 4:
+            stupid0 = bruz[0]
+            stupid1 = bruz[1]
+            stupid2 = bruz[2]
+            stupid3 = bruz[3]
+        if len(bruz) == 5:
+            stupid0 = bruz[0]
+            stupid1 = bruz[1]
+            stupid2 = bruz[2]
+            stupid3 = bruz[3]
+            stupid4 = bruz[4]
+        if len(bruz) == 5:
+            stupid0 = bruz[0]
+            stupid1 = bruz[1]
+            stupid2 = bruz[2]
+            stupid3 = bruz[3]
+            stupid4 = bruz[4]
+            stupid5 = bruz[5]
+
+        if len(bruz) == 1:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+        elif len(bruz) == 2:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        stupid1,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+        elif len(bruz) == 3:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        stupid1,
+                        stupid2,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+        elif len(bruz) == 4:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        stupid1,
+                        stupid2,
+                        stupid3,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+        elif len(bruz) == 5:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        stupid1,
+                        stupid2,
+                        stupid3,
+                        stupid4,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+        elif len(bruz) == 6:
+            try:
+                ffmpeg\
+                    .concat(
+                        stupid0,
+                        stupid1,
+                        stupid2,
+                        stupid3,
+                        stupid4,
+                        stupid5,
+                        v=0, a=1
+                    )\
+                    .output(f"{self.path}/{idx}.m4a")\
+                    .run(capture_stdout=True, capture_stderr=True)
+            except ffmpeg.Error as e:
+                print('stdout:', e.stdout.decode('utf8'))
+                print('stderr:', e.stderr.decode('utf8'))
+                raise e
+    #    CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
+    #        f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
+    #    )
+
+    #    for i in range(0, idy + 1):
+    #         print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+    #        Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+>>>>>>> Stashed changes
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
