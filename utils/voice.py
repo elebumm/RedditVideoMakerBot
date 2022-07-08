@@ -45,7 +45,7 @@ def sleep_until(time):
 
     # Type check
     if not isinstance(end, (int, float)):
-        raise Exception('The time parameter is not a number or datetime object')
+        raise Exception("The time parameter is not a number or datetime object")
 
     # Now we wait
     while True:

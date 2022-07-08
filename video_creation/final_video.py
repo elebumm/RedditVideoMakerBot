@@ -131,9 +131,11 @@ def make_final_video(
         threads=multiprocessing.cpu_count(),
     )
     if settings.config["settings"]["background_audio"]:
-        print('[bold green] Merging background audio with video')
+        print("[bold green] Merging background audio with video")
         if not exists(f"assets/backgrounds/background.mp3"):
-            print_substep("Cannot find assets/backgrounds/background.mp3 audio file didn't so skipping.")
+            print_substep(
+                "Cannot find assets/backgrounds/background.mp3 audio file didn't so skipping."
+            )
             ffmpeg_extract_subclip(
                 "assets/temp/temp.mp4",
                 0,
@@ -141,15 +143,19 @@ def make_final_video(
                 targetname=f"results/{subreddit}/{filename}",
             )
         else:
-            ffmpeg_merge_video_audio("assets/temp/temp.mp4", "assets/backgrounds/background.mp3", "assets/temp/temp_audio.mp4")
-            ffmpeg_extract_subclip( # check if this gets run
+            ffmpeg_merge_video_audio(
+                "assets/temp/temp.mp4",
+                "assets/backgrounds/background.mp3",
+                "assets/temp/temp_audio.mp4",
+            )
+            ffmpeg_extract_subclip(  # check if this gets run
                 "assets/temp/temp_audio.mp4",
                 0,
                 final.duration,
                 targetname=f"results/{subreddit}/{filename}",
             )
     else:
-        print('debug duck')
+        print("debug duck")
         ffmpeg_extract_subclip(
             "assets/temp/temp.mp4",
             0,
