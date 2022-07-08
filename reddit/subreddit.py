@@ -72,7 +72,7 @@ def get_subreddit_threads(POST_ID: str):
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
-    if submission is None:
+    if submission is None or not submission.num_comments:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
     upvotes = submission.score
     ratio = submission.upvote_ratio * 100
