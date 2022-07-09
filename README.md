@@ -40,8 +40,6 @@ The only original thing being done is the editing and gathering of all materials
 1. Clone this repository
 2. Run `pip install -r requirements.txt`
 
-3. Run `python -m playwright install` and `python -m playwright install-deps`
-
 **EXPERIMENTAL!!!!**
 
 On MacOS and Linux (debian, arch, fedora and centos, and based on those), you can run an install script that will automatically install steps 1 to 3. (requires bash)
