@@ -117,7 +117,9 @@ function install_playwright(){
     python3 -m playwright install 
     python3 -m playwright install-deps 
     # give a note
-    printf "Note, if these gave any errors, please run this command This will (maybe) fix the issue with playwright.\npython -m playwright install && python -m playwright install-deps"
+    printfNote, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues "Note, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues\n"
+    if [ -x "$(command -v pacman)" ]; then
+        printf "It seems you are on and Arch based distro.\nTry installing these from the AUR for playwright to run:\nenchant1.6\nicu66\nlibwebp052\n"
     cd ..
 } 
 
