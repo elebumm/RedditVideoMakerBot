@@ -62,10 +62,8 @@ def get_subreddit_threads(POST_ID: str):
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
-    elif (
-        settings.config["reddit"]["thread"]["post_id"]
-        and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
-    ):
+    elif (settings.config["reddit"]["thread"]["post_id"]
+          and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1):
         submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
 
     comment_type = settings.config["reddit"]["thread"]["sort"]

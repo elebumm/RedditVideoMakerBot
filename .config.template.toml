@@ -6,9 +6,9 @@ password = { optional = false, example = "fFAGRNJru1FTz70BzhT3Zg", explanation =
 2fa = { optional = true, example = "True", explanation = "Whether you have Reddit 2FA enabled, Valid options are True and False", default = false, options = [true, false], type = "bool" }
 
 [reddit.thread]
-random = { optional = true, example = "True", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it.", default = false, options = [true, false, ], type = "bool" }
+random = { optional = true, example = "True", explanation = "If set to false, it will ask you a thread link to extract the thread, if true it will randomize it.", default = true, options = [true, false], type = "bool" }
 subreddit = { optional = false, example = "AskReddit", explanation = "what subreddit to pull posts from, the name of the sub, not the URL", default = "", nmin = 3, nmax = 21,regex = "[_0-9a-zA-Z]+$", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
-post_id = { optional = true, example = "urdtfx", explanation = "Used if you want to use a specific post.", default = "", regex = "^((?!://|://)[+a-zA-Z])*$" }
+post_id = { optional = true, example = "urdtfx", explanation = "Used if you want to use a specific post.", regex = "^((?!://|://)[+a-zA-Z])*$" }
 max_comment_length = {  optional = false, example = 500, explanation = "max number of characters a comment can have. default is 500", default = 500, type = "int", nmin = 10, nmax = 10000, oob_error = "the max comment length should be between 10 and 10000" }
 post_lang = {  optional = true, example = "es-cr", explanation = "The language you would like to translate to.", default = "" }
 sort = {  optional = true, example = "hot ,top, relevance, new", explanation = "method of sorting threads", default = "top", options = ["hot", "top", "relevance", "new"] }

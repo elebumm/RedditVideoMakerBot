@@ -18,7 +18,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFAULT_MAX_LENGTH: int = 50  # video length variable
+DEFAULT_MAX_LENGTH: int = 45  # video length variable
 
 
 class TTSEngine:
