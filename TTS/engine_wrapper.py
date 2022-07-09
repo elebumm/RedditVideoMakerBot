@@ -85,7 +85,10 @@ class TTSEngine:
             x.group().strip()
             for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
         ]
-        silence_duration = settings.config["settings"]["tts"]["silence_duration"]
+        try:
+            silence_duration = settings.config["settings"]["tts"]["silence_duration"]
+        except ValueError:
+            silence_duration = 0.3
 
         silence_long = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration, fps=44100)
         silence_long_new = volumex(silence_long, 0)
