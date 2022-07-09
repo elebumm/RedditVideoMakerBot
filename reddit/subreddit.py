@@ -62,16 +62,29 @@ def get_subreddit_threads(POST_ID: str):
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
-    elif (
-        settings.config["reddit"]["thread"]["post_id"]
-        and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
-    ):
+    elif (settings.config["reddit"]["thread"]["post_id"]
+          and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1):
         submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
-    else:
 
-        threads = subreddit.hot(limit=25)
-        submission = get_subreddit_undone(threads, subreddit)
+    comment_type = settings.config["reddit"]["thread"]["sort"]
+
+    try:
+        if str(comment_type) == "top":
+            threads = subreddit.top(limit=25)
+        elif str(comment_type) == "new":
+            threads = subreddit.new(limit=25)
+        elif str(comment_type) == "hot":
+            threads = subreddit.hot(limit=25)
+        elif str(comment_type) == "relevance":
+            threads = subreddit.relevance(limit=25)
+        else:
+            threads = subreddit.top(limit=25)
+    except AttributeError:
+            threads = subreddit.top(limit=25)
+
+    submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
+
     if submission is None or not submission.num_comments:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
     upvotes = submission.score

@@ -6,6 +6,11 @@ import re
 # import sox
 # from mutagen import MutagenError
 # from mutagen.mp3 import MP3, HeaderNotFoundError
+import os
+
+import numpy as np
+from moviepy.audio.AudioClip import AudioClip
+from moviepy.audio.fx.volumex import volumex
 import translators as ts
 from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
@@ -13,7 +18,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFUALT_MAX_LENGTH: int = 50  # video length variable
+DEFAULT_MAX_LENGTH: int = 45  # video length variable
 
 
 class TTSEngine:
@@ -35,7 +40,7 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
+        max_length: int = DEFAULT_MAX_LENGTH,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
@@ -76,30 +81,37 @@ class TTSEngine:
         return self.length, idx
 
     def split_post(self, text: str, idx: int):
-        split_files = []
         split_text = [
             x.group().strip()
             for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
         ]
+        try:
+            silence_duration = settings.config["settings"]["tts"]["silence_duration"]
+        except ValueError:
+            silence_duration = 0.3
+
+        silence_long = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration, fps=44100)
+        silence_long_new = volumex(silence_long, 0)
+        silence_long_new.write_audiofile(f"{self.path}/long_silence.mp3", fps=44100, verbose=False, logger=None)
 
         idy = None
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
-        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
-            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
-        )
 
-        for i in split_files:
-            name = i.filename
-            i.close()
-            Path(name).unlink()
+            with open(f"{self.path}/list.txt", 'w') as f:
+                for newy in range(0, len(split_text)):
+                    f.write("file " + f"'{idx}-{newy}.part.mp3'"+"\n")
+                f.write("file " + f"'long_silence.mp3'"+"\n")
 
-        # for i in range(0, idy + 1):
-        # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+        os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+                  "-i " + f"{self.path}/list.txt " +
+                  "-c copy " + f"{self.path}/{idx}.mp3")
 
-        # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+
+        for i in range(0, idy + 1):
+            # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+            Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
