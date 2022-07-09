@@ -70,10 +70,19 @@ def get_subreddit_threads(POST_ID: str):
 
     comment_type = settings.config["reddit"]["thread"]["sort"]
 
-    if str(comment_type) == "top":
-        threads = subreddit.top(limit=25)
-    else:
-        threads = subreddit.hot(limit=25)
+    try:
+        if str(comment_type) == "top":
+            threads = subreddit.top(limit=25)
+        elif str(comment_type) == "new":
+            threads = subreddit.new(limit=25)
+        elif str(comment_type) == "hot":
+            threads = subreddit.hot(limit=25)
+        elif str(comment_type) == "relevance":
+            threads = subreddit.relevance(limit=25)
+        else:
+            threads = subreddit.top(limit=25)
+    except AttributeError:
+            threads = subreddit.top(limit=25)
 
     submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking

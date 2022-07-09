@@ -13,7 +13,6 @@ max_comment_length = {  optional = false, example = 500, explanation = "max numb
 post_lang = {  optional = true, example = "es-cr", explanation = "The language you would like to translate to.", default = "" }
 sort = {  optional = true, example = "hot ,top, relevance, new", explanation = "method of sorting threads", default = "top", options = ["hot", "top", "relevance", "new"] }
 sort_time = {  optional = true, example = "day, hour, week, month, year, all", explanation = "time range to gather threads from", default = "all", options = ["day", "hour", "week", "month", "year", "all"] }
-random = { optional = true, example = "True", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it.", default = false, options = [true, false], type = "bool" }
 
 [settings]
 allow_nsfw = { optional = false, example = "false", explanation = "Whether to allow NSFW content, True or False", default = false, options = [true, false], type = "bool" }
