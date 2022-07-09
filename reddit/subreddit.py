@@ -9,7 +9,9 @@ from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 
 
-def get_subreddit_threads(POST_ID: str):
+def get_subreddit_threads(
+        POST_ID: str
+):
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -87,6 +89,7 @@ def get_subreddit_threads(POST_ID: str):
     content["thread_title"] = submission.title
     content["thread_post"] = submission.selftext
     content["thread_id"] = submission.id
+    content["is_nsfw"] = 'nsfw' in submission.whitelist_status
     content["comments"] = []
 
     for top_level_comment in submission.comments:
