@@ -65,7 +65,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = (
             "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
         )
-        self.max_chars = 300
+        self.max_chars = 270
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
 
     def run(self, text, filepath, random_voice: bool = False):

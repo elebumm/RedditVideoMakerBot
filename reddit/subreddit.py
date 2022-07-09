@@ -67,11 +67,17 @@ def get_subreddit_threads(POST_ID: str):
         and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
     ):
         submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
-    else:
 
+    comment_type = settings.config["reddit"]["thread"]["sort"]
+
+    if str(comment_type) == "top":
+        threads = subreddit.top(limit=25)
+    else:
         threads = subreddit.hot(limit=25)
-        submission = get_subreddit_undone(threads, subreddit)
+
+    submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
+
     if submission is None or not submission.num_comments:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
     upvotes = submission.score
