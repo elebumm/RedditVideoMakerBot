@@ -10,3 +10,6 @@ toml==0.10.2
 translators==5.3.1
 pyppeteer==1.0.2
 attrs==21.4.0
+aiohttp==3.8.1  # There is security warning for <=3.8.1, no fixes for now
+aiofiles==0.8.0
+mutagen==1.45.1

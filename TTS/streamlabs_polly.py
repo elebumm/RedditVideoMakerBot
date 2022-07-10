@@ -1,62 +1,71 @@
-import random
-import requests
-from requests.exceptions import JSONDecodeError
+from aiohttp import ClientSession
+
+from random import choice
 from utils import settings
-from utils.voice import check_ratelimit
+from attr import attrs, attrib
+from attr.validators import instance_of
+
+from TTS.common import BaseApiTTS, get_random_voice
+
 
 voices = [
-    "Brian",
-    "Emma",
-    "Russell",
-    "Joey",
-    "Matthew",
-    "Joanna",
-    "Kimberly",
-    "Amy",
-    "Geraint",
-    "Nicole",
-    "Justin",
-    "Ivy",
-    "Kendra",
-    "Salli",
-    "Raveena",
+    'Brian',
+    'Emma',
+    'Russell',
+    'Joey',
+    'Matthew',
+    'Joanna',
+    'Kimberly',
+    'Amy',
+    'Geraint',
+    'Nicole',
+    'Justin',
+    'Ivy',
+    'Kendra',
+    'Salli',
+    'Raveena',
 ]
 
 
 # valid voices https://lazypy.ro/tts/
 
 
-class StreamlabsPolly:
-    def __init__(self):
-        self.url = "https://streamlabs.com/polly/speak"
-        self.max_chars = 550
-        self.voices = voices
+@attrs(auto_attribs=True)
+class StreamlabsPolly(BaseApiTTS):
+    client: ClientSession = attrib(
+        validator=instance_of(ClientSession),
+    )
+    random_voice: bool = False
+    url: str = attrib(
+        default='https://streamlabs.com/polly/speak',
+        kw_only=True,
+    )
 
-    def run(self, text, filepath, random_voice: bool = False):
-        if random_voice:
-            voice = self.randomvoice()
-        else:
-            if not settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
-                return ValueError(
-                    f"Please set the config variable STREAMLABS_VOICE to a valid voice. options are: {voices}"
-                )
-            voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
-        body = {"voice": voice, "text": text, "service": "polly"}
-        response = requests.post(self.url, data=body)
-        if not check_ratelimit(response):
-            self.run(text, filepath, random_voice)
+    max_chars = 550
 
-        else:
-            try:
-                voice_data = requests.get(response.json()["speak_url"])
-                with open(filepath, "wb") as f:
-                    f.write(voice_data.content)
-            except (KeyError, JSONDecodeError):
-                try:
-                    if response.json()["error"] == "No text specified!":
-                        raise ValueError("Please specify a text to convert to speech.")
-                except (KeyError, JSONDecodeError):
-                    print("Error occurred calling Streamlabs Polly")
+    async def make_request(
+            self,
+            text: str,
+    ):
+        voice = (
+            get_random_voice(voices)
+            if self.random_voice
+            else str(settings.config['settings']['tts']['streamlabs_polly_voice']).capitalize()
+            if str(settings.config['settings']['tts']['streamlabs_polly_voice']).lower() in [
+                voice.lower() for voice in voices]
+            else get_random_voice(voices)
+        )
 
-    def randomvoice(self):
-        return random.choice(self.voices)
+        response = await self.client.post(
+            self.url,
+            data={
+                'voice': voice,
+                'text': text,
+                'service': 'polly',
+            }
+        )
+        speak_url = await(
+            await response.json()
+        )['speak_url']
+
+        return await self.client.get(speak_url)

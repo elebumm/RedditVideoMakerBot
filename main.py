@@ -41,13 +41,10 @@ async def main(
 ):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
-    length, number_of_comments = save_text_to_mp3(reddit_object)
-    length = math.ceil(length)
-    await RedditScreenshot(reddit_object, number_of_comments).download()
+    comments_created = await save_text_to_mp3(reddit_object)
+    await RedditScreenshot(reddit_object, comments_created).download()
     bg_config = get_background_config()
-    download_background(bg_config)
-    chop_background_video(bg_config, length)
-    make_final_video(number_of_comments, length, reddit_object, bg_config)
+    make_final_video(comments_created, reddit_object, bg_config)
 
 
 async def run_many(times):

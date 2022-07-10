@@ -209,10 +209,10 @@ class RedditScreenshot(Browser, Wait):
     """
     Args:
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
-        screenshot_num (int): Number of screenshots to download
+        screenshot_idx (int): List with indexes of voiced comments
     """
     reddit_object: dict
-    screenshot_num: int = attrib()
+    screenshot_idx: list = attrib()
 
     @screenshot_num.validator
     def validate_screenshot_num(self, attribute, value):
@@ -348,9 +348,8 @@ class RedditScreenshot(Browser, Wait):
         )
 
         async_tasks_primary = [
-            self.__collect_comment(comment, idx) for idx, comment in
-            enumerate(self.reddit_object['comments'])
-            if idx < self.screenshot_num
+            self.__collect_comment(self.reddit_object['comments'][idx], idx) for idx in
+            self.screenshot_idx
         ]
 
         for task in track(
