@@ -48,8 +48,6 @@ class StreamlabsPolly:
 
         else:
             try:
-                print(body)
-                print(response.json())
                 voice_data = requests.get(response.json()["speak_url"])
                 with open(filepath, "wb") as f:
                     f.write(voice_data.content)

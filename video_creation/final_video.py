@@ -4,11 +4,15 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
-import translators as ts
-
-from moviepy.editor import (VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips, concatenate_audioclips,
-                            CompositeAudioClip, CompositeVideoClip, )
-from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio, ffmpeg_extract_subclip
+from moviepy import *
+from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
+from moviepy.audio.fx.audio_normalize import audio_normalize
+from moviepy.audio.io.AudioFileClip import AudioFileClip
+from moviepy.video.VideoClip import ImageClip
+from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+from moviepy.video.compositing.concatenate import concatenate_videoclips
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 import moviepy.editor as mpe
 
@@ -18,7 +22,10 @@ from utils.videos import save_data
 from utils import settings
 
 console = Console()
-VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
+try:
+    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
+except (TypeError, KeyError):
+    VOLUME_MULTIPLIER = 1
 W, H = 1080, 1920
 
 
@@ -32,6 +39,7 @@ def name_normalize(name: str) -> str:
 
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
+        import translators as ts
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
@@ -110,8 +118,11 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         print('Merging background audio with video')
         my_clip = mpe.VideoFileClip('assets/temp/temp.mp4')
         audio_background = AudioFileClip("assets/backgrounds/background.mp3")
-        lowered_audio = audio_background.multiply_volume(
-            VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
+        lowered_audio = audio_background.fl(lambda gf, t: VOLUME_MULTIPLIER * gf(t),
+                            keep_duration=True) # to testr
+        #lowered_audio = audio_normalize(audio_background)
+        # lowered_audio = audio_background.multiply_volume( # todo get this to work
+        #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
         lowered_audio = lowered_audio.subclip(0, my_clip.duration)  # trim the audio to the length of the video
         lowered_audio.set_duration(my_clip.duration)  # set the duration of the audio to the length of the video
         final_audio = mpe.CompositeAudioClip([my_clip.audio, lowered_audio])

@@ -7,7 +7,6 @@ from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
 from utils import settings
 
-# from utils.checker import envUpdate
 from video_creation.background import (
     download_background,
     chop_background_video,
