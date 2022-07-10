@@ -214,8 +214,8 @@ class RedditScreenshot(Browser, Wait):
     reddit_object: dict
     screenshot_idx: list = attrib()
 
-    @screenshot_num.validator
-    def validate_screenshot_num(self, attribute, value):
+    @screenshot_idx.validator
+    def validate_screenshot_idx(self, attribute, value):
         if value <= 0:
             raise ValueError('Check screenshot_num in config')
 
