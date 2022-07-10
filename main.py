@@ -15,7 +15,7 @@ from video_creation.background import (
     get_background_config,
 )
 from video_creation.final_video import make_final_video
-from video_creation.screenshot_downloader import Reddit
+from video_creation.screenshot_downloader import RedditScreenshot
 from video_creation.voices import save_text_to_mp3
 
 VERSION = "2.2.9"
@@ -43,9 +43,7 @@ async def main(
     reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    reddit_screenshots = Reddit(reddit_object, number_of_comments)
-    browser = await reddit_screenshots.get_browser()
-    await reddit_screenshots.download_screenshots(browser)
+    await RedditScreenshot(reddit_object, number_of_comments).download()
     bg_config = get_background_config()
     download_background(bg_config)
     chop_background_video(bg_config, length)
