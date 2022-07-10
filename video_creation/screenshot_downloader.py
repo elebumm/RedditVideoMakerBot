@@ -16,12 +16,12 @@ from utils.console import print_step, print_substep
 storymode = False
 
 
-def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
+def download_screenshots_of_reddit_posts(reddit_object: dict, voiced_idx: list):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
-        screenshot_num (int): Number of screenshots to download
+        voiced_idx (int): Indexes of voiced comments
     """
     print_step("Downloading screenshots of reddit posts...")
 
@@ -76,12 +76,11 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                 path="assets/temp/png/story_content.png"
             )
         else:
-            for idx, comment in enumerate(
-                track(reddit_object["comments"], "Downloading screenshots...")
+            for idx in track(
+                    screenshot_num,
+                    "Downloading screenshots..."
             ):
-                # Stop if we have reached the screenshot_num
-                if idx >= screenshot_num:
-                    break
+                comment = reddit_object["comments"][idx]
 
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()

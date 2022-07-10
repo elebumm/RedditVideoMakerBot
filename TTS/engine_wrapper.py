@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
-from pathlib import Path
-from typing import Tuple
-import re
+from asyncio import as_completed
 
-# import sox
-# from mutagen import MutagenError
-# from mutagen.mp3 import MP3, HeaderNotFoundError
+from pathlib import Path
 import translators as ts
 from rich.progress import track
-from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
+from attr import attrs, attrib
+
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
+from TTS.common import audio_length
 
-DEFUALT_MAX_LENGTH: int = 50  # video length variable
 
-
+@attrs(auto_attribs=True)
 class TTSEngine:
-
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
 
     Args:
@@ -29,94 +25,81 @@ class TTSEngine:
     Notes:
         tts_module must take the arguments text and filepath.
     """
+    tts_module: object
+    reddit_object: dict
+    path: str = 'assets/temp/mp3'
+    max_length: int = 50  # TODO move to config
+    __total_length: int = attrib(
+        default=0,
+        kw_only=True
+    )
 
-    def __init__(
-        self,
-        tts_module,
-        reddit_object: dict,
-        path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
-    ):
-        self.tts_module = tts_module()
-        self.reddit_object = reddit_object
-        self.path = path
-        self.max_length = max_length
-        self.length = 0
-
-    def run(self) -> Tuple[int, int]:
+    async def run(
+            self
+    ) -> list:
 
         Path(self.path).mkdir(parents=True, exist_ok=True)
 
-        # This file needs to be removed in case this post does not use post text, so that it wont appear in the final video
+        # This file needs to be removed in case this post does not use post text
+        # so that it won't appear in the final video
         try:
-            Path(f"{self.path}/posttext.mp3").unlink()
+            Path(f'{self.path}/posttext.mp3').unlink()
         except OSError:
             pass
 
-        print_step("Saving Text to MP3 files...")
+        print_step('Saving Text to MP3 files...')
 
-        self.call_tts("title", self.reddit_object["thread_title"])
-        if (
-            self.reddit_object["thread_post"] != ""
-            and settings.config["settings"]["storymode"] == True
-        ):
-            self.call_tts("posttext", self.reddit_object["thread_post"])
+        await self.call_tts('title', self.reddit_object['thread_title'])
+        async_tasks_offset = 1
 
-        idx = None
-        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
-            # ! Stop creating mp3 files if the length is greater than max length.
-            if self.length > self.max_length:
-                break
-            if not self.tts_module.max_chars:
-                self.call_tts(f"{idx}", comment["comment_body"])
-            else:
-                self.split_post(comment["comment_body"], idx)
+        if self.reddit_object['thread_post'] and settings.config['settings']['storymode']:
+            await self.call_tts('posttext', self.reddit_object['thread_post'])
+            async_tasks_offset += 1
 
-        print_substep("Saved Text to MP3 files successfully.", style="bold green")
-        return self.length, idx
-
-    def split_post(self, text: str, idx: int):
-        split_files = []
-        split_text = [
-            x.group().strip()
-            for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
+        async_tasks_primary = [
+            self.call_tts(str(idx), comment['comment_body'])
+            for idx, comment in enumerate(self.reddit_object['comments'])
         ]
 
-        idy = None
-        for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
-            self.call_tts(f"{idx}-{idy}.part", text_cut)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
-        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
-            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
+        for task in track(
+                as_completed(async_tasks_primary),
+                description='Saving...',
+                total=async_tasks_primary.__len__()
+        ):
+            await task
+
+        print_substep('Saved Text to MP3 files successfully.', style='bold green')
+        return [
+            comments for comments, condition in
+            zip(self.reddit_object['comments'], async_tasks_primary[async_tasks_offset:])
+            if condition
+        ]
+
+    async def call_tts(
+            self,
+            filename: str,
+            text: str
+    ) -> bool:
+        await self.tts_module.run(
+            text=self.process_text(text),
+            filepath=f'{self.path}/{filename}.mp3'
         )
 
-        for i in split_files:
-            name = i.filename
-            i.close()
-            Path(name).unlink()
+        clip_length = audio_length(f'assets/audio/{filename}.mp3')
 
-        # for i in range(0, idy + 1):
-        # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+        if self.__total_length + clip_length <= self.max_length:
+            self.max_length += clip_length
+            return True
+        return False
 
-        # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
-
-    def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
-        # try:
-        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-        # except (MutagenError, HeaderNotFoundError):
-        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
-        clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-        self.length += clip.duration
-        clip.close()
-
-
-def process_text(text: str):
-    lang = settings.config["reddit"]["thread"]["post_lang"]
-    new_text = sanitize_text(text)
-    if lang:
-        print_substep("Translating Text...")
-        translated_text = ts.google(text, to_language=lang)
-        new_text = sanitize_text(translated_text)
-    return new_text
+    @staticmethod
+    def process_text(
+            text: str,
+    ) -> str:
+        lang = settings.config['reddit']['thread']['post_lang']
+        new_text = sanitize_text(text)
+        if lang:
+            print_substep('Translating Text...')
+            translated_text = ts.google(text, to_language=lang)
+            new_text = sanitize_text(translated_text)
+        return new_text
