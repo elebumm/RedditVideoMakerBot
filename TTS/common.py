@@ -26,26 +26,26 @@ class BaseApiTTS:
     async def write_file(
             self,
             output_text: str,
-            filename: str,
+            filepath: str,
     ) -> None:
         decoded_text = base64.b64decode(output_text) if self.decode_base64 else output_text
 
-        async with open(filename, 'wb') as out:
+        async with open(filepath, 'wb') as out:
             await out.write(decoded_text)
 
     async def run(
             self,
-            req_text: str,
-            filename: str,
+            text: str,
+            filepath: str,
     ) -> None:
         output_text = ''
-        if len(req_text) > self.max_chars:
-            for part in self.text_len_sanitize(req_text, self.max_chars):
+        if len(text) > self.max_chars:
+            for part in self.text_len_sanitize(text, self.max_chars):
                 if part:
                     output_text += await self.make_request(part)
         else:
-            output_text = await self.make_request(req_text)
-        await self.write_file(output_text, filename)
+            output_text = await self.make_request(text)
+        await self.write_file(output_text, filepath)
 
 
 def get_random_voice(
