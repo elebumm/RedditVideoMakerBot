@@ -93,7 +93,7 @@ def make_final_video(
     indexes_for_videos = list()
 
     for idx, audio in track(
-            enumerate(indexes_of_clips, start=1),
+            enumerate(indexes_of_clips),
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
@@ -143,9 +143,9 @@ def make_final_video(
         image_clips.append(
             create_image_clip(
                 f'comment_{photo_idx}',
-                audio_clips[photo_idx].start,
-                audio_clips[photo_idx].end,
-                audio_clips[photo_idx].duration
+                audio_clips[photo_idx + 1].start,
+                audio_clips[photo_idx + 1].end,
+                audio_clips[photo_idx + 1].duration
             )
         )
 

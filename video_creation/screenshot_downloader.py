@@ -85,7 +85,12 @@ class Browser:
     """
     default_Viewport: dict = attrib(
         validator=instance_of(dict),
-        default=dict(),
+        default={
+            'defaultViewport': {
+                'width': 500,
+                'height': 900,
+            },
+        },
         kw_only=True,
     )
     browser: Optional[BrowserCls] = attrib(
@@ -93,10 +98,6 @@ class Browser:
         default=None,
         kw_only=True,
     )
-
-    def __attrs_post_init__(self):
-        if self.default_Viewport.__len__() == 0:
-            self.default_Viewport['isLandscape'] = True
 
     async def get_browser(
             self,
