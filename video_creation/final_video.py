@@ -28,6 +28,7 @@ from video_creation.background import download_background, chop_background_video
 console = Console()
 
 W, H = 1080, 1920  # TODO move to config
+
 max_length: int = 50  # TODO move to config
 
 

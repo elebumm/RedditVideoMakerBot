@@ -94,6 +94,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         vstr = [r.json()["data"]["v_str"]][0]
         b64d = base64.b64decode(vstr)
 
+
         with open(filepath, "wb") as out:
             out.write(b64d)
 

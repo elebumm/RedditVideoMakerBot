@@ -84,9 +84,9 @@ class TTSEngine:
         )
 
         clip_length = audio_length(f'assets/temp/mp3/{filename}.mp3')
-        print(clip_length, '/', self.__total_length)
+        print(clip_length, '/', self.__total_length)  # TODO remove debug
 
-        if self.__total_length + clip_length <= self.max_length:
+        if clip_length and self.__total_length + clip_length <= self.max_length:
             self.__total_length += clip_length
             return True
         return False
