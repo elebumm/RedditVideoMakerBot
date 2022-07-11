@@ -83,8 +83,11 @@ class TTSEngine:
     def split_post(self, text: str, idx: int):
         split_text = [
             x.group().strip()
-            for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
+            for x in re.finditer(rf"*(((.| \n){self.tts_module.max_chars})(\.|.$))", text)
         ]
+
+
+
         try:
             silence_duration = settings.config["settings"]["tts"]["silence_duration"]
         except ValueError:

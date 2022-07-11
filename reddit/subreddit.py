@@ -106,6 +106,7 @@ def get_subreddit_threads(POST_ID: str):
             continue
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
+        #print(top_level_comment.body)
         #print(sanitize_text(top_level_comment.body))
         if not sanitize_text(top_level_comment.body)or sanitize_text(top_level_comment.body).isspace():
             print("fuck you")
