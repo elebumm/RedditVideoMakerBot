@@ -97,7 +97,8 @@ def get_subreddit_threads(POST_ID: str):
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
             sanitised = sanitize_text(top_level_comment.body)
-            if not sanitised or sanitised != " ":
+            print(sanitised)
+            if not sanitised or sanitised == " ":
                 continue
             if len(top_level_comment.body) <= int(
                 settings.config["reddit"]["thread"]["max_comment_length"]
