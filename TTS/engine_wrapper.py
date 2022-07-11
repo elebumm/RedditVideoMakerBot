@@ -79,7 +79,9 @@ class TTSEngine:
         split_files = []
         split_text = [
             x.group().strip()
-            for x in re.finditer(rf" *((.{{0,{self.tts_module.max_chars}}})(\.|.$))", text)
+            for x in re.finditer(
+                r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text
+            )
         ]
 
         idy = None
