@@ -114,13 +114,30 @@ class TTSEngine:
             Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
-        # try:
-        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-        # except (MutagenError, HeaderNotFoundError):
-        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
-        clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-        self.length += clip.duration
+        if filename == "title":
+            self.tts_module.run(text=process_text(text), filepath=f"{self.path}/title_nosilence.mp3")
+
+
+            silence_long = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=0.3,
+                                     fps=44100)
+            silence_long_new = volumex(silence_long, 0)
+            silence_long_new.write_audiofile(f"{self.path}/title_silence.mp3", fps=44100, verbose=False, logger=None)
+
+            with open(f"{self.path}/title.txt", 'w') as f:
+                f.write("file " + f"'title_nosilence.mp3'"+"\n")
+                f.write("file " + f"'title_silence.mp3'"+"\n")
+
+            os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+                      "-i " + f"{self.path}/title.txt " +
+                      "-c copy " + f"{self.path}/title.mp3")
+
+
+            clip = AudioFileClip(f"{self.path}/title.mp3")
+            self.length += clip.duration
+        else:
+            self.tts_module.run(text=process_text(text), filepath=f"{self.path}/{filename}.mp3")
+            clip = AudioFileClip(f"{self.path}/{filename}.mp3")
+            self.length += clip.duration
         clip.close()
 
 
