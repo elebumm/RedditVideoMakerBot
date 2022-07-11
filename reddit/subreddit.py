@@ -7,6 +7,7 @@ from praw.models import MoreComments
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
+from utils.voice import sanitize_text
 
 
 def get_subreddit_threads(
@@ -98,6 +99,9 @@ def get_subreddit_threads(
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
+            sanitised = sanitize_text(top_level_comment.body)
+            if not sanitised or sanitised == " ":
+                continue
             if len(top_level_comment.body) <= int(
                 settings.config["reddit"]["thread"]["max_comment_length"]
             ):
