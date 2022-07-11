@@ -93,7 +93,7 @@ def make_final_video(
     indexes_for_videos = list()
 
     for idx, audio in track(
-            enumerate(indexes_of_clips),
+            enumerate(indexes_of_clips, start=1),
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
