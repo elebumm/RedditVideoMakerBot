@@ -30,7 +30,7 @@ background_options = {
         "https://www.youtube.com/watch?v=2X9QGY__0II",
         "rocket_league.mp4",
         "Orbital Gameplay",
-        "top",
+        lambda t: ("center", 200 + t),
     ),
     "minecraft": (  # Minecraft parkour
         "https://www.youtube.com/watch?v=n_Dv4JMiwK8",

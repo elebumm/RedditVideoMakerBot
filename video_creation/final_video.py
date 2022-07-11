@@ -4,9 +4,7 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
-from moviepy import *
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
-from moviepy.audio.fx.audio_normalize import audio_normalize
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
@@ -14,7 +12,6 @@ from moviepy.video.compositing.concatenate import concatenate_videoclips
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
-import moviepy.editor as mpe
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
@@ -22,10 +19,6 @@ from utils.videos import save_data
 from utils import settings
 
 console = Console()
-try:
-    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
-except (TypeError, KeyError):
-    VOLUME_MULTIPLIER = 1
 W, H = 1080, 1920
 
 
@@ -56,6 +49,12 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
+    #try:  # if it isn't found (i.e you just updated and copied over config.toml) it will throw an error
+    #    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
+    #except (TypeError, KeyError):
+    #    print('No background audio volume found in config.toml. Using default value of 1.')
+    #    VOLUME_MULTIPLIER = 1
+
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
@@ -103,38 +102,23 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     filename = f"{name_normalize(title)}.mp4"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    save_data(subreddit, filename, title, idx, background_config[2])
-
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
 
+    #if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+    #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
+    #    audioclip = audioclip.fx( volumex, 0.2)
+    #    final_audio = mpe.CompositeAudioClip([final.audio, audioclip])
+    #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
+    #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
+    #    final.set_audio(final_audio)
+
     final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k", verbose=False,
                           threads=multiprocessing.cpu_count(), )
-    if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
-        if not isinstance(VOLUME_MULTIPLIER, float):
-            print("No background audio volume set, using default of .3 set it in the config.toml file")
-            assert VOLUME_MULTIPLIER == float(0.3)
-        print('Merging background audio with video')
-        my_clip = mpe.VideoFileClip('assets/temp/temp.mp4')
-        audio_background = AudioFileClip("assets/backgrounds/background.mp3")
-        lowered_audio = audio_background.fl(lambda gf, t: VOLUME_MULTIPLIER * gf(t),
-                            keep_duration=True) # to testr
-        #lowered_audio = audio_normalize(audio_background)
-        # lowered_audio = audio_background.multiply_volume( # todo get this to work
-        #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
-        lowered_audio = lowered_audio.subclip(0, my_clip.duration)  # trim the audio to the length of the video
-        lowered_audio.set_duration(my_clip.duration)  # set the duration of the audio to the length of the video
-        final_audio = mpe.CompositeAudioClip([my_clip.audio, lowered_audio])
-        final_clip = my_clip.set_audio(final_audio)
-
-        final_clip.write_videofile("assets/temp/temp_audio.mp4", fps=30, audio_codec="aac", audio_bitrate="192k",
-                                   verbose=False, threads=multiprocessing.cpu_count())
-        ffmpeg_extract_subclip(  # check if this gets run
-            "assets/temp/temp_audio.mp4", 0, final.duration, targetname=f"results/{subreddit}/{filename}", )
-    else:
-        ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, final.duration,
-                               targetname=f"results/{subreddit}/{filename}", )
+    ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, final.duration,
+                           targetname=f"results/{subreddit}/{filename}", )
+    save_data(subreddit, filename, title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
