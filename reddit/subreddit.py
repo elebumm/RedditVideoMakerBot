@@ -60,15 +60,15 @@ def get_subreddit_threads(POST_ID: str):
             subreddit_choice
         )  # Allows you to specify in .env. Done for automation purposes.
 
+    sort_type = settings.config["reddit"]["thread"]["sort"]
+    sort_time = settings.config["reddit"]["thread"]["sort_time"]
+
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
     elif (settings.config["reddit"]["thread"]["post_id"]
           and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1):
         submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
-
-    sort_type = settings.config["reddit"]["thread"]["sort"]
-    sort_time = settings.config["reddit"]["thread"]["sort_time"]
-    try:
+    else:
         if str(sort_type) == "top":
             threads = subreddit.top(time_filter=sort_time, limit=25)
         elif str(sort_type) == "new":
@@ -79,12 +79,9 @@ def get_subreddit_threads(POST_ID: str):
             threads = subreddit.relevance(time_filter=sort_time, limit=25)
         else:
             threads = subreddit.top(time_filter="all", limit=25)
-    except AttributeError:
-            threads = subreddit.top(time_filter="all", limit=25)
+        submission = get_subreddit_undone(threads, subreddit)
 
-    submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
-
     if submission is None or not submission.num_comments:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
     submission.comment_sort = "top"
