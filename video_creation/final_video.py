@@ -97,12 +97,12 @@ def make_final_video(
     audio_clips.append(audio_title)
     indexes_for_videos = list()
 
-    for idx in track(
-            indexes_of_clips,
+    for idx, audio in track(
+            enumerate(indexes_of_clips, start=1),
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
-            idx,
+            audio,
             correct_audio_offset + video_duration,
         )
         if video_duration + temp_audio_clip.duration + correct_audio_offset + delay_before_end <= max_length:
@@ -145,13 +145,13 @@ def make_final_video(
         )
     )
 
-    for idx, photo_idx in enumerate(indexes_for_videos):
+    for photo_idx in indexes_for_videos:
         image_clips.append(
             create_image_clip(
-                f'comment_{photo_idx}',
-                audio_clips[idx + 1].start,
-                audio_clips[idx + 1].end,
-                audio_clips[idx + 1].duration
+                f'comment_{indexes_of_clips[photo_idx]}',
+                audio_clips[photo_idx].start,
+                audio_clips[photo_idx].end,
+                audio_clips[photo_idx].duration
             )
         )
 
