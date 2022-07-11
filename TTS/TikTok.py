@@ -71,7 +71,7 @@ class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
     )
     random_voice: bool = False
     uri_base: str = attrib(
-        default='https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke',
+        default='https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/',
         kw_only=True,
     )
     max_chars = 300
@@ -91,11 +91,12 @@ class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
             self,
             text: str,
     ):
-        return await self.client.post(
-            f'{self.uri_base}',
-            params={
-                'text_speaker': self.voice,
-                'req_text': text,
-                'speaker_map_type': 0,
-            }
-        )
+        async with self.client.post(
+                f'{self.uri_base}',
+                params={
+                    'text_speaker': self.voice,
+                    'req_text': text,
+                    'speaker_map_type': 0,
+                }) as results:
+            results = await results.json()
+        return results['data']['v_str']

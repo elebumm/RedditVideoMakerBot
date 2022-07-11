@@ -79,7 +79,7 @@ def make_final_video(
             clip_start: float,
     ) -> 'AudioFileClip':
         return (
-            AudioFileClip(f'assets/audio/{clip_title}.mp3')
+            AudioFileClip(f'assets/temp/mp3/{clip_title}.mp3')
             .set_start(clip_start)
         )
 
@@ -97,34 +97,29 @@ def make_final_video(
     audio_clips.append(audio_title)
     indexes_for_videos = list()
 
-    for audio in track(
-            indexes_of_clips,
+    for idx, audio in track(
+            enumerate(indexes_of_clips),
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
             audio,
             correct_audio_offset + video_duration,
         )
-        if video_duration + temp_audio_clip.duration + correct_audio_offset + delay_before_end > max_length:
-            continue
-        video_duration += temp_audio_clip.duration + correct_audio_offset
-        audio_clips.append(temp_audio_clip)
-        indexes_for_videos.append(audio)
+        if video_duration + temp_audio_clip.duration + correct_audio_offset + delay_before_end <= max_length:
+            video_duration += temp_audio_clip.duration + correct_audio_offset
+            audio_clips.append(temp_audio_clip)
+            indexes_for_videos.append(idx)
 
     video_duration += delay_before_end
 
-    for idx in indexes_of_clips:
-        audio_clips.append(AudioFileClip(f'assets/temp/mp3/{idx}.mp3'))
     audio_composite = concatenate_audioclips(audio_clips)
 
-    console.log(f'[bold green] Video Will Be: {audio_composite.length} Seconds Long')
+    console.log(f'[bold green] Video Will Be: {audio_composite.end} Seconds Long')
     # add title to video
-    image_clips = list()
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)  # TODO move to pydentic and percents
 
     def create_image_clip(
-            self,
             image_title: str | int,
             audio_start: float,
             audio_end: float,
@@ -132,30 +127,30 @@ def make_final_video(
     ) -> 'ImageClip':
         return (
             ImageClip(f'assets/temp/png/{image_title}.png')
-            .set_start(audio_start - self.time_before_tts)
-            .set_end(audio_end + self.time_before_tts)
-            .set_duration(self.time_before_tts * 2 + audio_duration, change_end=False)
+            .set_start(audio_start - time_before_tts)
+            .set_end(audio_end + time_before_tts)
+            .set_duration(time_before_tts * 2 + audio_duration, change_end=False)
             .set_opacity(new_opacity)
             .resize(width=W - 100)
         )
+    image_clips = list()
 
-    index_offset = 1
-
-    image_clips.insert(
-        0,
-        ImageClip('assets/temp/png/title.png')
-        .set_duration(audio_clips[0].duration)
-        .resize(width=W - 100)
-        .set_opacity(new_opacity),
+    image_clips.append(
+        create_image_clip(
+            'title',
+            audio_clips[0].start,
+            audio_clips[0].end,
+            audio_clips[0].duration
+        )
     )
 
-    for photo_idx in indexes_of_clips:
+    for photo_idx in indexes_for_videos:
         image_clips.append(
             create_image_clip(
                 f'comment_{photo_idx}',
-                audio_clips[photo_idx + index_offset].start,
-                audio_clips[photo_idx + index_offset].end,
-                audio_clips[photo_idx + index_offset].duration
+                audio_clips[photo_idx].start,
+                audio_clips[photo_idx].end,
+                audio_clips[photo_idx].duration
             )
         )
 
@@ -175,7 +170,7 @@ def make_final_video(
 
     download_background(background_config)
     background_clip = (
-        VideoFileClip('assets/temp/background.mp4')
+        VideoFileClip('assets/backgrounds/background.mp4')
         .set_start(0)
         .set_end(video_duration + delay_before_end)
         .without_audio()
@@ -248,7 +243,7 @@ def make_final_video(
                 'assets/temp/temp_audio.mp4',
                 0,
                 video_duration,
-                targetname=f"results/{subreddit}/{filename}",
+                targetname=f'results/{subreddit}/{filename}',
             )
     else:
         print('debug duck')

@@ -18,7 +18,6 @@ from attr import attrs, attrib
 from attr.validators import instance_of, optional
 from typing import TypeVar, Optional, Callable, Union
 
-
 _function = TypeVar('_function', bound=Callable[..., object])
 _exceptions = TypeVar('_exceptions', bound=Optional[Union[type, tuple, list]])
 
@@ -212,12 +211,7 @@ class RedditScreenshot(Browser, Wait):
         screenshot_idx (int): List with indexes of voiced comments
     """
     reddit_object: dict
-    screenshot_idx: list = attrib()
-
-    @screenshot_idx.validator
-    def validate_screenshot_idx(self, attribute, value):
-        if value <= 0:
-            raise ValueError('Check screenshot_num in config')
+    screenshot_idx: list
 
     async def __dark_theme(
             self,
@@ -352,12 +346,21 @@ class RedditScreenshot(Browser, Wait):
             self.screenshot_idx
         ]
 
-        for task in track(
-                as_completed(async_tasks_primary),
-                description='Downloading screenshots...',
-                total=async_tasks_primary.__len__(),
-        ):
-            await task
+        def chunks(lst, n):
+            """Yield successive n-sized chunks from lst."""
+            for i in range(0, len(lst), n):
+                yield lst[i:i + n]
 
-        print_substep('Screenshots downloaded Successfully.', style='bold green')
+        for idx, tasks in enumerate(
+                [chunk for chunk in chunks(async_tasks_primary, 15)],
+                start=1,
+        ):
+            for task in track(
+                    as_completed(tasks),
+                    description=f'Downloading comments: Chunk {idx}',
+                    total=tasks.__len__()
+            ):
+                await task
+
+        print_substep('Comments downloaded Successfully.', style='bold green')
         await self.close_browser()

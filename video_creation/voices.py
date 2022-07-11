@@ -37,13 +37,22 @@ async def save_text_to_mp3(
             if voice.casefold() in map(lambda _: _.casefold(), TTSProviders):
                 break
             print('Unknown Choice')
-    engine_instance = TTSEngine(get_case_insensitive_key_value(TTSProviders, voice), reddit_obj)
-    return await engine_instance.run()
+    TTS_instance = get_case_insensitive_key_value(TTSProviders, voice)
+    if TTS_instance == StreamlabsPolly or TTS_instance == TikTok:
+        from aiohttp import ClientSession
+
+        async with ClientSession() as client:
+            engine_instance = TTSEngine(TTS_instance(client), reddit_obj)
+            results = await engine_instance.run()
+    else:
+        engine_instance = TTSEngine(TTS_instance, reddit_obj)
+        results = await engine_instance.run()
+    return results
 
 
 def get_case_insensitive_key_value(
         input_dict,
-        key
+        key,
 ) -> object:
     return next(
         (value for dict_key, value in input_dict.items() if dict_key.lower() == key.lower()),
