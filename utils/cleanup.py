@@ -20,8 +20,14 @@ def cleanup() -> int:
                 os.remove("./assets/temp/mp4/" + file)
         except FileNotFoundError:
             pass
-        for file in os.listdir("./assets/temp/mp3"):
-            count += 1
-            os.remove("./assets/temp/mp3/" + file)
+        try:
+            for file in os.listdir("./assets/temp/mp3"):
+                count += 1
+                os.remove("./assets/temp/mp3/" + file)
+        except FileNotFoundError:
+            pass
+        except PermissionError:
+            print("permission error")
+            pass
         return count
     return 0
