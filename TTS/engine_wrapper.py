@@ -91,7 +91,7 @@ class TTSEngine:
 
         if self.__total_length + clip_length <= self.max_length:
             self.__total_length += clip_length
-            print(clip_length, '/', self.__total_length)
+            # print(clip_length, '/', self.__total_length)  # TODO remove debug stuff
             return True
         return False
 

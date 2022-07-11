@@ -28,6 +28,7 @@ from video_creation.background import download_background, chop_background_video
 console = Console()
 
 W, H = 1080, 1920  # TODO move to config
+max_length: int = 50  # TODO move to config
 
 
 def name_normalize(
@@ -105,7 +106,7 @@ def make_final_video(
 
     audio_composite = concatenate_audioclips(audio_clips)
 
-    console.log(f'[bold green] Video Will Be: {audio_composite.end} Seconds Long')
+    console.log('[bold green] Video Will Be: %.2f Seconds Long' % audio_composite.end)
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)  # TODO move to pydentic and percents
 
