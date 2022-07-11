@@ -73,15 +73,21 @@ def sanitize_text(text: str) -> str:
     Returns:
         str: Sanitized text
     """
-
+    #text.join("—-–")
     # remove any urls from the text
     regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
 
-    result = re.sub(regex_urls, "url", text)
+    result = re.sub(regex_urls, "", text)
 
     # note: not removing apostrophes
-    regex_expr = r"\s['|’]|['|’]\s|[\^_~@!&;#:\-%—“”‘\"%\*/{}\[\]\(\)\\|<>=+]"
+    regex_expr = r"\s['|’]|['|’]\s|[\^_~@!&;#:\%“”‘\"%\*/{}\[\]\(\)\\|<>=+]"
+    regex_expr2 = r"—"
+    regex_expr3 = r"–"
+    regex_expr4 = r"-"
     result = re.sub(regex_expr, " ", result)
+    result = re.sub(regex_expr2, " ", result)
+    result = re.sub(regex_expr3, " ", result)
+    result = re.sub(regex_expr4, " ", result)
     result = result.replace("+", "plus").replace("&", "and")
     # remove extra whitespace
     return " ".join(result.split())

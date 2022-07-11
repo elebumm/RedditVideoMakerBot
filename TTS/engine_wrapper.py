@@ -96,26 +96,33 @@ class TTSEngine:
 
         idy = None
         for idy, text_cut in enumerate(split_text):
-            #print(f"{idx}-{idy}: {text_cut}\n")
-            self.call_tts(f"{idx}-{idy}.part", text_cut)
+            print(f"{idx}-{idy}: {text_cut}\n")
+            newtext = process_text(text_cut)
+            #print(newtext)
+            if not newtext or newtext.isspace():
+                print("fuck you")
+                break
+            else:
+                self.call_tts(f"{idx}-{idy}.part", newtext)
+                with open(f"{self.path}/list.txt", 'w') as f:
+                    for newy in range(0, len(split_text)):
+                        f.write("file " + f"'{idx}-{newy}.part.mp3'" + "\n")
+                    f.write("file " + f"'long_silence.mp3'" + "\n")
 
-            with open(f"{self.path}/list.txt", 'w') as f:
-                for newy in range(0, len(split_text)):
-                    f.write("file " + f"'{idx}-{newy}.part.mp3'"+"\n")
-                f.write("file " + f"'long_silence.mp3'"+"\n")
-
-        os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
-                  "-i " + f"{self.path}/list.txt " +
-                  "-c copy " + f"{self.path}/{idx}.mp3")
-
-
-        for i in range(0, idy + 1):
-            # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
-            Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+                os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+                          "-i " + f"{self.path}/list.txt " +
+                          "-c copy " + f"{self.path}/{idx}.mp3")
+                try:
+                    for i in range(0, idy + 1):
+                        # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
+                        Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
+                except FileNotFoundError:
+                    print("file not found error")
 
     def call_tts(self, filename: str, text: str):
+
         if filename == "title":
-            self.tts_module.run(text=process_text(text), filepath=f"{self.path}/title_nosilence.mp3")
+            self.tts_module.run(text, filepath=f"{self.path}/title_nosilence.mp3")
 
 
             silence_long = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=0.3,

@@ -146,10 +146,11 @@ def make_final_video(
         "assets/temp/temp.mp4",
         fps=30,
         audio_codec="aac",
-        audio_bitrate="192k",
+        audio_bitrate="256k",
         verbose=False,
+        codec="h264_nvenc",
         threads=multiprocessing.cpu_count(),
-        ffmpeg_params=['--enable nvenc -hwaccel cuda -hwaccel_output_format cuda -c:v h264_nvenc -preset slow output"']
+        #ffmpeg_params=["-vcodec h264_nvenc"]
     )
 
 
