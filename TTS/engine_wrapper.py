@@ -63,6 +63,8 @@ class TTSEngine:
         sync_tasks_primary = [
             self.call_tts(str(idx), comment['comment_body'])
             for idx, comment in track(enumerate(self.reddit_object['comments']), description='Saving...')
+            # Crunch, there will be fix in async TTS api
+            if self.__total_length + self.__total_length * 0.05 < self.max_length
         ]
 
         print_substep('Saved Text to MP3 files successfully.', style='bold green')
@@ -109,7 +111,6 @@ class TTSEngine:
         )
 
         clip_length = audio_length(f'assets/temp/mp3/{filename}.mp3')
-        print(clip_length, '/', self.__total_length)  # TODO remove debug
 
         if clip_length and self.__total_length + clip_length <= self.max_length:
             self.__total_length += clip_length
