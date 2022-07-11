@@ -34,8 +34,8 @@ def get_subreddit_undone(submissions: list, subreddit):
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
-        if submission.num_comments == 0:
-            print_substep("This post has 0 comments. Skipping...")
+        if submission.num_comments < 100:
+            print_substep("This post has less than 100 comments. Skipping...")
             continue
         return submission
     print("all submissions have been done going by top submission order")
