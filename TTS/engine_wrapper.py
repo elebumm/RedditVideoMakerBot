@@ -66,7 +66,7 @@ class TTSEngine:
         print_substep('Saved Text to MP3 files successfully.', style='bold green')
         return [
             comments for comments, condition in
-            zip(self.reddit_object['comments'], sync_tasks_primary)
+            zip(range(self.reddit_object['comments'].__len__()), sync_tasks_primary)
             if condition
         ]
 
@@ -75,15 +75,19 @@ class TTSEngine:
             filename: str,
             text: str
     ) -> bool:
-        self.tts_module.run(
+        if not text:
+            return False
+
+        self.tts_module().run(
             text=self.process_text(text),
             filepath=f'{self.path}/{filename}.mp3'
         )
 
-        clip_length = audio_length(f'assets/audio/{filename}.mp3')
+        clip_length = audio_length(f'assets/temp/mp3/{filename}.mp3')
+        print(clip_length, '/', self.__total_length)
 
         if self.__total_length + clip_length <= self.max_length:
-            self.max_length += clip_length
+            self.__total_length += clip_length
             return True
         return False
 
