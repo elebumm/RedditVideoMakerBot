@@ -79,16 +79,16 @@ def make_final_video(
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
-    with open(f"assets/temp/mp3/list2.txt", 'w') as f:
-        f.write("file " + f"'title.mp3'" + "\n")
-        for newx in range(0, number_of_clips):
-            f.write("file " + f"'{newx}.mp3'" + "\n")
+    #with open(f"assets/temp/mp3/list2.txt", 'w') as f:
+    #    f.write("file " + f"'title.mp3'" + "\n")
+    #    for newx in range(0, number_of_clips):
+    #        f.write("file " + f"'{newx}.mp3'" + "\n")
 
-    os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
-              "-i " + f"assets/temp/mp3/list2.txt " +
-              "-c copy " + f"assets/temp/mp3/concat_audio.mp3")
+    #os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+    #          "-i " + f"assets/temp/mp3/list2.txt " +
+    #          "-c copy " + f"assets/temp/mp3/concat_audio.mp3")
 
-    all_audio = AudioFileClip(f"assets/temp/mp3/concat_audio.mp3")
+    #all_audio = AudioFileClip(f"assets/temp/mp3/concat_audio.mp3")
     audio_composite = CompositeAudioClip([audio_composite])
 
 
@@ -149,6 +149,7 @@ def make_final_video(
         audio_bitrate="192k",
         verbose=False,
         threads=multiprocessing.cpu_count(),
+        ffmpeg_params[-' = vcodec="h264_nvenc",']
     )
 
 
