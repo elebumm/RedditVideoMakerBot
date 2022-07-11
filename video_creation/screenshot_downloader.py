@@ -27,12 +27,12 @@ class ExceptionDecorator:
     """
     Factory for decorating functions
     """
-    __exception: Optional[_exceptions] = attrib(default=None)
+    exception: Optional[_exceptions] = attrib(default=None)
     __default_exception: _exceptions = attrib(default=BrowserTimeoutError)
 
     def __attrs_post_init__(self):
-        if not self.__exception:
-            self.__exception = self.__default_exception
+        if not self.exception:
+            self.exception = self.__default_exception
 
     def __call__(
             self,
@@ -45,13 +45,14 @@ class ExceptionDecorator:
             except Exception as caughtException:
                 import logging
 
-                if isinstance(self.__exception, type):
-                    if not type(caughtException) == self.__exception:
-                        logging.basicConfig(filename='.webdriver.log', filemode='w', encoding='utf-8',
-                                            level=logging.DEBUG)
+                logging.basicConfig(filename='.webdriver.log', filemode='a+',
+                                    encoding='utf-8', level=logging.ERROR)
+
+                if isinstance(self.exception, type):
+                    if not type(caughtException) == self.exception:
                         logging.error(f'unexpected error - {caughtException}')
                 else:
-                    if not type(caughtException) in self.__exception:
+                    if not type(caughtException) in self.exception:
                         logging.error(f'unexpected error - {caughtException}')
 
         return wrapper
@@ -251,6 +252,32 @@ class RedditScreenshot(Browser, Wait):
             {'timeout': 5000},
         )
 
+    async def __close_nsfw(
+            self,
+            page_instance: PageCls
+    ) -> None:
+        from asyncio import ensure_future
+
+        print_substep('Post is NSFW. You are spicy...')
+        # To await indirectly reload
+        navigation = ensure_future(page_instance.waitForNavigation())
+
+        # Triggers indirectly reload
+        await self.click(
+            page_instance,
+            '//button[text()="Yes"]',
+            {'timeout': 5000},
+        )
+
+        # Await reload
+        await navigation
+
+        await (await self.find_xpath(
+            page_instance,
+            '//button[text()="Click to see nsfw"]',
+            {'timeout': 5000},
+        )).click()
+
     async def __collect_comment(
             self,
             comment_obj: dict,
@@ -289,13 +316,13 @@ class RedditScreenshot(Browser, Wait):
         """
         Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
         """
-        await self.get_browser()
         print_step('Downloading screenshots of reddit posts...')
+
+        print_substep('Launching Headless Browser...')
+        await self.get_browser()
 
         # ! Make sure the reddit screenshots folder exists
         Path('assets/temp/png').mkdir(parents=True, exist_ok=True)
-
-        print_substep('Launching Headless Browser...')
 
         # Get the thread screenshot
         reddit_main = await self.browser.newPage()
@@ -306,19 +333,7 @@ class RedditScreenshot(Browser, Wait):
 
         if self.reddit_object['is_nsfw']:
             # This means the post is NSFW and requires to click the proceed button.
-
-            print_substep('Post is NSFW. You are spicy...')
-            await self.click(
-                reddit_main,
-                '//button[contains(text(), \'Yes\')]',
-                {'timeout': 5000},
-            )
-
-            await self.click(
-                reddit_main,
-                '//button[contains(text(), \'nsfw\')]',
-                {'timeout': 5000},
-            )
+            await self.__close_nsfw(reddit_main)
 
         # Translates submission title
         if settings.config['reddit']['thread']['post_lang']:
@@ -336,16 +351,18 @@ class RedditScreenshot(Browser, Wait):
         else:
             print_substep("Skipping translation...")
 
-        await self.screenshot(
-            reddit_main,
-            f'//*[contains(@id, \'t3_{self.reddit_object["thread_id"]}\')]',
-            {'path': f'assets/temp/png/title.png'},
-        )
-
         async_tasks_primary = [
             self.__collect_comment(self.reddit_object['comments'][idx], idx) for idx in
             self.screenshot_idx
         ]
+
+        async_tasks_primary.append(
+            self.screenshot(
+                reddit_main,
+                f'//*[contains(@id, \'t3_{self.reddit_object["thread_id"]}\')]',
+                {'path': f'assets/temp/png/title.png'},
+            )
+        )
 
         def chunks(lst, n):
             """Yield successive n-sized chunks from lst."""

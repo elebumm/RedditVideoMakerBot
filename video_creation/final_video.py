@@ -92,12 +92,12 @@ def make_final_video(
     audio_clips.append(audio_title)
     indexes_for_videos = list()
 
-    for idx, audio in track(
-            enumerate(indexes_of_clips),
+    for idx in track(
+            indexes_of_clips,
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
-            audio,
+            idx,
             video_duration,
         )
         if video_duration + temp_audio_clip.duration <= max_length:
@@ -107,7 +107,7 @@ def make_final_video(
 
     audio_composite = concatenate_audioclips(audio_clips)
 
-    console.log(f'[bold green] Video Will Be: {video_duration} Seconds Long')
+    console.log('[bold green] Video Will Be: %.2f Seconds Long' % video_duration)
 
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)  # TODO move to pydentic and percents
@@ -139,10 +139,11 @@ def make_final_video(
         )
     )
 
-    for photo_idx in indexes_for_videos:
+    for photo_idx in range(indexes_for_videos.__len__()):
         image_clips.append(
             create_image_clip(
-                f'comment_{photo_idx}',
+                f'comment_{indexes_for_videos[photo_idx]}',
+                # + title clip
                 audio_clips[photo_idx + 1].start,
                 audio_clips[photo_idx + 1].end,
                 audio_clips[photo_idx + 1].duration
