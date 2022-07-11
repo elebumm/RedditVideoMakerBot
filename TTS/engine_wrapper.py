@@ -96,7 +96,7 @@ class TTSEngine:
 
         idy = None
         for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
+            print(f"{idx}-{idy}: {text_cut}\n")
             self.call_tts(f"{idx}-{idy}.part", text_cut)
 
             with open(f"{self.path}/list.txt", 'w') as f:

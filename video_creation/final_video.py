@@ -72,10 +72,26 @@ def make_final_video(
     )
 
     # Gather all audio clips
+
     audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
+    audio_composite.write_audiofile(f"assets/temp/mp3/moviepy.mp3", fps=44100, verbose=False, logger=None)
+
+    with open(f"assets/temp/mp3/list2.txt", 'w') as f:
+        f.write("file " + f"'title.mp3'" + "\n")
+        for newx in range(0, number_of_clips):
+            f.write("file " + f"'{newx}.mp3'" + "\n")
+
+    os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+              "-i " + f"assets/temp/mp3/list2.txt " +
+              "-c copy " + f"assets/temp/mp3/concat_audio.mp4")
+
+    all_audio = AudioFileClip(f"assets/temp/mp3/concat_audio.mp4")
+    all_audio = CompositeAudioClip([audio_composite])
+
+
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # add title to video
@@ -110,7 +126,9 @@ def make_final_video(
     # else: story mode stuff
     img_clip_pos = background_config[3]
     image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)
-    image_concat.audio = audio_composite
+    #image_concat.audio = audio_composite
+    image_concat.audio = all_audio
+
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
@@ -132,6 +150,12 @@ def make_final_video(
         verbose=False,
         threads=multiprocessing.cpu_count(),
     )
+
+
+
+
+
+
     if settings.config["settings"]["background_audio"]:
         print("[bold green] Merging background audio with video")
         if not exists(f"assets/backgrounds/background.mp3"):
