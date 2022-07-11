@@ -33,7 +33,9 @@ print_markdown(
 print_step(f"You are using V{VERSION} of the bot")
 
 
-async def main(POST_ID=None):
+async def main(
+        POST_ID=None
+):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     comments_created = await save_text_to_mp3(reddit_object)
