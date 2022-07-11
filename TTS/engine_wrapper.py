@@ -10,6 +10,8 @@ import translators as ts
 from rich.progress import track
 from attr import attrs, attrib
 
+from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
+
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
@@ -69,6 +71,29 @@ class TTSEngine:
             zip(range(self.reddit_object['comments'].__len__()), sync_tasks_primary)
             if condition
         ]
+
+    def split_post(self, text: str, idx: int):
+        split_files = []
+        split_text = [
+            x.group().strip()
+            for x in re.finditer(
+                r" *(((.|\n){0," + str(self.tts_module().max_chars) + "})(\.|.$))", text
+            )
+        ]
+
+        idy = None
+        for idy, text_cut in enumerate(split_text):
+            # print(f"{idx}-{idy}: {text_cut}\n")
+            self.call_tts(f"{idx}-{idy}.part", text_cut)
+            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
+        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
+            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
+        )
+
+        for i in split_files:
+            name = i.filename
+            i.close()
+            Path(name).unlink()
 
     def call_tts(
             self,
