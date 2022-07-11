@@ -56,16 +56,16 @@ class StreamlabsPolly(BaseApiTTS):
             else get_random_voice(voices)
         )
 
-        response = await self.client.post(
+        async with self.client.post(
             self.url,
             data={
                 'voice': voice,
                 'text': text,
                 'service': 'polly',
             }
-        )
-        speak_url = await(
-            await response.json()
-        )['speak_url']
+        ) as response:
+            speak_url = await(
+                await response.json()
+            )['speak_url']
 
         return await self.client.get(speak_url)

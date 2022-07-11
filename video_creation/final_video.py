@@ -17,6 +17,7 @@ from moviepy.editor import (
 )
 from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio, ffmpeg_extract_subclip
 from rich.console import Console
+from rich.progress import track
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
@@ -67,32 +68,82 @@ def make_final_video(
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
     opacity = settings.config['settings']['opacity']
 
-    final_length = 0
+    def create_audio_clip(
+            clip_title: str | int,
+            clip_start: float,
+    ) -> 'AudioFileClip':
+        return (
+            AudioFileClip(f'assets/temp/mp3/{clip_title}.mp3')
+            .set_start(clip_start)
+        )
+
+    video_duration = 0
 
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f'assets/temp/mp3/{i}.mp3') for i in indexes_of_clips]
-    audio_clips.insert(0, AudioFileClip('assets/temp/mp3/title.mp3'))
+    audio_clips = list()
+
+    audio_title = create_audio_clip(
+        'title',
+        0,
+    )
+    video_duration += audio_title.duration
+    audio_clips.append(audio_title)
+    indexes_for_videos = list()
+
+    for idx in track(
+            indexes_of_clips,
+            description='Gathering audio clips...',
+    ):
+        temp_audio_clip = create_audio_clip(
+            idx,
+            video_duration,
+        )
+        if video_duration + temp_audio_clip.duration <= max_length:
+            video_duration += temp_audio_clip.duration
+            audio_clips.append(temp_audio_clip)
+            indexes_for_videos.append(idx)
+
     audio_composite = concatenate_audioclips(audio_clips)
 
-    console.log(f'[bold green] Video Will Be: {audio_composite.length} Seconds Long')
-    # add title to video
-    image_clips = []
+    console.log(f'[bold green] Video Will Be: {audio_composite.end} Seconds Long')
     # Gather all images
-    new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    image_clips.insert(
-        0,
-        ImageClip('assets/temp/png/title.png')
-        .set_duration(audio_clips[0].duration)
-        .resize(width=W - 100)
-        .set_opacity(new_opacity),
+    new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)  # TODO move to pydentic and percents
+
+    def create_image_clip(
+            image_title: str | int,
+            audio_start: float,
+            audio_end: float,
+            audio_duration: float,
+    ) -> 'ImageClip':
+        return (
+            ImageClip(f'assets/temp/png/{image_title}.png')
+            .set_start(audio_start)
+            .set_end(audio_end)
+            .set_duration(audio_duration, change_end=False)
+            .set_opacity(new_opacity)
+            .resize(width=W - 100)
+        )
+
+    # add title to video
+    image_clips = list()
+
+    image_clips.append(
+        create_image_clip(
+            'title',
+            audio_clips[0].start,
+            audio_clips[0].end,
+            audio_clips[0].duration
+        )
     )
 
-    for i in indexes_of_clips:
+    for photo_idx in indexes_for_videos:
         image_clips.append(
-            ImageClip(f'assets/temp/png/comment_{i}.png')
-            .set_duration(audio_clips[i + 1].duration)
-            .resize(width=W - 100)
-            .set_opacity(new_opacity)
+            create_image_clip(
+                f'comment_{photo_idx}',
+                audio_clips[photo_idx].start,
+                audio_clips[photo_idx].end,
+                audio_clips[photo_idx].duration
+            )
         )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
@@ -110,9 +161,11 @@ def make_final_video(
     image_concat.audio = audio_composite
 
     download_background(background_config)
-    chop_background_video(background_config, final_length)
+    chop_background_video(background_config, video_duration)
     background_clip = (
-        VideoFileClip("assets/temp/background.mp4")
+        VideoFileClip('assets/temp/background.mp4')
+        .set_start(0)
+        .set_end(video_duration)
         .without_audio()
         .resize(height=H)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
@@ -148,7 +201,7 @@ def make_final_video(
             ffmpeg_extract_subclip(
                 'assets/temp/temp.mp4',
                 0,
-                final.duration,
+                video_duration,
                 targetname=f'results/{subreddit}/{filename}',
             )
         else:
@@ -160,15 +213,15 @@ def make_final_video(
             ffmpeg_extract_subclip(  # check if this gets run
                 'assets/temp/temp_audio.mp4',
                 0,
-                final.duration,
-                targetname=f"results/{subreddit}/{filename}",
+                video_duration,
+                targetname=f'results/{subreddit}/{filename}',
             )
     else:
         print('debug duck')
         ffmpeg_extract_subclip(
             'assets/temp/temp.mp4',
             0,
-            final.duration,
+            video_duration,
             targetname=f'results/{subreddit}/{filename}',
         )
     print_step('Removing temporary files 🗑')

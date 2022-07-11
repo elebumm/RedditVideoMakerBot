@@ -49,29 +49,31 @@ class TTSEngine:
 
         print_step('Saving Text to MP3 files...')
 
-        await self.call_tts('title', self.reddit_object['thread_title'])
-        async_tasks_offset = 1
+        async_tasks_primary = list()
+
+        async_tasks_primary.append(self.call_tts('title', self.reddit_object['thread_title']))
 
         if self.reddit_object['thread_post'] and settings.config['settings']['storymode']:
-            await self.call_tts('posttext', self.reddit_object['thread_post'])
-            async_tasks_offset += 1
+            async_tasks_primary.append(self.call_tts('posttext', self.reddit_object['thread_post']))
 
-        async_tasks_primary = [
+        async_tasks_primary.extend([
             self.call_tts(str(idx), comment['comment_body'])
             for idx, comment in enumerate(self.reddit_object['comments'])
-        ]
+        ])
 
+        async_tasks_primary_results = list()
         for task in track(
                 as_completed(async_tasks_primary),
                 description='Saving...',
                 total=async_tasks_primary.__len__()
         ):
-            await task
+            async_tasks_primary_results.append(await task)
+        async_tasks_primary.clear()
 
         print_substep('Saved Text to MP3 files successfully.', style='bold green')
         return [
             comments for comments, condition in
-            zip(self.reddit_object['comments'], async_tasks_primary[async_tasks_offset:])
+            zip(range(self.reddit_object['comments'].__len__()), async_tasks_primary_results)
             if condition
         ]
 
@@ -85,10 +87,11 @@ class TTSEngine:
             filepath=f'{self.path}/{filename}.mp3'
         )
 
-        clip_length = audio_length(f'assets/audio/{filename}.mp3')
+        clip_length = audio_length(f'{self.path}/{filename}.mp3')
 
         if self.__total_length + clip_length <= self.max_length:
-            self.max_length += clip_length
+            self.__total_length += clip_length
+            print(clip_length, '/', self.__total_length)
             return True
         return False
 
