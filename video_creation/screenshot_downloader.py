@@ -74,7 +74,7 @@ async def download_screenshots_of_reddit_posts(reddit_object: dict, voiced_idx: 
             )
         else:
             for idx in track(
-                    screenshot_num,
+                    voiced_idx,
                     "Downloading screenshots..."
             ):
                 comment = reddit_object["comments"][idx]

@@ -37,7 +37,7 @@ async def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     comments_created = await save_text_to_mp3(reddit_object)
-    download_screenshots_of_reddit_posts(reddit_object, comments_created)
+    await download_screenshots_of_reddit_posts(reddit_object, comments_created)
     bg_config = get_background_config()
     make_final_video(comments_created, reddit_object, bg_config)
 

@@ -137,13 +137,13 @@ def make_final_video(
         )
     )
 
-    for photo_idx in indexes_for_videos:
+    for idx, photo_idx in enumerate(indexes_for_videos):
         image_clips.append(
             create_image_clip(
                 f'comment_{photo_idx}',
-                audio_clips[photo_idx].start,
-                audio_clips[photo_idx].end,
-                audio_clips[photo_idx].duration
+                audio_clips[idx + 1].start,
+                audio_clips[idx + 1].end,
+                audio_clips[idx + 1].duration
             )
         )
 
