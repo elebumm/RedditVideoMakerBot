@@ -12,11 +12,11 @@ password = { optional = false, nmin = 8, explanation = "the password of your red
 random = { optional = true, options = [true,
     false,
 ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
-subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, nmax = 21, explanation = "what subreddit to pull posts from, the name of the sub, not the URL", example = "AskReddit", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
+subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, explanation = "what subreddit to pull posts from, the name of the sub, not the URL", example = "AskReddit", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
 post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
 max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr" }
-min_comments = { default = 20, optional = false, nmin = 15, nmax = 999999, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
+min_comments = { default = 20, optional = false, nmin = 15, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true,
     false,
