@@ -1,7 +1,8 @@
 import random
-import os
 import requests
 from requests.exceptions import JSONDecodeError
+from utils import settings
+from utils.voice import check_ratelimit
 
 voices = [
     "Brian",
@@ -35,26 +36,27 @@ class StreamlabsPolly:
         if random_voice:
             voice = self.randomvoice()
         else:
-            if not os.getenv("VOICE"):
-                return ValueError(
-                    f"Please set the environment variable VOICE to a valid voice. options are: {voices}"
+            if not settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
+                raise ValueError(
+                    f"Please set the config variable STREAMLABS_POLLY_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(os.getenv("STREAMLABS_VOICE")).capitalize()
+            voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
-        try:
-            voice_data = requests.get(response.json()["speak_url"])
-            with open(filepath, "wb") as f:
-                f.write(voice_data.content)
-        except (KeyError, JSONDecodeError):
+        if not check_ratelimit(response):
+            self.run(text, filepath, random_voice)
+
+        else:
             try:
-                if response.json()["error"] == "No text specified!":
-                    raise ValueError("Please specify a text to convert to speech.")
+                voice_data = requests.get(response.json()["speak_url"])
+                with open(filepath, "wb") as f:
+                    f.write(voice_data.content)
             except (KeyError, JSONDecodeError):
-                print("Error occurred calling Streamlabs Polly")
+                try:
+                    if response.json()["error"] == "No text specified!":
+                        raise ValueError("Please specify a text to convert to speech.")
+                except (KeyError, JSONDecodeError):
+                    print("Error occurred calling Streamlabs Polly")
 
     def randomvoice(self):
         return random.choice(self.voices)
-
-
-# StreamlabsPolly().run(text=str('hi hi ' * 92)[1:], filepath='hello.mp3', random_voice=True)
