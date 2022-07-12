@@ -85,15 +85,16 @@ class TTSEngine:
                 r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text
             )
         ]
-
+        offset = 0
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
-            if text_cut == "":
-                print("Empty text cut: tell the devs about this")
+            if not text_cut or text_cut.isspace():
+                offset += 1
                 continue
 
-            self.call_tts(f"{idx}-{idy}.part", text_cut)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy}.part.mp3"))
+            self.call_tts(f"{idx}-{idy - offset}.part", text_cut)
+            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3"))
+
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
         )
