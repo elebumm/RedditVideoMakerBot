@@ -294,10 +294,10 @@ class RedditScreenshot(Browser, Wait):
         await comment_page.goto(f'https://reddit.com{comment_obj["comment_url"]}')
 
         # Translates submission' comment
-        if settings.config["reddit"]["thread"]["post_lang"]:
+        if settings.config['reddit']['thread']['post_lang']:
             comment_tl = ts.google(
-                comment_obj["comment_body"],
-                to_language=settings.config["reddit"]["thread"]["post_lang"],
+                comment_obj['comment_body'],
+                to_language=settings.config['reddit']['thread']['post_lang'],
             )
             await comment_page.evaluate(
                 f'([tl_content, tl_id]) => document.querySelector(`#t1_{comment_obj["comment_id"]} > div:nth-child(2) '
@@ -349,7 +349,7 @@ class RedditScreenshot(Browser, Wait):
                 texts_in_tl,
             )
         else:
-            print_substep("Skipping translation...")
+            print_substep('Skipping translation...')
 
         async_tasks_primary = [
             self.__collect_comment(self.reddit_object['comments'][idx], idx) for idx in
@@ -364,19 +364,20 @@ class RedditScreenshot(Browser, Wait):
             )
         )
 
+        # Lots of tabs - lots of memory
+        # chunk needed to minimize memory required
         def chunks(lst, n):
-            """Yield successive n-sized chunks from lst."""
+            """Yield successive n-sized chunks from list."""
             for i in range(0, len(lst), n):
                 yield lst[i:i + n]
 
-        for idx, tasks in enumerate(
-                [chunk for chunk in chunks(async_tasks_primary, 15)],
+        for idx, chunked_tasks in enumerate(
+                [chunk for chunk in chunks(async_tasks_primary, 10)],
                 start=1,
         ):
             for task in track(
-                    as_completed(tasks),
-                    description=f'Downloading comments: Chunk {idx}',
-                    total=tasks.__len__()
+                    as_completed(chunked_tasks),
+                    description=f'Downloading comments: Chunk {idx}/{chunked_tasks.__len__()}',
             ):
                 await task
 
