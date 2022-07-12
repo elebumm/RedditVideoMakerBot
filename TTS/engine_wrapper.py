@@ -74,33 +74,6 @@ class TTSEngine:
             if condition
         ]
 
-    def split_post(self, text: str, idx: int):
-        split_files = []
-        split_text = [
-            x.group().strip()
-            for x in re.finditer(
-                r" *(((.|\n){0," + str(self.tts_module().max_chars) + "})(\.|.$))", text
-            )
-        ]
-        offset = 0
-        for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
-            if not text_cut or text_cut.isspace():
-                offset += 1
-                continue
-
-            self.call_tts(f"{idx}-{idy - offset}.part", text_cut)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3"))
-
-        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
-            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
-        )
-
-        for i in split_files:
-            name = i.filename
-            i.close()
-            Path(name).unlink()
-
     def call_tts(
             self,
             filename: str,
@@ -114,7 +87,7 @@ class TTSEngine:
             filepath=f'{self.path}/{filename}.mp3'
         )
 
-        clip_length = audio_length(f'assets/temp/mp3/{filename}.mp3')
+        clip_length = audio_length(f'{self.path}/{filename}.mp3')
 
         if clip_length and self.__total_length + clip_length <= self.max_length:
             self.__total_length += clip_length
