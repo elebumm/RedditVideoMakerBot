@@ -34,7 +34,7 @@ def get_subreddit_undone(submissions: list, subreddit):
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
-        if submission.num_comments <= int(settings.config["reddit"]["thread"]["min_comments"]):
+        if submission.num_comments < int(settings.config["reddit"]["thread"]["min_comments"]):
             print_substep(
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )

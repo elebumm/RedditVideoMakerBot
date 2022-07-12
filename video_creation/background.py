@@ -71,7 +71,7 @@ def get_background_config():
 
     # Handle default / not supported background using default option.
     # Default : pick random from supported background.
-    if not choice or choice not in background_options:
+    if choice not in background_options:
         choice = random.choice(list(background_options.keys()))
 
     return background_options[choice]
