@@ -54,7 +54,6 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #except (TypeError, KeyError):
     #    print('No background audio volume found in config.toml. Using default value of 1.')
     #    VOLUME_MULTIPLIER = 1
-
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
