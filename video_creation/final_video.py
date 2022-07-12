@@ -33,6 +33,7 @@ def name_normalize(name: str) -> str:
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         import translators as ts
+
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
@@ -41,7 +42,9 @@ def name_normalize(name: str) -> str:
         return name
 
 
-def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]):
+def make_final_video(
+    number_of_clips: int, length: int, reddit_obj: dict, background_config: Tuple[str, str, str, Any]
+):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
         number_of_clips (int): Index to end at when going through the screenshots'
@@ -49,9 +52,9 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
-    #try:  # if it isn't found (i.e you just updated and copied over config.toml) it will throw an error
+    # try:  # if it isn't found (i.e you just updated and copied over config.toml) it will throw an error
     #    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
-    #except (TypeError, KeyError):
+    # except (TypeError, KeyError):
     #    print('No background audio volume found in config.toml. Using default value of 1.')
     #    VOLUME_MULTIPLIER = 1
     print_step("Creating the final video 🎥")
@@ -59,8 +62,11 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
     opacity = settings.config["settings"]["opacity"]
     background_clip = (
-        VideoFileClip("assets/temp/background.mp4").without_audio().resize(height=H).crop(x1=1166.6, y1=0, x2=2246.6,
-                                                                                          y2=1920))
+        VideoFileClip("assets/temp/background.mp4")
+        .without_audio()
+        .resize(height=H)
+        .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
+    )
 
     # Gather all audio clips
     audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
@@ -73,13 +79,21 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    image_clips.insert(0, ImageClip("assets/temp/png/title.png").set_duration(audio_clips[0].duration).resize(
-        width=W - 100).set_opacity(new_opacity), )
+    image_clips.insert(
+        0,
+        ImageClip("assets/temp/png/title.png")
+        .set_duration(audio_clips[0].duration)
+        .resize(width=W - 100)
+        .set_opacity(new_opacity),
+    )
 
     for i in range(0, number_of_clips):
         image_clips.append(
-            ImageClip(f"assets/temp/png/comment_{i}.png").set_duration(audio_clips[i + 1].duration).resize(
-                width=W - 100).set_opacity(new_opacity))
+            ImageClip(f"assets/temp/png/comment_{i}.png")
+            .set_duration(audio_clips[i + 1].duration)
+            .resize(width=W - 100)
+            .set_opacity(new_opacity)
+        )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
@@ -105,7 +119,7 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
 
-    #if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+    # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
     #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
     #    audioclip = audioclip.fx( volumex, 0.2)
     #    final_audio = mpe.CompositeAudioClip([final.audio, audioclip])
@@ -113,14 +127,26 @@ def make_final_video(number_of_clips: int, length: int, reddit_obj: dict, backgr
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
 
-    final.write_videofile("assets/temp/temp.mp4", fps=30, audio_codec="aac", audio_bitrate="192k", verbose=False,
-                          threads=multiprocessing.cpu_count(), )
-    ffmpeg_extract_subclip("assets/temp/temp.mp4", 0, final.duration,
-                           targetname=f"results/{subreddit}/{filename}", )
+    final.write_videofile(
+        "assets/temp/temp.mp4",
+        fps=30,
+        audio_codec="aac",
+        audio_bitrate="192k",
+        verbose=False,
+        threads=multiprocessing.cpu_count(),
+    )
+    ffmpeg_extract_subclip(
+        "assets/temp/temp.mp4",
+        0,
+        final.duration,
+        targetname=f"results/{subreddit}/{filename}",
+    )
     save_data(subreddit, filename, title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup()
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')
+    print_step(
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
+    )
