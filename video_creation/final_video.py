@@ -28,6 +28,10 @@ console = Console()
 W, H = 1080, 1920  # TODO move to config
 
 max_length: int = 50  # TODO move to config
+time_before_first_picture: float = 1  # TODO move to config
+time_before_tts: float = 0.5  # TODO move to config
+time_between_pictures: float = 1  # TODO move to config
+delay_before_end: int = 1  # TODO move to config
 
 
 def name_normalize(
@@ -61,7 +65,7 @@ def make_final_video(
     Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
 
     Args:
-        indexes_of_clips (list): Indexes with created comments'
+        indexes_of_clips (list): Indexes of voiced comments
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
@@ -83,27 +87,30 @@ def make_final_video(
 
     # Gather all audio clips
     audio_clips = list()
+    correct_audio_offset = time_before_tts * 2 + time_between_pictures
 
     audio_title = create_audio_clip(
         'title',
-        0,
+        time_before_first_picture + time_before_tts,
     )
-    video_duration += audio_title.duration
+    video_duration += audio_title.duration + time_before_first_picture + time_before_tts
     audio_clips.append(audio_title)
     indexes_for_videos = list()
 
-    for idx in track(
-            indexes_of_clips,
+    for idx, audio in track(
+            enumerate(indexes_of_clips, start=1),
             description='Gathering audio clips...',
     ):
         temp_audio_clip = create_audio_clip(
-            idx,
-            video_duration,
+            audio,
+            correct_audio_offset + video_duration,
         )
-        if video_duration + temp_audio_clip.duration <= max_length:
-            video_duration += temp_audio_clip.duration
+        if video_duration + temp_audio_clip.duration + correct_audio_offset + delay_before_end <= max_length:
+            video_duration += temp_audio_clip.duration + correct_audio_offset
             audio_clips.append(temp_audio_clip)
             indexes_for_videos.append(idx)
+
+    video_duration += delay_before_end
 
     audio_composite = concatenate_audioclips(audio_clips)
 
@@ -120,9 +127,9 @@ def make_final_video(
     ) -> 'ImageClip':
         return (
             ImageClip(f'assets/temp/png/{image_title}.png')
-            .set_start(audio_start)
-            .set_end(audio_end)
-            .set_duration(audio_duration, change_end=False)
+            .set_start(audio_start - time_before_tts)
+            .set_end(audio_end + time_before_tts)
+            .set_duration(time_before_tts * 2 + audio_duration, change_end=False)
             .set_opacity(new_opacity)
             .resize(width=W - 100)
         )
@@ -139,14 +146,13 @@ def make_final_video(
         )
     )
 
-    for photo_idx in range(indexes_for_videos.__len__()):
+    for photo_idx in indexes_for_videos:
         image_clips.append(
             create_image_clip(
-                f'comment_{indexes_for_videos[photo_idx]}',
-                # + title clip
-                audio_clips[photo_idx + 1].start,
-                audio_clips[photo_idx + 1].end,
-                audio_clips[photo_idx + 1].duration
+                f'comment_{indexes_of_clips[photo_idx]}',
+                audio_clips[photo_idx].start,
+                audio_clips[photo_idx].end,
+                audio_clips[photo_idx].duration
             )
         )
 
@@ -169,20 +175,40 @@ def make_final_video(
     background_clip = (
         VideoFileClip('assets/temp/background.mp4')
         .set_start(0)
-        .set_end(video_duration)
+        .set_end(video_duration + delay_before_end)
         .without_audio()
         .resize(height=H)
-        .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
+
+    back_video_width, back_video_height = background_clip.size
+
+    # Fix for crop with vertical videos
+    if back_video_width < H:
+        background_clip = (
+            background_clip
+            .resize(width=W)
+        )
+        back_video_width, back_video_height = background_clip.size
+        background_clip = background_clip.crop(
+            x1=0,
+            x2=back_video_width,
+            y1=back_video_height / 2 - H / 2,
+            y2=back_video_height / 2 + H / 2
+        )
+    else:
+        background_clip = background_clip.crop(
+            x1=back_video_width / 2 - W / 2,
+            x2=back_video_width / 2 + W / 2,
+            y1=0,
+            y2=back_video_height
+        )
 
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r'[^\w\s-]', '', reddit_obj['thread_title'])
     idx = re.sub(r'[^\w\s-]', '', reddit_obj['thread_id'])
 
     filename = f'{name_normalize(title)}.mp4'
-    subreddit = settings.config['reddit']['thread']['subreddit']
-
-    save_data(subreddit, filename, title, idx, background_config[2])
+    subreddit = str(settings.config['reddit']['thread']['subreddit'])
 
     if not exists(f'./results/{subreddit}'):
         print_substep('The results folder didn\'t exist so I made it')
