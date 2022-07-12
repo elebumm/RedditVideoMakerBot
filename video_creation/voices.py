@@ -29,7 +29,7 @@ def save_text_to_mp3(
     """
 
     voice = settings.config['settings']['tts']['choice']
-    if voice.casefold() not in map(lambda _: _.casefold(), TTSProviders):
+    if str(voice).casefold() not in map(lambda _: _.casefold(), TTSProviders):
         while True:
             print_step('Please choose one of the following TTS providers: ')
             print_table(TTSProviders)

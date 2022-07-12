@@ -5,8 +5,6 @@ import re
 from os.path import exists
 from typing import Tuple, Any
 
-import translators as ts
-
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -44,6 +42,8 @@ def name_normalize(
 
     lang = settings.config['reddit']['thread']['post_lang']
     if lang:
+        import translators as ts
+
         print_substep('Translating filename...')
         translated_name = ts.google(name, to_language=lang)
         return translated_name
@@ -196,38 +196,13 @@ def make_final_video(
         verbose=False,
         threads=multiprocessing.cpu_count(),
     )
-    if settings.config['settings']['background_audio']:
-        print('[bold green] Merging background audio with video')
-        if not exists('assets/backgrounds/background.mp3'):
-            print_substep(
-                'Cannot find assets/backgrounds/background.mp3 audio file didn\'t so skipping.'
-            )
-            ffmpeg_extract_subclip(
-                'assets/temp/temp.mp4',
-                0,
-                video_duration,
-                targetname=f'results/{subreddit}/{filename}',
-            )
-        else:
-            ffmpeg_merge_video_audio(
-                'assets/temp/temp.mp4',
-                'assets/backgrounds/background.mp3',
-                'assets/temp/temp_audio.mp4',
-            )
-            ffmpeg_extract_subclip(  # check if this gets run
-                'assets/temp/temp_audio.mp4',
-                0,
-                video_duration,
-                targetname=f'results/{subreddit}/{filename}',
-            )
-    else:
-        print('debug duck')
-        ffmpeg_extract_subclip(
-            'assets/temp/temp.mp4',
-            0,
-            video_duration,
-            targetname=f'results/{subreddit}/{filename}',
-        )
+    ffmpeg_extract_subclip(
+        "assets/temp/temp.mp4",
+        0,
+        video_duration,
+        targetname=f'results/{subreddit}/{filename}',
+    )
+    save_data(subreddit, filename, title, idx, background_config[2])
     print_step('Removing temporary files 🗑')
     cleanups = cleanup()
     print_substep(f'Removed {cleanups} temporary files 🗑')
