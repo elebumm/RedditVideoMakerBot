@@ -37,7 +37,7 @@ class AWSPolly:
                 voice = self.randomvoice()
             else:
                 if not settings.config["settings"]["tts"]["aws_polly_voice"]:
-                    return ValueError(
+                    raise ValueError(
                         f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
                     )
                 voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
@@ -64,10 +64,12 @@ class AWSPolly:
                 sys.exit(-1)
         except ProfileNotFound:
             print("You need to install the AWS CLI and configure your profile")
-            print("""
+            print(
+                """
             Linux: https://docs.aws.amazon.com/polly/latest/dg/setup-aws-cli.html
             Windows: https://docs.aws.amazon.com/polly/latest/dg/install-voice-plugin2.html
-            """)
+            """
+            )
             sys.exit(-1)
 
     def randomvoice(self):
