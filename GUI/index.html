@@ -59,7 +59,7 @@
           white-space: nowrap;
           -webkit-overflow-scrolling: touch;
         }
-        
+
         #tooltip {
           background-color: #333;
           color: white;
@@ -105,8 +105,8 @@
         <p class="float-end mb-1">
           <a href="#">Back to top</a>
         </p>
-        <p class="mb-1"><a href="https://getbootstrap.com/docs/5.2/examples/album/" target="_blank">Album</a> Example Theme by &copy; Bootstrap.</p>
-        <p class="mb-0">If your data is not refreshing, try to Hard reload(Ctrl + F5) and visit your local <a href="video_creation/data/videos.json" target="_blank">videos.json</a> file.</p>
+        <p class="mb-1"><a href="https://getbootstrap.com/docs/5.2/examples/album/" target="_blank">Album</a> Example Theme by &copy; Bootstrap.          <a href="https://github.com/elebumm/RedditVideoMakerBot/blob/master/README.md#developers-and-maintainers" target="_blank">Developers and Maintainers</a></p>
+        <p class="mb-0">If your data is not refreshing, try to hard reload(Ctrl + F5) and visit your local <a href="../video_creation/data/videos.json" target="_blank">videos.json</a> file.</p>
       </div>
     </footer>
 
@@ -134,7 +134,7 @@
       }
 
       $(document).ready(function () {
-        $.getJSON("video_creation/data/videos.json",
+        $.getJSON("../video_creation/data/videos.json",
             function (data) {
           data.sort((b, a) => a['time'] - b['time'])
           var video = '';
@@ -163,7 +163,7 @@
             video += '</div>';
 
           });
-          
+
           $('#videos').append(video);
         });
       });
