@@ -8,5 +8,5 @@ praw==7.6.0
 python-dotenv==0.20.0
 pytube==12.1.0
 requests==2.28.1
-rich==12.4.4
+rich==12.5.1
 translators==5.3.1
