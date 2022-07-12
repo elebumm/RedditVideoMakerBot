@@ -78,18 +78,7 @@ def make_final_video(
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
-
-    #with open(f"assets/temp/mp3/list2.txt", 'w') as f:
-    #    f.write("file " + f"'title.mp3'" + "\n")
-    #    for newx in range(0, number_of_clips):
-    #        f.write("file " + f"'{newx}.mp3'" + "\n")
-
-    #os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
-    #          "-i " + f"assets/temp/mp3/list2.txt " +
-    #          "-c copy " + f"assets/temp/mp3/concat_audio.mp3")
-
-    #all_audio = AudioFileClip(f"assets/temp/mp3/concat_audio.mp3")
-    audio_composite = CompositeAudioClip([audio_composite])
+    #audio_composite = CompositeAudioClip([audio_composite])
 
 
 
@@ -127,7 +116,6 @@ def make_final_video(
     img_clip_pos = background_config[3]
     image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)
     image_concat.audio = audio_composite
-    #image_concat.audio = all_audio
 
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
