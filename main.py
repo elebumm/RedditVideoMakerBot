@@ -9,8 +9,6 @@ from utils import settings
 
 # from utils.checker import envUpdate
 from video_creation.background import (
-    download_background,
-    chop_background_video,
     get_background_config,
 )
 from video_creation.final_video import make_final_video

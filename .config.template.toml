@@ -25,10 +25,17 @@ theme = { optional = false, default = "dark", example = "light", options = ["dar
     "light",
 ], explanation = "sets the Reddit theme, either LIGHT or DARK" }
 times_to_run = { optional = false, default = 1, example = 2, explanation = "used if you want to run multiple times. set to an int e.g. 4 or 29 or 1", type = "int", nmin = 1, oob_error = "It's very hard to run something less than once." }
-opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
+opacity = { optional = false, default = 90, example = 80, explanation = "Sets the opacity (in percents) of the comments when overlayed over the background", type = "int", nmin = 10, nmax = 100, oob_error = "The opacity HAS to be between 10 and 100 percents", input_error = "The opacity HAS to be a number between 10 and 100" }
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true,
     false,
 ], explanation = "not yet implemented" }
+video_length = { optional = false, default = 50, example = 60, explanation = "Approximated final video length", type = "int", nmin = 15, oob_error = "15 seconds is short enought" }
+time_before_first_picture = { optional = false, default = 0.5, example = 1.0, explanation = "Deley before first screenshot apears", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
+time_before_tts = { optional = false, default = 0.5, example = 1.0, explanation = "Deley between screenshot and TTS", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
+time_between_pictures = { optional = false, default = 0.5, example = 1.0, explanation = "Time between every screenshot", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
+delay_before_end = { optional = false, default = 0.5, example = 1.0, explanation = "Deley before video ends", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
+video_width = { optional = true, default = 1080, example = 1080, explanation = "Final video width", type = "int", nmin = 600, oob_error = "Choose at least 600 pixels wide" }
+video_height = { optional = true, default = 1920, example = 1920, explanation = "Final video height", type = "int", nmin = 800, oob_error = "Choose at least 800 pixels long" }
 
 [settings.background]
 background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video" }

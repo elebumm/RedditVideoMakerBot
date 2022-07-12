@@ -375,9 +375,10 @@ class RedditScreenshot(Browser, Wait):
                 [chunk for chunk in chunks(async_tasks_primary, 10)],
                 start=1,
         ):
+            chunk_list = async_tasks_primary.__len__() // 10 + (1 if async_tasks_primary.__len__() % 10 != 0 else 0)
             for task in track(
                     as_completed(chunked_tasks),
-                    description=f'Downloading comments: Chunk {idx}/{chunked_tasks.__len__()}',
+                    description=f'Downloading comments: Chunk {idx}/{chunk_list}',
             ):
                 await task
 

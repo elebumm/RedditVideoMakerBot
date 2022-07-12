@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 from pathlib import Path
-from typing import Tuple
-import re
+from typing import Union
 
-# import sox
-# from mutagen import MutagenError
-# from mutagen.mp3 import MP3, HeaderNotFoundError
 import translators as ts
 from rich.progress import track
 from attr import attrs, attrib
-
-from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 from TTS.common import audio_length
+
+from TTS.GTTS import GTTS
+from TTS.streamlabs_polly import StreamlabsPolly
+from TTS.TikTok import TikTok
+from TTS.aws_polly import AWSPolly
 
 
 @attrs(auto_attribs=True)
@@ -31,14 +30,23 @@ class TTSEngine:
     Notes:
         tts_module must take the arguments text and filepath.
     """
-    tts_module: object
+    tts_module: Union[GTTS, StreamlabsPolly, TikTok, AWSPolly]
     reddit_object: dict
     path: str = 'assets/temp/mp3'
-    max_length: int = 50  # TODO move to config
     __total_length: int = attrib(
         default=0,
         kw_only=True
     )
+
+    def __attrs_post_init__(self):
+        self.tts_module = self.tts_module()
+        self.max_length: int = settings.config['settings']['video_length']
+        self.time_before_tts: float = settings.config['settings']['time_before_tts']
+        self.time_between_pictures: float = settings.config['settings']['time_between_pictures']
+        self.__total_length = (
+                settings.config['settings']['time_before_first_picture'] +
+                settings.config['settings']['delay_before_end']
+        )
 
     def run(
             self
@@ -82,15 +90,16 @@ class TTSEngine:
         if not text:
             return False
 
-        self.tts_module().run(
+        self.tts_module.run(
             text=self.process_text(text),
             filepath=f'{self.path}/{filename}.mp3'
         )
 
         clip_length = audio_length(f'{self.path}/{filename}.mp3')
+        clip_offset = self.time_between_pictures + self.time_before_tts * 2
 
-        if clip_length and self.__total_length + clip_length <= self.max_length:
-            self.__total_length += clip_length
+        if clip_length and self.__total_length + clip_length + clip_offset <= self.max_length:
+            self.__total_length += clip_length + clip_offset
             return True
         return False
 
