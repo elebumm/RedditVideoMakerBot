@@ -29,7 +29,7 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
-    name[:70]
+    name[:30]
 
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
