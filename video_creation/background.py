@@ -44,6 +44,18 @@ background_options = {
         "Achy Gaming",
         lambda t: ("center", 480 + t),
     ),
+    "csgo-surf": (  # CSGO Surf
+        "https://www.youtube.com/watch?v=E-8JlyO59Io",
+        "csgo-surf.mp4",
+        "Aki",
+        "center",
+    ),
+    "cluster-truck": (  # Cluster Truck Gameplay
+        "https://www.youtube.com/watch?v=uVKxtdMgJVU",
+        "cluster_truck.mp4",
+        "No Copyright Gameplay",
+        lambda t: ("center", 480 + t),
+    ),
 }
 
 
