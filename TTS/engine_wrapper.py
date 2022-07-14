@@ -100,8 +100,9 @@ class TTSEngine:
 
         idy = None
         for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
+
             newtext = process_text(text_cut)
+            print(f"{idx}-{idy}: {newtext}\n")
             if not newtext or newtext.isspace():
                 print("newtext was blank because sanitized split text resulted in none")
                 continue
@@ -110,20 +111,20 @@ class TTSEngine:
                 with open(f"{self.path}/list.txt", 'w') as f:
                     for idz in range(0, len(split_text)):
                         f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
-                        split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
+                    split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     f.write("file " + f"'silence.mp3'" + "\n")
                 f.close()
 
                 os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
                           "-i " + f"{self.path}/list.txt " +
                           "-c copy " + f"{self.path}/{idx}.mp3")
-                try:
-                    name = rf"{self.path}/{idx}-{idz}.part.mp3"
-                    os.unlink(name)
-                except FileNotFoundError:
-                    print("file not found error")
-                except OSError:
-                    print("OSError")
+        try:
+            for i in range(0, len(split_files)):
+                os.unlink(split_files[i])
+        except FileNotFoundError:
+            print("file not found error")
+        except OSError:
+            print("OSError")
 
     def call_tts(self, filename: str, text: str):
 
