@@ -42,6 +42,15 @@ class StreamlabsPolly(BaseApiTTS):
             self,
             text,
     ):
+        """
+        Makes a requests to remote TTS service
+
+        Args:
+            text: text to be voice over
+
+        Returns:
+            Request's response
+        """
         voice = (
             get_random_voice(voices)
             if self.random_voice

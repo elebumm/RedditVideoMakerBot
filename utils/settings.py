@@ -9,7 +9,7 @@ from utils.console import handle_input
 
 
 console = Console()
-config = dict()  # calling instance of a dict to calm lint down
+config = dict()  # calling instance of a dict to calm lint down (dict[any] will work as well)
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):

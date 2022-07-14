@@ -13,7 +13,7 @@ from moviepy.editor import (
     CompositeAudioClip,
     CompositeVideoClip,
 )
-from moviepy.video.io.ffmpeg_tools import ffmpeg_merge_video_audio, ffmpeg_extract_subclip
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 from rich.progress import track
 
@@ -35,7 +35,7 @@ def name_normalize(
     name = re.sub(r'(\d+)\s?\/\s?(\d+)', r'\1 of \2', name)
     name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
     name = re.sub(r'\/', '', name)
-    name[:30]
+    name[:30]  # the hell this little guy does?
 
     lang = settings.config['reddit']['thread']['post_lang']
     if lang:

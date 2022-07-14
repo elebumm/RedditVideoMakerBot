@@ -25,7 +25,7 @@ _exceptions = TypeVar('_exceptions', bound=Optional[Union[type, tuple, list]])
 @attrs
 class ExceptionDecorator:
     """
-    Factory for decorating functions
+    Decorator factory for catching exceptions and writing logs
     """
     exception: Optional[_exceptions] = attrib(default=None)
     __default_exception: _exceptions = attrib(default=BrowserTimeoutError)
@@ -45,15 +45,17 @@ class ExceptionDecorator:
             except Exception as caughtException:
                 import logging
 
-                logging.basicConfig(filename='.webdriver.log', filemode='a+',
-                                    encoding='utf-8', level=logging.ERROR)
+                logger = logging.getLogger('webdriver_log')
+                logger.setLevel(logging.DEBUG)
+                handler = logging.FileHandler('.webdriver.log', mode='a+', encoding='utf-8')
+                logger.addHandler(handler)
 
                 if isinstance(self.exception, type):
                     if not type(caughtException) == self.exception:
-                        logging.error(f'unexpected error - {caughtException}')
+                        logger.error(f'unexpected error - {caughtException}')
                 else:
                     if not type(caughtException) in self.exception:
-                        logging.error(f'unexpected error - {caughtException}')
+                        logger.error(f'unexpected error - {caughtException}')
 
         return wrapper
 

@@ -29,7 +29,7 @@ def save_text_to_mp3(
     """
 
     voice = settings.config['settings']['tts']['choice']
-    if str(voice).casefold() not in map(lambda _: _.casefold(), TTSProviders):
+    if voice.casefold() not in map(lambda _: _.casefold(), TTSProviders):
         while True:
             print_step('Please choose one of the following TTS providers: ')
             print_table(TTSProviders)
@@ -45,6 +45,7 @@ def get_case_insensitive_key_value(
         input_dict,
         key,
 ) -> object:
+    # TODO add a factory later
     return next(
         (value for dict_key, value in input_dict.items() if dict_key.lower() == key.lower()),
         None,

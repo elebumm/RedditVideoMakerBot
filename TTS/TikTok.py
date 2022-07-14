@@ -1,10 +1,8 @@
-import base64
 from utils import settings
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from attr import attrs, attrib
-from attr.validators import instance_of
 
 from TTS.common import BaseApiTTS, get_random_voice
 
@@ -74,8 +72,20 @@ class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
     max_chars = 300
     decode_base64 = True
 
-    def __attrs_post_init__(self):
-        self.voice = (
+    def make_request(
+            self,
+            text: str,
+    ):
+        """
+                Makes a requests to remote TTS service
+
+                Args:
+                    text: text to be voice over
+
+                Returns:
+                    Request's response
+                """
+        voice = (
             get_random_voice(voices, 'human')
             if self.random_voice
             else str(settings.config['settings']['tts']['tiktok_voice']).lower()
@@ -83,16 +93,11 @@ class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
                 voice.lower() for dict_title in voices for voice in voices[dict_title]]
             else get_random_voice(voices, 'human')
         )
-
-    def make_request(
-            self,
-            text: str,
-    ):
         try:
             r = requests.post(
                 self.uri_base,
                 params={
-                    'text_speaker': self.voice,
+                    'text_speaker': voice,
                     'req_text': text,
                     'speaker_map_type': 0,
                 })
@@ -103,6 +108,6 @@ class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
             adapter = HTTPAdapter(max_retries=retry)
             session.mount('http://', adapter)
             session.mount('https://', adapter)
-            r = session.post(f'{self.uri_base}{self.voice}&req_text={text}&speaker_map_type=0')
+            r = session.post(f'{self.uri_base}{voice}&req_text={text}&speaker_map_type=0')
         # print(r.text)
         return r.json()['data']['v_str']

@@ -11,7 +11,7 @@ if sys.version_info[0] >= 3:
 
 
 def check_ratelimit(
-        response: Response
+        response: Response,
 ):
     """
     Checks if the response is a ratelimit response.

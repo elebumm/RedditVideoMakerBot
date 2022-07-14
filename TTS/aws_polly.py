@@ -37,7 +37,14 @@ class AWSPolly:
             self,
             text,
             filepath,
-    ):
+    ) -> None:
+        """
+        Calls for TTS api
+
+        Args:
+            text: text to be voiced over
+            filepath: name of the audio file
+        """
         try:
             session = Session(profile_name='polly')
             polly = session.client('polly')

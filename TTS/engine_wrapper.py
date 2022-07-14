@@ -39,7 +39,9 @@ class TTSEngine:
     )
 
     def __attrs_post_init__(self):
+        # Calls an instance of the tts_module class
         self.tts_module = self.tts_module()
+        # Loading settings from the config
         self.max_length: int = settings.config['settings']['video_length']
         self.time_before_tts: float = settings.config['settings']['time_before_tts']
         self.time_between_pictures: float = settings.config['settings']['time_between_pictures']
@@ -51,7 +53,12 @@ class TTSEngine:
     def run(
             self
     ) -> list:
+        """
+        Voices over comments & title of the submission
 
+        Returns:
+            Indexes of comments to be used in the final video
+        """
         Path(self.path).mkdir(parents=True, exist_ok=True)
 
         # This file needs to be removed in case this post does not use post text
@@ -87,6 +94,16 @@ class TTSEngine:
             filename: str,
             text: str
     ) -> bool:
+        """
+        Calls for TTS api from the factory
+
+        Args:
+            filename: name of audio file w/o .mp3
+            text: text to be voiced over
+
+        Returns:
+            True if audio files not exceeding the maximum length else false
+        """
         if not text:
             return False
 
@@ -107,6 +124,15 @@ class TTSEngine:
     def process_text(
             text: str,
     ) -> str:
+        """
+        Sanitizes text for illegal characters and translates text
+
+        Args:
+            text: text to be sanitized & translated
+
+        Returns:
+            Processed text as a str
+        """
         lang = settings.config['reddit']['thread']['post_lang']
         new_text = sanitize_text(text)
         if lang:
