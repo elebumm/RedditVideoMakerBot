@@ -245,3 +245,4 @@ video_creation/data/envvars.txt
 config.toml
 ffmpeg.exe
 tempTEMP_MPY_wvf_snd.mp4
+*.mp4

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import random
 from random import randrange
@@ -109,17 +110,22 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
-    try:
-        ffmpeg_extract_subclip(
-            f"assets/backgrounds/{choice}",
-            start_time,
-            end_time,
-            targetname="assets/temp/background.mp4",
-        )
-    except (OSError, IOError):  # ffmpeg issue see #348
-        print_substep("FFMPEG issue. Trying again...")
-        with VideoFileClip(f"assets/backgrounds/{choice}") as video:
-            new = video.subclip(start_time, end_time)
-            new.write_videofile("assets/temp/background.mp4")
-    print_substep("Background video chopped successfully!", style="bold green")
-    return background_config[2]
+
+    os.system("ffmpeg -i " + f"assets/backgrounds/{choice} " + "-acodec copy -f segment "
+                                                "-vcodec copy -reset_timestamps 1 -map 0 OUTPUT%d.mp4")
+
+   # try:
+    #    ffmpeg_extract_subclip(
+     #       f"assets/backgrounds/{choice}",
+      #      start_time,
+       #     end_time,
+        #    vcodec="libx264",
+         #   targetname="assets/temp/background.mp4",
+        #)
+    #except (OSError, IOError):  # ffmpeg issue see #348
+     #   print_substep("FFMPEG issue. Trying again...")
+      #  with VideoFileClip(f"assets/backgrounds/{choice}") as video:
+       #     new = video.subclip(start_time, end_time)
+        #    new.write_videofile("assets/temp/background.mp4")
+    #print_substep("Background video chopped successfully!", style="bold green")
+    #return background_config[2]

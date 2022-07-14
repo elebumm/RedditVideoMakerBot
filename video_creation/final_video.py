@@ -130,6 +130,8 @@ def make_final_video(
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
 
+#h264_nvenc, mpeg4
+#libfdk_aac
     final.write_videofile(
         "assets/temp/temp.mp4",
         fps=30,
