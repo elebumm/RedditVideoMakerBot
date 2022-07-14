@@ -34,11 +34,16 @@ def get_subreddit_undone(submissions: list, subreddit):
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
+        if submission.num_comments <= int(settings.config["reddit"]["thread"]["min_comments"]):
+            print_substep(
+                f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
+            )
+            continue
         return submission
     print("all submissions have been done going by top submission order")
     return get_subreddit_undone(
         subreddit.top(time_filter="hour"), subreddit
-    )  # all of the videos in hot have already been done
+    )  # all the videos in hot have already been done
 
 
 def already_done(done_videos: list, submission) -> bool:

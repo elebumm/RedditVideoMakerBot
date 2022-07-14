@@ -30,7 +30,7 @@ background_options = {
         "https://www.youtube.com/watch?v=2X9QGY__0II",
         "rocket_league.mp4",
         "Orbital Gameplay",
-        "top",
+        lambda t: ("center", 200 + t),
     ),
     "minecraft": (  # Minecraft parkour
         "https://www.youtube.com/watch?v=n_Dv4JMiwK8",
@@ -64,7 +64,7 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
 def get_background_config():
     """Fetch the background/s configuration"""
     try:
-        choice = str(settings.config["settings"]["background_choice"]).casefold()
+        choice = str(settings.config["settings"]["background"]["background_choice"]).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None

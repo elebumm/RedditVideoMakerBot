@@ -7,6 +7,7 @@ from praw.models import MoreComments
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
+from utils.voice import sanitize_text
 
 
 def get_subreddit_threads(POST_ID: str):
@@ -17,7 +18,7 @@ def get_subreddit_threads(POST_ID: str):
     print_substep("Logging into Reddit.")
 
     content = {}
-    if settings.config["reddit"]["creds"]["2fa"] == True:
+    if settings.config["reddit"]["creds"]["2fa"]:
         print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
         print()
@@ -26,7 +27,7 @@ def get_subreddit_threads(POST_ID: str):
     else:
         passkey = settings.config["reddit"]["creds"]["password"]
     username = settings.config["reddit"]["creds"]["username"]
-    if username.casefold().startswith("u/"):
+    if str(username).casefold().startswith("u/"):
         username = username[2:]
     reddit = praw.Reddit(
         client_id=settings.config["reddit"]["creds"]["client_id"],
@@ -54,7 +55,7 @@ def get_subreddit_threads(POST_ID: str):
         sub = settings.config["reddit"]["thread"]["subreddit"]
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
-        if subreddit_choice.casefold().startswith("r/"):  # removes the r/ from the input
+        if str(subreddit_choice).casefold().startswith("r/"):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(
             subreddit_choice
@@ -64,11 +65,10 @@ def get_subreddit_threads(POST_ID: str):
         submission = reddit.submission(id=POST_ID)
     elif (
         settings.config["reddit"]["thread"]["post_id"]
-        and len(settings.config["reddit"]["thread"]["post_id"].split("+")) == 1
+        and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
     ):
         submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
     else:
-
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
@@ -95,11 +95,15 @@ def get_subreddit_threads(POST_ID: str):
         if top_level_comment.body in ["[removed]", "[deleted]"]:
             continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
         if not top_level_comment.stickied:
+            sanitised = sanitize_text(top_level_comment.body)
+            if not sanitised or sanitised == " ":
+                continue
             if len(top_level_comment.body) <= int(
                 settings.config["reddit"]["thread"]["max_comment_length"]
             ):
                 if (
                     top_level_comment.author is not None
+                    and sanitize_text(top_level_comment.body) is not None
                 ):  # if errors occur with this change to if not.
                     content["comments"].append(
                         {
