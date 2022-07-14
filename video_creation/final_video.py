@@ -158,7 +158,7 @@ def make_final_video(
     ):
         image_clips.append(
             create_image_clip(
-                f'comment_{indexes_of_clips[photo_idx]}',
+                f'comment_{photo_idx}',
                 audio_clips[idx].start,
                 audio_clips[idx].duration
             )
