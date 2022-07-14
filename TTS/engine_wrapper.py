@@ -111,7 +111,7 @@ class TTSEngine:
                         f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
                     split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     f.write("file " + f"'silence.mp3'" + "\n")
-                f.close()
+                
 
                 os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
                           "-i " + f"{self.path}/list.txt " +
