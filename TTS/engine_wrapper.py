@@ -21,7 +21,6 @@ DEFUALT_MAX_LENGTH: int = 50  # video length variable
 
 
 class TTSEngine:
-
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
 
     Args:
@@ -35,11 +34,11 @@ class TTSEngine:
     """
 
     def __init__(
-        self,
-        tts_module,
-        reddit_object: dict,
-        path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
+            self,
+            tts_module,
+            reddit_object: dict,
+            path: str = "assets/temp/mp3",
+            max_length: int = DEFUALT_MAX_LENGTH,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
@@ -61,8 +60,8 @@ class TTSEngine:
 
         self.call_tts("title", self.reddit_object["thread_title"])
         if (
-            self.reddit_object["thread_post"] != ""
-            and settings.config["settings"]["storymode"] == True
+                self.reddit_object["thread_post"] != ""
+                and settings.config["settings"]["storymode"] == True
         ):
             self.call_tts("posttext", self.reddit_object["thread_post"])
 
@@ -72,7 +71,7 @@ class TTSEngine:
             if self.length > self.max_length:
                 break
             if (
-                len(comment["comment_body"]) > self.tts_module.max_chars
+                    len(comment["comment_body"]) > self.tts_module.max_chars
             ):  # Split the comment if it is too long
                 self.split_post(comment["comment_body"], idx)  # Split the comment
             else:  # If the comment is not too long, just call the tts engine
@@ -89,7 +88,6 @@ class TTSEngine:
                 r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text
             )
         ]
-        offset = 0
         try:
             silence_duration = settings.config["settings"]["tts"]["silence_duration"]
         except AttributeError:
@@ -100,9 +98,9 @@ class TTSEngine:
 
         idy = None
         for idy, text_cut in enumerate(split_text):
-
             newtext = process_text(text_cut)
-            print(f"{idx}-{idy}: {newtext}\n")
+            #print(f"{idx}-{idy}: {newtext}\n")
+
             if not newtext or newtext.isspace():
                 print("newtext was blank because sanitized split text resulted in none")
                 continue
@@ -136,7 +134,7 @@ class TTSEngine:
                 except AttributeError:
                     silence_duration = 0.3
                 silence = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration,
-                                         fps=44100)
+                                    fps=44100)
                 silence = volumex(silence, 0)
                 silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
 
@@ -153,7 +151,7 @@ class TTSEngine:
                 try:
                     name = ["title_no_silence.mp3", "silence.mp3", "title.txt"]
                     for i in range(0, len(name)):
-                        os.unlink(str(rf"{self.path}/"+name[i]))
+                        os.unlink(str(rf"{self.path}/" + name[i]))
                 except FileNotFoundError:
                     print("file not found error")
                 except OSError:
@@ -168,6 +166,7 @@ class TTSEngine:
                 clip.close()
             except:
                 self.length = 0
+
 
 def process_text(text: str):
     lang = settings.config["reddit"]["thread"]["post_lang"]
