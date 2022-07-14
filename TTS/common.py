@@ -23,13 +23,32 @@ class BaseApiTTS:
             Split text as a list
         """
         # Split by comma or dot (else you can lose intonations), if there is non, split by groups of 299 chars
-        if '.' in text and all([split_text.__len__() < max_length for split_text in text.split('.')]):
-            return text.split('.')
+        split_text = ''
 
-        if ',' in text and all([split_text.__len__() < max_length for split_text in text.split(',')]):
-            return text.split(',')
+        split_text = list(
+            map(lambda x: x.strip() if x.strip()[-1] != '.' else x.strip()[:-1],
+                filter(lambda x: True if x else False, text.split('.')))
+        )
+        if split_text and all([chunk.__len__() < max_length for chunk in split_text]):
+            return split_text
 
-        return [text[i:i + max_length] for i in range(0, len(text), max_length)]
+        split_text = list(
+            map(lambda x: x.strip() if x.strip()[-1] != ',' else x.strip()[:-1],
+                filter(lambda x: True if x else False, text.split(','))
+                )
+        )
+        if split_text and all([chunk.__len__() < max_length for chunk in split_text]):
+            return split_text
+
+        return list(
+            map(
+                lambda x: x.strip() if x.strip()[-1] != '.' or x.strip()[-1] != ',' else x.strip()[:-1],
+                filter(
+                    lambda x: True if x else False,
+                    [text[i:i + max_length] for i in range(0, len(text), max_length)]
+                )
+            )
+        )
 
     def write_file(
             self,
