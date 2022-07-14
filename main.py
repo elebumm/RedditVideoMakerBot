@@ -15,7 +15,9 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import RedditScreenshot
 from video_creation.voices import save_text_to_mp3
 
-VERSION = "2.2.9"
+__VERSION__ = "2.3"
+__BRANCH__ = "master"
+
 print(
     """
 ██████╗ ███████╗██████╗ ██████╗ ██╗████████╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗     ███╗   ███╗ █████╗ ██╗  ██╗███████╗██████╗
@@ -30,7 +32,7 @@ print(
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
 )
-print_step(f"You are using V{VERSION} of the bot")
+print_step(f"You are using v{__VERSION__} of the bot")
 
 
 async def main(
