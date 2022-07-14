@@ -13,7 +13,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFUALT_MAX_LENGTH: int = 50  # video length variable
+DEFAULT_MAX_LENGTH: int = 50  # video length variable
 
 
 class TTSEngine:
@@ -35,7 +35,7 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
+        max_length: int = DEFAULT_MAX_LENGTH,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
