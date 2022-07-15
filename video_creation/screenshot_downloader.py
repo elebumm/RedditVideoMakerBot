@@ -63,7 +63,7 @@ class ExceptionDecorator:
 def catch_exception(
         func: Optional[_function],
         exception: Optional[_exceptions] = None,
-) -> ExceptionDecorator | _function:
+) -> Union[ExceptionDecorator, _function]:
     """
     Decorator for catching exceptions and writing logs
 
@@ -91,7 +91,7 @@ class Browser:
         default={
             'defaultViewport': {
                 'width': 500,
-                'height': 900,
+                'height': 1200,
             },
         },
         kw_only=True,

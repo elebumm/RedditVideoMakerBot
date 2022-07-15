@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import re
 from os.path import exists
-from typing import Tuple, Any
+from typing import Tuple, Any, Union
 
 from moviepy.editor import (
     VideoFileClip,
@@ -80,7 +80,7 @@ def make_final_video(
     opacity = settings.config['settings']['opacity'] / 100
 
     def create_audio_clip(
-            clip_title: str | int,
+            clip_title: Union[str, int],
             clip_start: float,
     ) -> 'AudioFileClip':
         return (
@@ -126,7 +126,7 @@ def make_final_video(
     new_opacity = 1 if opacity is None or opacity >= 1 else opacity
 
     def create_image_clip(
-            image_title: str | int,
+            image_title: Union[str, int],
             audio_start: float,
             audio_duration: float,
     ) -> 'ImageClip':
@@ -174,7 +174,7 @@ def make_final_video(
     #        .set_opacity(float(opacity)),
     #    )
     # else: story mode stuff
-    image_concat = concatenate_videoclips(image_clips).set_position(background_config[3])
+    image_concat = CompositeVideoClip(image_clips).set_position(background_config[3])
 
     download_background(background_config)
     chop_background_video(background_config, video_duration)
@@ -209,8 +209,6 @@ def make_final_video(
             y2=back_video_height
         )
 
-    [print(image.start, audio.start, '|', audio.end, image.end, end=f'\n{"-" * 10}\n') for
-     audio, image in zip(audio_clips, image_clips)]
     final = CompositeVideoClip([background_clip, image_concat])
     final.audio = audio_composite
 

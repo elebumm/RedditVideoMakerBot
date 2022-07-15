@@ -114,7 +114,7 @@ def get_random_voice(
 
 def audio_length(
         path: str,
-) -> float | int:
+) -> Union[float, int]:
     """
     Gets the length of the audio file
 
@@ -132,9 +132,9 @@ def audio_length(
     except Exception as e:
         import logging
 
-        logger = logging.getLogger('spam_application')
-        logger.setLevel(logging.DEBUG)
-        handler = logging.FileHandler('tts_log', mode='a+', encoding='utf-8')
+        logger = logging.getLogger('tts_logger')
+        logger.setLevel(logging.ERROR)
+        handler = logging.FileHandler('.tts.log', mode='a+', encoding='utf-8')
         logger.addHandler(handler)
         logger.error('Error occurred in audio_length:', e)
         return 0
