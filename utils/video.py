@@ -18,7 +18,6 @@ class Video:
         path = "./assets/temp/png/watermark.png"
         width = int(fontsize * len(text))
         height = int(fontsize * len(text) / 2)
-
         white = (255, 255, 255)
         transparent = (0, 0, 0, 0)
 
@@ -35,10 +34,15 @@ class Video:
         im.save(path)
         return ImageClip(path)
 
-    def add_watermark(self, text, opacity=0.5, duration: int | float = 5, position: Tuple = (1, 100), fontsize=15):
+    def add_watermark(self, text, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15):
+        print(len(text))
+        compensation = round((position[0] / ((len(text) * (fontsize / 5) / 1.5) / 100 + position[0] * position[0])), ndigits=2)
+        position = (compensation, position[1])
+        print(f'{compensation=}')
+        print(f'{position=}')
         img_clip = self._create_watermark(text, opacity=opacity, fontsize=fontsize)
         img_clip = img_clip.set_opacity(opacity).set_duration(duration)
-        img_clip = img_clip.set_position(("center","bottom"))  # set position doesn't work for some reason # todo fix
+        img_clip = img_clip.set_position(position, relative=True)  # set position doesn't work for some reason # fixme
 
         # Overlay the img clip on the first video clip
         self.video = CompositeVideoClip([self.video, img_clip])
