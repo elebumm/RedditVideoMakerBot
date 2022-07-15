@@ -58,7 +58,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
         "assets/backgrounds", filename=f"{credit}-{filename}"
     )
-    print_substep("Background videos downloaded successfully! 🎉", style="bold green")
+    print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
 def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
