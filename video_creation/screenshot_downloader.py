@@ -51,27 +51,36 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             page.locator('[data-testid="content-gate"] button').click()
 
             if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator('[data-click-id="text"] button').click()  # Remove "Click to see nsfw" Button in Screenshot
+                page.locator(
+                    '[data-click-id="text"] button'
+                ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
         # translate code
 
         if settings.config["reddit"]["thread"]["post_lang"]:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(reddit_object["thread_title"],
-                                    to_language=settings.config["reddit"]["thread"]["post_lang"], )
+            texts_in_tl = ts.google(
+                reddit_object["thread_title"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
+            )
 
             page.evaluate(
                 "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
-                texts_in_tl, )
+                texts_in_tl,
+            )
         else:
             print_substep("Skipping translation...")
 
         page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
 
         if storymode:
-            page.locator('[data-click-id="text"]').screenshot(path="assets/temp/png/story_content.png")
+            page.locator('[data-click-id="text"]').screenshot(
+                path="assets/temp/png/story_content.png"
+            )
         else:
-            for idx, comment in enumerate(track(reddit_object["comments"], "Downloading screenshots...")):
+            for idx, comment in enumerate(
+                track(reddit_object["comments"], "Downloading screenshots...")
+            ):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
                     break
@@ -84,16 +93,21 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                 # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = ts.google(comment["comment_body"],
-                                           to_language=settings.config["reddit"]["thread"]["post_lang"], )
+                    comment_tl = ts.google(
+                        comment["comment_body"],
+                        to_language=settings.config["reddit"]["thread"]["post_lang"],
+                    )
                     page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
-                        [comment_tl, comment["comment_id"]], )
+                        [comment_tl, comment["comment_id"]],
+                    )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(path=f"assets/temp/png/comment_{idx}.png")
+                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                        path=f"assets/temp/png/comment_{idx}.png"
+                    )
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
-                    print('TimeoutError: Skipping screenshot...')
+                    print("TimeoutError: Skipping screenshot...")
                     continue
         print_substep("Screenshots downloaded Successfully.", style="bold green")

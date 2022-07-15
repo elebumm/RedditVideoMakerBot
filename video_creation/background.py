@@ -13,6 +13,7 @@ from utils import settings
 from utils.CONSTANTS import background_options
 from utils.console import print_step, print_substep
 
+
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
 

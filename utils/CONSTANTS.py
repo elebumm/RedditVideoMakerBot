@@ -1,4 +1,3 @@
-
 # Supported Background. Can add/remove background video here....
 # <key>-<value> : key -> used as keyword for TOML file. value -> background configuration
 # Format (value):

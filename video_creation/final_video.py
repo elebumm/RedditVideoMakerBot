@@ -35,6 +35,7 @@ def name_normalize(name: str) -> str:
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         import translators as ts
+
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
