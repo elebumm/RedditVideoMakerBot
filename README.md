@@ -64,7 +64,7 @@ https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-
 
 ## Contributing & Ways to improve 📈
 
-In its current state, this bot does exactly what it needs to do. However, lots of improvements can be made.
+In its current state, this bot does exactly what it needs to do. However, improvements can always be made!
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 

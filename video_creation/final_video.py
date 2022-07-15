@@ -15,6 +15,7 @@ from rich.console import Console
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from utils.video import Video
 from utils.videos import save_data
 from utils import settings
 
@@ -34,6 +35,7 @@ def name_normalize(name: str) -> str:
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         import translators as ts
+
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
@@ -109,7 +111,9 @@ def make_final_video(
     #    )
     # else: story mode stuff
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        img_clip_pos
+    )  # note transition kwarg for delay in imgs
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -129,7 +133,9 @@ def make_final_video(
     #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
-
+    final = Video(final).add_watermark(
+        text=f"Background credit: {background_config[2]}", opacity=0.4
+    )
     final.write_videofile(
         "assets/temp/temp.mp4",
         fps=30,

@@ -2,6 +2,9 @@
 import math
 from subprocess import Popen
 from os import name
+
+from prawcore import ResponseException
+
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
@@ -16,8 +19,8 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.3"
-__BRANCH__ = "master"
+__VERSION__ = "2.3.1"
+__BRANCH__ = "develop"
 
 print(
     """
@@ -51,14 +54,20 @@ def main(POST_ID=None):
 def run_many(times):
     for x in range(1, times + 1):
         print_step(
-            f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th","th", "th")[x%10]} iteration of {times}'
+            f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
         )  # correct 1st 2nd 3rd 4th 5th....
         main()
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
+def shutdown():
+    print_markdown("## Clearing temp files")
+    cleanup()
+    exit()
+
+
 if __name__ == "__main__":
-    config = settings.check_toml(".config.template.toml", "config.toml")
+    config = settings.check_toml("utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:
         if config["settings"]["times_to_run"]:
@@ -68,13 +77,19 @@ if __name__ == "__main__":
             for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
-                    f'on the {index}{("st" if index%10 == 1 else ("nd" if index%10 == 2 else ("rd" if index%10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
+                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         else:
             main()
     except KeyboardInterrupt:
-        print_markdown("## Clearing temp files")
-        cleanup()
-        exit()
+        shutdown()
+    except ResponseException:
+        # error for invalid credentials
+        print_markdown("## Invalid credentials")
+        print_markdown("Please check your credentials in the config.toml file")
+
+        shutdown()
+
+        # todo error
