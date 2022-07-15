@@ -35,7 +35,7 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
+        max_length: int = DEFAULT_MAX_LENGTH,
         last_clip_length: int = 0,
     ):
         self.tts_module = tts_module()
