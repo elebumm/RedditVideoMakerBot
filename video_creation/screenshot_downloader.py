@@ -18,8 +18,8 @@ from attr import attrs, attrib
 from attr.validators import instance_of, optional
 from typing import TypeVar, Optional, Callable, Union
 
-_function = TypeVar('_function', bound=Callable[..., object])
-_exceptions = TypeVar('_exceptions', bound=Optional[Union[type, tuple, list]])
+_function = TypeVar("_function", bound=Callable[..., object])
+_exceptions = TypeVar("_exceptions", bound=Optional[Union[type, tuple, list]])
 
 
 @attrs
@@ -45,17 +45,17 @@ class ExceptionDecorator:
             except Exception as caughtException:
                 import logging
 
-                logger = logging.getLogger('webdriver_log')
+                logger = logging.getLogger("webdriver_log")
                 logger.setLevel(logging.ERROR)
-                handler = logging.FileHandler('.webdriver.log', mode='a+', encoding='utf-8')
+                handler = logging.FileHandler(".webdriver.log", mode="a+", encoding="utf-8")
                 logger.addHandler(handler)
 
                 if isinstance(self.exception, type):
                     if not type(caughtException) == self.exception:
-                        logger.error(f'unexpected error - {caughtException}')
+                        logger.error(f"unexpected error - {caughtException}")
                 else:
                     if not type(caughtException) in self.exception:
-                        logger.error(f'unexpected error - {caughtException}')
+                        logger.error(f"unexpected error - {caughtException}")
 
         return wrapper
 
@@ -89,9 +89,9 @@ class Browser:
     default_Viewport: dict = attrib(
         validator=instance_of(dict),
         default={
-            'defaultViewport': {
-                'width': 500,
-                'height': 1200,
+            "defaultViewport": {
+                "width": 500,
+                "height": 1200,
             },
         },
         kw_only=True,
@@ -230,28 +230,28 @@ class RedditScreenshot(Browser, Wait):
 
         await self.click(
             page_instance,
-            '//*[contains(@class, \'header-user-dropdown\')]',
-            {'timeout': 5000},
+            "//*[contains(@class, 'header-user-dropdown')]",
+            {"timeout": 5000},
         )
 
         # It's normal not to find it, sometimes there is none :shrug:
         await self.click(
             page_instance,
-            '//*[contains(text(), \'Settings\')]/ancestor::button[1]',
-            {'timeout': 5000},
+            "//*[contains(text(), 'Settings')]/ancestor::button[1]",
+            {"timeout": 5000},
         )
 
         await self.click(
             page_instance,
-            '//*[contains(text(), \'Dark Mode\')]/ancestor::button[1]',
-            {'timeout': 5000},
+            "//*[contains(text(), 'Dark Mode')]/ancestor::button[1]",
+            {"timeout": 5000},
         )
 
         # Closes settings
         await self.click(
             page_instance,
-            '//*[contains(@class, \'header-user-dropdown\')]',
-            {'timeout': 5000},
+            "//*[contains(@class, 'header-user-dropdown')]",
+            {"timeout": 5000},
         )
 
     async def __close_nsfw(
@@ -260,7 +260,7 @@ class RedditScreenshot(Browser, Wait):
     ) -> None:
         from asyncio import ensure_future
 
-        print_substep('Post is NSFW. You are spicy...')
+        print_substep("Post is NSFW. You are spicy...")
         # To await indirectly reload
         navigation = ensure_future(page_instance.waitForNavigation())
 
@@ -268,7 +268,7 @@ class RedditScreenshot(Browser, Wait):
         await self.click(
             page_instance,
             '//button[text()="Yes"]',
-            {'timeout': 5000},
+            {"timeout": 5000},
         )
 
         # Await reload
@@ -277,7 +277,7 @@ class RedditScreenshot(Browser, Wait):
         await (await self.find_xpath(
             page_instance,
             '//button[text()="Click to see nsfw"]',
-            {'timeout': 5000},
+            {"timeout": 5000},
         )).click()
 
     async def __collect_comment(
@@ -296,10 +296,10 @@ class RedditScreenshot(Browser, Wait):
         await comment_page.goto(f'https://reddit.com{comment_obj["comment_url"]}')
 
         # Translates submission' comment
-        if settings.config['reddit']['thread']['post_lang']:
+        if settings.config["reddit"]["thread"]["post_lang"]:
             comment_tl = ts.google(
-                comment_obj['comment_body'],
-                to_language=settings.config['reddit']['thread']['post_lang'],
+                comment_obj["comment_body"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
             )
             await comment_page.evaluate(
                 f'([tl_content, tl_id]) => document.querySelector(`#t1_{comment_obj["comment_id"]} > div:nth-child(2) '
@@ -309,7 +309,7 @@ class RedditScreenshot(Browser, Wait):
         await self.screenshot(
             comment_page,
             f'//*[contains(@id, \'t1_{comment_obj["comment_id"]}\')]',
-            {'path': f'assets/temp/png/comment_{filename_idx}.png'},
+            {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
     async def download(
@@ -318,31 +318,31 @@ class RedditScreenshot(Browser, Wait):
         """
         Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
         """
-        print_step('Downloading screenshots of reddit posts...')
+        print_step("Downloading screenshots of reddit posts...")
 
-        print_substep('Launching Headless Browser...')
+        print_substep("Launching Headless Browser...")
         await self.get_browser()
 
         # ! Make sure the reddit screenshots folder exists
-        Path('assets/temp/png').mkdir(parents=True, exist_ok=True)
+        Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
 
         # Get the thread screenshot
         reddit_main = await self.browser.newPage()
-        await reddit_main.goto(self.reddit_object['thread_url'])
+        await reddit_main.goto(self.reddit_object["thread_url"])
 
-        if settings.config['settings']['theme'] == 'dark':
+        if settings.config["settings"]["theme"] == "dark":
             await self.__dark_theme(reddit_main)
 
-        if self.reddit_object['is_nsfw']:
+        if self.reddit_object["is_nsfw"]:
             # This means the post is NSFW and requires to click the proceed button.
             await self.__close_nsfw(reddit_main)
 
         # Translates submission title
-        if settings.config['reddit']['thread']['post_lang']:
-            print_substep('Translating post...')
+        if settings.config["reddit"]["thread"]["post_lang"]:
+            print_substep("Translating post...")
             texts_in_tl = ts.google(
-                self.reddit_object['thread_title'],
-                to_language=settings.config['reddit']['thread']['post_lang'],
+                self.reddit_object["thread_title"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
             )
 
             await reddit_main.evaluate(
@@ -351,10 +351,10 @@ class RedditScreenshot(Browser, Wait):
                 texts_in_tl,
             )
         else:
-            print_substep('Skipping translation...')
+            print_substep("Skipping translation...")
 
         async_tasks_primary = [
-            self.__collect_comment(self.reddit_object['comments'][idx], idx) for idx in
+            self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
             self.screenshot_idx
         ]
 
@@ -362,7 +362,7 @@ class RedditScreenshot(Browser, Wait):
             self.screenshot(
                 reddit_main,
                 f'//*[contains(@id, \'t3_{self.reddit_object["thread_id"]}\')]',
-                {'path': f'assets/temp/png/title.png'},
+                {"path": "assets/temp/png/title.png"},
             )
         )
 
@@ -380,9 +380,10 @@ class RedditScreenshot(Browser, Wait):
             chunk_list = async_tasks_primary.__len__() // 10 + (1 if async_tasks_primary.__len__() % 10 != 0 else 0)
             for task in track(
                     as_completed(chunked_tasks),
-                    description=f'Downloading comments: Chunk {idx}/{chunk_list}',
+                    description=f"Downloading comments: Chunk {idx}/{chunk_list}",
+                    total=chunked_tasks.__len__(),
             ):
                 await task
 
-        print_substep('Comments downloaded Successfully.', style='bold green')
+        print_substep("Comments downloaded Successfully.", style="bold green")
         await self.close_browser()

@@ -23,18 +23,16 @@ class BaseApiTTS:
             Split text as a list
         """
         # Split by comma or dot (else you can lose intonations), if there is non, split by groups of 299 chars
-        split_text = ''
-
         split_text = list(
-            map(lambda x: x.strip() if x.strip()[-1] != '.' else x.strip()[:-1],
-                filter(lambda x: True if x else False, text.split('.')))
+            map(lambda x: x.strip() if x.strip()[-1] != "." else x.strip()[:-1],
+                filter(lambda x: True if x else False, text.split(".")))
         )
         if split_text and all([chunk.__len__() < max_length for chunk in split_text]):
             return split_text
 
         split_text = list(
-            map(lambda x: x.strip() if x.strip()[-1] != ',' else x.strip()[:-1],
-                filter(lambda x: True if x else False, text.split(','))
+            map(lambda x: x.strip() if x.strip()[-1] != "," else x.strip()[:-1],
+                filter(lambda x: True if x else False, text.split(","))
                 )
         )
         if split_text and all([chunk.__len__() < max_length for chunk in split_text]):
@@ -42,7 +40,7 @@ class BaseApiTTS:
 
         return list(
             map(
-                lambda x: x.strip() if x.strip()[-1] != '.' or x.strip()[-1] != ',' else x.strip()[:-1],
+                lambda x: x.strip() if x.strip()[-1] != "." or x.strip()[-1] != "," else x.strip()[:-1],
                 filter(
                     lambda x: True if x else False,
                     [text[i:i + max_length] for i in range(0, len(text), max_length)]
@@ -64,7 +62,7 @@ class BaseApiTTS:
         """
         decoded_text = base64.b64decode(output_text) if self.decode_base64 else output_text
 
-        with open(filepath, 'wb') as out:
+        with open(filepath, "wb") as out:
             out.write(decoded_text)
 
     def run(
@@ -82,7 +80,7 @@ class BaseApiTTS:
         Returns:
 
         """
-        output_text = ''
+        output_text = ""
         if len(text) > self.max_chars:
             for part in self.text_len_sanitize(text, self.max_chars):
                 if part:
@@ -135,9 +133,9 @@ def audio_length(
     except Exception as e:
         import logging
 
-        logger = logging.getLogger('tts_logger')
+        logger = logging.getLogger("tts_logger")
         logger.setLevel(logging.ERROR)
-        handler = logging.FileHandler('.tts.log', mode='a+', encoding='utf-8')
+        handler = logging.FileHandler(".tts.log", mode="a+", encoding="utf-8")
         logger.addHandler(handler)
-        logger.error('Error occurred in audio_length:', e)
+        logger.error("Error occurred in audio_length:", e)
         return 0

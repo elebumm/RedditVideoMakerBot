@@ -9,10 +9,10 @@ from utils.console import print_table, print_step
 
 
 TTSProviders = {
-    'GoogleTranslate': GTTS,
-    'AWSPolly': AWSPolly,
-    'StreamlabsPolly': StreamlabsPolly,
-    'TikTok': TikTok,
+    "GoogleTranslate": GTTS,
+    "AWSPolly": AWSPolly,
+    "StreamlabsPolly": StreamlabsPolly,
+    "TikTok": TikTok,
 }
 
 
@@ -28,15 +28,15 @@ def save_text_to_mp3(
         The number of comments audio was generated for
     """
 
-    voice = settings.config['settings']['tts']['choice']
+    voice = settings.config["settings"]["tts"]["choice"]
     if voice.casefold() not in map(lambda _: _.casefold(), TTSProviders):
         while True:
-            print_step('Please choose one of the following TTS providers: ')
+            print_step("Please choose one of the following TTS providers: ")
             print_table(TTSProviders)
-            voice = input('\n')
+            voice = input("\n")
             if voice.casefold() in map(lambda _: _.casefold(), TTSProviders):
                 break
-            print('Unknown Choice')
+            print("Unknown Choice")
     engine_instance = TTSEngine(get_case_insensitive_key_value(TTSProviders, voice), reddit_obj)
     return engine_instance.run()
 

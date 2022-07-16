@@ -37,7 +37,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
             continue
         if submission.num_comments < int(settings.config["reddit"]["thread"]["min_comments"]):
             print_substep(
-                'This post has under the specified minimum of comments' 
+                "This post has under the specified minimum of comments"
                 f'({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
             continue

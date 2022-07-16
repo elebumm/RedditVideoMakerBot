@@ -8,21 +8,21 @@ from TTS.common import BaseApiTTS, get_random_voice
 from utils.voice import check_ratelimit
 
 voices = [
-    'Brian',
-    'Emma',
-    'Russell',
-    'Joey',
-    'Matthew',
-    'Joanna',
-    'Kimberly',
-    'Amy',
-    'Geraint',
-    'Nicole',
-    'Justin',
-    'Ivy',
-    'Kendra',
-    'Salli',
-    'Raveena',
+    "Brian",
+    "Emma",
+    "Russell",
+    "Joey",
+    "Matthew",
+    "Joanna",
+    "Kimberly",
+    "Amy",
+    "Geraint",
+    "Nicole",
+    "Justin",
+    "Ivy",
+    "Kendra",
+    "Salli",
+    "Raveena",
 ]
 
 
@@ -35,7 +35,7 @@ class StreamlabsPolly(BaseApiTTS):
         validator=instance_of(bool),
         default=False
     )
-    url: str = 'https://streamlabs.com/polly/speak',
+    url: str = "https://streamlabs.com/polly/speak"
     max_chars: int = 550
 
     def make_request(
@@ -54,27 +54,27 @@ class StreamlabsPolly(BaseApiTTS):
         voice = (
             get_random_voice(voices)
             if self.random_voice
-            else str(settings.config['settings']['tts']['streamlabs_polly_voice']).capitalize()
-            if str(settings.config['settings']['tts']['streamlabs_polly_voice']).lower() in [
+            else str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
+            if str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).lower() in [
                 voice.lower() for voice in voices]
             else get_random_voice(voices)
         )
         response = requests.post(
             self.url,
             data={
-                'voice': voice,
-                'text': text,
-                'service': 'polly',
+                "voice": voice,
+                "text": text,
+                "service": "polly",
             })
         if not check_ratelimit(response):
             return self.make_request(text)
         else:
             try:
-                results = requests.get(response.json()['speak_url'])
+                results = requests.get(response.json()["speak_url"])
                 return results
             except (KeyError, JSONDecodeError):
                 try:
-                    if response.json()['error'] == 'No text specified!':
-                        raise ValueError('Please specify a text to convert to speech.')
+                    if response.json()["error"] == "No text specified!":
+                        raise ValueError("Please specify a text to convert to speech.")
                 except (KeyError, JSONDecodeError):
-                    print('Error occurred calling Streamlabs Polly')
+                    print("Error occurred calling Streamlabs Polly")

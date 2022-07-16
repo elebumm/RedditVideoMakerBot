@@ -30,18 +30,18 @@ def name_normalize(
         name: str
 ) -> str:
     name = re.sub(r'[?\\"%*:|<>]', "", name)
-    name = re.sub(r'( [w,W]\s?\/\s?[o,O,0])', r' without', name)
-    name = re.sub(r'( [w,W]\s?\/)', r' with', name)
-    name = re.sub(r'(\d+)\s?\/\s?(\d+)', r'\1 of \2', name)
-    name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
-    name = re.sub(r'\/', '', name)
+    name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
+    name = re.sub(r"( [w,W]\s?\/)", r" with", name)
+    name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
+    name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
+    name = re.sub(r"\/", "", name)
     # name[:30]  # the hell this little guy does? commented until explained
 
-    lang = settings.config['reddit']['thread']['post_lang']
+    lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         import translators as ts
 
-        print_substep('Translating filename...')
+        print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
     return name
@@ -60,29 +60,29 @@ def make_final_video(
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
-    W: int = int(settings.config['settings']['video_width'])
-    H: int = int(settings.config['settings']['video_height'])
+    W: int = int(settings.config["settings"]["video_width"])
+    H: int = int(settings.config["settings"]["video_height"])
 
     if not W or not H:
         W, H = 1080, 1920
 
-    max_length: int = int(settings.config['settings']['video_length'])
-    time_before_first_picture: float = settings.config['settings']['time_before_first_picture']
-    time_before_tts: float = settings.config['settings']['time_before_tts']
-    time_between_pictures: float = settings.config['settings']['time_between_pictures']
-    delay_before_end: float = settings.config['settings']['delay_before_end']
+    max_length: int = int(settings.config["settings"]["video_length"])
+    time_before_first_picture: float = settings.config["settings"]["time_before_first_picture"]
+    time_before_tts: float = settings.config["settings"]["time_before_tts"]
+    time_between_pictures: float = settings.config["settings"]["time_between_pictures"]
+    delay_before_end: float = settings.config["settings"]["delay_before_end"]
 
-    print_step('Creating the final video 🎥')
+    print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
-    opacity = settings.config['settings']['opacity'] / 100
+    opacity = settings.config["settings"]["opacity"] / 100
 
     def create_audio_clip(
             clip_title: Union[str, int],
             clip_start: float,
     ) -> 'AudioFileClip':
         return (
-            AudioFileClip(f'assets/temp/mp3/{clip_title}.mp3')
+            AudioFileClip(f"assets/temp/mp3/{clip_title}.mp3")
             .set_start(clip_start)
         )
 
@@ -93,7 +93,7 @@ def make_final_video(
     correct_audio_offset = time_before_tts * 2 + time_between_pictures
 
     audio_title = create_audio_clip(
-        'title',
+        "title",
         time_before_first_picture + time_before_tts,
     )
     video_duration += audio_title.duration + time_before_first_picture + time_before_tts
@@ -102,7 +102,8 @@ def make_final_video(
 
     for audio_title in track(
             indexes_of_clips,
-            description='Gathering audio clips...',
+            description="Gathering audio clips...",
+            total=indexes_of_clips.__len__()
     ):
         temp_audio_clip = create_audio_clip(
             audio_title,
@@ -118,7 +119,7 @@ def make_final_video(
     # Can't use concatenate_audioclips here, it resets clips' start point
     audio_composite = CompositeAudioClip(audio_clips)
 
-    console.log('[bold green] Video Will Be: %.2f Seconds Long' % video_duration)
+    console.log("[bold green] Video Will Be: %.2f Seconds Long" % video_duration)
 
     # Gather all images
     new_opacity = 1 if opacity is None or opacity >= 1 else opacity
@@ -129,7 +130,7 @@ def make_final_video(
             audio_duration: float,
     ) -> 'ImageClip':
         return (
-            ImageClip(f'assets/temp/png/{image_title}.png')
+            ImageClip(f"assets/temp/png/{image_title}.png")
             .set_start(audio_start - time_before_tts)
             .set_duration(time_before_tts * 2 + audio_duration)
             .set_opacity(new_opacity)
@@ -144,19 +145,23 @@ def make_final_video(
 
     image_clips.append(
         create_image_clip(
-            'title',
+            "title",
             audio_clips[0].start,
             audio_clips[0].duration
         )
     )
 
-    for idx, photo_idx in enumerate(
-            indexes_for_videos,
-            start=index_offset,
+    for idx, photo_idx in track(
+            enumerate(
+                indexes_for_videos,
+                start=index_offset,
+            ),
+            description="Gathering audio clips...",
+            total=indexes_for_videos[index_offset:].__len__()
     ):
         image_clips.append(
             create_image_clip(
-                f'comment_{photo_idx}',
+                f"comment_{photo_idx}",
                 audio_clips[idx].start,
                 audio_clips[idx].duration
             )
@@ -174,12 +179,13 @@ def make_final_video(
     # else: story mode stuff
 
     # Can't use concatenate_videoclips here, it resets clips' start point
-    image_concat = CompositeVideoClip(image_clips).set_position(background_config[3])
+    image_concat = CompositeVideoClip(image_clips)
+    image_concat.set_position(background_config[3])
 
     download_background(background_config)
     chop_background_video(background_config, video_duration)
     background_clip = (
-        VideoFileClip('assets/temp/background.mp4')
+        VideoFileClip("assets/temp/background.mp4")
         .set_start(0)
         .set_end(video_duration)
         .without_audio()
@@ -212,15 +218,15 @@ def make_final_video(
     final = CompositeVideoClip([background_clip, image_concat])
     final.audio = audio_composite
 
-    title = re.sub(r'[^\w\s-]', '', reddit_obj['thread_title'])
-    idx = re.sub(r'[^\w\s-]', '', reddit_obj['thread_id'])
+    title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+    idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
-    filename = f'{name_normalize(title)}.mp4'
-    subreddit = str(settings.config['reddit']['thread']['subreddit'])
+    filename = f"{name_normalize(title)}.mp4"
+    subreddit = str(settings.config["reddit"]["thread"]["subreddit"])
 
-    if not exists(f'./results/{subreddit}'):
-        print_substep('The results folder didn\'t exist so I made it')
-        os.makedirs(f'./results/{subreddit}')
+    if not exists(f"./results/{subreddit}"):
+        print_substep("The results folder didn't exist so I made it")
+        os.makedirs(f"./results/{subreddit}")
 
     # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
     #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
@@ -235,10 +241,10 @@ def make_final_video(
     )
 
     final.write_videofile(
-        'assets/temp/temp.mp4',
+        "assets/temp/temp.mp4",
         fps=30,
-        audio_codec='aac',
-        audio_bitrate='192k',
+        audio_codec="aac",
+        audio_bitrate="192k",
         verbose=False,
         threads=multiprocessing.cpu_count(),
     )
@@ -246,13 +252,13 @@ def make_final_video(
         "assets/temp/temp.mp4",
         0,
         video_duration,
-        targetname=f'results/{subreddit}/{filename}',
+        targetname=f"results/{subreddit}/{filename}",
     )
     save_data(subreddit, filename, title, idx, background_config[2])
-    print_step('Removing temporary files 🗑')
+    print_step("Removing temporary files 🗑")
     cleanups = cleanup()
-    print_substep(f'Removed {cleanups} temporary files 🗑')
-    print_substep('See result in the results folder!')
+    print_substep(f"Removed {cleanups} temporary files 🗑")
+    print_substep("See result in the results folder!")
 
     print_step(
         f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
