@@ -4,7 +4,8 @@ from botocore.exceptions import BotoCoreError, ClientError, ProfileNotFound
 
 import sys
 from utils import settings
-from attr import attrs
+from attr import attrs, attrib
+from attr.validators import instance_of
 
 from TTS.common import get_random_voice
 
@@ -28,9 +29,12 @@ voices = [
 ]
 
 
-@attrs(auto_attribs=True)
+@attrs
 class AWSPolly:
-    random_voice: bool = False
+    random_voice: bool = attrib(
+        validator=instance_of(bool),
+        default=False
+    )
     max_chars: int = 0
 
     def run(

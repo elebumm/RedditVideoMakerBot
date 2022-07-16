@@ -2,6 +2,7 @@ import requests
 from requests.exceptions import JSONDecodeError
 from utils import settings
 from attr import attrs, attrib
+from attr.validators import instance_of
 
 from TTS.common import BaseApiTTS, get_random_voice
 from utils.voice import check_ratelimit
@@ -28,15 +29,14 @@ voices = [
 # valid voices https://lazypy.ro/tts/
 
 
-@attrs(auto_attribs=True)
+@attrs
 class StreamlabsPolly(BaseApiTTS):
-    random_voice: bool = False
-    url: str = attrib(
-        default='https://streamlabs.com/polly/speak',
-        kw_only=True,
+    random_voice: bool = attrib(
+        validator=instance_of(bool),
+        default=False
     )
-
-    max_chars = 550
+    url: str = 'https://streamlabs.com/polly/speak',
+    max_chars: int = 550
 
     def make_request(
             self,

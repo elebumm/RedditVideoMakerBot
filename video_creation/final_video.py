@@ -9,7 +9,6 @@ from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
     ImageClip,
-    concatenate_videoclips,
     CompositeAudioClip,
     CompositeVideoClip,
 )
@@ -35,7 +34,7 @@ def name_normalize(
     name = re.sub(r'(\d+)\s?\/\s?(\d+)', r'\1 of \2', name)
     name = re.sub(r'(\w+)\s?\/\s?(\w+)', r'\1 or \2', name)
     name = re.sub(r'\/', '', name)
-    name[:30]  # the hell this little guy does?
+    # name[:30]  # the hell this little guy does? commented until explained
 
     lang = settings.config['reddit']['thread']['post_lang']
     if lang:
@@ -44,9 +43,7 @@ def name_normalize(
         print_substep('Translating filename...')
         translated_name = ts.google(name, to_language=lang)
         return translated_name
-
-    else:
-        return name
+    return name
 
 
 def make_final_video(

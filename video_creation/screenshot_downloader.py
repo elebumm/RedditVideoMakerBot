@@ -46,7 +46,7 @@ class ExceptionDecorator:
                 import logging
 
                 logger = logging.getLogger('webdriver_log')
-                logger.setLevel(logging.DEBUG)
+                logger.setLevel(logging.ERROR)
                 handler = logging.FileHandler('.webdriver.log', mode='a+', encoding='utf-8')
                 logger.addHandler(handler)
 

@@ -3,6 +3,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from attr import attrs, attrib
+from attr.validators import instance_of
 
 from TTS.common import BaseApiTTS, get_random_voice
 
@@ -62,15 +63,15 @@ voices['non_eng'] = [
 # more or less: en_us_rocket, en_us_ghostface
 
 
-@attrs(auto_attribs=True)
+@attrs
 class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
-    random_voice: bool = False
-    uri_base: str = attrib(
-        default='https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/',
-        kw_only=True,
+    random_voice: bool = attrib(
+        validator=instance_of(bool),
+        default=False
     )
-    max_chars = 300
-    decode_base64 = True
+    uri_base: str = 'https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/'
+    max_chars: int = 300
+    decode_base64: bool = True
 
     def make_request(
             self,

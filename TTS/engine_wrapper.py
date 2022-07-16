@@ -17,26 +17,21 @@ from TTS.TikTok import TikTok
 from TTS.aws_polly import AWSPolly
 
 
-@attrs(auto_attribs=True)
+@attrs
 class TTSEngine:
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
 
     Args:
         tts_module          : The TTS module. Your module should handle the TTS itself and saving to the given path under the run method.
         reddit_object         : The reddit object that contains the posts to read.
-        path (Optional)       : The unix style path to save the mp3 files to. This must not have leading or trailing slashes.
-        max_length (Optional) : The maximum length of the mp3 files in total.
 
     Notes:
         tts_module must take the arguments text and filepath.
     """
-    tts_module: Union[GTTS, StreamlabsPolly, TikTok, AWSPolly]
-    reddit_object: dict
-    path: str = 'assets/temp/mp3'
-    __total_length: int = attrib(
-        default=0,
-        kw_only=True
-    )
+    tts_module: Union[GTTS, StreamlabsPolly, TikTok, AWSPolly] = attrib()
+    reddit_object: dict = attrib()
+    __path: str = 'assets/temp/mp3'
+    __total_length: int = 0
 
     def __attrs_post_init__(self):
         # Calls an instance of the tts_module class
@@ -59,12 +54,12 @@ class TTSEngine:
         Returns:
             Indexes of comments to be used in the final video
         """
-        Path(self.path).mkdir(parents=True, exist_ok=True)
+        Path(self.__path).mkdir(parents=True, exist_ok=True)
 
         # This file needs to be removed in case this post does not use post text
         # so that it won't appear in the final video
         try:
-            Path(f'{self.path}/posttext.mp3').unlink()
+            Path(f'{self.__path}/posttext.mp3').unlink()
         except OSError:
             pass
 
@@ -109,10 +104,10 @@ class TTSEngine:
 
         self.tts_module.run(
             text=self.process_text(text),
-            filepath=f'{self.path}/{filename}.mp3'
+            filepath=f'{self.__path}/{filename}.mp3'
         )
 
-        clip_length = audio_length(f'{self.path}/{filename}.mp3')
+        clip_length = audio_length(f'{self.__path}/{filename}.mp3')
         clip_offset = self.time_between_pictures + self.time_before_tts * 2
 
         if clip_length and self.__total_length + clip_length + clip_offset <= self.max_length:
