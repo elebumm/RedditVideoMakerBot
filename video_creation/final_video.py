@@ -18,6 +18,7 @@ from rich.progress import track
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from utils.video import Video
 from utils.videos import save_data
 from utils import settings
 from video_creation.background import download_background, chop_background_video
@@ -171,6 +172,8 @@ def make_final_video(
     #        .set_opacity(float(opacity)),
     #    )
     # else: story mode stuff
+
+    # Can't use concatenate_videoclips here, it resets clips' start point
     image_concat = CompositeVideoClip(image_clips).set_position(background_config[3])
 
     download_background(background_config)
@@ -218,6 +221,18 @@ def make_final_video(
     if not exists(f'./results/{subreddit}'):
         print_substep('The results folder didn\'t exist so I made it')
         os.makedirs(f'./results/{subreddit}')
+
+    # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+    #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
+    #    audioclip = audioclip.fx( volumex, 0.2)
+    #    final_audio = mpe.CompositeAudioClip([final.audio, audioclip])
+    #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
+    #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
+    #    final.set_audio(final_audio)
+
+    final = Video(final).add_watermark(
+        text=f"Background credit: {background_config[2]}", opacity=0.4
+    )
 
     final.write_videofile(
         'assets/temp/temp.mp4',

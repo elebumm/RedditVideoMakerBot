@@ -38,7 +38,7 @@ video_width = { optional = true, default = 1080, example = 1080, explanation = "
 video_height = { optional = true, default = 1920, example = 1920, explanation = "Final video height", type = "int", nmin = 800, oob_error = "Choose at least 800 pixels long" }
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video" }
+background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", ""], explanation = "Sets the background for the video" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
 #    false,
 #], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }

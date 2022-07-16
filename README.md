@@ -48,7 +48,7 @@ On MacOS and Linux (debian, arch, fedora and centos, and based on those), you ca
 This can also be used to update the installation
 
 4. Run `python main.py`
-5. Visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps), and set up an app that is a "script".
+5. Visit [the Reddit Apps page.](https://www.reddit.com/prefs/apps), and set up an app that is a "script". Paste any URL in redirect URL. Ex:google.com
 6. The bot will ask you to fill in your details to connect to the Reddit API, and configure the bot to your liking
 7. Enjoy 😎
 8. If you need to reconfigure the bot, simply open the `config.toml` file and delete the lines that need to be changed. On the next run of the bot, it will help you reconfigure those options.
@@ -61,7 +61,7 @@ https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-
 
 ## Contributing & Ways to improve 📈
 
-In its current state, this bot does exactly what it needs to do. However, lots of improvements can be made.
+In its current state, this bot does exactly what it needs to do. However, improvements can always be made!
 
 I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
 
