@@ -124,11 +124,14 @@ def audio_length(
     Returns:
         length in seconds as an int
     """
-    from mutagen.mp3 import MP3
+    from moviepy.editor import AudioFileClip
 
     try:
-        audio = MP3(path)
-        return audio.info.length
+        # please use something else here in the future
+        audio_clip = AudioFileClip(path)
+        audio_duration = audio_clip.duration
+        audio_clip.close()
+        return audio_duration
     except Exception as e:
         import logging
 

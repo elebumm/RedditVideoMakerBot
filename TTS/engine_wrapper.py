@@ -72,8 +72,10 @@ class TTSEngine:
 
         sync_tasks_primary = [
             self.call_tts(str(idx), comment['comment_body'])
-            for idx, comment in track(enumerate(self.reddit_object['comments']), description='Saving...')
-            # Crunch, there will be fix in async TTS api
+            for idx, comment in track(
+                enumerate(self.reddit_object['comments']),
+                description='Saving...')
+            # Crunch, there will be fix in async TTS api, maybe
             if self.__total_length + self.__total_length * 0.05 < self.max_length
         ]
 
