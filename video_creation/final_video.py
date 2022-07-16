@@ -22,6 +22,12 @@ console = Console()
 W, H = 1080, 1920
 
 
+def change_background_resolution():
+    global W
+    global H
+    W, H = settings.config["settings"]["background"]["width"], settings.config["settings"]["background"]["height"]
+
+
 def name_normalize(name: str) -> str:
     name = re.sub(r'[?\\"%*:|<>]', "", name)
     name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
@@ -43,10 +49,10 @@ def name_normalize(name: str) -> str:
 
 
 def make_final_video(
-    number_of_clips: int,
-    length: int,
-    reddit_obj: dict,
-    background_config: Tuple[str, str, str, Any],
+        number_of_clips: int,
+        length: int,
+        reddit_obj: dict,
+        background_config: Tuple[str, str, str, Any],
 ):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:

@@ -9,7 +9,7 @@ from utils.console import handle_input
 
 
 console = Console()
-config = dict  # autocomplete
+config: dict | None = None  # autocomplete
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):

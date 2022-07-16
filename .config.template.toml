@@ -32,6 +32,8 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 
 [settings.background]
 background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video" }
+width = { optional = true, default = 1080, example = 1080, explanation = "Sets the width resolution for the video", type = "int", nmin = 1, oob_error = "The width HAS to be greater than 1", input_error = "The width HAS to be an integer greater than 1" }
+height = { optional = true, default = 1920, example = 1920, explanation = "Sets the height resolution for the video", type = "int", nmin = 1, oob_error = "The height HAS to be greater than 1", input_error = "The height HAS to be an integer greater than 1" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
 #    false,
 #], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
