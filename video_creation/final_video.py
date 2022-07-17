@@ -192,8 +192,6 @@ class FinalVideo:
         # else: story mode stuff
 
         # Can't use concatenate_videoclips here, it resets clips' start point
-        image_concat = CompositeVideoClip(image_clips)
-        image_concat.set_position(background_config[3])
 
         download_background(background_config)
         chop_background_video(background_config, self.video_duration)
@@ -228,7 +226,7 @@ class FinalVideo:
                 y2=back_video_height
             )
 
-        final = CompositeVideoClip([background_clip, image_concat])
+        final = CompositeVideoClip([background_clip, *image_clips])
         final.audio = audio_composite
 
         title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
