@@ -13,7 +13,7 @@ from utils import settings
 from video_creation.background import (
     get_background_config,
 )
-from video_creation.final_video import make_final_video
+from video_creation.final_video import FinalVideo
 from video_creation.screenshot_downloader import RedditScreenshot
 from video_creation.voices import save_text_to_mp3
 
@@ -45,7 +45,7 @@ async def main(
     comments_created = save_text_to_mp3(reddit_object)
     await RedditScreenshot(reddit_object, comments_created).download()
     bg_config = get_background_config()
-    make_final_video(comments_created, reddit_object, bg_config)
+    FinalVideo().make(comments_created, reddit_object, bg_config)
 
 
 async def run_many(times):
