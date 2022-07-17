@@ -12,7 +12,6 @@ from moviepy.editor import (
     CompositeAudioClip,
     CompositeVideoClip,
 )
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 from rich.progress import track
 from attr import attrs
@@ -265,11 +264,10 @@ class FinalVideo:
             verbose=False,
             threads=multiprocessing.cpu_count(),
         )
-        ffmpeg_extract_subclip(
+        # Moves file in subreddit folder and renames it
+        os.rename(
             "assets/temp/temp.mp4",
-            0,
-            self.video_duration,
-            targetname=f"results/{subreddit}/{filename}",
+            f"results/{subreddit}/{filename}",
         )
         save_data(subreddit, filename, title, idx, background_config[2])
         print_step("Removing temporary files 🗑")
