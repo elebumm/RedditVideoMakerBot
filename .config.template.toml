@@ -22,7 +22,7 @@ opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets 
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, not yet implemented" }
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "minecraft, gta, rocket-league, or motor-gta", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video based on game name" }
+background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video based on game name" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
 #    false,
 #], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
@@ -30,7 +30,7 @@ background_choice = { optional = true, default = "minecraft", example = "minecra
 
 
 [settings.tts]
-voice_choice = { optional = false, default = "", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", ], example = "streamlabspolly, tiktok, googletranslate, or awspolly", explanation = "The voice used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
+voice_choice = { optional = false, default = "", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = false, default = "en_us_006", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
