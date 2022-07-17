@@ -53,11 +53,11 @@ class FinalVideo:
             name: str
     ) -> str:
         name = re.sub(r'[?\\"%*:|<>]', "", name)
-        name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
-        name = re.sub(r"( [w,W]\s?\/)", r" with", name)
-        name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
-        name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
-        name = re.sub(r"\/", "", name)
+        name = re.sub(r"( [w,W]\s?/\s?[oO0])", r" without", name)
+        name = re.sub(r"( [w,W]\s?/)", r" with", name)
+        name = re.sub(r"(\d+)\s?/\s?(\d+)", r"\1 of \2", name)
+        name = re.sub(r"(\w+)\s?/\s?(\w+)", r"\1 or \2", name)
+        name = re.sub(r"/", "", name)
         # name[:30]  # the hell this little guy does? commented until explained
 
         lang = settings.config["reddit"]["thread"]["post_lang"]
