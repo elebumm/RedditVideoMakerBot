@@ -13,7 +13,6 @@ from video_creation.background import (
     get_background_config,
 )
 from video_creation.final_video import make_final_video
-from video_creation.final_video import change_background_resolution
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
@@ -39,7 +38,6 @@ print_step(f"You are using v{__VERSION__} of the bot")
 
 def main(POST_ID=None):
     cleanup()
-    change_background_resolution()
     reddit_object = get_subreddit_threads(POST_ID)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)

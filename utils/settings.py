@@ -3,13 +3,13 @@ import toml
 from rich.console import Console
 import re
 
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Union
 
 from utils.console import handle_input
 
 
 console = Console()
-config: dict | None = None  # autocomplete
+config: Union[dict, None] = None  # autocomplete
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):

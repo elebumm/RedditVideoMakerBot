@@ -19,13 +19,6 @@ from utils.videos import save_data
 from utils import settings
 
 console = Console()
-W, H = 1080, 1920
-
-
-def change_background_resolution():
-    global W
-    global H
-    W, H = settings.config["settings"]["background"]["width"], settings.config["settings"]["background"]["height"]
 
 
 def name_normalize(name: str) -> str:
@@ -66,6 +59,11 @@ def make_final_video(
     # except (TypeError, KeyError):
     #    print('No background audio volume found in config.toml. Using default value of 1.')
     #    VOLUME_MULTIPLIER = 1
+    W: int = settings.config["settings"]["background"]["width"]
+    H: int = settings.config["settings"]["background"]["height"]
+
+    if not W or not H:
+        W, H = 1080, 1920
     print_step("Creating the final video 🎥")
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
