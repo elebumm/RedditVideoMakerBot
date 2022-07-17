@@ -37,9 +37,7 @@ print_markdown(
 print_step(f"You are using v{__VERSION__} of the bot")
 
 
-async def main(
-        POST_ID=None
-):
+async def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     comments_created = save_text_to_mp3(reddit_object)
@@ -84,7 +82,7 @@ if __name__ == "__main__":
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         else:
             main()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # TODO wont work with async code
         shutdown()
     except ResponseException:
         # error for invalid credentials

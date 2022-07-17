@@ -10,9 +10,7 @@ if sys.version_info[0] >= 3:
     from datetime import timezone
 
 
-def check_ratelimit(
-        response: Response,
-):
+def check_ratelimit(response: Response):
     """
     Checks if the response is a ratelimit response.
     If it is, it sleeps for the time specified in the response.

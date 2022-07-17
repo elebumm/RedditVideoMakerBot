@@ -89,6 +89,7 @@ class Browser:
     default_Viewport: dict = attrib(
         validator=instance_of(dict),
         default={
+            # 9x21 to see long posts
             "defaultViewport": {
                 "width": 500,
                 "height": 1200,

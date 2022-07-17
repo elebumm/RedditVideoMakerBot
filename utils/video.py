@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Tuple
 
 from PIL import ImageFont, Image, ImageDraw, ImageEnhance
@@ -26,7 +28,7 @@ class Video:
         draw = ImageDraw.Draw(wm)
         w, h = draw.textsize(text, font)
         draw.text(((width - w) / 2, (height - h) / 2), text, white, font)
-        en = ImageEnhance.Brightness(wm)  # TODO allow it to use the fontsize
+        en = ImageEnhance.Brightness(wm)  # todo allow it to use the fontsize
         mask = en.enhance(1 - opacity)
         im.paste(wm, (25, 25), mask)
         im.save(path)
@@ -40,11 +42,13 @@ class Video:
             ndigits=2,
         )
         position = (compensation, position[1])
+        # print(f'{compensation=}')
+        # print(f'{position=}')
         img_clip = self._create_watermark(text, opacity=opacity, fontsize=fontsize)
         img_clip = img_clip.set_opacity(opacity).set_duration(duration)
         img_clip = img_clip.set_position(
             position, relative=True
-        )  # TODO get data from utils/CONSTANTS.py and adapt position accordingly
+        )  # todo get data from utils/CONSTANTS.py and adapt position accordingly
 
         # Overlay the img clip on the first video clip
         self.video = CompositeVideoClip([self.video, img_clip])

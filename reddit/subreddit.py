@@ -10,9 +10,7 @@ from utils.videos import check_done
 from utils.voice import sanitize_text
 
 
-def get_subreddit_threads(
-        POST_ID: str
-):
+def get_subreddit_threads(POST_ID: str):
     """
     Returns a list of threads from the AskReddit subreddit.
     """

@@ -3,7 +3,6 @@ from TTS.GTTS import GTTS
 from TTS.streamlabs_polly import StreamlabsPolly
 from TTS.aws_polly import AWSPolly
 from TTS.TikTok import TikTok
-
 from utils import settings
 from utils.console import print_table, print_step
 
@@ -41,11 +40,7 @@ def save_text_to_mp3(
     return engine_instance.run()
 
 
-def get_case_insensitive_key_value(
-        input_dict,
-        key,
-) -> object:
-    # TODO add a factory later
+def get_case_insensitive_key_value(input_dict, key):
     return next(
         (value for dict_key, value in input_dict.items() if dict_key.lower() == key.lower()),
         None,
