@@ -24,15 +24,15 @@ def print_step(text):
     console.print(panel)
 
 
-def print_substep(text, style=""):
-    """Prints a rich info message without the panelling."""
-    console.print(text, style=style)
-
-
 def print_table(items):
     """Prints items in a table."""
 
     console.print(Columns([Panel(f"[yellow]{item}", expand=True) for item in items]))
+
+
+def print_substep(text, style=""):
+    """Prints a rich info message without the panelling."""
+    console.print(text, style=style)
 
 
 def handle_input(
@@ -44,33 +44,77 @@ def handle_input(
     nmax=None,
     oob_error="",
     extra_info="",
+    options: list = None,
+    default=NotImplemented,
+    optional=False,
 ):
-    match = re.compile(match + "$")
+    if optional:
+        console.print(message + "\n[green]This is an optional value. Do you want to skip it? (y/n)")
+        if input().casefold().startswith("y"):
+            return default if default is not NotImplemented else ""
+    if default is not NotImplemented:
+        console.print(
+            "[green]"
+            + message
+            + '\n[blue bold]The default value is "'
+            + str(default)
+            + '"\nDo you want to use it?(y/n)'
+        )
+        if input().casefold().startswith("y"):
+            return default
+    if options is None:
+        match = re.compile(match)
+        console.print("[green bold]" + extra_info, no_wrap=True)
+        while True:
+            console.print(message, end="")
+            user_input = input("").strip()
+            if check_type is not False:
+                try:
+                    user_input = check_type(user_input)
+                    if (nmin is not None and user_input < nmin) or (
+                        nmax is not None and user_input > nmax
+                    ):
+                        # FAILSTATE Input out of bounds
+                        console.print("[red]" + oob_error)
+                        continue
+                    break  # Successful type conversion and number in bounds
+                except ValueError:
+                    # Type conversion failed
+                    console.print("[red]" + err_message)
+                    continue
+            elif match != "" and re.match(match, user_input) is None:
+                console.print("[red]" + err_message + "\nAre you absolutely sure it's correct?(y/n)")
+                if input().casefold().startswith("y"):
+                    break
+                continue
+            else:
+                # FAILSTATE Input STRING out of bounds
+                if (nmin is not None and len(user_input) < nmin) or (
+                    nmax is not None and len(user_input) > nmax
+                ):
+                    console.print("[red bold]" + oob_error)
+                    continue
+                break  # SUCCESS Input STRING in bounds
+        return user_input
     console.print(extra_info, no_wrap=True)
     while True:
         console.print(message, end="")
         user_input = input("").strip()
-        if re.match(match, user_input) is not None:
-            if check_type is not False:
-                try:
-                    user_input = check_type(user_input)  # this line is fine
-                    if nmin is not None and user_input < nmin:
-                        console.print("[red]" + oob_error)  # Input too low failstate
-                        continue
-                    if nmax is not None and user_input > nmax:
-                        console.print("[red]" + oob_error)  # Input too high
-                        continue
-                    break  # Successful type conversion and number in bounds
-                except ValueError:
-                    console.print("[red]" + err_message)  # Type conversion failed
-                    continue
-            if nmin is not None and len(user_input) < nmin:  # Check if string is long enough
-                console.print("[red]" + oob_error)
+        if check_type is not False:
+            try:
+                isinstance(eval(user_input), check_type)
+                return check_type(user_input)
+            except:
+                console.print(
+                    "[red bold]"
+                    + err_message
+                    + "\nValid options are: "
+                    + ", ".join(map(str, options))
+                    + "."
+                )
                 continue
-            if nmax is not None and len(user_input) > nmax:  # Check if string is not too long
-                console.print("[red]" + oob_error)
-                continue
-            break
-        console.print("[red]" + err_message)
-
-    return user_input
+        if user_input in options:
+            return user_input
+        console.print(
+            "[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + "."
+        )

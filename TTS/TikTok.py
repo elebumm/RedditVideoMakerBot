@@ -1,5 +1,5 @@
 import base64
-import os
+from utils import settings
 import random
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -75,7 +75,10 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         voice = (
             self.randomvoice()
             if random_voice
-            else (os.getenv("TIKTOK_VOICE") or random.choice(self.voices["human"]))
+            else (
+                settings.config["settings"]["tts"]["tiktok_voice"]
+                or random.choice(self.voices["human"])
+            )
         )
         try:
             r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")

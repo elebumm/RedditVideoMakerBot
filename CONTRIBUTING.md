@@ -111,7 +111,16 @@ When making your PR, follow these guidelines:
 
 - Your branch has a base of _develop_, **not** _master_
 - You are merging your branch into the _develop_ branch
-- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request.
+- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request
+- Where possible, you have used `git pull --rebase`, to avoid creating unnecessary merge commits
+- You have meaningful commits, and if possible, follow the commit style guide of `type: explanation`
+- Here are the commit types: 
+ - **feat** - a new feature
+ - **fix** - a bug fix
+ - **docs** - a change to documentation / commenting
+ - **style** - formatting changes - does not impact code
+ - **refactor** - refactored code
+ - **chore** - updating configs, workflows etc - does not impact code
 
 ### Improving The Documentation
 

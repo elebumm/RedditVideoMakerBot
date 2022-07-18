@@ -5,36 +5,46 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
+
   stale:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
-      - uses: actions/stale@main
+      - uses: actions/stale@v4
         id: stale-issue
         name: stale-issue
         with:
+          # general settings
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-issue-message: 'This issue is stale because it has been open 7 days with no activity. Remove stale label or comment, or this will be closed in 10 days.'
           close-issue-message: 'Issue closed due to being stale. Please reopen if issue persists in latest version.'
-          days-before-stale: 7
-          days-before-close: 10
+          days-before-stale: 6
+          days-before-close: 12
           stale-issue-label: 'stale'
           close-issue-label: 'outdated'
           exempt-issue-labels: 'enhancement,keep,blocked'
           exempt-all-issue-milestones: true
           operations-per-run: 300
           remove-stale-when-updated: true
-          
-      - uses: actions/stale@main
+          ascending: true
+          #debug-only: true
+
+      - uses: actions/stale@v4
         id: stale-pr
         name: stale-pr
         with:
+          # general settings
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-pr-message: 'This pull request is stale as it has been open for 7 days with no activity. Remove stale label or comment, or this will be closed in 10 days.'
           close-pr-message: 'Pull request closed due to being stale.'
-          days-before-stale: 7
-          days-before-close: 10
+          days-before-stale: 10
+          days-before-close: 20
           close-pr-label: 'outdated'
           stale-pr-label: 'stale'
           exempt-pr-labels: 'keep,blocked,before next release,after next release'
           exempt-all-pr-milestones: true
           operations-per-run: 300
           remove-stale-when-updated: true
-
+          #debug-only: true
