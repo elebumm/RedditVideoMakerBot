@@ -11,6 +11,7 @@ from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 from moviepy.video.compositing.concatenate import concatenate_videoclips
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from moviepy.audio.fx.all import volumex
 from rich.console import Console
 
 from utils.cleanup import cleanup
@@ -73,11 +74,16 @@ def make_final_video(
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
 
+    # Gather audio background
+    volume = settings.config["settings"]["background"]["background_volume"]
+    audio_bg = AudioFileClip("assets/temp/background.mp3")
+    audio_bg = audio_bg.fx(volumex, volume)
+
     # Gather all audio clips
     audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
-    audio_composite = CompositeAudioClip([audio_concat])
+    audio_composite = CompositeAudioClip([audio_concat, audio_bg])
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # add title to video

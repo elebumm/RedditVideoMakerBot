@@ -43,3 +43,17 @@ background_options = {
         lambda t: ("center", 480 + t),
     ),
 }
+
+# Supported Audio Background. Can add/remove background audio here....
+# <key>-<value> : key -> used as keyword for TOML file. value -> background configuration
+# Format (value):
+# 1. Youtube URI
+# 2. filename
+# 3. Citation (owner of the video)
+background_audio_options = {
+  "phonk": (
+    "https://www.youtube.com/watch?v=URhQ9iJHIsU",
+    "phonk.mp3",
+    "dms mus."
+  ),
+}
