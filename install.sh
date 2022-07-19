@@ -92,7 +92,10 @@ function install_centos(){
 
 function get_the_bot(){ 
     echo "Downloading the bot" 
-    git clone https://github.com/elebumm/RedditVideoMakerBot.git 
+    rm -rf RedditVideoMakerBot-master
+    curl -sL https://github.com/elebumm/RedditVideoMakerBot/archive/refs/heads/master.zip -o master.zip
+    unzip master.zip
+    rm -rf master.zip
 } 
 
 #install python dependencies
@@ -100,7 +103,7 @@ function install_python_dep(){
     # tell the user that the script is going to install the python dependencies
     echo "Installing python dependencies" 
     # cd into the directory
-    cd RedditVideoMakerBot 
+    cd RedditVideoMakerBot-master
     # install the dependencies
     pip3 install -r requirements.txt 
     # cd out
@@ -112,7 +115,7 @@ function install_playwright(){
     # tell the user that the script is going to install playwright 
     echo "Installing playwright"
     # cd into the directory where the script is downloaded
-    cd RedditVideoMakerBot
+    cd RedditVideoMakerBot-master
     # run the install script
     python3 -m playwright install 
     python3 -m playwright install-deps 
@@ -198,9 +201,9 @@ function install_main(){
         install_playwright
     fi
 
-    DIR="./RedditVideoMakerBot"
+    DIR="./RedditVideoMakerBot-master"
     if [ -d "$DIR" ]; then
-        printf "\nThe bot is already installed, want to run it?"
+        printf "\nThe bot is installed, want to run it?"
         # if -y (assume yes) continue 
         if [[ ASSUME_YES -eq 1 ]]; then
             echo "Assuming yes"
@@ -214,7 +217,7 @@ function install_main(){
                 exit 1
             fi
         fi
-        cd RedditVideoMakerBot
+        cd RedditVideoMakerBot-master
         python3 main.py
     fi
 }
