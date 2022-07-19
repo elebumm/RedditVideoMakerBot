@@ -7,18 +7,16 @@ from pyppeteer.element_handle import ElementHandle as ElementHandleCls
 from pyppeteer.errors import TimeoutError as BrowserTimeoutError
 
 from pathlib import Path
-from typing import Dict
 from utils import settings
-
+from utils.console import print_step, print_substep
 from rich.progress import track
 import translators as ts
-from utils.console import print_step, print_substep
 
 from attr import attrs, attrib
-from attr.validators import instance_of, optional
+from attr.validators import instance_of
 from typing import Optional
 
-from webdriver.common import ExceptionDecorator
+from webdriver.common import ExceptionDecorator, chunks
 
 catch_exception = ExceptionDecorator(default_exception=BrowserTimeoutError).catch_exception
 
@@ -100,8 +98,9 @@ class Wait:
             self,
             page_instance: Optional[PageCls] = None,
             xpath: Optional[str] = None,
-            find_options: Optional[dict] = None,
             options: Optional[dict] = None,
+            *,
+            find_options: Optional[dict] = None,
             el: Optional[ElementHandleCls] = None,
     ) -> None:
         """
@@ -127,6 +126,7 @@ class Wait:
             page_instance: Optional[PageCls] = None,
             xpath: Optional[str] = None,
             options: Optional[dict] = None,
+            *,
             find_options: Optional[dict] = None,
             el: Optional[ElementHandleCls] = None,
     ) -> None:
@@ -154,13 +154,20 @@ class RedditScreenshot(Browser, Wait):
     Args:
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
         screenshot_idx (int): List with indexes of voiced comments
+        story_mode (bool): If submission is a story takes screenshot of the story
     """
     reddit_object: dict
     screenshot_idx: list
     story_mode: Optional[bool] = attrib(
         validator=instance_of(bool),
         default=False,
+        kw_only=True
     )
+
+    def __attrs_post_init__(
+            self,
+    ):
+        self.post_lang: Optional[bool] = settings.config["reddit"]["thread"]["post_lang"]
 
     async def __dark_theme(
             self,
@@ -176,33 +183,40 @@ class RedditScreenshot(Browser, Wait):
         await self.click(
             page_instance,
             "//*[contains(@class, 'header-user-dropdown')]",
-            {"timeout": 5000},
+            find_options={"timeout": 5000},
         )
 
         # It's normal not to find it, sometimes there is none :shrug:
         await self.click(
             page_instance,
             "//*[contains(text(), 'Settings')]/ancestor::button[1]",
-            {"timeout": 5000},
+            find_options={"timeout": 5000},
         )
 
         await self.click(
             page_instance,
             "//*[contains(text(), 'Dark Mode')]/ancestor::button[1]",
-            {"timeout": 5000},
+            find_options={"timeout": 5000},
         )
 
         # Closes settings
         await self.click(
             page_instance,
             "//*[contains(@class, 'header-user-dropdown')]",
-            {"timeout": 5000},
+            find_options={"timeout": 5000},
         )
 
     async def __close_nsfw(
             self,
-            page_instance: PageCls
+            page_instance: PageCls,
     ) -> None:
+        """
+        Closes NSFW stuff
+
+        Args:
+            page_instance:  Instance of main page
+        """
+
         from asyncio import ensure_future
 
         print_substep("Post is NSFW. You are spicy...")
@@ -213,17 +227,17 @@ class RedditScreenshot(Browser, Wait):
         await self.click(
             page_instance,
             '//button[text()="Yes"]',
-            {"timeout": 5000},
+            find_options={"timeout": 5000},
         )
 
         # Await reload
         await navigation
 
-        await (await self.find_xpath(
+        await self.click(
             page_instance,
             '//button[text()="Click to see nsfw"]',
-            {"timeout": 5000},
-        )).click()
+            find_options={"timeout": 5000},
+        )
 
     async def __collect_comment(
             self,
@@ -241,19 +255,19 @@ class RedditScreenshot(Browser, Wait):
         await comment_page.goto(f'https://reddit.com{comment_obj["comment_url"]}')
 
         # Translates submission' comment
-        if settings.config["reddit"]["thread"]["post_lang"]:
+        if self.post_lang:
             comment_tl = ts.google(
                 comment_obj["comment_body"],
-                to_language=settings.config["reddit"]["thread"]["post_lang"],
+                to_language=self.post_lang,
             )
             await comment_page.evaluate(
-                f'([tl_content, tl_id]) => document.querySelector(`#t1_{comment_obj["comment_id"]} > div:nth-child(2) '
-                f'> div > div[data-testid="comment"] > div`).textContent = {comment_tl}',
+                f"([tl_content, tl_id]) => document.querySelector('#t1_{comment_obj['comment_id']} > div:nth-child(2) "
+                f'> div > div[data-testid="comment"] > div\').textContent = {comment_tl}',
             )
 
         await self.screenshot(
             comment_page,
-            f'//*[contains(@id, \'t1_{comment_obj["comment_id"]}\')]',
+            f"//*[contains(@id, 't1_{comment_obj['comment_id']}')]",
             {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
@@ -261,13 +275,12 @@ class RedditScreenshot(Browser, Wait):
     async def __collect_story(
             self,
             main_page: PageCls,
-
     ):
         # Translates submission text
-        if settings.config["reddit"]["thread"]["post_lang"]:
+        if self.post_lang:
             story_tl = ts.google(
                 self.reddit_object["thread_post"],
-                to_language=settings.config["reddit"]["thread"]["post_lang"],
+                to_language=self.post_lang,
             )
             split_story_tl = story_tl.split('\n')
             await main_page.evaluate(
@@ -304,6 +317,7 @@ class RedditScreenshot(Browser, Wait):
 
         # Get the thread screenshot
         reddit_main = await self.browser.newPage()
+        # noinspection Duplicates
         await reddit_main.goto(self.reddit_object["thread_url"])
 
         if settings.config["settings"]["theme"] == "dark":
@@ -322,13 +336,14 @@ class RedditScreenshot(Browser, Wait):
             )
 
             await reddit_main.evaluate(
-                "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > "
-                "div').textContent = tl_content",
-                texts_in_tl,
+                "document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > "
+                f"div').textContent = {texts_in_tl}",
             )
         else:
             print_substep("Skipping translation...")
 
+        # No sense to move it in common.py
+        # noinspection Duplicates
         async_tasks_primary = (
             [
                 self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
@@ -347,13 +362,6 @@ class RedditScreenshot(Browser, Wait):
                 {"path": "assets/temp/png/title.png"},
             )
         )
-
-        # Lots of tabs - lots of memory
-        # chunk needed to minimize memory required
-        def chunks(lst, n):
-            """Yield successive n-sized chunks from list."""
-            for i in range(0, len(lst), n):
-                yield lst[i:i + n]
 
         for idx, chunked_tasks in enumerate(
                 [chunk for chunk in chunks(async_tasks_primary, 10)],

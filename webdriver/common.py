@@ -65,3 +65,11 @@ class ExceptionDecorator:
         if func:
             exceptor = exceptor(func)
         return exceptor
+
+
+# Lots of tabs - lots of memory
+# chunk needed to minimize memory required
+def chunks(lst, n):
+    """Yield successive n-sized chunks from list."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]

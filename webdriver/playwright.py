@@ -1,15 +1,21 @@
-from playwright.async_api import async_playwright, ViewportSize
-from playwright.async_api import Browser, Playwright
-from rich.progress import track
+from asyncio import as_completed
+
+from playwright.async_api import async_playwright, TimeoutError
+from playwright.async_api import Browser, Playwright, Page, BrowserContext, Locator
 
 from pathlib import Path
-import translators as ts
 from utils import settings
 from utils.console import print_step, print_substep
-from attr import attrs, attrib
-from attr.validators import instance_of, optional
+import translators as ts
+from rich.progress import track
 
-from typing import Dict, Optional, Union
+from attr import attrs, attrib
+from attr.validators import instance_of
+from typing import Dict, Optional
+
+from webdriver.common import ExceptionDecorator, chunks
+
+catch_exception = ExceptionDecorator(default_exception=TimeoutError).catch_exception
 
 
 @attrs
@@ -23,15 +29,14 @@ class Browser:
         validator=instance_of(dict),
         default={
             # 9x21 to see long posts
-            "defaultViewport": {
-                "width": 500,
-                "height": 1200,
-            },
+            "width": 500,
+            "height": 1200,
         },
         kw_only=True,
     )
     playwright: Playwright
     browser: Browser
+    context: BrowserContext
 
     async def get_browser(
             self,
@@ -41,30 +46,98 @@ class Browser:
         """
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch()
+        self.context = await self.browser.new_context(viewport=self.default_Viewport)
 
     async def close_browser(
             self,
     ) -> None:
         """
-        Closes Pyppeteer browser
+        Closes Playwright stuff
         """
+        await self.context.close()
         await self.browser.close()
         await self.playwright.stop()
 
 
-@attrs(auto_attribs=True)
-class RedditScreenshot(Browser):
+class Flaky:
     """
-        Args:
-            reddit_object (Dict): Reddit object received from reddit/subreddit.py
-            screenshot_idx (int): List with indexes of voiced comments
-        """
+    All methods decorated with function catching default exceptions and writing logs
+    """
+
+    @staticmethod
+    @catch_exception
+    def find_element(
+            query: str,
+            page_instance: Page,
+            options: Optional[dict] = None,
+    ) -> Locator:
+        return page_instance.locator(query, **options) if options else page_instance.locator(query)
+
+    @catch_exception
+    async def click(
+            self,
+            page_instance: Optional[Page] = None,
+            query: Optional[str] = None,
+            options: Optional[dict] = None,
+            *,
+            find_options: Optional[dict] = None,
+            element: Optional[Locator] = None,
+    ) -> None:
+        if element:
+            await element.click(**options) if options else element.click()
+        else:
+            results = (
+                self.find_element(query, page_instance, **find_options)
+                if find_options
+                else self.find_element(query, page_instance)
+            )
+            await results.click(**options) if options else await results.click()
+
+    @catch_exception
+    async def screenshot(
+            self,
+            page_instance: Optional[Page] = None,
+            query: Optional[str] = None,
+            options: Optional[dict] = None,
+            *,
+            find_options: Optional[dict] = None,
+            element: Optional[Locator] = None,
+    ) -> None:
+        if element:
+            await element.screenshot(**options) if options else await element.screenshot()
+        else:
+            results = (
+                self.find_element(query, page_instance, **find_options)
+                if find_options
+                else self.find_element(query, page_instance)
+            )
+            await results.screenshot(**options) if options else await results.screenshot()
+
+
+@attrs(auto_attribs=True)
+class RedditScreenshot(Flaky, Browser):
+    """
+    Args:
+        reddit_object (Dict): Reddit object received from reddit/subreddit.py
+        screenshot_idx (int): List with indexes of voiced comments
+        story_mode (bool): If submission is a story takes screenshot of the story
+    """
     reddit_object: dict
     screenshot_idx: list
+    story_mode: Optional[bool] = attrib(
+        validator=instance_of(bool),
+        default=False,
+        kw_only=True
+    )
+
+    def __attrs_post_init__(
+            self
+    ):
+        self.post_lang: Optional[bool] = settings.config["reddit"]["thread"]["post_lang"]
 
     async def __dark_theme(
             self,
-            page_instance: PageCls,
+            page_instance: Page,
     ) -> None:
         """
         Enables dark theme in Reddit
@@ -75,128 +148,190 @@ class RedditScreenshot(Browser):
 
         await self.click(
             page_instance,
-            "//*[contains(@class, 'header-user-dropdown')]",
-            {"timeout": 5000},
+            "header-user-dropdown",
         )
 
         # It's normal not to find it, sometimes there is none :shrug:
         await self.click(
             page_instance,
-            "//*[contains(text(), 'Settings')]/ancestor::button[1]",
-            {"timeout": 5000},
+            ":nth-match(button) >> 'Settings'",
         )
 
         await self.click(
             page_instance,
-            "//*[contains(text(), 'Dark Mode')]/ancestor::button[1]",
-            {"timeout": 5000},
+            ":nth-match(button) >> 'Dark Mode'",
         )
 
         # Closes settings
         await self.click(
             page_instance,
-            "//*[contains(@class, 'header-user-dropdown')]",
+            "header-user-dropdown"
+        )
+
+    async def __close_nsfw(
+            self,
+            page_instance: Page,
+    ) -> None:
+        """
+        Closes NSFW stuff
+
+        Args:
+            page_instance:  Instance of main page
+        """
+
+        print_substep("Post is NSFW. You are spicy...")
+
+        # Triggers indirectly reload
+        await self.click(
+            page_instance,
+            'button:has-text("Yes")',
             {"timeout": 5000},
         )
 
+        # Await indirect reload
+        await page_instance.wait_for_load_state()
 
+        await self.click(
+            page_instance,
+            'button:has-text("Click to see nsfw")',
+            {"timeout": 5000},
+        )
 
-storymode = False
+    async def __collect_comment(
+            self,
+            comment_obj: dict,
+            filename_idx: int,
+    ) -> None:
+        """
+        Makes a screenshot of the comment
 
+        Args:
+            comment_obj: prew comment object
+            filename_idx: index for the filename
+        """
+        comment_page = await self.context.new_page()
+        await comment_page.goto(f'https://reddit.com{comment_obj["comment_url"]}')
 
-def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
-    """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
+        # Translates submission' comment
+        if self.post_lang:
+            comment_tl = ts.google(
+                comment_obj["comment_body"],
+                to_language=self.post_lang,
+            )
+            await comment_page.evaluate(
+                f"document.querySelector('#t1_{comment_obj['comment_id']} > div:nth-child(2) "
+                f'> div > div[data-testid="comment"] > div\').textContent = {comment_tl}',
+            )
 
-    Args:
-        reddit_object (Dict): Reddit object received from reddit/subreddit.py
-        screenshot_num (int): Number of screenshots to download
-    """
-    print_step("Downloading screenshots of reddit posts...")
+        await self.screenshot(
+            comment_page,
+            f"id=t1_{comment_obj['comment_id']}",
+            {"path": f"assets/temp/png/comment_{filename_idx}.png"},
+        )
 
-    # ! Make sure the reddit screenshots folder exists
-    Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
+    # WIP  TODO test it
+    async def __collect_story(
+            self,
+            main_page: Page,
+    ):
+        # Translates submission text
+        if self.post_lang:
+            story_tl = ts.google(
+                self.reddit_object["thread_post"],
+                to_language=self.post_lang,
+            )
+            split_story_tl = story_tl.split('\n')
+            await main_page.evaluate(
+                # Find all elements
+                'var elements = document.querySelectorAll(`[data-test-id="post-content"]'
+                ' > [data-click-id="text"] > div > p`);'
+                # Set array with translated text
+                f"var texts = {split_story_tl};"
+                # Map 2 arrays together
+                "var text_map = texts.map(function(e, i) { return [e, elements[i]]; });"
+                # Change text on the page
+                "for (i = 0; i < text_map.length; ++i) { text_map[i][1].textContent = text_map[i][0] ; };"
+            )
 
-    with sync_playwright() as p:
+        await self.screenshot(
+            main_page,
+            '[data-click-id="text"]',
+            {"path": "assets/temp/png/story_content.png"},
+        )
+
+    async def download(
+            self,
+    ):
+        """
+        Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
+        """
+        print_step("Downloading screenshots of reddit posts...")
+
         print_substep("Launching Headless Browser...")
+        await self.get_browser()
 
-        browser = p.chromium.launch()
-        context = browser.new_context()
+        # ! Make sure the reddit screenshots folder exists
+        Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
+
+        # Get the thread screenshot
+        reddit_main = await self.browser.new_page()
+        # noinspection Duplicates
+        await reddit_main.goto(self.reddit_object["thread_url"])
 
         if settings.config["settings"]["theme"] == "dark":
-            cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
-        else:
-            cookie_file = open("./video_creation/data/cookie-light-mode.json", encoding="utf-8")
-        cookies = json.load(cookie_file)
-        context.add_cookies(cookies)  # load preference cookies
-        # Get the thread screenshot
-        page = context.new_page()
-        page.goto(reddit_object["thread_url"], timeout=0)
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
-        if page.locator('[data-testid="content-gate"]').is_visible():
+            await self.__dark_theme(reddit_main)
+
+        if self.reddit_object["is_nsfw"]:
             # This means the post is NSFW and requires to click the proceed button.
+            await self.__close_nsfw(reddit_main)
 
-            print_substep("Post is NSFW. You are spicy...")
-            page.locator('[data-testid="content-gate"] button').click()
-            page.wait_for_load_state() # Wait for page to fully load
-
-            if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator(
-                    '[data-click-id="text"] button'
-                ).click()  # Remove "Click to see nsfw" Button in Screenshot
-
-        # translate code
-
+        # Translates submission title
         if settings.config["reddit"]["thread"]["post_lang"]:
             print_substep("Translating post...")
             texts_in_tl = ts.google(
-                reddit_object["thread_title"],
+                self.reddit_object["thread_title"],
                 to_language=settings.config["reddit"]["thread"]["post_lang"],
             )
 
-            page.evaluate(
-                "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
-                texts_in_tl,
+            await reddit_main.evaluate(
+                "document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > "
+                f"div').textContent = {texts_in_tl}",
             )
         else:
             print_substep("Skipping translation...")
 
-        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
+        # No sense to move it in common.py
+        # noinspection Duplicates
+        async_tasks_primary = (
+            [
+                self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
+                self.screenshot_idx
+            ]
+            if not self.story_mode
+            else [
+                self.__collect_story(reddit_main)
+            ]
+        )
 
-        if storymode:
-            page.locator('[data-click-id="text"]').screenshot(
-                path="assets/temp/png/story_content.png"
+        async_tasks_primary.append(
+            self.screenshot(
+                reddit_main,
+                f"id=t3_{self.reddit_object['thread_id']}",
+                {"path": "assets/temp/png/title.png"},
             )
-        else:
-            for idx, comment in enumerate(
-                track(reddit_object["comments"], "Downloading screenshots...")
+        )
+
+        for idx, chunked_tasks in enumerate(
+                [chunk for chunk in chunks(async_tasks_primary, 10)],
+                start=1,
+        ):
+            chunk_list = async_tasks_primary.__len__() // 10 + (1 if async_tasks_primary.__len__() % 10 != 0 else 0)
+            for task in track(
+                    as_completed(chunked_tasks),
+                    description=f"Downloading comments: Chunk {idx}/{chunk_list}",
+                    total=chunked_tasks.__len__(),
             ):
-                # Stop if we have reached the screenshot_num
-                if idx >= screenshot_num:
-                    break
+                await task
 
-                if page.locator('[data-testid="content-gate"]').is_visible():
-                    page.locator('[data-testid="content-gate"] button').click()
-
-                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
-
-                # translate code
-
-                if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = ts.google(
-                        comment["comment_body"],
-                        to_language=settings.config["reddit"]["thread"]["post_lang"],
-                    )
-                    page.evaluate(
-                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
-                        [comment_tl, comment["comment_id"]],
-                    )
-                try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/png/comment_{idx}.png"
-                    )
-                except TimeoutError:
-                    del reddit_object["comments"]
-                    screenshot_num += 1
-                    print("TimeoutError: Skipping screenshot...")
-                    continue
-        print_substep("Screenshots downloaded Successfully.", style="bold green")
+        print_substep("Comments downloaded Successfully.", style="bold green")
+        await self.close_browser()
