@@ -1,6 +1,3 @@
-# I am now pushing directly to https://github.com/elebumm/RedditVideoMakerBot GO THERE.
-
-
 # Reddit Video Maker Bot 🎥
 
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
