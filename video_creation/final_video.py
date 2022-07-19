@@ -66,6 +66,7 @@ def make_final_video(
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
     opacity = settings.config["settings"]["opacity"]
+    transition = settings.config["settings"]["transition"]
     background_clip = (
         VideoFileClip("assets/temp/background.mp4")
         .without_audio()
@@ -84,12 +85,15 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
+    new_transition = 0 if transition is None or float(transition) > 2 else float(transition)
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")
         .set_duration(audio_clips[0].duration)
         .resize(width=W - 100)
-        .set_opacity(new_opacity),
+        .set_opacity(new_opacity)
+        .crossfadein(new_transition)
+        .crossfadeout(new_transition),
     )
 
     for i in range(0, number_of_clips):
@@ -98,6 +102,8 @@ def make_final_video(
             .set_duration(audio_clips[i + 1].duration)
             .resize(width=W - 100)
             .set_opacity(new_opacity)
+            .crossfadein(new_transition)
+            .crossfadeout(new_transition)
         )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
