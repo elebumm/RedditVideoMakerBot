@@ -141,7 +141,7 @@ def make_final_video(
     ffmpeg_extract_subclip(
         "assets/temp/temp.mp4",
         0,
-        final.duration,
+        length,
         targetname=f"results/{subreddit}/{filename}",
     )
     save_data(subreddit, filename, title, idx, background_config[2])
