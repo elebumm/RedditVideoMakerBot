@@ -58,6 +58,8 @@ This can also be used to update the installation
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 
+If you want a more detailed explanation, check out the [docs](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)
+
 ## Video
 
 https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
