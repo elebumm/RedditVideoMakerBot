@@ -12,7 +12,7 @@ function Help(){
     echo "Options:" 
     echo "  -h: Show this help message and exit" 
     echo "  -d: Install only dependencies" 
-    echo "  -p: Install only python dependencies"
+    echo "  -p: Install only python dependencies (including playwright)"
     echo "  -b: Install just the bot"
     echo "  -l: Install the bot and the python dependencies"
 } 
@@ -107,6 +107,23 @@ function install_python_dep(){
     cd ..
 } 
 
+# install playwright function
+function install_playwright(){
+    # tell the user that the script is going to install playwright
+    echo "Installing playwright"
+    # cd into the directory where the script is downloaded
+    cd RedditVideoMakerBot
+    # run the install script
+    python3 -m playwright install
+    python3 -m playwright install-deps
+    # give a note
+    printf "Note, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues"
+    if [ -x "$(command -v pacman)" ]; then
+        printf "It seems you are on and Arch based distro.\nTry installing these from the AUR for playwright to run:\nenchant1.6\nicu66\nlibwebp052\n"
+    fi
+    cd ..
+}
+
 # Install depndencies
 function install_deps(){ 
     # if the platform is mac, install macos
@@ -131,7 +148,7 @@ function install_deps(){
     # else
     else
         # print an error message and exit
-        printf "Your OS is not supported\n Please install python3, pip3 and git manually\n After that, run the script again with the -pb option to install python and dependencies\n If you want to add support for your OS, please open a pull request on github\n
+        printf "Your OS is not supported\n Please install python3, pip3 and git manually\n After that, run the script again with the -pb option to install python and playwright dependencies\n If you want to add support for your OS, please open a pull request on github\n
 https://github.com/elebumm/RedditVideoMakerBot"
         exit 1
     fi
@@ -159,9 +176,10 @@ function install_main(){
         echo "Installing only dependencies" 
         install_deps
     elif [[ PYTHON_ONLY -eq 1 ]]; then
-    # if the -p (only python dependencies) options is selected install just the python dependencies
+    # if the -p (only python dependencies) options is selected install just the python dependencies and playwright
         echo "Installing only python dependencies" 
         install_python_dep 
+        install_playwright
     # if the -b (only the bot) options is selected install just the bot
     elif [[ JUST_BOT -eq 1 ]]; then
         echo "Installing only the bot"
@@ -177,6 +195,7 @@ function install_main(){
         install_deps 
         get_the_bot 
         install_python_dep
+        install_playwright
     fi
 
     DIR="./RedditVideoMakerBot"

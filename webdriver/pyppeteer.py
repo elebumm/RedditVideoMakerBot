@@ -16,67 +16,11 @@ from utils.console import print_step, print_substep
 
 from attr import attrs, attrib
 from attr.validators import instance_of, optional
-from typing import TypeVar, Optional, Callable, Union
+from typing import Optional
 
-_function = TypeVar("_function", bound=Callable[..., object])
-_exceptions = TypeVar("_exceptions", bound=Optional[Union[type, tuple, list]])
+from webdriver.common import ExceptionDecorator
 
-
-@attrs
-class ExceptionDecorator:
-    """
-    Decorator factory for catching exceptions and writing logs
-    """
-    exception: Optional[_exceptions] = attrib(default=None)
-    __default_exception: _exceptions = attrib(default=BrowserTimeoutError)
-
-    def __attrs_post_init__(self):
-        if not self.exception:
-            self.exception = self.__default_exception
-
-    def __call__(
-            self,
-            func: _function,
-    ):
-        async def wrapper(*args, **kwargs):
-            try:
-                obj_to_return = await func(*args, **kwargs)
-                return obj_to_return
-            except Exception as caughtException:
-                import logging
-
-                logger = logging.getLogger("webdriver_log")
-                logger.setLevel(logging.ERROR)
-                handler = logging.FileHandler(".webdriver.log", mode="a+", encoding="utf-8")
-                logger.addHandler(handler)
-
-                if isinstance(self.exception, type):
-                    if not type(caughtException) == self.exception:
-                        logger.error(f"unexpected error - {caughtException}")
-                else:
-                    if not type(caughtException) in self.exception:
-                        logger.error(f"unexpected error - {caughtException}")
-
-        return wrapper
-
-
-def catch_exception(
-        func: Optional[_function],
-        exception: Optional[_exceptions] = None,
-) -> Union[ExceptionDecorator, _function]:
-    """
-    Decorator for catching exceptions and writing logs
-
-    Args:
-        func: Function to be decorated
-        exception: Expected exception(s)
-    Returns:
-        Decorated function
-    """
-    exceptor = ExceptionDecorator(exception)
-    if func:
-        exceptor = exceptor(func)
-    return exceptor
+catch_exception = ExceptionDecorator(default_exception=BrowserTimeoutError).catch_exception
 
 
 @attrs
@@ -97,11 +41,7 @@ class Browser:
         },
         kw_only=True,
     )
-    browser: Optional[BrowserCls] = attrib(
-        validator=optional(instance_of(BrowserCls)),
-        default=None,
-        kw_only=True,
-    )
+    browser: BrowserCls
 
     async def get_browser(
             self,
@@ -217,6 +157,10 @@ class RedditScreenshot(Browser, Wait):
     """
     reddit_object: dict
     screenshot_idx: list
+    story_mode: Optional[bool] = attrib(
+        validator=instance_of(bool),
+        default=False,
+    )
 
     async def __dark_theme(
             self,
@@ -313,6 +257,37 @@ class RedditScreenshot(Browser, Wait):
             {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
+    # WIP  TODO test it
+    async def __collect_story(
+            self,
+            main_page: PageCls,
+
+    ):
+        # Translates submission text
+        if settings.config["reddit"]["thread"]["post_lang"]:
+            story_tl = ts.google(
+                self.reddit_object["thread_post"],
+                to_language=settings.config["reddit"]["thread"]["post_lang"],
+            )
+            split_story_tl = story_tl.split('\n')
+            await main_page.evaluate(
+                # Find all elements
+                'var elements = document.querySelectorAll(`[data-test-id="post-content"]'
+                ' > [data-click-id="text"] > div > p`);'
+                # Set array with translated text
+                f"var texts = {split_story_tl};"
+                # Map 2 arrays together
+                "var text_map = texts.map(function(e, i) { return [e, elements[i]]; });"
+                # Change text on the page
+                "for (i = 0; i < text_map.length; ++i) { text_map[i][1].textContent = text_map[i][0] ; };"
+            )
+
+        await self.screenshot(
+            main_page,
+            "//*[@data-click-id='text']",
+            {"path": "assets/temp/png/story_content.png"},
+        )
+
     async def download(
             self,
     ):
@@ -354,10 +329,16 @@ class RedditScreenshot(Browser, Wait):
         else:
             print_substep("Skipping translation...")
 
-        async_tasks_primary = [
-            self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
-            self.screenshot_idx
-        ]
+        async_tasks_primary = (
+            [
+                self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
+                self.screenshot_idx
+            ]
+            if not self.story_mode
+            else [
+                self.__collect_story(reddit_main)
+            ]
+        )
 
         async_tasks_primary.append(
             self.screenshot(

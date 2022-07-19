@@ -14,7 +14,7 @@ from video_creation.background import (
     get_background_config,
 )
 from video_creation.final_video import FinalVideo
-from video_creation.screenshot_downloader import RedditScreenshot
+from webdriver.web_engine import screenshot_factory
 from video_creation.voices import save_text_to_mp3
 
 __VERSION__ = "2.3.1"
@@ -41,7 +41,8 @@ async def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     comments_created = save_text_to_mp3(reddit_object)
-    await RedditScreenshot(reddit_object, comments_created).download()
+    webdriver = screenshot_factory(config["settings"]["times_to_run"])  # TODO add in config
+    await webdriver(reddit_object, comments_created).download()
     bg_config = get_background_config()
     FinalVideo().make(comments_created, reddit_object, bg_config)
 
