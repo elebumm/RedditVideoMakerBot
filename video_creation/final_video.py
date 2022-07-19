@@ -57,16 +57,15 @@ class FinalVideo:
         name = re.sub(r"(\d+)\s?/\s?(\d+)", r"\1 of \2", name)
         name = re.sub(r"(\w+)\s?/\s?(\w+)", r"\1 or \2", name)
         name = re.sub(r"/", "", name)
-        # name[:30]  # does nothing
 
         lang = settings.config["reddit"]["thread"]["post_lang"]
+        translated_name = None
         if lang:
             import translators as ts
 
             print_substep("Translating filename...")
             translated_name = ts.google(name, to_language=lang)
-            return translated_name
-        return name
+        return translated_name[:30] if translated_name else name[:30]
 
     @staticmethod
     def create_audio_clip(
