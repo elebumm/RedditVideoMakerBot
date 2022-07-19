@@ -1,11 +1,12 @@
 from typing import Union
 
 from webdriver.pyppeteer import RedditScreenshot as Pyppeteer
+from webdriver.playwright import RedditScreenshot as Playwright
 
 
 def screenshot_factory(
         driver: str,
-) -> Union[Pyppeteer]:
+) -> Union[type(Pyppeteer), type(Playwright)]:
     """
     Factory for webdriver
     Args:
@@ -16,7 +17,7 @@ def screenshot_factory(
     """
     web_drivers = {
         "pyppeteer": Pyppeteer,
-        "playwright": None,
+        "playwright": Playwright,
     }
 
     return web_drivers[driver]

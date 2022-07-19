@@ -16,7 +16,8 @@ subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, explanation 
 post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
 max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr" }
-min_comments = { default = 20, optional = false, nmin = 15, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
+min_comments = { default = 20, optional = false, nmin = 15, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments must be at least 15" }
+
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true,
     false,
@@ -35,7 +36,8 @@ time_before_tts = { optional = false, default = 0.5, example = 1.0, explanation 
 time_between_pictures = { optional = false, default = 0.5, example = 1.0, explanation = "Time between every screenshot", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
 delay_before_end = { optional = false, default = 0.5, example = 1.0, explanation = "Deley before video ends", type = "float", nmin = 0, oob_error = "Choose at least 0 second" }
 video_width = { optional = true, default = 1080, example = 1080, explanation = "Final video width", type = "int", nmin = 600, oob_error = "Choose at least 600 pixels wide" }
-video_height = { optional = true, default = 1920, example = 1920, explanation = "Final video height", type = "int", nmin = 800, oob_error = "Choose at least 800 pixels long" }
+video_height = { optional = true, default = 1920, example = 1920, explanation = "Final video height", type = "int", nmin = 600, oob_error = "Choose at least 600 pixels long" }
+webdriver = { optional = true, default = "pyppeteer", example = "pyppeteer", options = ["pyppeteer", "playwright"], explanation = "Driver used to take screenshots (use pyppeteer if you have some problems with playwright)"}
 
 [settings.background]
 background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", ""], explanation = "Sets the background for the video" }

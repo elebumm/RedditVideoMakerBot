@@ -41,7 +41,7 @@ async def main(POST_ID=None):
     cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
     comments_created = save_text_to_mp3(reddit_object)
-    webdriver = screenshot_factory(config["settings"]["times_to_run"])  # TODO add in config
+    webdriver = screenshot_factory(config["settings"]["webdriver"])
     await webdriver(reddit_object, comments_created).download()
     bg_config = get_background_config()
     FinalVideo().make(comments_created, reddit_object, bg_config)
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         else:
             main()
-    except KeyboardInterrupt:  # TODO wont work with async code
+    except KeyboardInterrupt:  # TODO won't work with async code
         shutdown()
     except ResponseException:
         # error for invalid credentials
