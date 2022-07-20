@@ -22,7 +22,7 @@ opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets 
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, not yet implemented" }
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", ""], explanation = "Sets the background for the video based on game name" }
+background_choice = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", ""], explanation = "Sets the background for the video based on game name" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true,
 #    false,
 #], explaination="Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
