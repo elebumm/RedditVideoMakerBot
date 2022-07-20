@@ -244,6 +244,7 @@ class RedditScreenshot(Flaky, Browser):
                 to_language=self.post_lang,
             )
             split_story_tl = story_tl.split('\n')
+
             await main_page.evaluate(
                 # Find all elements with story text
                 "const elements = document.querySelectorAll('[data-test-id=\"post-content\"]"
@@ -280,7 +281,7 @@ class RedditScreenshot(Flaky, Browser):
         Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
 
         # Get the thread screenshot
-        reddit_main = await self.browser.new_page()
+        reddit_main = await self.context.new_page()
         # noinspection Duplicates
         await reddit_main.goto(self.reddit_object["thread_url"])
 
@@ -292,11 +293,11 @@ class RedditScreenshot(Flaky, Browser):
             await self.__close_nsfw(reddit_main)
 
         # Translates submission title
-        if settings.config["reddit"]["thread"]["post_lang"]:
+        if self.post_lang:
             print_substep("Translating post...")
             texts_in_tl = ts.google(
                 self.reddit_object["thread_title"],
-                to_language=settings.config["reddit"]["thread"]["post_lang"],
+                to_language=self.post_lang,
             )
 
             await reddit_main.evaluate(
@@ -306,7 +307,7 @@ class RedditScreenshot(Flaky, Browser):
         else:
             print_substep("Skipping translation...")
 
-        # No sense to move it in common.py
+        # No sense to move it to common.py
         # noinspection Duplicates
         async_tasks_primary = (
             [

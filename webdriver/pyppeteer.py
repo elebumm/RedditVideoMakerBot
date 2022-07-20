@@ -283,6 +283,7 @@ class RedditScreenshot(Browser, Wait):
                 to_language=self.post_lang,
             )
             split_story_tl = story_tl.split('\n')
+
             await main_page.evaluate(
                 # Find all elements with story text
                 "const elements = document.querySelectorAll('[data-test-id=\"post-content\"]"
@@ -331,11 +332,11 @@ class RedditScreenshot(Browser, Wait):
             await self.__close_nsfw(reddit_main)
 
         # Translates submission title
-        if settings.config["reddit"]["thread"]["post_lang"]:
+        if self.post_lang:
             print_substep("Translating post...")
             texts_in_tl = ts.google(
                 self.reddit_object["thread_title"],
-                to_language=settings.config["reddit"]["thread"]["post_lang"],
+                to_language=self.post_lang,
             )
 
             await reddit_main.evaluate(
@@ -345,7 +346,7 @@ class RedditScreenshot(Browser, Wait):
         else:
             print_substep("Skipping translation...")
 
-        # No sense to move it in common.py
+        # No sense to move it to common.py
         # noinspection Duplicates
         async_tasks_primary = (
             [
