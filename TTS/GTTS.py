@@ -8,7 +8,7 @@ max_chars = 0
 
 class GTTS:
     def __init__(self):
-        self.max_chars = 0
+        self.max_chars = 5000
         self.voices = []
 
     def run(self, text, filepath):
