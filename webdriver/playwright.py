@@ -14,7 +14,6 @@ from utils.console import print_step, print_substep
 
 import webdriver.common as common
 
-
 common.default_exception = TimeoutError
 
 
@@ -188,7 +187,7 @@ class RedditScreenshot(Flaky, Browser):
         # Triggers indirectly reload
         await self.click(
             page_instance,
-            'button:has-text("Yes")',
+            "button:has-text('Yes')",
             {"timeout": 5000},
         )
 
@@ -197,7 +196,7 @@ class RedditScreenshot(Flaky, Browser):
 
         await self.click(
             page_instance,
-            'button:has-text("Click to see nsfw")',
+            "button:has-text('Click to see nsfw')",
             {"timeout": 5000},
         )
 
@@ -229,7 +228,7 @@ class RedditScreenshot(Flaky, Browser):
 
         await self.screenshot(
             comment_page,
-            f"[data-testid='post-container']",
+            f"id=t1_{comment_obj['comment_id']}",
             {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
@@ -246,20 +245,23 @@ class RedditScreenshot(Flaky, Browser):
             )
             split_story_tl = story_tl.split('\n')
             await main_page.evaluate(
-                # Find all elements
-                'var elements = document.querySelectorAll(`[data-test-id="post-content"]'
-                ' > [data-click-id="text"] > div > p`);'
+                # Find all elements with story text
+                "const elements = document.querySelectorAll('[data-test-id=\"post-content\"]"
+                " > [data-click-id=\"text\"] > div > p');"
                 # Set array with translated text
-                f"var texts = {split_story_tl};"
+                f"const texts = {split_story_tl};"
                 # Map 2 arrays together
-                "var text_map = texts.map(function(e, i) { return [e, elements[i]]; });"
+                "const concat = (element, i) => [element, elements[i]];"
+                "const mappedTexts = texts.map(concat);"
                 # Change text on the page
-                "for (i = 0; i < text_map.length; ++i) { text_map[i][1].textContent = text_map[i][0] ; };"
+                "for (i = 0; i < mappedTexts.length; ++i) {"
+                "mappedTexts[i][1].textContent = mappedTexts[i][0];"
+                "};"
             )
 
         await self.screenshot(
             main_page,
-            '[data-test-id="post-content"] > [data-click-id="text"]',
+            "data-test-id='post-content' > data-click-id='text'",
             {"path": "assets/temp/png/story_content.png"},
         )
 

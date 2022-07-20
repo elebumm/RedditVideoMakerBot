@@ -18,7 +18,6 @@ from typing import Optional
 
 import webdriver.common as common
 
-
 common.default_exception = BrowserTimeoutError
 
 
@@ -183,27 +182,27 @@ class RedditScreenshot(Browser, Wait):
 
         await self.click(
             page_instance,
-            "//*[contains(@class, 'header-user-dropdown')]",
+            "//div[@class='header-user-dropdown']",
             find_options={"timeout": 5000},
         )
 
         # It's normal not to find it, sometimes there is none :shrug:
         await self.click(
             page_instance,
-            "//*[contains(text(), 'Settings')]/ancestor::button[1]",
+            "//span[text()='Settings']/ancestor::button[1]",
             find_options={"timeout": 5000},
         )
 
         await self.click(
             page_instance,
-            "//*[contains(text(), 'Dark Mode')]/ancestor::button[1]",
+            "//span[text()='Dark Mode']/ancestor::button[1]",
             find_options={"timeout": 5000},
         )
 
         # Closes settings
         await self.click(
             page_instance,
-            "//*[contains(@class, 'header-user-dropdown')]",
+            "//div[@class='header-user-dropdown']",
             find_options={"timeout": 5000},
         )
 
@@ -268,7 +267,7 @@ class RedditScreenshot(Browser, Wait):
 
         await self.screenshot(
             comment_page,
-            f"//*[contains(@id, 't1_{comment_obj['comment_id']}')]",
+            f"//div[@id='t1_{comment_obj['comment_id']}']",
             {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
@@ -285,15 +284,18 @@ class RedditScreenshot(Browser, Wait):
             )
             split_story_tl = story_tl.split('\n')
             await main_page.evaluate(
-                # Find all elements
-                'var elements = document.querySelectorAll(`[data-test-id="post-content"]'
-                ' > [data-click-id="text"] > div > p`);'
+                # Find all elements with story text
+                "const elements = document.querySelectorAll('[data-test-id=\"post-content\"]"
+                " > [data-click-id=\"text\"] > div > p');"
                 # Set array with translated text
-                f"var texts = {split_story_tl};"
+                f"const texts = {split_story_tl};"
                 # Map 2 arrays together
-                "var text_map = texts.map(function(e, i) { return [e, elements[i]]; });"
+                "const concat = (element, i) => [element, elements[i]];"
+                "const mappedTexts = texts.map(concat);"
                 # Change text on the page
-                "for (i = 0; i < text_map.length; ++i) { text_map[i][1].textContent = text_map[i][0] ; };"
+                "for (i = 0; i < mappedTexts.length; ++i) {"
+                "mappedTexts[i][1].textContent = mappedTexts[i][0];"
+                "};"
             )
 
         await self.screenshot(
@@ -359,7 +361,7 @@ class RedditScreenshot(Browser, Wait):
         async_tasks_primary.append(
             self.screenshot(
                 reddit_main,
-                f'//*[@data-testid="post-container"]',
+                f"//div[@data-testid='post-container']",
                 {"path": "assets/temp/png/title.png"},
             )
         )

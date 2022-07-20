@@ -66,7 +66,19 @@ def catch_exception(
 
 # Lots of tabs - lots of memory
 # chunk needed to minimize memory required
-def chunks(lst, n):
-    """Yield successive n-sized chunks from list."""
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+def chunks(
+        array: list,
+        size: int,
+):
+    """
+    Yield successive n-sized chunks from list.
+
+    Args:
+        array: List to be chunked
+        size: size of a chunk
+
+    Returns:
+        Generator with chunked list
+    """
+    for i in range(0, len(array), size):
+        yield array[i:i + size]
