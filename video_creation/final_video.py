@@ -46,6 +46,8 @@ class FinalVideo:
 
         self.opacity = settings.config["settings"]["opacity"]
         self.opacity = 1 if self.opacity is None or self.opacity >= 1 else self.opacity
+        self.transition = settings.config["settings"]["transition"]
+        self.transition = 0 if self.transition is None or self.transition > 2 else self.transition
 
     @staticmethod
     def name_normalize(
@@ -94,6 +96,8 @@ class FinalVideo:
                 width=self.W - self.W / 20 if self.vertical_video else None,
                 height=self.H - self.H / 5 if not self.vertical_video else None,
                 )
+            .crossfadein(self.transition)
+            .crossfadeout(self.transition)
         )
 
     def make(
@@ -102,15 +106,20 @@ class FinalVideo:
             reddit_obj: dict,
             background_config: Tuple[str, str, str, Any],
     ) -> None:
-        """
-        Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
-    
+        """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
         Args:
             indexes_of_clips (list): Indexes of voiced comments
             reddit_obj (dict): The reddit object that contains the posts to read.
             background_config (Tuple[str, str, str, Any]): The background config to use.
         """
+        # try:  # if it isn't found (i.e you just updated and copied over config.toml) it will throw an error
+        #    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
+        # except (TypeError, KeyError):
+        #    print('No background audio volume found in config.toml. Using default value of 1.')
+        #    VOLUME_MULTIPLIER = 1
         print_step("Creating the final video 🎥")
+        VideoFileClip.reW = lambda clip: clip.resize(width=self.W)
+        VideoFileClip.reH = lambda clip: clip.resize(width=self.H)
 
         # Gather all audio clips
         audio_clips = list()
