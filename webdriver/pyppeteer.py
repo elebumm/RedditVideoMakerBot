@@ -261,8 +261,8 @@ class RedditScreenshot(Browser, Wait):
                 to_language=self.post_lang,
             )
             await comment_page.evaluate(
-                f"([tl_content, tl_id]) => document.querySelector('#t1_{comment_obj['comment_id']} > div:nth-child(2) "
-                f'> div > div[data-testid="comment"] > div\').textContent = {comment_tl}',
+                '([comment_id, comment_tl]) => document.querySelector(`#t1_${comment_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = comment_tl',  # noqa
+                [comment_obj["comment_id"], comment_tl],
             )
 
         await self.screenshot(
@@ -285,23 +285,13 @@ class RedditScreenshot(Browser, Wait):
             split_story_tl = story_tl.split('\n')
 
             await main_page.evaluate(
-                # Find all elements with story text
-                "const elements = document.querySelectorAll('[data-test-id=\"post-content\"]"
-                " > [data-click-id=\"text\"] > div > p');"
-                # Set array with translated text
-                f"const texts = {split_story_tl};"
-                # Map 2 arrays together
-                "const concat = (element, i) => [element, elements[i]];"
-                "const mappedTexts = texts.map(concat);"
-                # Change text on the page
-                "for (i = 0; i < mappedTexts.length; ++i) {"
-                "mappedTexts[i][1].textContent = mappedTexts[i][0];"
-                "};"
+                "(split_story_tl) => split_story_tl.map(function(element, i) { return [element, document.querySelectorAll('[data-test-id=\"post-content\"] > [data-click-id=\"text\"] > div > p')[i]]; }).forEach(mappedElement => mappedElement[1].textContent = mappedElement[0])",  # noqa
+                split_story_tl,
             )
 
         await self.screenshot(
             main_page,
-            "//div[@data-click-id='post-container']/child::div[@data-click-id='text']",
+            "//div[@data-test-id='post-content']//div[@data-click-id='text']",
             {"path": "assets/temp/png/story_content.png"},
         )
 
@@ -321,8 +311,7 @@ class RedditScreenshot(Browser, Wait):
 
         # Get the thread screenshot
         reddit_main = await self.browser.newPage()
-        # noinspection Duplicates
-        await reddit_main.goto(self.reddit_object["thread_url"])
+        await reddit_main.goto(self.reddit_object["thread_url"])  # noqa
 
         if settings.config["settings"]["theme"] == "dark":
             await self.__dark_theme(reddit_main)
@@ -340,15 +329,14 @@ class RedditScreenshot(Browser, Wait):
             )
 
             await reddit_main.evaluate(
-                "document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > "
-                f"div').textContent = {texts_in_tl}",
+                f"(texts_in_tl) => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = texts_in_tl",  # noqa
+                texts_in_tl,
             )
         else:
             print_substep("Skipping translation...")
 
         # No sense to move it to common.py
-        # noinspection Duplicates
-        async_tasks_primary = (
+        async_tasks_primary = (  # noqa
             [
                 self.__collect_comment(self.reddit_object["comments"][idx], idx) for idx in
                 self.screenshot_idx
