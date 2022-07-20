@@ -1,21 +1,21 @@
 from asyncio import as_completed
-
-from playwright.async_api import async_playwright, TimeoutError
-from playwright.async_api import Browser, Playwright, Page, BrowserContext, Locator
-
 from pathlib import Path
-from utils import settings
-from utils.console import print_step, print_substep
-import translators as ts
-from rich.progress import track
-
-from attr import attrs, attrib
-from attr.validators import instance_of
 from typing import Dict, Optional
 
-from webdriver.common import ExceptionDecorator, chunks
+import translators as ts
+from attr import attrs, attrib
+from attr.validators import instance_of
+from playwright.async_api import Browser, Playwright, Page, BrowserContext, ElementHandle
+from playwright.async_api import async_playwright, TimeoutError
+from rich.progress import track
 
-catch_exception = ExceptionDecorator(default_exception=TimeoutError).catch_exception
+from utils import settings
+from utils.console import print_step, print_substep
+
+import webdriver.common as common
+
+
+common.default_exception = TimeoutError
 
 
 @attrs
@@ -65,15 +65,19 @@ class Flaky:
     """
 
     @staticmethod
-    @catch_exception
-    def find_element(
-            query: str,
+    @common.catch_exception
+    async def find_element(
+            selector: str,
             page_instance: Page,
             options: Optional[dict] = None,
-    ) -> Locator:
-        return page_instance.locator(query, **options) if options else page_instance.locator(query)
+    ) -> ElementHandle:
+        return (
+            await page_instance.wait_for_selector(selector, **options)
+            if options
+            else await page_instance.wait_for_selector(selector)
+        )
 
-    @catch_exception
+    @common.catch_exception
     async def click(
             self,
             page_instance: Optional[Page] = None,
@@ -81,19 +85,19 @@ class Flaky:
             options: Optional[dict] = None,
             *,
             find_options: Optional[dict] = None,
-            element: Optional[Locator] = None,
+            element: Optional[ElementHandle] = None,
     ) -> None:
         if element:
-            await element.click(**options) if options else element.click()
+            await element.click(**options) if options else await element.click()
         else:
             results = (
-                self.find_element(query, page_instance, **find_options)
+                await self.find_element(query, page_instance, **find_options)
                 if find_options
-                else self.find_element(query, page_instance)
+                else await self.find_element(query, page_instance)
             )
             await results.click(**options) if options else await results.click()
 
-    @catch_exception
+    @common.catch_exception
     async def screenshot(
             self,
             page_instance: Optional[Page] = None,
@@ -101,15 +105,15 @@ class Flaky:
             options: Optional[dict] = None,
             *,
             find_options: Optional[dict] = None,
-            element: Optional[Locator] = None,
+            element: Optional[ElementHandle] = None,
     ) -> None:
         if element:
             await element.screenshot(**options) if options else await element.screenshot()
         else:
             results = (
-                self.find_element(query, page_instance, **find_options)
+                await self.find_element(query, page_instance, **find_options)
                 if find_options
-                else self.find_element(query, page_instance)
+                else await self.find_element(query, page_instance)
             )
             await results.screenshot(**options) if options else await results.screenshot()
 
@@ -135,7 +139,7 @@ class RedditScreenshot(Flaky, Browser):
     ):
         self.post_lang: Optional[bool] = settings.config["reddit"]["thread"]["post_lang"]
 
-    async def __dark_theme(
+    async def __dark_theme(  # TODO isn't working
             self,
             page_instance: Page,
     ) -> None:
@@ -148,24 +152,24 @@ class RedditScreenshot(Flaky, Browser):
 
         await self.click(
             page_instance,
-            "header-user-dropdown",
+            ".header-user-dropdown",
         )
 
         # It's normal not to find it, sometimes there is none :shrug:
         await self.click(
             page_instance,
-            ":nth-match(button) >> 'Settings'",
+            "button >> span:has-text('Settings')",
         )
 
         await self.click(
             page_instance,
-            ":nth-match(button) >> 'Dark Mode'",
+            "button >> span:has-text('Dark Mode')",
         )
 
         # Closes settings
         await self.click(
             page_instance,
-            "header-user-dropdown"
+            ".header-user-dropdown"
         )
 
     async def __close_nsfw(
@@ -225,7 +229,7 @@ class RedditScreenshot(Flaky, Browser):
 
         await self.screenshot(
             comment_page,
-            f"id=t1_{comment_obj['comment_id']}",
+            f"[data-testid='post-container']",
             {"path": f"assets/temp/png/comment_{filename_idx}.png"},
         )
 
@@ -255,7 +259,7 @@ class RedditScreenshot(Flaky, Browser):
 
         await self.screenshot(
             main_page,
-            '[data-click-id="text"]',
+            '[data-test-id="post-content"] > [data-click-id="text"]',
             {"path": "assets/temp/png/story_content.png"},
         )
 
@@ -322,7 +326,7 @@ class RedditScreenshot(Flaky, Browser):
         )
 
         for idx, chunked_tasks in enumerate(
-                [chunk for chunk in chunks(async_tasks_primary, 10)],
+                [chunk for chunk in common.chunks(async_tasks_primary, 10)],
                 start=1,
         ):
             chunk_list = async_tasks_primary.__len__() // 10 + (1 if async_tasks_primary.__len__() % 10 != 0 else 0)

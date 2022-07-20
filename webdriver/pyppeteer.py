@@ -16,9 +16,10 @@ from attr import attrs, attrib
 from attr.validators import instance_of
 from typing import Optional
 
-from webdriver.common import ExceptionDecorator, chunks
+import webdriver.common as common
 
-catch_exception = ExceptionDecorator(default_exception=BrowserTimeoutError).catch_exception
+
+common.default_exception = BrowserTimeoutError
 
 
 @attrs
@@ -60,7 +61,7 @@ class Browser:
 
 class Wait:
     @staticmethod
-    @catch_exception
+    @common.catch_exception
     async def find_xpath(
             page_instance: PageCls,
             xpath: Optional[str] = None,
@@ -93,7 +94,7 @@ class Wait:
             el = await page_instance.waitForXPath(xpath)
         return el
 
-    @catch_exception
+    @common.catch_exception
     async def click(
             self,
             page_instance: Optional[PageCls] = None,
@@ -120,7 +121,7 @@ class Wait:
         else:
             await el.click()
 
-    @catch_exception
+    @common.catch_exception
     async def screenshot(
             self,
             page_instance: Optional[PageCls] = None,
@@ -297,7 +298,7 @@ class RedditScreenshot(Browser, Wait):
 
         await self.screenshot(
             main_page,
-            "//*[@data-click-id='text']",
+            "//div[@data-click-id='post-container']/child::div[@data-click-id='text']",
             {"path": "assets/temp/png/story_content.png"},
         )
 
@@ -358,13 +359,13 @@ class RedditScreenshot(Browser, Wait):
         async_tasks_primary.append(
             self.screenshot(
                 reddit_main,
-                f'//*[contains(@id, \'t3_{self.reddit_object["thread_id"]}\')]',
+                f'//*[@data-testid="post-container"]',
                 {"path": "assets/temp/png/title.png"},
             )
         )
 
         for idx, chunked_tasks in enumerate(
-                [chunk for chunk in chunks(async_tasks_primary, 10)],
+                [chunk for chunk in common.chunks(async_tasks_primary, 10)],
                 start=1,
         ):
             chunk_list = async_tasks_primary.__len__() // 10 + (1 if async_tasks_primary.__len__() % 10 != 0 else 0)

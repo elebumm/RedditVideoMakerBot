@@ -5,21 +5,19 @@ from typing import TypeVar, Optional, Callable, Union
 _function = TypeVar("_function", bound=Callable[..., object])
 _exceptions = TypeVar("_exceptions", bound=Optional[Union[type, tuple, list]])
 
+default_exception = None
+
 
 @attrs
 class ExceptionDecorator:
     """
-    Decorator factory for catching exceptions and writing logs
+    Decorator for catching exceptions and writing logs
     """
     exception: Optional[_exceptions] = attrib(default=None)
-    _default_exception: Optional[_exceptions] = attrib(
-        kw_only=True,
-        default=None
-    )
 
     def __attrs_post_init__(self):
         if not self.exception:
-            self.exception = self._default_exception
+            self.exception = default_exception
 
     def __call__(
             self,
@@ -46,25 +44,24 @@ class ExceptionDecorator:
 
         return wrapper
 
-    @classmethod
-    def catch_exception(
-            cls,
-            func: Optional[_function],
-            exception: Optional[_exceptions] = None,
-    ) -> Union[object, _function]:
-        """
-        Decorator for catching exceptions and writing logs
 
-        Args:
-            func: Function to be decorated
-            exception: Expected exception(s)
-        Returns:
-            Decorated function
-        """
-        exceptor = cls(exception)
-        if func:
-            exceptor = exceptor(func)
-        return exceptor
+def catch_exception(
+        func: Optional[_function],
+        exception: Optional[_exceptions] = None,
+) -> Union[object, _function]:
+    """
+    Decorator for catching exceptions and writing logs
+
+    Args:
+        func: Function to be decorated
+        exception: Expected exception(s)
+    Returns:
+        Decorated function
+    """
+    exceptor = ExceptionDecorator(exception)
+    if func:
+        exceptor = exceptor(func)
+    return exceptor
 
 
 # Lots of tabs - lots of memory
