@@ -71,7 +71,7 @@ class StreamlabsPolly(BaseApiTTS):
         else:
             try:
                 results = requests.get(response.json()["speak_url"])
-                return results
+                return results.content
             except (KeyError, JSONDecodeError):
                 try:
                     if response.json()["error"] == "No text specified!":

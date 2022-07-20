@@ -8,7 +8,7 @@ class GTTS:
     # voices = []
 
     @staticmethod
-    async def run(
+    def run(
             text,
             filepath
     ) -> None:
