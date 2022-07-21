@@ -62,6 +62,8 @@ def run_many(times):
 
 def shutdown():
     print_markdown("## Clearing temp files")
+    # Informs the user of exiting the program
+    print("Exiting...")
     cleanup()
     exit()
 
