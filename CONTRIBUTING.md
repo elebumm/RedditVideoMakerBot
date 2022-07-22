@@ -1,3 +1,4 @@
+
 # Contributing to Reddit Video Maker Bot 🎥
 
 Thanks for taking the time to contribute! ❤️
@@ -115,7 +116,7 @@ Before contributing, follow these steps (if you are a beginner)
 - Create a fork of this repository to your personal account
 - Clone the repo to your computer
 - Make sure that you have all dependencies installed
-- Run `python3 main.py` to make sure that the program is working
+- Run `python main.py` to make sure that the program is working
 - Now, you are all setup to contribute your own features to this repo!
 
 Even if you are a beginner to working with python or contributing to open source software,
