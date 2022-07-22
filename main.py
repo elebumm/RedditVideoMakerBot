@@ -63,6 +63,7 @@ def run_many(times):
 def shutdown():
     print_markdown("## Clearing temp files")
     cleanup()
+    print("Exiting...")
     exit()
 
 
