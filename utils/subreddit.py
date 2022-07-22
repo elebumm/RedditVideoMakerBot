@@ -9,6 +9,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
     """_summary_
 
     Args:
+        times_checked: (int): For internal use, number of times function was called
         submissions (list): List of posts that are going to potentially be generated into a video
         subreddit (praw.Reddit.SubredditHelper): Chosen subreddit
 
@@ -34,22 +35,23 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
-        if submission.num_comments <= int(settings.config["reddit"]["thread"]["min_comments"]):
+        if submission.num_comments < int(settings.config["reddit"]["thread"]["min_comments"]):
             print_substep(
-                f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
+                "This post has under the specified minimum of comments"
+                f'({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
             continue
         return submission
     print("all submissions have been done going by top submission order")
     VALID_TIME_FILTERS = [
-        "day",
         "hour",
+        "day",
         "month",
         "week",
         "year",
         "all",
     ]  # set doesn't have __getitem__
-    index = times_checked + 1
+    index = times_checked + 1 if times_checked != 0 else times_checked
     if index == len(VALID_TIME_FILTERS):
         print("all time filters have been checked you absolute madlad ")
 

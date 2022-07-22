@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError, ProfileNotFound
+
 import sys
 from utils import settings
-import random
+from attr import attrs, attrib
+from attr.validators import instance_of
+
+from TTS.common import get_random_voice
+
 
 voices = [
     "Brian",
@@ -24,23 +29,37 @@ voices = [
 ]
 
 
+@attrs
 class AWSPolly:
-    def __init__(self):
-        self.max_chars = 0
-        self.voices = voices
+    random_voice: bool = attrib(
+        validator=instance_of(bool),
+        default=False
+    )
+    max_chars: int = 0
 
-    def run(self, text, filepath, random_voice: bool = False):
+    def run(
+            self,
+            text,
+            filepath,
+    ) -> None:
+        """
+        Calls for TTS api
+
+        Args:
+            text: text to be voiced over
+            filepath: name of the audio file
+        """
         try:
             session = Session(profile_name="polly")
             polly = session.client("polly")
-            if random_voice:
-                voice = self.randomvoice()
-            else:
-                if not settings.config["settings"]["tts"]["aws_polly_voice"]:
-                    raise ValueError(
-                        f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
-                    )
-                voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
+            voice = (
+                get_random_voice(voices)
+                if self.random_voice
+                else str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
+                if str(settings.config["settings"]["tts"]["aws_polly_voice"]).lower() in [voice.lower() for voice in
+                                                                                          voices]
+                else get_random_voice(voices)
+            )
             try:
                 # Request speech synthesis
                 response = polly.synthesize_speech(
@@ -71,6 +90,3 @@ class AWSPolly:
             """
             )
             sys.exit(-1)
-
-    def randomvoice(self):
-        return random.choice(self.voices)

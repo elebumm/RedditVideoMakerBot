@@ -3,13 +3,13 @@ import toml
 from rich.console import Console
 import re
 
-from typing import Tuple, Dict
+from typing import Dict, Optional, Union
 
 from utils.console import handle_input
 
 
 console = Console()
-config = dict  # autocomplete
+config: Optional[dict] = None  # autocomplete
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
@@ -108,7 +108,7 @@ def check_vars(path, checks):
     crawl_and_check(config, path, checks)
 
 
-def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
+def check_toml(template_file, config_file) -> Union[bool, Dict]:
     global config
     config = None
     try:

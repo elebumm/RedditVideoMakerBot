@@ -9,5 +9,6 @@ requests==2.28.1
 rich==12.5.1
 toml==0.10.2
 translators==5.3.1
-
+pyppeteer==1.0.2
+attrs==21.4.0
 Pillow~=9.1.1

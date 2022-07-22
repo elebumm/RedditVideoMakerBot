@@ -12,7 +12,7 @@ function Help(){
     echo "Options:" 
     echo "  -h: Show this help message and exit" 
     echo "  -d: Install only dependencies" 
-    echo "  -p: Install only python dependencies (including playwright)" 
+    echo "  -p: Install only python dependencies (including playwright)"
     echo "  -b: Install just the bot"
     echo "  -l: Install the bot and the python dependencies"
 } 
@@ -112,20 +112,20 @@ function install_python_dep(){
 
 # install playwright function
 function install_playwright(){
-    # tell the user that the script is going to install playwright 
+    # tell the user that the script is going to install playwright
     echo "Installing playwright"
     # cd into the directory where the script is downloaded
     cd RedditVideoMakerBot-master
     # run the install script
-    python3 -m playwright install 
-    python3 -m playwright install-deps 
+    python3 -m playwright install
+    python3 -m playwright install-deps
     # give a note
     printf "Note, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues"
     if [ -x "$(command -v pacman)" ]; then
         printf "It seems you are on and Arch based distro.\nTry installing these from the AUR for playwright to run:\nenchant1.6\nicu66\nlibwebp052\n"
     fi
     cd ..
-} 
+}
 
 # Install depndencies
 function install_deps(){ 

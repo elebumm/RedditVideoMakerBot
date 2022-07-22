@@ -48,7 +48,7 @@ class Video:
         img_clip = img_clip.set_opacity(opacity).set_duration(duration)
         img_clip = img_clip.set_position(
             position, relative=True
-        )  # todo get dara from utils/CONSTANTS.py and adapt position accordingly
+        )  # todo get data from utils/CONSTANTS.py and adapt position accordingly
 
         # Overlay the img clip on the first video clip
         self.video = CompositeVideoClip([self.video, img_clip])

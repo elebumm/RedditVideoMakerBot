@@ -1,15 +1,17 @@
-import base64
 from utils import settings
-import random
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
-# from profanity_filter import ProfanityFilter
-# pf = ProfanityFilter()
-# Code by @JasonLovesDoggo
-# https://twitter.com/scanlime/status/1512598559769702406
+from attr import attrs, attrib
+from attr.validators import instance_of
 
-nonhuman = [  # DISNEY VOICES
+from TTS.common import BaseApiTTS, get_random_voice
+
+# TTS examples: https://twitter.com/scanlime/status/1512598559769702406
+
+voices = dict()
+
+voices["nonhuman"] = [  # DISNEY VOICES
     "en_us_ghostface",  # Ghost Face
     "en_us_chewbacca",  # Chewbacca
     "en_us_c3po",  # C3PO
@@ -18,7 +20,7 @@ nonhuman = [  # DISNEY VOICES
     "en_us_rocket",  # Rocket
     # ENGLISH VOICES
 ]
-human = [
+voices["human"] = [
     "en_au_001",  # English AU - Female
     "en_au_002",  # English AU - Male
     "en_uk_001",  # English UK - Male 1
@@ -30,9 +32,8 @@ human = [
     "en_us_009",  # English US - Male 3
     "en_us_010",
 ]
-voices = nonhuman + human
 
-noneng = [
+voices["non_eng"] = [
     "fr_001",  # French - Male 1
     "fr_002",  # French - Male 2
     "de_001",  # German - Female
@@ -56,32 +57,51 @@ noneng = [
 ]
 
 
-# good_voices = {'good': ['en_us_002', 'en_us_006'],
-#               'ok': ['en_au_002', 'en_uk_001']}  # less en_us_stormtrooper more less en_us_rocket en_us_ghostface
+# good_voices: 'en_us_002', 'en_us_006'
+# ok: 'en_au_002', 'en_uk_001'
+# less: en_us_stormtrooper
+# more or less: en_us_rocket, en_us_ghostface
 
 
-class TikTok:  # TikTok Text-to-Speech Wrapper
-    def __init__(self):
-        self.URI_BASE = (
-            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
-        )
-        self.max_chars = 300
-        self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
+@attrs
+class TikTok(BaseApiTTS):  # TikTok Text-to-Speech Wrapper
+    random_voice: bool = attrib(
+        validator=instance_of(bool),
+        default=False
+    )
+    uri_base: str = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/"
+    max_chars: int = 300
+    decode_base64: bool = True
 
-    def run(self, text, filepath, random_voice: bool = False):
-        # if censor:
-        #     req_text = pf.censor(req_text)
-        #     pass
+    def make_request(
+            self,
+            text: str,
+    ):
+        """
+                Makes a requests to remote TTS service
+
+                Args:
+                    text: text to be voice over
+
+                Returns:
+                    Request's response
+                """
         voice = (
-            self.randomvoice()
-            if random_voice
-            else (
-                settings.config["settings"]["tts"]["tiktok_voice"]
-                or random.choice(self.voices["human"])
-            )
+            get_random_voice(voices, "human")
+            if self.random_voice
+            else str(settings.config["settings"]["tts"]["tiktok_voice"]).lower()
+            if str(settings.config["settings"]["tts"]["tiktok_voice"]).lower() in [
+                voice.lower() for dict_title in voices for voice in voices[dict_title]]
+            else get_random_voice(voices, "human")
         )
         try:
-            r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = requests.post(
+                self.uri_base,
+                params={
+                    "text_speaker": voice,
+                    "req_text": text,
+                    "speaker_map_type": 0,
+                })
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
             session = requests.Session()
@@ -89,13 +109,6 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             adapter = HTTPAdapter(max_retries=retry)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            r = session.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = session.post(f"{self.uri_base}{voice}&req_text={text}&speaker_map_type=0")
         # print(r.text)
-        vstr = [r.json()["data"]["v_str"]][0]
-        b64d = base64.b64decode(vstr)
-
-        with open(filepath, "wb") as out:
-            out.write(b64d)
-
-    def randomvoice(self):
-        return random.choice(self.voices["human"])
+        return r.json()["data"]["v_str"]

@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
-import random
 from utils import settings
 from gtts import gTTS
 
-max_chars = 0
-
 
 class GTTS:
-    def __init__(self):
-        self.max_chars = 0
-        self.voices = []
+    max_chars = 0
+    # voices = []
 
-    def run(self, text, filepath):
+    @staticmethod
+    def run(
+            text,
+            filepath
+    ) -> None:
+        """
+        Calls for TTS api
+
+        Args:
+            text: text to be voiced over
+            filepath: name of the audio file
+        """
         tts = gTTS(
             text=text,
             lang=settings.config["reddit"]["thread"]["post_lang"] or "en",
             slow=False,
         )
         tts.save(filepath)
-
-    def randomvoice(self):
-        return random.choice(self.voices)
