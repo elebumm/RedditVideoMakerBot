@@ -88,7 +88,7 @@ class TTSEngine:
         offset = 0
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
-            if not text_cut or text_cut.isspace():
+            if not process_text(text_cut) or process_text(text_cut).isspace():
                 offset += 1
                 continue
 
