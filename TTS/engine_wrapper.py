@@ -94,11 +94,12 @@ class TTSEngine:
         offset = 0
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
-            if not process_text(text_cut) or process_text(text_cut.isspace()):
+            new_text = process_text(text_cut)
+            if not new_text or new_text.isspace():
                 offset += 1
                 continue
 
-            self.call_tts(f"{idx}-{idy - offset}.part", text_cut)
+            self.call_tts(f"{idx}-{idy - offset}.part", new_text)
             split_files.append(
                 AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3")
             )
@@ -119,7 +120,7 @@ class TTSEngine:
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(
-            text=process_text(text), filepath=f"{self.path}/{filename}.mp3"
+            text, filepath=f"{self.path}/{filename}.mp3"
         )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
