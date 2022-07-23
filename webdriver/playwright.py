@@ -213,7 +213,10 @@ class RedditScreenshot(Flaky, Browser):
             filename_idx: index for the filename
         """
         comment_page = await self.context.new_page()
-        await comment_page.goto(f'https://reddit.com{comment_obj["comment_url"]}')
+        await comment_page.goto(
+            f'https://reddit.com{comment_obj["comment_url"]}',
+            timeout=0,  # Fix for Navigation TimeoutError
+        )
 
         # Translates submission' comment
         if self.post_lang:
@@ -272,7 +275,10 @@ class RedditScreenshot(Flaky, Browser):
 
         # Get the thread screenshot
         reddit_main = await self.context.new_page()
-        await reddit_main.goto(self.reddit_object["thread_url"])  # noqa
+        await reddit_main.goto(  # noqa
+            self.reddit_object["thread_url"],
+            timeout=0,  # Fix for Navigation TimeoutError
+        )
 
         if settings.config["settings"]["theme"] == "dark":
             await self.__dark_theme(reddit_main)
