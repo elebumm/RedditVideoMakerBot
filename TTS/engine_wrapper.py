@@ -13,7 +13,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFAULT_MAX_LENGTH: int = 50  # video length variable
+DEFUALT_MAX_LENGTH: int = 50  # video length variable
 
 
 class TTSEngine:
@@ -35,15 +35,13 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFAULT_MAX_LENGTH,
-        last_clip_length: int = 0,
+        max_length: int = DEFUALT_MAX_LENGTH,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
         self.path = path
         self.max_length = max_length
         self.length = 0
-        self.last_clip_length = last_clip_length
 
     def run(self) -> Tuple[int, int]:
 
@@ -57,28 +55,25 @@ class TTSEngine:
 
         print_step("Saving Text to MP3 files...")
 
-        self.call_tts("title", self.reddit_object["thread_title"])
+        self.call_tts("title", process_text(self.reddit_object["thread_title"]))
+        processed_text = process_text(self.reddit_object["thread_post"])
         if (
-            self.reddit_object["thread_post"] != ""
+            processed_text != ""
             and settings.config["settings"]["storymode"] == True
         ):
-            self.call_tts("posttext", self.reddit_object["thread_post"])
+            self.call_tts("posttext", processed_text)
 
         idx = None
-        for idx, comment in track(
-            enumerate(self.reddit_object["comments"]), "Saving..."
-        ):
+        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
-                self.length -= self.last_clip_length
-                idx -= 1
                 break
             if (
                 len(comment["comment_body"]) > self.tts_module.max_chars
             ):  # Split the comment if it is too long
                 self.split_post(comment["comment_body"], idx)  # Split the comment
             else:  # If the comment is not too long, just call the tts engine
-                self.call_tts(f"{idx}", comment["comment_body"])
+                self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
@@ -94,15 +89,13 @@ class TTSEngine:
         offset = 0
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
-            new_text = process_text(text_cut)
+            new_text = process_text(text_cut) 
             if not new_text or new_text.isspace():
                 offset += 1
                 continue
 
             self.call_tts(f"{idx}-{idy - offset}.part", new_text)
-            split_files.append(
-                AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3")
-            )
+            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3"))
 
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
@@ -119,17 +112,13 @@ class TTSEngine:
         # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(
-            text, filepath=f"{self.path}/{filename}.mp3"
-        )
+        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
         #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         try:
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            if clip.duration + self.length < self.max_length:
-                self.last_clip_length = clip.duration
             self.length += clip.duration
             clip.close()
         except:
