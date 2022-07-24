@@ -55,12 +55,13 @@ class TTSEngine:
 
         print_step("Saving Text to MP3 files...")
 
-        self.call_tts("title", self.reddit_object["thread_title"])
+        self.call_tts("title", process_text(self.reddit_object["thread_title"]))
+        processed_text = process_text(self.reddit_object["thread_post"])
         if (
-            self.reddit_object["thread_post"] != ""
+            processed_text != ""
             and settings.config["settings"]["storymode"] == True
         ):
-            self.call_tts("posttext", self.reddit_object["thread_post"])
+            self.call_tts("posttext", processed_text)
 
         idx = None
         for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
@@ -72,7 +73,7 @@ class TTSEngine:
             ):  # Split the comment if it is too long
                 self.split_post(comment["comment_body"], idx)  # Split the comment
             else:  # If the comment is not too long, just call the tts engine
-                self.call_tts(f"{idx}", comment["comment_body"])
+                self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
