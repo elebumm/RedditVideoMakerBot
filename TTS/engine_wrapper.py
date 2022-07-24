@@ -13,7 +13,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFUALT_MAX_LENGTH: int = 50  # video length variable
+DEFAULT_MAX_LENGTH: int = 50  # video length variable
 
 
 class TTSEngine:
@@ -35,13 +35,15 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFUALT_MAX_LENGTH,
+        max_length: int = DEFAULT_MAX_LENGTH,
+        last_clip_length: int = 0,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
         self.path = path
         self.max_length = max_length
         self.length = 0
+        self.last_clip_length = last_clip_length
 
     def run(self) -> Tuple[int, int]:
 
@@ -64,9 +66,13 @@ class TTSEngine:
             self.call_tts("posttext", processed_text)
 
         idx = None
-        for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+        for idx, comment in track(
+            enumerate(self.reddit_object["comments"]), "Saving..."
+        ):
             # ! Stop creating mp3 files if the length is greater than max length.
             if self.length > self.max_length:
+                self.length -= self.last_clip_length
+                idx -= 1
                 break
             if (
                 len(comment["comment_body"]) > self.tts_module.max_chars
@@ -95,7 +101,9 @@ class TTSEngine:
                 continue
 
             self.call_tts(f"{idx}-{idy - offset}.part", new_text)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3"))
+            split_files.append(
+                AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3")
+            )
 
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
@@ -112,13 +120,17 @@ class TTSEngine:
         # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
+        self.tts_module.run(
+            text, filepath=f"{self.path}/{filename}.mp3"
+        )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
         #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         try:
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
+            if clip.duration + self.length < self.max_length:
+                self.last_clip_length = clip.duration
             self.length += clip.duration
             clip.close()
         except:
