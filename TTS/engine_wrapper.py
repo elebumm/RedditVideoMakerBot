@@ -13,7 +13,7 @@ from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 from utils import settings
 
-DEFAULT_MAX_LENGTH: int = 50  # video length variable
+
 
 
 class TTSEngine:
@@ -24,7 +24,6 @@ class TTSEngine:
         tts_module          : The TTS module. Your module should handle the TTS itself and saving to the given path under the run method.
         reddit_object         : The reddit object that contains the posts to read.
         path (Optional)       : The unix style path to save the mp3 files to. This must not have leading or trailing slashes.
-        max_length (Optional) : The maximum length of the mp3 files in total.
 
     Notes:
         tts_module must take the arguments text and filepath.
@@ -35,13 +34,12 @@ class TTSEngine:
         tts_module,
         reddit_object: dict,
         path: str = "assets/temp/mp3",
-        max_length: int = DEFAULT_MAX_LENGTH,
         last_clip_length: int = 0,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
         self.path = path
-        self.max_length = max_length
+        self.max_length = settings.config["settings"]["video_length"]
         self.length = 0
         self.last_clip_length = last_clip_length
 

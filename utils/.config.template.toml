@@ -21,6 +21,7 @@ min_comments = { default = 20, optional = false, nmin = 15, type = "int", explan
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true,
     false,
 ], explanation = "Whether to allow NSFW content, True or False" }
+video_length = { default = 50, optional = false, nmin = 20, nmax = 3600, type = "int", explanation = "The minimum length of a video in seconds. default is 50", example = 25, oob_error = "the length of the video should be between 20 and 3600 seconds" }
 theme = { optional = false, default = "dark", example = "light", options = ["dark",
     "light",
 ], explanation = "sets the Reddit theme, either LIGHT or DARK" }
