@@ -14,6 +14,9 @@ from video_creation.background import (
     download_background,
     chop_background_video,
     get_background_config,
+    download_background_audio,
+    chop_background_audio,
+    get_background_audio_config
 )
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
@@ -48,6 +51,9 @@ def main(POST_ID=None):
     bg_config = get_background_config()
     download_background(bg_config)
     chop_background_video(bg_config, length)
+    bg_config_audio = get_background_audio_config()
+    download_background_audio(bg_config_audio)
+    chop_background_audio(bg_config_audio, length)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 

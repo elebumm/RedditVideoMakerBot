@@ -4,13 +4,13 @@ from random import randrange
 from typing import Any, Tuple
 
 
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
 
 from utils import settings
-from utils.CONSTANTS import background_options
+from utils.CONSTANTS import background_options, background_audio_options
 from utils.console import print_step, print_substep
 
 
@@ -44,6 +44,22 @@ def get_background_config():
     return background_options[choice]
 
 
+def get_background_audio_config():
+    """Fetch the audio background/s configuration"""
+    try:
+        audio = str(settings.config["settings"]["background"]["background_audio"]).casefold()
+    except AttributeError:
+        print_substep("No background selected. Picking random background'")
+        audio = None
+    
+    # Handle default / not supported background using default option.
+    # Default : pick random from supported background.
+    if not audio or audio not in background_options:
+        audio = random.choice(list(background_audio_options.keys()))
+
+    return background_audio_options[audio]
+
+
 def download_background(background_config: Tuple[str, str, str, Any]):
     """Downloads the background/s video from YouTube."""
     Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
@@ -60,6 +76,19 @@ def download_background(background_config: Tuple[str, str, str, Any]):
         "assets/backgrounds", filename=f"{credit}-{filename}"
     )
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
+
+
+def download_background_audio(background_audio_config: Tuple[str, str, str]):
+    """Downloads the background/s audio from YouTube."""
+    Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
+    uri, filename, credit = background_audio_config
+    if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
+        return
+
+    print_substep("Downloading the backgrounds audios... please be patient 🙏 ")
+    print_substep(f"Downloading {filename} from {uri}")
+    YouTube(uri, on_progress_callback=on_progress).streams.filter(type="audio").first().download("assets/backgrounds", filename=f"{credit}-{filename}")
+    print_substep("Background audios downloaded successfully! 🎉", style="bold green")
 
 
 def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
@@ -90,3 +119,26 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
             new.write_videofile("assets/temp/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
     return background_config[2]
+
+
+def chop_background_audio(background_audio_config: Tuple[str, str, str], video_length: int):
+    """Generates the audio background footage to be used in the video and writes it to assets/temp/background.mp3
+
+    Args:
+        background_config (Tuple[str, str, str]) : Current audio background configuration
+        video_length (int): Length of the clip where the background footage is to be taken out of
+    """
+    print_step("Finding a spot in the backgrounds audio to chop...✂️")
+    _, filename, credit = background_audio_config
+    choice = f"{credit}-{filename}"
+
+    background = AudioFileClip(f"assets/backgrounds/{choice}")
+
+    start_time, end_time = get_start_and_end_times(video_length, background.duration)
+
+    # use ffmpeg instead ?
+    with AudioFileClip(f"assets/backgrounds/{choice}") as audio:
+            new = audio.subclip(start_time, end_time)
+            new.write_audiofile("assets/temp/background.mp3")
+    
+    print_substep("Background audio chopped successfully!", style="bold green")
