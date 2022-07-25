@@ -52,7 +52,7 @@ def check(
     Returns:
         Correct value
     """
-    correct = True if value else False
+    correct = True if value != {} else False
 
     if correct and "type" in checks:
         try:
