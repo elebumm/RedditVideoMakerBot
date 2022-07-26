@@ -154,7 +154,7 @@ def check_vars(
         checks: dict,
 ) -> None:
     """
-    Checks if value is in nested dict and correct by path of keys
+    Checks if there is the value in the dict and it's correct
 
     Args:
         path: List with path
@@ -204,9 +204,9 @@ def check_config_wrapper(
                     return False
             console.print("Unable to read config, and not allowed to overwrite it. Giving up.")
             return False
-        # except Exception as error:
-        #     console.print(f"[red bold]Encountered error when trying to to load {kwargs['template_name']}: {error}")
-        #     return False
+        except Exception as error:
+            console.print(f"[red bold]Encountered error when trying to to load {kwargs['template_name']}: {error}")
+            return False
 
     return wrapper
 
@@ -248,6 +248,16 @@ def check_config(
         config = toml.load(config_name)
 
     template = toml.load(template_name)
+    console.print(
+        """\
+[blue bold]###############################
+#                             #
+# Checking TOML configuration #
+#                             #
+###############################
+If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
+"""
+    )
     crawl(template, check_vars)
     with open(config_name, "w") as f:
         toml.dump(config, f)
