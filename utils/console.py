@@ -5,6 +5,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 from rich.columns import Columns
+from typing import Optional, Union
 import re
 
 console = Console()
@@ -36,18 +37,32 @@ def print_substep(text, style=""):
 
 
 def handle_input(
-    message: str = "",
-    check_type=False,
-    match: str = "",
-    err_message: str = "",
-    nmin=None,
-    nmax=None,
-    oob_error="",
-    extra_info="",
-    options: list = None,
-    default=NotImplemented,
-    optional=False,
+        *,
+        var_type: Union[str, bool] = False,
+        regex: str = "",
+        input_error: str = "",
+        nmin: Optional[int] = None,  # noqa
+        nmax: Optional[int] = None,  # noqa
+        oob_error: str = "",
+        explanation: str = "",
+        options: list = None,
+        default: Optional[str] = NotImplemented,
+        optional: bool = False,
+        example: Optional[str] = None,
+        name: str = "",
+        message: Optional[Union[str, float]] = None,
 ):
+    if not message:
+        message = (
+                (("[blue]Example: " + str(example) + "\n") if example else "")
+                + "[red]"
+                + ("Non-optional ", "Optional ")[optional]
+                + "[#C0CAF5 bold]"
+                + str(name)
+                + "[#F7768E bold]="
+        )
+    var_type: any = eval(var_type) if var_type else var_type
+
     if optional:
         console.print(message + "\n[green]This is an optional value. Do you want to skip it? (y/n)")
         if input().casefold().startswith("y"):
@@ -63,16 +78,16 @@ def handle_input(
         if input().casefold().startswith("y"):
             return default
     if options is None:
-        match = re.compile(match)
-        console.print("[green bold]" + extra_info, no_wrap=True)
+        regex = re.compile(regex)
+        console.print("[green bold]" + explanation, no_wrap=True)
         while True:
             console.print(message, end="")
             user_input = input("").strip()
-            if check_type is not False:
+            if var_type is not False:
                 try:
-                    user_input = check_type(user_input)
+                    user_input = var_type(user_input)
                     if (nmin is not None and user_input < nmin) or (
-                        nmax is not None and user_input > nmax
+                            nmax is not None and user_input > nmax
                     ):
                         # FAILSTATE Input out of bounds
                         console.print("[red]" + oob_error)
@@ -80,34 +95,34 @@ def handle_input(
                     break  # Successful type conversion and number in bounds
                 except ValueError:
                     # Type conversion failed
-                    console.print("[red]" + err_message)
+                    console.print("[red]" + input_error)
                     continue
-            elif match != "" and re.match(match, user_input) is None:
-                console.print("[red]" + err_message + "\nAre you absolutely sure it's correct?(y/n)")
+            elif regex != "" and re.match(regex, user_input) is None:
+                console.print("[red]" + input_error + "\nAre you absolutely sure it's correct?(y/n)")
                 if input().casefold().startswith("y"):
                     break
                 continue
             else:
                 # FAILSTATE Input STRING out of bounds
                 if (nmin is not None and len(user_input) < nmin) or (
-                    nmax is not None and len(user_input) > nmax
+                        nmax is not None and len(user_input) > nmax
                 ):
                     console.print("[red bold]" + oob_error)
                     continue
                 break  # SUCCESS Input STRING in bounds
         return user_input
-    console.print(extra_info, no_wrap=True)
+    console.print(explanation, no_wrap=True)
     while True:
         console.print(message, end="")
         user_input = input("").strip()
-        if check_type is not False:
+        if var_type is not False:
             try:
-                isinstance(eval(user_input), check_type)
-                return check_type(user_input)
-            except:
+                isinstance(eval(user_input), var_type)
+                return var_type(user_input)
+            except Exception:  # noqa (Exception is fine, it's not too broad)
                 console.print(
                     "[red bold]"
-                    + err_message
+                    + input_error
                     + "\nValid options are: "
                     + ", ".join(map(str, options))
                     + "."
@@ -116,5 +131,5 @@ def handle_input(
         if user_input in options:
             return user_input
         console.print(
-            "[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + "."
+            "[red bold]" + input_error + "\nValid options are: " + ", ".join(map(str, options)) + "."
         )
