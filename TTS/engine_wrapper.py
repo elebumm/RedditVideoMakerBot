@@ -59,10 +59,7 @@ class TTSEngine:
 
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         processed_text = process_text(self.reddit_object["thread_post"])
-        if (
-            processed_text != ""
-            and settings.config["settings"]["storymode"] == True
-        ):
+        if processed_text != "" and settings.config["settings"]["storymode"] == True:
             self.call_tts("posttext", processed_text)
 
         idx = None
@@ -95,7 +92,7 @@ class TTSEngine:
         offset = 0
         for idy, text_cut in enumerate(split_text):
             # print(f"{idx}-{idy}: {text_cut}\n")
-            new_text = process_text(text_cut) 
+            new_text = process_text(text_cut)
             if not new_text or new_text.isspace():
                 offset += 1
                 continue
@@ -120,9 +117,7 @@ class TTSEngine:
         # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(
-            text, filepath=f"{self.path}/{filename}.mp3"
-        )
+        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):

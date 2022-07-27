@@ -31,7 +31,9 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
 def get_background_config():
     """Fetch the background/s configuration"""
     try:
-        choice = str(settings.config["settings"]["background"]["background_choice"]).casefold()
+        choice = str(
+            settings.config["settings"]["background"]["background_choice"]
+        ).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None
@@ -56,13 +58,15 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
-        "assets/backgrounds", filename=f"{credit}-{filename}"
-    )
+    YouTube(uri, on_progress_callback=on_progress).streams.filter(
+        res="1080p"
+    ).first().download("assets/backgrounds", filename=f"{credit}-{filename}")
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
-def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
+def chop_background_video(
+    background_config: Tuple[str, str, str, Any], video_length: int
+):
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
