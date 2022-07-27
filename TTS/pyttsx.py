@@ -21,7 +21,7 @@ class pyttsx:
     ):
         voice_id = int(settings.config["settings"]["tts"]["python_voice"])
         voice_num = int(settings.config["settings"]["tts"]["python_voice_number"])
-        for i in range(voice_num):
+        for i in range(voice_num-1):
             self.voices.append(i)
             i=+1
         if random_voice:

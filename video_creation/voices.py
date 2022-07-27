@@ -3,7 +3,6 @@
 from typing import Dict, Tuple
 
 from rich.console import Console
-from TTS import pyttsx
 
 from TTS.engine_wrapper import TTSEngine
 from TTS.GTTS import GTTS
