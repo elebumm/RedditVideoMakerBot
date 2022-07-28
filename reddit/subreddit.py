@@ -83,6 +83,12 @@ def get_subreddit_threads(POST_ID: str):
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
 
+
+    if settings.config['reddit']['thread']['random']:
+        choice = input('Do you want this thread? y/n \n').lower().strip()
+        if choice == 'n':
+            return get_subreddit_threads(None)
+
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
     content["thread_post"] = submission.selftext
