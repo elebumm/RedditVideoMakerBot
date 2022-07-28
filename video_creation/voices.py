@@ -9,7 +9,7 @@ from TTS.GTTS import GTTS
 from TTS.streamlabs_polly import StreamlabsPolly
 from TTS.aws_polly import AWSPolly
 from TTS.TikTok import TikTok
-from TTS.pyttsx import Pyttsx
+from TTS.pyttsx import pyttsx
 from utils import settings
 from utils.console import print_table, print_step
 
@@ -21,7 +21,7 @@ TTSProviders = {
     "AWSPolly": AWSPolly,
     "StreamlabsPolly": StreamlabsPolly,
     "TikTok": TikTok,
-    "pyttsx": Pyttsx,
+    "pyttsx": pyttsx,
 }
 
 
