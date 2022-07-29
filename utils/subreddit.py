@@ -55,7 +55,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
 
     return get_subreddit_undone(
         subreddit.top(
-            time_filter=VALID_TIME_FILTERS[index],limit=(50 if int(index) == 0 else index + 1 * 50)
+            time_filter=VALID_TIME_FILTERS[index], limit=(50 if int(index) == 0 else index + 1 * 50)
         ),
         subreddit,
         times_checked=index,
