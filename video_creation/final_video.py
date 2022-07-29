@@ -75,9 +75,7 @@ def make_final_video(
     )
 
     # Gather all audio clips
-    audio_clips = [
-        AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)
-    ]
+    audio_clips = [AudioFileClip(f"assets/temp/mp3/{i}.mp3") for i in range(number_of_clips)]
     audio_clips.insert(0, AudioFileClip("assets/temp/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -87,9 +85,7 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    new_transition = (
-        0 if transition is None or float(transition) > 2 else float(transition)
-    )
+    new_transition = (0 if transition is None or float(transition) > 2 else float(transition))
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")

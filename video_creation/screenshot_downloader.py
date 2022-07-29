@@ -1,4 +1,3 @@
-from distutils.command.config import config
 import json
 
 from pathlib import Path
@@ -36,13 +35,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         context = browser.new_context()
 
         if settings.config["settings"]["theme"] == "dark":
-            cookie_file = open(
-                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
-            )
+            cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
         else:
-            cookie_file = open(
-                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
-            )
+            cookie_file = open("./video_creation/data/cookie-light-mode.json", encoding="utf-8")
         cookies = json.load(cookie_file)
         context.add_cookies(cookies)  # load preference cookies
         # Get the thread screenshot
@@ -54,7 +49,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
-            page.wait_for_load_state()  # Wait for page to fully load
+            page.wait_for_load_state() # Wait for page to fully load
 
             if page.locator('[data-click-id="text"] button').is_visible():
                 page.locator(
@@ -77,9 +72,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         else:
             print_substep("Skipping translation...")
 
-        page.locator('[data-test-id="post-content"]').screenshot(
-            path="assets/temp/png/title.png"
-        )
+        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
