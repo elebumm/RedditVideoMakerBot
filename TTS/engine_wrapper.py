@@ -34,13 +34,14 @@ class TTSEngine:
         self,
         tts_module,
         reddit_object: dict,
-        path: str = "assets/temp/mp3",
+        path: str = "assets/temp/",
         max_length: int = DEFAULT_MAX_LENGTH,
         last_clip_length: int = 0,
     ):
         self.tts_module = tts_module()
         self.reddit_object = reddit_object
-        self.path = path
+        self.redditid = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
+        self.path = path + self.redditid + "/mp3"
         self.max_length = max_length
         self.length = 0
         self.last_clip_length = last_clip_length

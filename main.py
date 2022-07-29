@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import math
+import re
 from subprocess import Popen
 from os import name
 
@@ -7,7 +8,7 @@ from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step
+from utils.console import print_markdown, print_step, print_substep
 from utils import settings
 
 from video_creation.background import (
@@ -36,20 +37,27 @@ print(
 print_markdown(
     "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
 )
-print_step(f"You are using v{__VERSION__} of the bot")
+print_step(f"You are using v{__VERSION__} of the bot in the {__BRANCH__} branch.")
 
 
 def main(POST_ID=None):
-    cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
+    id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
     download_background(bg_config)
-    chop_background_video(bg_config, length)
+    chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
+def id(reddit_obj: dict):
+    """
+    This function takes a reddit object and returns the post id
+    """
+    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    print_substep(f"Thread ID is {id}", style="bold blue")
+    return id
 
 def run_many(times):
     for x in range(1, times + 1):
@@ -61,8 +69,6 @@ def run_many(times):
 
 
 def shutdown():
-    print_markdown("## Clearing temp files")
-    cleanup()
     print("Exiting...")
     exit()
 
