@@ -9,7 +9,7 @@ from prawcore import ResponseException
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step, print_substep
-from utils import settings
+from utils import settings, id
 
 from video_creation.background import (
     download_background,
@@ -51,13 +51,6 @@ def main(POST_ID=None):
     chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
-def id(reddit_obj: dict):
-    """
-    This function takes a reddit object and returns the post id
-    """
-    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
-    print_substep(f"Thread ID is {id}", style="bold blue")
-    return id
 
 def run_many(times):
     for x in range(1, times + 1):
