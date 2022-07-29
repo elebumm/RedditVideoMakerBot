@@ -9,7 +9,8 @@ from prawcore import ResponseException
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step, print_substep
-from utils import settings, id
+from utils import settings
+from utils.id import id
 
 from video_creation.background import (
     download_background,
@@ -42,7 +43,8 @@ print_step(f"You are using v{__VERSION__} of the bot in the {__BRANCH__} branch.
 
 def main(POST_ID=None):
     reddit_object = get_subreddit_threads(POST_ID)
-    id(reddit_object)
+    global redditid
+    redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
@@ -62,9 +64,16 @@ def run_many(times):
 
 
 def shutdown():
-    print("Exiting...")
-    exit()
-
+    print_markdown("## Clearing temp files")
+    try:
+        redditid
+    except NameError:
+        print("Exiting...")
+        exit()
+    else:
+        cleanup(redditid)
+        print("Exiting...")
+        exit()
 
 if __name__ == "__main__":
     config = settings.check_toml("utils/.config.template.toml", "config.toml")
