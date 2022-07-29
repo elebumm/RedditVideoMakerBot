@@ -35,7 +35,7 @@ class Video:
         return ImageClip(path)
 
     def add_watermark(
-        self, text, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15,
+        self, text, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15
     ):
         compensation = round(
             (position[0] / ((len(text) * (fontsize / 5) / 1.5) / 100 + position[0] * position[0])),

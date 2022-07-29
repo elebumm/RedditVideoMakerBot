@@ -60,9 +60,9 @@ class TTSEngine:
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         processed_text = process_text(self.reddit_object["thread_post"])
         if (
-            processed_text != "" 
+            processed_text != ""
             and settings.config["settings"]["storymode"] == True
-            ):
+        ):
             self.call_tts("posttext", processed_text)
 
         idx = None
@@ -122,7 +122,7 @@ class TTSEngine:
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(
             text, filepath=f"{self.path}/{filename}.mp3"
-            )
+        )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):

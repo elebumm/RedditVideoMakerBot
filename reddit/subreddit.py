@@ -55,7 +55,7 @@ def get_subreddit_threads(POST_ID: str):
         sub = settings.config["reddit"]["thread"]["subreddit"]
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
-        if (str(subreddit_choice).casefold().startswith("r/")):  # removes the r/ from the input
+        if str(subreddit_choice).casefold().startswith("r/"):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(
             subreddit_choice

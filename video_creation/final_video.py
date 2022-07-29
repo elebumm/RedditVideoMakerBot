@@ -85,7 +85,7 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    new_transition = (0 if transition is None or float(transition) > 2 else float(transition))
+    new_transition = 0 if transition is None or float(transition) > 2 else float(transition)
     image_clips.insert(
         0,
         ImageClip("assets/temp/png/title.png")
