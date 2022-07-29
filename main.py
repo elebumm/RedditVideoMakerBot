@@ -20,7 +20,7 @@ from video_creation.screenshot_downloader import download_screenshots_of_reddit_
 from video_creation.voices import save_text_to_mp3
 
 __VERSION__ = "2.3.1"
-__BRANCH__ = "develop"
+__BRANCH__ = "master"
 
 print(
     """
