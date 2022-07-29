@@ -49,7 +49,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
-            page.wait_for_load_state() # Wait for page to fully load
+            page.wait_for_load_state()  # Wait for page to fully load
 
             if page.locator('[data-click-id="text"] button').is_visible():
                 page.locator(
