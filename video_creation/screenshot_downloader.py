@@ -49,9 +49,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
             print_substep("Post is NSFW. You are spicy...")
             page.locator('[data-testid="content-gate"] button').click()
-            page.locator(
-                '[data-click-id="text"] button'
-            ).click()  # Remove "Click to see nsfw" Button in Screenshot
+            page.wait_for_load_state()  # Wait for page to fully load
+
+            if page.locator('[data-click-id="text"] button').is_visible():
+                page.locator(
+                    '[data-click-id="text"] button'
+                ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
         # translate code
 
@@ -99,9 +102,13 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
                         [comment_tl, comment["comment_id"]],
                     )
-
-                page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                    path=f"assets/temp/png/comment_{idx}.png"
-                )
-
+                try:
+                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                        path=f"assets/temp/png/comment_{idx}.png"
+                    )
+                except TimeoutError:
+                    del reddit_object["comments"]
+                    screenshot_num += 1
+                    print("TimeoutError: Skipping screenshot...")
+                    continue
         print_substep("Screenshots downloaded Successfully.", style="bold green")

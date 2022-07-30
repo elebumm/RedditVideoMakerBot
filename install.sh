@@ -68,31 +68,34 @@ function install_macos(){
 # Function to install for arch (and other forks like manjaro)
 function install_arch(){ 
     echo "Installing required packages"
-    sudo pacman -S --needed python3 tk git && python3 -m ensurepip || install_fail
+    sudo pacman -S --needed python3 tk git && python3 -m ensurepip unzip || install_fail
 } 
 
 # Function to install for debian (and ubuntu)
 function install_deb(){ 
     echo "Installing required packages"
-    sudo apt install python3 python3-dev python3-tk python3-pip git || install_fail
+    sudo apt install python3 python3-dev python3-tk python3-pip unzip || install_fail
 } 
 
 # Function to install for fedora (and other forks)
 function install_fedora(){ 
     echo "Installing required packages" 
-    sudo dnf install python3 python3-tkinter python3-pip git python3-devel || install_fail
+    sudo dnf install python3 python3-tkinter python3-pip python3-devel unzip || install_fail
 } 
 
 # Function to install for centos (and other forks based on it)
 function install_centos(){
     echo "Installing required packages"
     sudo yum install -y python3 || install_fail
-    sudo yum install -y python3-tkinter epel-release python3-pip git || install_fail
+    sudo yum install -y python3-tkinter epel-release python3-pip unzip|| install_fail
 } 
 
 function get_the_bot(){ 
     echo "Downloading the bot" 
-    git clone https://github.com/elebumm/RedditVideoMakerBot.git 
+    rm -rf RedditVideoMakerBot-master
+    curl -sL https://github.com/elebumm/RedditVideoMakerBot/archive/refs/heads/master.zip -o master.zip
+    unzip master.zip
+    rm -rf master.zip
 } 
 
 #install python dependencies
@@ -100,7 +103,7 @@ function install_python_dep(){
     # tell the user that the script is going to install the python dependencies
     echo "Installing python dependencies" 
     # cd into the directory
-    cd RedditVideoMakerBot 
+    cd RedditVideoMakerBot-master
     # install the dependencies
     pip3 install -r requirements.txt 
     # cd out
@@ -112,7 +115,7 @@ function install_playwright(){
     # tell the user that the script is going to install playwright 
     echo "Installing playwright"
     # cd into the directory where the script is downloaded
-    cd RedditVideoMakerBot
+    cd RedditVideoMakerBot-master
     # run the install script
     python3 -m playwright install 
     python3 -m playwright install-deps 
@@ -198,9 +201,9 @@ function install_main(){
         install_playwright
     fi
 
-    DIR="./RedditVideoMakerBot"
+    DIR="./RedditVideoMakerBot-master"
     if [ -d "$DIR" ]; then
-        printf "\nThe bot is already installed, want to run it?"
+        printf "\nThe bot is installed, want to run it?"
         # if -y (assume yes) continue 
         if [[ ASSUME_YES -eq 1 ]]; then
             echo "Assuming yes"
@@ -214,7 +217,7 @@ function install_main(){
                 exit 1
             fi
         fi
-        cd RedditVideoMakerBot
+        cd RedditVideoMakerBot-master
         python3 main.py
     fi
 }

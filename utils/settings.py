@@ -167,4 +167,4 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 
 
 if __name__ == "__main__":
-    check_toml(".config.template.toml", "config.toml")
+    check_toml("utils/.config.template.toml", "config.toml")

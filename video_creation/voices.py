@@ -9,6 +9,7 @@ from TTS.GTTS import GTTS
 from TTS.streamlabs_polly import StreamlabsPolly
 from TTS.aws_polly import AWSPolly
 from TTS.TikTok import TikTok
+from TTS.pyttsx import pyttsx
 from utils import settings
 from utils.console import print_table, print_step
 
@@ -20,6 +21,7 @@ TTSProviders = {
     "AWSPolly": AWSPolly,
     "StreamlabsPolly": StreamlabsPolly,
     "TikTok": TikTok,
+    "pyttsx": pyttsx,
 }
 
 
@@ -33,7 +35,7 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
 
-    voice = settings.config["settings"]["tts"]["choice"]
+    voice = settings.config["settings"]["tts"]["voice_choice"]
     if str(voice).casefold() in map(lambda _: _.casefold(), TTSProviders):
         text_to_mp3 = TTSEngine(get_case_insensitive_key_value(TTSProviders, voice), reddit_obj)
     else:
