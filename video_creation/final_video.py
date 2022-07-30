@@ -140,9 +140,9 @@ def make_final_video(
     #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
-    '''final = Video(final).add_watermark(
-        text=f"Background credit: {background_config[2]}", opacity=0.4
-    )''' #  todo add watermark
+    final = Video(final).add_watermark(
+        text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
+     )
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
