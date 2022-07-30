@@ -1,6 +1,7 @@
 import json
 
 from pathlib import Path
+import re
 from typing import Dict
 from utils import settings
 from playwright.async_api import async_playwright  # pylint: disable=unused-import
@@ -24,9 +25,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         screenshot_num (int): Number of screenshots to download
     """
     print_step("Downloading screenshots of reddit posts...")
-
+    id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     # ! Make sure the reddit screenshots folder exists
-    Path("assets/temp/png").mkdir(parents=True, exist_ok=True)
+    Path(f"assets/temp/{id}/png").mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
@@ -72,11 +73,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         else:
             print_substep("Skipping translation...")
 
-        page.locator('[data-test-id="post-content"]').screenshot(path="assets/temp/png/title.png")
+        postcontentpath = f"assets/temp/{id}/png/title.png"
+        page.locator('[data-test-id="post-content"]').screenshot(path= postcontentpath)
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
-                path="assets/temp/png/story_content.png"
+                path=f"assets/temp/{id}/png/story_content.png"
             )
         else:
             for idx, comment in enumerate(
@@ -104,7 +106,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                     )
                 try:
                     page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/png/comment_{idx}.png"
+                        path=f"assets/temp/{id}/png/comment_{idx}.png"
                     )
                 except TimeoutError:
                     del reddit_object["comments"]

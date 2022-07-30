@@ -1,6 +1,7 @@
 from pathlib import Path
 import random
 from random import randrange
+import re
 from typing import Any, Tuple
 
 
@@ -62,7 +63,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
-def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int):
+def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int, reddit_object: dict):
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
@@ -72,7 +73,7 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
 
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     choice = f"{background_config[2]}-{background_config[1]}"
-
+    id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     background = VideoFileClip(f"assets/backgrounds/{choice}")
 
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
@@ -81,12 +82,12 @@ def chop_background_video(background_config: Tuple[str, str, str, Any], video_le
             f"assets/backgrounds/{choice}",
             start_time,
             end_time,
-            targetname="assets/temp/background.mp4",
+            targetname=f"assets/temp/{id}/background.mp4",
         )
     except (OSError, IOError):  # ffmpeg issue see #348
         print_substep("FFMPEG issue. Trying again...")
         with VideoFileClip(f"assets/backgrounds/{choice}") as video:
             new = video.subclip(start_time, end_time)
-            new.write_videofile("assets/temp/background.mp4")
+            new.write_videofile(f"assets/temp/{id}/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
     return background_config[2]
