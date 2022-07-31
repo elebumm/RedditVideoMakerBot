@@ -26,7 +26,7 @@ voices = [
 
 class AWSPolly:
     def __init__(self):
-        self.max_chars = 0
+        self.max_chars = 3000
         self.voices = voices
 
     def run(self, text, filepath, random_voice: bool = False):
