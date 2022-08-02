@@ -120,8 +120,7 @@ class TTSEngine:
         #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         try:
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            if clip.duration + self.length < self.max_length:
-                self.last_clip_length = clip.duration
+            self.last_clip_length = clip.duration
             self.length += clip.duration
             clip.close()
         except:
