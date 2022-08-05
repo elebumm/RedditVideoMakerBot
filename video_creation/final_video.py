@@ -125,7 +125,7 @@ def make_final_video(
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
-    filename = f"{name_normalize(title)}.mp4"
+    filename = f"{name_normalize(title)[:251]}.mp4"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
