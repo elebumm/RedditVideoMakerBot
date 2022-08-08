@@ -149,7 +149,7 @@
             video += '<div class="d-flex justify-content-between align-items-center">';
             video += '<div class="btn-group">';
             video += '<a href="https://www.reddit.com/r/'+value.subreddit+'/comments/'+value.id+'/" class="btn btn-sm btn-outline-secondary" target="_blank">View</a>';
-            video += '<a href="results/'+value.subreddit+'/'+value.filename+'" class="btn btn-sm btn-outline-secondary" download>Download</a>';
+            video += '<a href="http://localhost:4000/results/'+value.subreddit+'/'+value.filename+'" class="btn btn-sm btn-outline-secondary" download>Download</a>';
             video += '</div>';
             video += '<div class="btn-group">';
             video += '<button type="button" data-toggle="tooltip" id="copy" data-original-title="Copy to clipboard" class="btn btn-sm btn-outline-secondary" data-clipboard-text="'+getCopyData(value.subreddit, value.reddit_title, value.filename, value.background_credit)+'"><i class="bi bi-card-text"></i></button>';

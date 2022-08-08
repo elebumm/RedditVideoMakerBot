@@ -118,3 +118,4 @@ def handle_input(
         console.print(
             "[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + "."
         )
+        
