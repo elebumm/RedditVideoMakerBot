@@ -57,9 +57,7 @@ def get_subreddit_threads(POST_ID: str):
         subreddit_choice = sub
         if str(subreddit_choice).casefold().startswith("r/"):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
-        subreddit = reddit.subreddit(
-            subreddit_choice
-        )  # Allows you to specify in .env. Done for automation purposes.
+        subreddit = reddit.subreddit(subreddit_choice)
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
