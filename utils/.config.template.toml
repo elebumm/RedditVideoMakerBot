@@ -8,7 +8,7 @@ password = { optional = false, nmin = 8, explanation = "The password of your red
 
 [reddit.thread]
 random = { optional = true, options = [true, false,], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
-subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, explanation = "What subreddit to pull posts from, the name of the sub, not the URL", example = "AskReddit", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
+subreddit = { optional = false, regex = "[_0-9a-zA-Z]+$", nmin = 3, explanation = "What subreddit to pull posts from, the name of the sub, not the URL. You can have multiple subreddits, add an + with no spaces.", example = "AskReddit+Redditdev", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
 post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z0-9])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
 max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr" }
