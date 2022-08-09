@@ -1,5 +1,7 @@
 import re
 
+from prawcore.exceptions import ResponseException
+
 from utils import settings
 import praw
 from praw.models import MoreComments
@@ -29,14 +31,21 @@ def get_subreddit_threads(POST_ID: str):
     username = settings.config["reddit"]["creds"]["username"]
     if str(username).casefold().startswith("u/"):
         username = username[2:]
-    reddit = praw.Reddit(
-        client_id=settings.config["reddit"]["creds"]["client_id"],
-        client_secret=settings.config["reddit"]["creds"]["client_secret"],
-        user_agent="Accessing Reddit threads",
-        username=username,
-        passkey=passkey,
-        check_for_async=False,
-    )
+    try:
+        reddit = praw.Reddit(
+            client_id=settings.config["reddit"]["creds"]["client_id"],
+            client_secret=settings.config["reddit"]["creds"]["client_secret"],
+            user_agent="Accessing Reddit threads",
+            username=username,
+            passkey=passkey,
+            check_for_async=False,
+        )
+    except ResponseException as e:
+        match e.response.status_code:
+            case 401:
+                print("Invalid credentials - please check them in config.toml")
+    except:
+        print("Something went wrong...")
 
     # Ask user for subreddit input
     print_step("Getting subreddit threads...")
@@ -57,9 +66,7 @@ def get_subreddit_threads(POST_ID: str):
         subreddit_choice = sub
         if str(subreddit_choice).casefold().startswith("r/"):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
-        subreddit = reddit.subreddit(
-            subreddit_choice
-        )  # Allows you to specify in .env. Done for automation purposes.
+        subreddit = reddit.subreddit(subreddit_choice)
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
