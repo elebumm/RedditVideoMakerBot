@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import math
+import re
 from subprocess import Popen
 from os import name
 
@@ -7,8 +8,9 @@ from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step
+from utils.console import print_markdown, print_step, print_substep
 from utils import settings
+from utils.id import id
 from utils.version import checkversion
 
 from video_creation.background import (
@@ -40,14 +42,15 @@ checkversion(__VERSION__)
 
 
 def main(POST_ID=None):
-    cleanup()
     reddit_object = get_subreddit_threads(POST_ID)
+    global redditid
+    redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
     download_background(bg_config)
-    chop_background_video(bg_config, length)
+    chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 
@@ -62,10 +65,15 @@ def run_many(times):
 
 def shutdown():
     print_markdown("## Clearing temp files")
-    cleanup()
-    print("Exiting...")
-    exit()
-
+    try:
+        redditid
+    except NameError:
+        print("Exiting...")
+        exit()
+    else:
+        cleanup(redditid)
+        print("Exiting...")
+        exit()
 
 if __name__ == "__main__":
     config = settings.check_toml("utils/.config.template.toml", "config.toml")
