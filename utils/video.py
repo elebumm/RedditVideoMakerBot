@@ -1,4 +1,6 @@
 from __future__ import annotations
+from ast import Str
+import re
 
 from typing import Tuple
 
@@ -14,8 +16,9 @@ class Video:
         self.duration = self.video.duration
 
     @staticmethod
-    def _create_watermark(text, fontsize, opacity=0.5):
-        path = "./assets/temp/png/watermark.png"
+    def _create_watermark(text, redditid, fontsize, opacity=0.5):
+        id = re.sub(r"[^\w\s-]", "", redditid["thread_id"])
+        path = f"./assets/temp/{id}/png/watermark.png"
         width = int(fontsize * len(text))
         height = int(fontsize * len(text) / 2)
         white = (255, 255, 255)
@@ -35,7 +38,7 @@ class Video:
         return ImageClip(path)
 
     def add_watermark(
-        self, text, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15
+        self, text, redditid, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15
     ):
         compensation = round(
             (position[0] / ((len(text) * (fontsize / 5) / 1.5) / 100 + position[0] * position[0])),
@@ -44,7 +47,7 @@ class Video:
         position = (compensation, position[1])
         # print(f'{compensation=}')
         # print(f'{position=}')
-        img_clip = self._create_watermark(text, opacity=opacity, fontsize=fontsize)
+        img_clip = self._create_watermark(text, redditid, fontsize=fontsize, opacity=opacity)
         img_clip = img_clip.set_opacity(opacity).set_duration(duration)
         img_clip = img_clip.set_position(
             position, relative=True
