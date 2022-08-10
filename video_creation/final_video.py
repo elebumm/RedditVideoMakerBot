@@ -4,6 +4,7 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
+
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
@@ -13,11 +14,11 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 
+from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.video import Video
 from utils.videos import save_data
-from utils import settings
 
 console = Console()
 W, H = 1080, 1920

@@ -1,7 +1,6 @@
 from __future__ import annotations
-from ast import Str
-import re
 
+import re
 from typing import Tuple
 
 from PIL import ImageFont, Image, ImageDraw, ImageEnhance

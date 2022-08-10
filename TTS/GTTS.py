@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import random
-from utils import settings
+
 from gtts import gTTS
+
+from utils import settings
 
 
 class GTTS:

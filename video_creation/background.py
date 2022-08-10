@@ -1,9 +1,8 @@
-from pathlib import Path
 import random
-from random import randrange
 import re
+from pathlib import Path
+from random import randrange
 from typing import Any, Tuple
-
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip

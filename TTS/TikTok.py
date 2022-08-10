@@ -1,8 +1,10 @@
 import base64
-from utils import settings
 import random
+
 import requests
 from requests.adapters import HTTPAdapter, Retry
+
+from utils import settings
 
 # from profanity_filter import ProfanityFilter
 # pf = ProfanityFilter()

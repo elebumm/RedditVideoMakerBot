@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import random
+import sys
+
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError, ProfileNotFound
-import sys
+
 from utils import settings
-import random
 
 voices = [
     "Brian",

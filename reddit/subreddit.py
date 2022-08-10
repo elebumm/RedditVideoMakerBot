@@ -1,11 +1,10 @@
 import re
 
+import praw
+from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
 from utils import settings
-import praw
-from praw.models import MoreComments
-
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
@@ -41,9 +40,8 @@ def get_subreddit_threads(POST_ID: str):
             check_for_async=False,
         )
     except ResponseException as e:
-        match e.response.status_code:
-            case 401:
-                print("Invalid credentials - please check them in config.toml")
+        if e.response.status_code == 401:
+            print("Invalid credentials - please check them in config.toml")
     except:
         print("Something went wrong...")
 

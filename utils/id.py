@@ -1,5 +1,7 @@
 import re
-from utils import print_substep
+
+from utils.console import print_substep
+
 
 def id(reddit_obj: dict):
     """
