@@ -120,9 +120,7 @@ def make_final_video(
     # else: story mode stuff
     img_clip_pos = background_config[3]
 
-    image_concat = concatenate_videoclips(image_clips).set_position(
-        img_clip_pos
-    )  # note transition kwarg for delay in imgs
+    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
 
     image_concat.audio = audio_composite
 
@@ -145,6 +143,7 @@ def make_final_video(
     #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
+
     final = Video(final).add_watermark(
         text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
      )
@@ -173,6 +172,4 @@ def make_final_video(
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
-    )
+    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')
