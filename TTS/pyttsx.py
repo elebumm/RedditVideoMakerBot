@@ -32,9 +32,7 @@ class pyttsx:
             voice_id = self.randomvoice()
         engine = pyttsx3.init()
         voices = engine.getProperty("voices")
-        engine.setProperty(
-            "voice", voices[voice_id].id
-        )  # changing index changes voices but ony 0 and 1 are working here
+        engine.setProperty("voice", voices[voice_id].id)  # changing index changes voices but ony 0 and 1 are working here
         engine.save_to_file(text, f"{filepath}")
         engine.runAndWait()
 

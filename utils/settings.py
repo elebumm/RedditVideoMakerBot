@@ -34,17 +34,12 @@ def check(value, checks, name):
         except:
             incorrect = True
 
-    if (
-        not incorrect and "options" in checks and value not in checks["options"]
-    ):  # FAILSTATE Value is not one of the options
+    if not incorrect and "options" in checks and value not in checks["options"]:  # FAILSTATE Value is not one of the options
         incorrect = True
     if (
         not incorrect
         and "regex" in checks
-        and (
-            (isinstance(value, str) and re.match(checks["regex"], value) is None)
-            or not isinstance(value, str)
-        )
+        and ((isinstance(value, str) and re.match(checks["regex"], value) is None) or not isinstance(value, str))
     ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
         incorrect = True
 
@@ -84,9 +79,7 @@ def check(value, checks, name):
             err_message=get_check_value("input_error", "Incorrect input"),
             nmin=get_check_value("nmin", None),
             nmax=get_check_value("nmax", None),
-            oob_error=get_check_value(
-                "oob_error", "Input out of bounds(Value too high/low/long/short)"
-            ),
+            oob_error=get_check_value("oob_error", "Input out of bounds(Value too high/low/long/short)"),
             options=get_check_value("options", None),
             optional=get_check_value("optional", False),
         )

@@ -30,7 +30,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(headless=True) # add headless=False for debug
+        browser = p.chromium.launch(headless=True)  # add headless=False for debug
         context = browser.new_context()
 
         if settings.config["settings"]["theme"] == "dark":
@@ -51,9 +51,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             page.wait_for_load_state()  # Wait for page to fully load
 
             if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator(
-                    '[data-click-id="text"] button'
-                ).click()  # Remove "Click to see nsfw" Button in Screenshot
+                page.locator('[data-click-id="text"] button').click()  # Remove "Click to see nsfw" Button in Screenshot
 
         # translate code
 
@@ -72,16 +70,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{id}/png/title.png"
-        page.locator('[data-test-id="post-content"]').screenshot(path= postcontentpath)
+        page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if storymode:
-            page.locator('[data-click-id="text"]').screenshot(
-                path=f"assets/temp/{id}/png/story_content.png"
-            )
+            page.locator('[data-click-id="text"]').screenshot(path=f"assets/temp/{id}/png/story_content.png")
         else:
-            for idx, comment in enumerate(
-                track(reddit_object["comments"], "Downloading screenshots...")
-            ):
+            for idx, comment in enumerate(track(reddit_object["comments"], "Downloading screenshots...")):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
                     break
@@ -103,9 +97,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{id}/png/comment_{idx}.png"
-                    )
+                    page.locator(f"#t1_{comment['comment_id']}").screenshot(path=f"assets/temp/{id}/png/comment_{idx}.png")
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1

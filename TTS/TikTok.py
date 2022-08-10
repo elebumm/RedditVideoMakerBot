@@ -64,9 +64,7 @@ noneng = [
 
 class TikTok:  # TikTok Text-to-Speech Wrapper
     def __init__(self):
-        self.URI_BASE = (
-            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
-        )
+        self.URI_BASE = "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
         self.max_chars = 300
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
 
@@ -77,10 +75,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         voice = (
             self.randomvoice()
             if random_voice
-            else (
-                settings.config["settings"]["tts"]["tiktok_voice"]
-                or random.choice(self.voices["human"])
-            )
+            else (settings.config["settings"]["tts"]["tiktok_voice"] or random.choice(self.voices["human"]))
         )
         try:
             r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")

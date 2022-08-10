@@ -74,6 +74,7 @@ def shutdown():
         print("Exiting...")
         exit()
 
+
 if __name__ == "__main__":
     assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
     config = settings.check_toml("utils/.config.template.toml", "config.toml")
