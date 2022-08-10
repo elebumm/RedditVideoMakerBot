@@ -51,9 +51,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     uri, filename, credit, _ = background_config
     if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
         return
-    print_step(
-        "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
-    )
+    print_step("We need to download the backgrounds videos. they are fairly large but it's only done once. 😎")
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
     YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
