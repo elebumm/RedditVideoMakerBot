@@ -38,7 +38,7 @@ print(
 )
 # Modified by JasonLovesDoggo
 print_markdown(
-    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation]: https://reddit-video-maker-bot.netlify.app/"
+    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://reddit-video-maker-bot.netlify.app/)"
 )
 checkversion(__VERSION__)
 
