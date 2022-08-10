@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-import toml
-from rich.console import Console
 import re
-
 from typing import Tuple, Dict
 
-from utils.console import handle_input
+import toml
+from rich.console import Console
 
+from utils.console import handle_input
 
 console = Console()
 config = dict  # autocomplete

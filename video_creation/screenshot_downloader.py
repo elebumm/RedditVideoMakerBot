@@ -1,18 +1,16 @@
 import json
-
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Dict
-from utils import settings
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
 
-# do not remove the above line
-
+import translators as ts
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
-import translators as ts
 
+from utils import settings
 from utils.console import print_step, print_substep
+
+# do not remove the above line
 
 storymode = False
 

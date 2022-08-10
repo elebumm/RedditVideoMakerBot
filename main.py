@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 import math
-import re
-from subprocess import Popen
+import sys
 from os import name
+from subprocess import Popen
 
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
-from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step, print_substep
 from utils import settings
+from utils.cleanup import cleanup
+from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
-
 from video_creation.background import (
     download_background,
     chop_background_video,
@@ -76,6 +75,7 @@ def shutdown():
         exit()
 
 if __name__ == "__main__":
+    assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
     config = settings.check_toml("utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:

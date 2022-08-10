@@ -1,7 +1,7 @@
 import re
 import sys
-from datetime import datetime
 import time as pytime
+from datetime import datetime
 from time import sleep
 
 from requests import Response

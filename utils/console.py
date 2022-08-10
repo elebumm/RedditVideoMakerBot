@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+import re
+
+from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
-from rich.columns import Columns
-import re
 
 console = Console()
 
