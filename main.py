@@ -21,7 +21,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.4.1"
+__VERSION__ = "2.4.3"
 
 print(
     """
@@ -80,10 +80,7 @@ if __name__ == "__main__":
     config = settings.check_toml("utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:
-        if config["settings"]["times_to_run"]:
-            run_many(config["settings"]["times_to_run"])
-
-        elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+        if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
             for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
@@ -91,6 +88,8 @@ if __name__ == "__main__":
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
+        elif config["settings"]["times_to_run"]:
+            run_many(config["settings"]["times_to_run"])
         else:
             main()
     except KeyboardInterrupt:
