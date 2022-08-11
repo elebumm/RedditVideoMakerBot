@@ -62,6 +62,7 @@ function install_macos(){
     fi
     # Install the required packages
     echo "Installing required Packages" 
+
     if [! command --version python3 &> /dev/null ]; then
 	    echo "Installing python3"
 	    brew install python@3.10
