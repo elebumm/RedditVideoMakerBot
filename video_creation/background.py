@@ -12,14 +12,12 @@ from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
 
-# Supported Background.
-# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
-
 # Load background videos
 with open("utils/backgrounds.json") as json_file:
     background_options = json.load(json_file)
 
 # Add position lambda function
+# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
 for name in list(background_options.keys()):
     pos = background_options[name][3]
 
