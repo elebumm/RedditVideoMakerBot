@@ -42,4 +42,16 @@ background_options = {
         "No Copyright Gameplay",
         lambda t: ("center", 480 + t),
     ),
+    "fall-guys": ( # Falls Guys Gameplay
+        "https://www.youtube.com/watch?v=Gm3Ypy_4k88",
+        "fall_guys.mp4",
+        "Throneful",
+        lambda t: ("center", 480 + t),
+    ),
+    "valorant": (  # Valorant Gameplay
+        "https://www.youtube.com/watch?v=Wrdh5HrOCMc",
+        "valorant.mp4",
+        "Throneful",
+        lambda t: ("center", 480 + t),
+    ),
 }
