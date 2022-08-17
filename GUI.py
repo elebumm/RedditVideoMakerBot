@@ -64,7 +64,7 @@ def add_background():
 
     # Validate YouTube URI
     regex = re.compile(
-        r"(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?"
+        r"(?:\/|%3D|v=|vi=)([0-9A-z-_]{11})(?:[%#?&]|$)"
     ).search(youtube_uri)
 
     if not regex:
