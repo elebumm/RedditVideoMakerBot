@@ -108,6 +108,11 @@ def make_final_video(
             .crossfadeout(new_transition)
         )
 
+    #Subscribe Overlay
+    if settings.config["settings"]["sub_overlay"]:
+        subOverlayClip = VideoFileClip((f"assets/subOverlay/subOverlayClip.mov"), has_mask=True)
+        subOverlayClip.set_pos('center')
+
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
     #        0,
