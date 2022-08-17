@@ -22,6 +22,7 @@ times_to_run = { optional = false, default = 1, example = 2, explanation = "Used
 opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
 transition = { optional = true, default = 0.2, example = 0.2, explanation = "Sets the transition time (in seconds) between the comments. Set to 0 if you want to disable it.", type = "float", nmin = 0, nmax = 2, oob_error = "The transition HAS to be between 0 and 2", input_error = "The opacity HAS to be a decimal number between 0 and 2" }
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, not yet implemented" }
+sub_overlay = { optional = true, type = "bool", default = false, example = false, options = [true, false], explanation = "This will add a subscribe animation overlay to the end of the video" }
 
 
 [settings.background]

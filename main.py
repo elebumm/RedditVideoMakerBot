@@ -17,6 +17,9 @@ from video_creation.background import (
     chop_background_video,
     get_background_config,
 )
+
+from video_creation.subOverlay import download_suboverlay
+
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
@@ -49,6 +52,7 @@ def main(POST_ID=None):
     download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
     download_background(bg_config)
+    download_suboverlay() # Check for suboverlay and download if not found! 
     chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 

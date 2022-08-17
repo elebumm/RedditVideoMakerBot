@@ -108,6 +108,11 @@ def make_final_video(
             .crossfadeout(new_transition)
         )
 
+    #Subscribe Overlay
+    if settings.config["settings"]["sub_overlay"]:
+        subOverlayClip = VideoFileClip((f"assets/subOverlay/subOverlayClip.mov"), has_mask=True)
+        subOverlayClip.set_pos('center')
+
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
     #        0,
@@ -119,9 +124,16 @@ def make_final_video(
     #    )
     # else: story mode stuff
     img_clip_pos = background_config[3]
+
     image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
+
     image_concat.audio = audio_composite
-    final = CompositeVideoClip([background_clip, image_concat])
+
+    if settings.config["settings"]["sub_overlay"]:
+        final = CompositeVideoClip([background_clip, image_concat, subOverlayClip.set_start(background_clip.duration - subOverlayClip.duration)])
+    else:
+        final = CompositeVideoClip([background_clip, image_concat])
+
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
