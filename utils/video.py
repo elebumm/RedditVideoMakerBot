@@ -1,11 +1,16 @@
 from __future__ import annotations
-
+from ast import Str
 import re
+import math
+
 from typing import Tuple
+
+from utils import settings
 
 from PIL import ImageFont, Image, ImageDraw, ImageEnhance
 from moviepy.video.VideoClip import VideoClip, ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+from moviepy.video.io.VideoFileClip import VideoFileClip
 
 
 class Video:
@@ -36,7 +41,9 @@ class Video:
         im.save(path)
         return ImageClip(path)
 
-    def add_watermark(self, text, redditid, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15):
+    def add_watermark(
+        self, text, redditid, opacity=0.5, duration: int | float = 5, position: Tuple = (0.7, 0.9), fontsize=15
+    ):
         compensation = round(
             (position[0] / ((len(text) * (fontsize / 5) / 1.5) / 100 + position[0] * position[0])),
             ndigits=2,
@@ -53,3 +60,18 @@ class Video:
         # Overlay the img clip on the first video clip
         self.video = CompositeVideoClip([self.video, img_clip])
         return self.video
+
+    def add_overlay(self):
+        # Get duration for the entire video to place the overlay at the correct time
+        video_duration = self.video.duration
+
+        overlayName = settings.config["settings"]["sub_overlay_name"]
+
+        subOverlayClip = VideoFileClip((f"assets/subOverlay/{overlayName}.mov"), has_mask=True)
+        subOverlayClip.set_pos('center')
+
+        placeTime = math.floor(video_duration - subOverlayClip.duration) - 3
+
+        self.video = CompositeVideoClip([self.video, subOverlayClip.set_start(placeTime)])
+        return self.video
+        
