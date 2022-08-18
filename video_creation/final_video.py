@@ -4,7 +4,6 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
-
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
@@ -14,11 +13,11 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 
-from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.video import Video
 from utils.videos import save_data
+from utils import settings
 
 console = Console()
 W, H = 1080, 1920
@@ -108,11 +107,6 @@ def make_final_video(
             .crossfadeout(new_transition)
         )
 
-    #Subscribe Overlay
-    if settings.config["settings"]["sub_overlay"]:
-        subOverlayClip = VideoFileClip((f"assets/subOverlay/subOverlayClip.mov"), has_mask=True)
-        subOverlayClip.set_pos('center')
-
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(
     #        0,
@@ -125,7 +119,9 @@ def make_final_video(
     # else: story mode stuff
     img_clip_pos = background_config[3]
 
-    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        img_clip_pos
+    )  # note transition kwarg for delay in imgs
 
     image_concat.audio = audio_composite
 
@@ -177,4 +173,6 @@ def make_final_video(
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')
+    print_step(
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
+    )
