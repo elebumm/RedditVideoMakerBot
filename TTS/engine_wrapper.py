@@ -120,15 +120,6 @@ class TTSEngine:
         except OSError:
             print("OSError")
 
-        CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
-            f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
-        )
-
-        for i in split_files:
-            name = i.filename
-            i.close()
-            Path(name).unlink()
-
     def call_tts(self, filename: str, text: str):
 
         if filename == "title":
