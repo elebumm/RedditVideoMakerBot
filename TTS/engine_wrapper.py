@@ -88,10 +88,7 @@ class TTSEngine:
         split_text = [
             x.group().strip() for x in re.finditer(r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text)
         ]
-        try:
-            silence_duration = settings.config["settings"]["tts"]["silence_duration"]
-        except AttributeError:
-            silence_duration = 0.3
+        silence_duration = settings.config["settings"]["tts"]["silence_duration"]
         silence = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration, fps=44100)
         silence = volumex(silence, 0)
         silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
