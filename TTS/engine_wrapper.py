@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 import re
+import os
 from pathlib import Path
 from typing import Tuple
 
 # import sox
 # from mutagen import MutagenError
 # from mutagen.mp3 import MP3, HeaderNotFoundError
+import numpy as np
 import translators as ts
+from moviepy.audio.AudioClip import AudioClip
+from moviepy.audio.fx.volumex import volumex
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
 from rich.progress import track
 
@@ -84,16 +88,40 @@ class TTSEngine:
         split_text = [
             x.group().strip() for x in re.finditer(r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text)
         ]
-        offset = 0
-        for idy, text_cut in enumerate(split_text):
-            # print(f"{idx}-{idy}: {text_cut}\n")
-            new_text = process_text(text_cut)
-            if not new_text or new_text.isspace():
-                offset += 1
-                continue
+        try:
+            silence_duration = settings.config["settings"]["tts"]["silence_duration"]
+        except AttributeError:
+            silence_duration = 0.3
+        silence = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration, fps=44100)
+        silence = volumex(silence, 0)
+        silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
 
-            self.call_tts(f"{idx}-{idy - offset}.part", new_text)
-            split_files.append(AudioFileClip(f"{self.path}/{idx}-{idy - offset}.part.mp3"))
+        idy = None
+        for idy, text_cut in enumerate(split_text):
+            newtext = process_text(text_cut)
+            # print(f"{idx}-{idy}: {newtext}\n")
+
+            if not newtext or newtext.isspace():
+                print("newtext was blank because sanitized split text resulted in none")
+                continue
+            else:
+                self.call_tts(f"{idx}-{idy}.part", newtext)
+                with open(f"{self.path}/list.txt", 'w') as f:
+                    for idz in range(0, len(split_text)):
+                        f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
+                    split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
+                    f.write("file " + f"'silence.mp3'" + "\n")
+
+                os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+                          "-i " + f"{self.path}/list.txt " +
+                          "-c copy " + f"{self.path}/{idx}.mp3")
+        try:
+            for i in range(0, len(split_files)):
+                os.unlink(split_files[i])
+        except FileNotFoundError:
+            print("file not found error")
+        except OSError:
+            print("OSError")
 
         CompositeAudioClip([concatenate_audioclips(split_files)]).write_audiofile(
             f"{self.path}/{idx}.mp3", fps=44100, verbose=False, logger=None
@@ -104,24 +132,48 @@ class TTSEngine:
             i.close()
             Path(name).unlink()
 
-        # for i in range(0, idy + 1):
-        # print(f"Cleaning up {self.path}/{idx}-{i}.part.mp3")
-
-        # Path(f"{self.path}/{idx}-{i}.part.mp3").unlink()
-
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
-        # try:
-        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-        # except (MutagenError, HeaderNotFoundError):
-        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
-        try:
-            clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            self.last_clip_length = clip.duration
-            self.length += clip.duration
-            clip.close()
-        except:
-            self.length = 0
+
+        if filename == "title":
+            try:
+                self.tts_module.run(text, filepath=f"{self.path}/title_no_silence.mp3")
+                try:
+                    silence_duration = settings.config["settings"]["tts"]["silence_duration"]
+                except AttributeError:
+                    silence_duration = 0.3
+                silence = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration,
+                                    fps=44100)
+                silence = volumex(silence, 0)
+                silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
+
+                with open(f"{self.path}/title.txt", 'w') as f:
+                    f.write("file " + f"'title_no_silence.mp3'" + "\n")
+                    f.write("file " + f"'silence.mp3'" + "\n")
+                f.close()
+                os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
+                          "-i " + f"{self.path}/title.txt " +
+                          "-c copy " + f"{self.path}/title.mp3")
+                clip = AudioFileClip(f"{self.path}/title.mp3")
+                self.length += clip.duration
+                clip.close()
+                try:
+                    name = ["title_no_silence.mp3", "silence.mp3", "title.txt"]
+                    for i in range(0, len(name)):
+                        os.unlink(str(rf"{self.path}/" + name[i]))
+                except FileNotFoundError:
+                    print("file not found error")
+                except OSError:
+                    print("OSError")
+            except:
+                self.length = 0
+        else:
+            try:
+                self.tts_module.run(text=text, filepath=f"{self.path}/{filename}.mp3")
+                clip = AudioFileClip(f"{self.path}/{filename}.mp3")
+                self.length += clip.duration
+                clip.close()
+            except:
+                self.length = 0
 
 
 def process_text(text: str):
