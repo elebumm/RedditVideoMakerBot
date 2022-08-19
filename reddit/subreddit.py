@@ -41,8 +41,9 @@ def get_subreddit_threads(POST_ID: str):
             check_for_async=False,
         )
     except ResponseException as e:
-        # match wasnt supported for python 3.9+ or above. So fixed it with a simple if stament.
-        if(e.response.status_code == 401): print("Invalid credentials - please check them in config.toml")
+        match e.response.status_code:
+            case 401:
+                print("Invalid credentials - please check them in config.toml")
     except:
         print("Something went wrong...")
 
