@@ -143,6 +143,11 @@ def make_final_video(
     final = Video(final).add_watermark(
         text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
      )
+
+    # Add an overlay
+    if settings.config["settings"]["sub_overlay"]:
+        final = Video(final).add_overlay()
+
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
