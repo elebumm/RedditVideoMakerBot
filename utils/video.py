@@ -59,17 +59,3 @@ class Video:
         # Overlay the img clip on the first video clip
         self.video = CompositeVideoClip([self.video, img_clip])
         return self.video
-
-    def add_overlay(self):
-        # Get duration for the entire video to place the overlay at the correct time
-        video_duration = self.video.duration
-
-        overlayName = settings.config["settings"]["sub_overlay_name"]
-
-        subOverlayClip = VideoFileClip((f"assets/subOverlay/{overlayName}.mov"), has_mask=True)
-        subOverlayClip.set_pos('center')
-
-        placeTime = math.floor(video_duration - subOverlayClip.duration) - 3
-
-        self.video = CompositeVideoClip([self.video, subOverlayClip.set_start(placeTime)])
-        return self.video
