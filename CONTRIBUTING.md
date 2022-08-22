@@ -1,4 +1,3 @@
-
 # Contributing to Reddit Video Maker Bot 🎥
 
 Thanks for taking the time to contribute! ❤️
@@ -106,41 +105,13 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/elebum
 
 You development environment should follow the requirements stated in the [README file](README.md). If you are not using the specified versions, **please reference this in your pull request**, so reviewers can test your code on both versions.
 
-#### Setting up your development repository
-
-These steps are only specified for beginner developers trying to contribute to this repository.
-If you know how to make a fork and clone, you can skip these steps.
-
-Before contributing, follow these steps (if you are a beginner)
-
-- Create a fork of this repository to your personal account
-- Clone the repo to your computer
-- Make sure that you have all dependencies installed
-- Run `python main.py` to make sure that the program is working
-- Now, you are all setup to contribute your own features to this repo!
-
-Even if you are a beginner to working with python or contributing to open source software,
-don't worry! You can still try contributing even to the documentation!
-
-("Setting up your development repository" was written by a beginner developer themselves!)
-
-
 #### Making your first PR
 
 When making your PR, follow these guidelines:
 
 - Your branch has a base of _develop_, **not** _master_
 - You are merging your branch into the _develop_ branch
-- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request
-- Where possible, you have used `git pull --rebase`, to avoid creating unnecessary merge commits
-- You have meaningful commits, and if possible, follow the commit style guide of `type: explanation`
-- Here are the commit types:
- - **feat** - a new feature
- - **fix** - a bug fix
- - **docs** - a change to documentation / commenting
- - **style** - formatting changes - does not impact code
- - **refactor** - refactored code
- - **chore** - updating configs, workflows etc - does not impact code
+- You link any issues that are resolved or fixed by your changes. (this is done by typing "Fixes #\<issue number\>") in your pull request.
 
 ### Improving The Documentation
 
