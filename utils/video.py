@@ -1,15 +1,12 @@
 from __future__ import annotations
 from ast import Str
 import re
-import math
 
 from typing import Tuple
-from utils import settings
 
 from PIL import ImageFont, Image, ImageDraw, ImageEnhance
 from moviepy.video.VideoClip import VideoClip, ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
-from moviepy.video.io.VideoFileClip import VideoFileClip
 
 
 class Video:
