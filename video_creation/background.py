@@ -1,3 +1,4 @@
+import json
 import random
 import re
 from pathlib import Path
@@ -8,10 +9,23 @@ from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
-
 from utils import settings
-from utils.CONSTANTS import background_options
 from utils.console import print_step, print_substep
+
+# Load background videos
+with open("utils/backgrounds.json") as json_file:
+    background_options = json.load(json_file)
+
+# Remove "__comment" from backgrounds
+background_options.pop("__comment", None)
+
+# Add position lambda function
+# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
+for name in list(background_options.keys()):
+    pos = background_options[name][3]
+
+    if pos != "center":
+        background_options[name][3] = lambda t: ("center", pos + t)
 
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
