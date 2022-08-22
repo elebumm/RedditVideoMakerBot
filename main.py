@@ -100,3 +100,5 @@ if __name__ == "__main__":
         print_markdown("Please check your credentials in the config.toml file")
 
         shutdown()
+
+        # todo error
