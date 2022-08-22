@@ -16,14 +16,12 @@ from utils.console import print_step, print_substep
 with open("utils/backgrounds.json") as json_file:
     background_options = json.load(json_file)
 
+# Remove "__comment" from backgrounds
+background_options.pop("__comment", None)
+
 # Add position lambda function
 # (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
-backgrounds = list(background_options.keys())
-
-if "__comment" in backgrounds:
-    backgrounds.remove("__comment")
-
-for name in backgrounds:
+for name in list(background_options.keys()):
     pos = background_options[name][3]
 
     if pos != "center":
