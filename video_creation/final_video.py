@@ -140,6 +140,10 @@ def make_final_video(
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
     final = Video(final).add_watermark(text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj)
+        # Add an overlay
+    if settings.config["settings"]["sub_overlay"]:
+        final = Video(final).add_overlay()
+
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
