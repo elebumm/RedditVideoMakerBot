@@ -18,8 +18,6 @@ from video_creation.background import (
     chop_background_video,
     get_background_config,
 )
-
-
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
@@ -102,5 +100,3 @@ if __name__ == "__main__":
         print_markdown("Please check your credentials in the config.toml file")
 
         shutdown()
-
-        # todo error
