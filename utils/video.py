@@ -63,7 +63,7 @@ class Video:
 
             overlayName = settings.config["settings"]["sub_overlay_name"]
 
-            subOverlayClip = VideoFileClip((f"assets/subOverlay/{overlayName}.mov"), has_mask=True)
+            subOverlayClip = VideoFileClip((f"utils/subOverlay/{overlayName}.mov"), has_mask=True)
             subOverlayClip.set_pos('center')
 
             placeTime = math.floor(video_duration - subOverlayClip.duration) - 3
