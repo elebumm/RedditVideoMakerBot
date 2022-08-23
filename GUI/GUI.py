@@ -17,6 +17,7 @@ class App(customtkinter.CTk):
 
         self.title("Reddit Video Maker Bot GUI")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
+        self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
 
         # ============ create two frames ============
