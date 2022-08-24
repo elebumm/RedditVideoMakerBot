@@ -461,18 +461,17 @@ class App(customtkinter.CTk):
                                                    justify=tkinter.LEFT)
         self.label_info_1.grid(column=0, row=0, sticky="nwe", padx=15, pady=15)
 
-        self.progressbar = customtkinter.CTkProgressBar(master=self.frame_info)
-        self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
+
 
 # Settings sync
 
     # Check if config.toml exists if not generates a new config with default values
-        if not os.path.isfile(f"config.toml"):
+        if not os.path.isfile("config.toml"):
             print("Can't find config generating new config")
             open("config.toml", "w")
-            shutil.copyfile(f"utils/config.temp.toml", f"config.toml")
+            shutil.copyfile("utils/config.temp.toml", "config.toml")
 
-        config = toml.load(f"config.toml") # Loads config to be able to read and write
+        config = toml.load("config.toml") # Loads config to be able to read and write
 
 # Sync config settings to gui
         
