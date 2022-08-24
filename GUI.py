@@ -1,10 +1,15 @@
+from genericpath import isfile
 from main import main, shutdown
 
 from doctest import master
 import tkinter
 import tkinter.messagebox
 import customtkinter
+import os
+import toml
+import shutil
 from utils.settings import check_toml
+from utils import settings
 from pathlib import Path
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
@@ -22,7 +27,6 @@ class App(customtkinter.CTk):
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
-        self.resizable(False, False)
 
         # ============ create two frames ============
 
@@ -191,7 +195,7 @@ class App(customtkinter.CTk):
         )
         self.user_2fa.grid(row=7, column=0, padx=15)
 
-# Thread Settings
+# Thread Settings 
 
     # Thread settings title
         self.thread_title = customtkinter.CTkLabel(
@@ -377,14 +381,77 @@ class App(customtkinter.CTk):
         self.progressbar = customtkinter.CTkProgressBar(master=self.frame_info)
         self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
 
-        # set the default values for the settings
-        directory = Path().absolute()
-        config = check_toml(f"{directory}/utils/.config.template.toml", "config.toml")  
+# Settings sync
+
+    # Check if config.toml exists if not generates a new config with default values
+        if not os.path.isfile(f"config.toml"):
+            print("Can't find config generating new config")
+            open("config.toml", "w")
+            shutil.copyfile(f"utils/config.temp.toml", f"config.toml")
+
+        config = toml.load(f"config.toml") # Loads config to be able to read and write
+
+# Sync config settings to gui
+        
+    # User Settings
+
+        # User name
+        if not config["reddit"]["creds"]["username"] == "":
+            self.user_name.insert("0", config["reddit"]["creds"]["username"])
+
+        # User password
+        if not config["reddit"]["creds"]["password"] == "":
+            self.user_password.insert("0", config["reddit"]["creds"]["password"])
+        
+        # Client Secret
+        if not config["reddit"]["creds"]["client_secret"] == "":
+            self.client_secret.insert("0", config["reddit"]["creds"]["client_secret"])
+        
+        # Client Id
+        if not config["reddit"]["creds"]["client_id"] == "":
+            self.client_id.insert("0", config["reddit"]["creds"]["client_id"])
+
+        # 2fa
+        self.user_2fa.set(str(config["reddit"]["creds"]["2fa"]))
+
+    # Thread Settings
+
+        # Random
+        self.thread_random.set(str(config["reddit"]["thread"]["random"]))
+
+        # Subreddit
+        if not config["reddit"]["thread"]["subreddit"] == "":
+            self.thread_subreddit.insert("0", config["reddit"]["thread"]["subreddit"])
+
+        # Post id
+        if not config["reddit"]["thread"]["post_id"] == "":
+            self.thread_post_id.insert("0", config["reddit"]["thread"]["post_id"])
+
+        # Max comment length
+        self.thread_max_comment_length.insert("0", config["reddit"]["thread"]["max_comment_length"])
+
+        # Post langauge
+        self.thread_post_lang.insert("0", config["reddit"]["thread"]["post_lang"])
+
+        # Min comments
+        self.thread_min_comment_length("0", config["reddit"]["thread"]["min_comments"])
+
+    # Misc Settings
+
+        # Allow nsfw
         self.misc_allow_nsfw.set(str(config["settings"]["allow_nsfw"]))
-        self.misc_theme.set(config["settings"]["theme"])
-        self.misc_times_to_run.insert(0, config["settings"]["times_to_run"])
-        self.misc_opacity.insert(0, config["settings"]["opacity"])
-        print("Settings imported!")
+
+        # Theme
+        self.misc_theme.insert("0", config["settings"]["theme"])
+
+        # Times to run
+        self.misc_times_to_run.insert("0", config["settings"]["times_to_run"])
+
+        # Opacity
+        self.misc_opacity.insert("0", config["settings"]["opacity"])
+        
+
+        
 
     # Show frame
     def showFrame(self, frame):
@@ -415,9 +482,9 @@ class App(customtkinter.CTk):
         self.destroy()
         shutdown()
 
-def start():
+def launchGui():
     if __name__ == "__main__":
         app = App()
         app.mainloop()
 
-start()
+launchGui()

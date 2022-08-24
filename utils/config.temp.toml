@@ -1,0 +1,33 @@
+[settings]
+allow_nsfw = false
+theme = "dark"
+times_to_run = 1
+opacity = 0.9
+transition = 0.2
+storymode = false
+
+[settings.background]
+background_choice = "minecraft"
+
+[settings.tts]
+voice_choice = "tiktok"
+aws_polly_voice = "Matthew"
+streamlabs_polly_voice = "Matthew"
+tiktok_voice = "en_us_006"
+python_voice = "1"
+py_voice_num = "2"
+
+[reddit.creds]
+client_id = ""
+client_secret = ""
+username = ""
+password = ""
+2fa = false
+
+[reddit.thread]
+random = false
+subreddit = ""
+post_id = ""
+max_comment_length = 50
+post_lang = ""
+min_comments = 20
