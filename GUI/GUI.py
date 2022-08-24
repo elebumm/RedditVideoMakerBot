@@ -93,14 +93,6 @@ class App(customtkinter.CTk):
                                                         command=self.change_appearance_mode)
         self.optionmenu_1.grid(row=10, column=0, pady=0, padx=20, sticky="w")
 
-        # frame_home
-        self.frame_config(self.frame_home)
-        # frame_settings
-        self.frame_settings.rowconfigure(0)
-        self.frame_settings.columnconfigure(0)
-        # frame_results
-        self.frame_config(self.frame_results)
-
 ### Adds all the stuff for frame_settings ###
 
         # Background within frame
@@ -120,94 +112,243 @@ class App(customtkinter.CTk):
 
 ## USER SETTINGS ##
 
-        # User settings title
+    # User settings title
         self.user_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
             text="User Settings",
             text_font=("Courier_Bold", 14)
         )
-        self.user_title.grid(row=1, column=0, columnspan=2)
+        self.user_title.grid(row=1, column=0, columnspan=2, pady=10)
 
-        # Client secret input box
+    # Client secret title
+        self.client_secret_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Client Secrect"
+        )
+        self.client_secret_title.grid(row=2, column=0, padx=15)
+
+    # Client secret input box
         self.client_secret = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
             placeholder_text = "Client Secret"
         )
-        self.client_secret.grid(row=2, column=0, pady=5, padx=15)
+        self.client_secret.grid(row=3, column=0, padx=15)
 
-        # Client id input box
+    # Client id title
+        self.client_id_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text = "Client Id"
+        )
+        self.client_id_title.grid(row=4, column=0, padx=15)
+
+    # Client id input box
         self.client_id = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
-            placeholder_text = "Client Id"
+            placeholder_text="Client Id"
         )
-        self.client_id.grid(row=3, column=0, pady=5, padx=15)
+        self.client_id.grid(row=5, column=0, padx=15)
 
-        # Username
+    # Username title
+        self.user_name_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Username"
+        )
+        self.user_name_title.grid(row=2, column=1, padx=15)
+    
+    # Username input box
         self.user_name = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
-            placeholder_text = "Username"
+            placeholder_text="Username"
         )
-        self.user_name.grid(row=2, column=1, pady=5, padx=15)
+        self.user_name.grid(row=3, column=1, padx=15)
 
-        # Password
+    # Password title
+        self.user_password_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Password"
+        )
+        self.user_password_title.grid(row=4, column=1, padx=15)
+
+    # Password input box
         self.user_password = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
-            placeholder_text = "Password"
+            placeholder_text="Password"
         )
-        self.user_password.grid(row=3, column=1, pady=5, padx=15)
+        self.user_password.grid(row=5, column=1, padx=15)
 
-        # 2fa label
+    # 2fa label
         self.user_2fa_label = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
             text = "2FA enabled?"
         )
-        self.user_2fa_label.grid(row=4, column=0, pady=0, padx=15)
+        self.user_2fa_label.grid(row=6, column=0, padx=15)
 
-        # 2fa option menu
+    # 2fa option menu
         self.user_2fa = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["True", "False"]
+            values=["False", "True"]
         )
-        self.user_2fa.grid(row=5, column=0, pady=0, padx=15)
+        self.user_2fa.grid(row=7, column=0, padx=15)
 
-## THREAD SETTINGS
+# Thread Settings
 
-        # Thread Settings Title
+    # Thread settings title
         self.thread_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
             text="Thread Settings",
             text_font=("Courier_Bold", 14)
         )
-        self.thread_title.grid(row=1, column=3, columnspan=2)
+        self.thread_title.grid(row=1, column=2, columnspan=2, pady=10)
 
-        # Subreddit
+    # Random Title
+        self.thread_random_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Random"
+        )
+        self.thread_random_title.grid(row=2, column=2, padx=15)
+
+    # Random option menu
+        self.thread_random = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["False", "True"]
+        )
+        self.thread_random.grid(row=3, column=2, padx=15)
+
+    # Subreddit title
+        self.thread_subreddit_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Subreddit"
+        )
+        self.thread_subreddit_title.grid(row=2, column=3, padx=15)
+    
+    # Subreddit input box
         self.thread_subreddit = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
             placeholder_text="Subreddit"
         )
-        self.thread_subreddit.grid(row=2, column=3, pady=15, padx=15)
+        self.thread_subreddit.grid(row=3, column=3, padx=15)
 
-        # Max Comment Lenght
-        self.thread_max_comment_lenght = customtkinter.CTkEntry(
+    # Post id title
+        self.thread_post_id_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
-            placeholder_text="Max Comment Lenght"
+            text="Post Id"
         )
-        self.thread_max_comment_lenght.grid(row=2, column=4, pady=15, padx=15)
+        self.thread_post_id_title.grid(row=4, column=2, padx=15)
 
-        # Post Id
+    # Post id input box
         self.thread_post_id = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
             placeholder_text="Post Id"
         )
-        self.thread_post_id.grid(row=3, column=3, pady=15, padx=15)
+        self.thread_post_id.grid(row=5, column=2, padx=15)
 
-        # Min Comment Lenght
-        self.thread_min_comment_lenght = customtkinter.CTkEntry(
+    # Max comment length title
+        self.thread_max_comment_length_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
-            placeholder_text="Min Comment Lenght"
+            text="Max comment length"
         )
-        self.thread_min_comment_lenght.grid(row=3, column=4, pady=15, padx=15)
+        self.thread_max_comment_length_title.grid(row=4, column=3, padx=15)
 
+    # Max comment length
+        self.thread_max_comment_length = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Max comment length (NUM)"
+        )
+        self.thread_max_comment_length.grid(row=5, column=3, padx=15)
+
+    # Post lang title
+        self.thread_post_lang_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Post language"
+        )
+        self.thread_post_lang_title.grid(row=6, column=2, padx=15)
+
+    # Post lang
+        self.thread_post_lang = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Post language (en/cr)"
+        )
+        self.thread_post_lang.grid(row=7, column=2, padx=15)
+
+    # Min comment length title
+        self.thread_min_comment_length_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Min comment length (NUM)"
+        )
+        self.thread_min_comment_length_title.grid(row=6, column=3, padx=15)
+
+    # Min comment length
+        self.thread_min_comment_length = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Min comment length"
+        )
+        self.thread_min_comment_length.grid(row=7, column=3, padx=15)
+
+# Misc Settings
+
+    # Misc settings title
+        self.misc_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Misc Settings",
+            text_font=("Courier_Bold", 14)
+        )
+        self.misc_title.grid(row=8, column=0, columnspan=2, pady=10)
+
+    # Allow nsfw title
+        self.misc_allow_nsfw_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Allow NSFW"
+        )
+        self.misc_allow_nsfw_title.grid(row=9, column=0, padx=15)
+
+    # Allow nsfw option box
+        self.misc_allow_nsfw = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["False", "True"]
+        )
+        self.misc_allow_nsfw.grid(row=10, column=0, padx=15)
+
+    # Theme title
+        self.misc_theme_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Theme"
+        )
+        self.misc_theme_title.grid(row=9, column=1, padx=15)
+
+    # Theme
+        self.misc_theme = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["dark", "light"]
+        )
+        self.misc_theme.grid(row=10, column=1, padx=15)
+
+    # Times to run title
+        self.misc_times_to_run_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Times to run (NUM)"
+        )
+        self.misc_times_to_run_title.grid(row=11, column=0, padx=15)
+
+    # Times to run
+        self.misc_times_to_run = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Times to run"
+        )
+        self.misc_times_to_run.grid(row=12, column=0, padx=15)
+
+    # Opacity title
+        self.misc_opacity_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Opacity (NUM 0.1-0.9)"
+        )
+        self.misc_opacity_title.grid(row=11, column=1, padx=15)
+
+    # Opcaity
+        self.misc_opacity = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Opacity"
+        )
+        self.misc_opacity.grid(row=12, column=1, padx=15)
 
 
         # configure grid layout (3x7)
@@ -248,11 +389,6 @@ class App(customtkinter.CTk):
         ###self.radio_button_3.configure(state=tkinter.DISABLED)
         ###self.check_box_1.configure(state=tkinter.DISABLED, text="CheckBox disabled")
         ###self.check_box_2.select()
-
-    # Configures the frames of the right side
-    def frame_config(self, frame):
-            frame.rowconfigure(8, weight=1)
-            frame.columnconfigure(8, weight=10)
 
     # Show frame
     def showFrame(self, frame):
