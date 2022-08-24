@@ -434,7 +434,7 @@ class App(customtkinter.CTk):
         self.thread_post_lang.insert("0", config["reddit"]["thread"]["post_lang"])
 
         # Min comments
-        self.thread_min_comment_length("0", config["reddit"]["thread"]["min_comments"])
+        self.thread_min_comment_length.insert("0", config["reddit"]["thread"]["min_comments"])
 
     # Misc Settings
 
@@ -442,7 +442,7 @@ class App(customtkinter.CTk):
         self.misc_allow_nsfw.set(str(config["settings"]["allow_nsfw"]))
 
         # Theme
-        self.misc_theme.insert("0", config["settings"]["theme"])
+        self.misc_theme.set(str(config["settings"]["theme"]))
 
         # Times to run
         self.misc_times_to_run.insert("0", config["settings"]["times_to_run"])
@@ -450,6 +450,7 @@ class App(customtkinter.CTk):
         # Opacity
         self.misc_opacity.insert("0", config["settings"]["opacity"])
         
+        # Transition
 
         
 
