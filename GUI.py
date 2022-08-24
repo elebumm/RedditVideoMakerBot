@@ -5,6 +5,7 @@ from doctest import master
 import tkinter
 import tkinter.messagebox
 import customtkinter
+from tkinter import filedialog
 import os
 import toml
 import shutil
@@ -102,7 +103,7 @@ class App(customtkinter.CTk):
 
         # Background within frame
         self.frame_bg_settings = customtkinter.CTkFrame(master=self.frame_settings)
-        self.frame_bg_settings.grid(row=0, column=0, pady=15, padx=15, sticky=("nswe"))
+        self.frame_bg_settings.grid(row=0, column=0, pady=15, padx=15, ipadx=18, sticky=("nswe"))
 
         self.frame_bg_settings.rowconfigure(10, weight=1)
         self.frame_bg_settings.columnconfigure(10, weight=1)
@@ -250,14 +251,14 @@ class App(customtkinter.CTk):
     # Max comment length title
         self.thread_max_comment_length_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
-            text="Max comment length"
+            text="Max comment length (NUM)"
         )
         self.thread_max_comment_length_title.grid(row=4, column=3, padx=15)
 
     # Max comment length
         self.thread_max_comment_length = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
-            placeholder_text="Max comment length (NUM)"
+            placeholder_text="Max comment length"
         )
         self.thread_max_comment_length.grid(row=5, column=3, padx=15)
 
@@ -355,6 +356,88 @@ class App(customtkinter.CTk):
         )
         self.misc_opacity.grid(row=12, column=1, padx=15)
 
+    # Transition title
+        self.misc_transition_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Transition"
+        )
+        self.misc_transition_title.grid(row=13, column=0, padx=15)
+
+    # Transition
+        self.misc_transtion = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="Transtion"
+        )
+        self.misc_transtion.grid(row=14, column=0, padx=15)
+
+# Background Settings
+
+    # Background settings title
+
+        self.background_settings_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Background Settings",
+            text_font=("Courier_Bold", 14)
+        )
+        self.background_settings_title.grid(row=1, column=4, pady=10)
+
+    # Choose background title
+        self.background_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Background"
+        )
+        self.background_title.grid(row=2, column=4, padx=15)
+
+    # Select one of these (custom, youtube or built in video)
+        self.background_select = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["builtin", "custom", "youtube"],
+            command=self.switchBackgroundType
+        )
+        self.background_select.grid(row=3, column=4, padx=15)
+
+    # Custom title
+        self.background_custom_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Custom background"
+        )
+        self.background_custom_title.grid(row=4, column=4, padx=15)
+
+    # Custom file path
+        self.background_custom = customtkinter.CTkButton(
+            master=self.frame_bg_settings,
+            text="Select background",
+            command=self.backgroundBrowse
+        )
+        self.background_custom.grid(row=5, column=4, padx=15)
+
+    # Youtube title
+        self.background_youtube_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="YouTube background"
+        )
+        self.background_youtube_title.grid(row=4, column=4, padx=15)
+
+    # Youtube
+        self.background_youtube = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="YouTube URL"
+        )
+        self.background_youtube.grid(row=5, column=4, padx=15)
+
+    # Builtin title
+        self.background_builtin_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Builtin background"
+        )
+        self.background_builtin_title.grid(row=4, column=4, padx=15)
+
+    # Builtin
+        self.background_builtin = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="minecraft, rocket-league"
+        )
+        self.background_builtin.grid(row=5, column=4, padx=15)
 
         # configure grid layout (3x7)
         
@@ -452,7 +535,34 @@ class App(customtkinter.CTk):
         
         # Transition
 
-        
+
+    # Background file browse
+    def backgroundBrowse(self):
+        filepath = filedialog.askopenfilename(
+            initialdir="/",
+            title="Select a mp4 file"
+        )
+
+        filename = Path(filepath).stem
+
+        self.background_custom.configure(text=filename)
+
+        if filepath == "":
+            self.background_custom.configure(text="Select background")
+
+    # Background type switch
+    def switchBackgroundType(self, type):
+        if type == "custom":
+            self.background_custom_title.tkraise()
+            self.background_custom.tkraise()
+
+        if type == "builtin":
+            self.background_builtin_title.tkraise()
+            self.background_builtin.tkraise()
+
+        if type == "youtube":
+            self.background_youtube_title.tkraise()
+            self.background_youtube.tkraise()
 
     # Show frame
     def showFrame(self, frame):

@@ -8,6 +8,7 @@ storymode = false
 
 [settings.background]
 background_choice = "minecraft"
+background_type = "builtin"
 
 [settings.tts]
 voice_choice = "tiktok"
