@@ -21,6 +21,7 @@ class App(customtkinter.CTk):
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)  # call .on_closing() when app gets closed
+        self.resizable(False, False)
 
         # ============ create two frames ============
 
