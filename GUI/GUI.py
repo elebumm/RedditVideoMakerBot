@@ -4,10 +4,10 @@ from doctest import master
 import tkinter
 import tkinter.messagebox
 import customtkinter
-from utils.settings import settings
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
 
 class App(customtkinter.CTk):
 
@@ -391,8 +391,6 @@ class App(customtkinter.CTk):
         ###self.check_box_1.configure(state=tkinter.DISABLED, text="CheckBox disabled")
         ###self.check_box_2.select()
 
-    def load_value_from_toml(self):
-        self.client_secret.set(config["settings"]["times_to_run"])
     # Show frame
     def showFrame(self, frame):
         frame.tkraise()
