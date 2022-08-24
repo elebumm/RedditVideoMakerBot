@@ -364,16 +364,15 @@ class App(customtkinter.CTk):
         self.misc_transition_title.grid(row=13, column=0, padx=15)
 
     # Transition
-        self.misc_transtion = customtkinter.CTkEntry(
+        self.misc_transition = customtkinter.CTkEntry(
             master=self.frame_bg_settings,
             placeholder_text="Transtion"
         )
-        self.misc_transtion.grid(row=14, column=0, padx=15)
+        self.misc_transition.grid(row=14, column=0, padx=15)
 
 # Background Settings
 
     # Background settings title
-
         self.background_settings_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
             text="Background Settings",
@@ -438,6 +437,103 @@ class App(customtkinter.CTk):
             placeholder_text="minecraft, rocket-league"
         )
         self.background_builtin.grid(row=5, column=4, padx=15)
+
+# Tts Settings
+
+    # Tts settings title
+        self.tts_settings_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Text To Speech Settings",
+            text_font=("Courier_Bold", 14)
+        )
+        self.tts_settings_title.grid(row=8, column=2, columnspan=2, pady=10)
+
+    # Voice choice title
+        self.tts_voice_choice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Voice choice"
+        )
+        self.tts_voice_choice_title.grid(row=9, column=2, padx=15)
+
+    # Voice choice
+        self.tts_voice_choice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["tiktok", "googletranslate", "streamlabspolly", "awspolly", "pyttsx"],
+            command=self.ttsVoiceChange
+        )
+        self.tts_voice_choice.grid(row=10, column=2, padx=15)
+
+    # aws_polly_voice title
+        self.tts_aws_polly_voice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Aws polly voice"
+        )
+        self.tts_aws_polly_voice_title.grid(row=11, column=2, padx=15)
+
+    # aws_polly_voice
+        self.tts_aws_polly_voice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["Matthew"]
+        )
+        self.tts_aws_polly_voice.grid(row=12, column=2, padx=15)
+
+    # streamlabs_polly_voice title
+        self.tts_streamlabs_polly_voice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Streamlabs polly voice"
+        )
+        self.tts_streamlabs_polly_voice_title.grid(row=11, column=2, padx=15)
+
+    # streamlabs_polly_voice
+        self.tts_streamlabs_polly_voice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["Matthew"]
+        )
+        self.tts_streamlabs_polly_voice.grid(row=12, column=2, padx=15)
+
+    # python_voice title
+        self.tts_python_voice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Python voice"
+        )
+        self.tts_python_voice_title.grid(row=11, column=2, padx=15)
+
+    # python_voice
+        self.tts_python_voice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["1"]
+        )
+        self.tts_python_voice.grid(row=12, column=2, padx=15)
+
+    # tiktok_voice title
+        self.tts_tiktok_voice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="TikTok voice"
+        )
+        self.tts_tiktok_voice_title.grid(row=11, column=2, padx=15)
+
+    # tiktok_voice
+        self.tts_tiktok_voice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["en_us_006"]
+        )
+        self.tts_tiktok_voice.grid(row=12, column=2, padx=15)
+
+    # silence_duration title
+        self.tts_silence_duration_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Silence duration"
+        )
+        self.tts_silence_duration_title.grid(row=9, column=3, padx=15)
+
+    # silence_duration
+        self.tts_silence_duration = customtkinter.CTkEntry(
+            master=self.frame_bg_settings,
+            placeholder_text="0.1 / 0.9"
+        )
+        self.tts_silence_duration.grid(row=10, column=3, padx=15)
+
+    
 
         # configure grid layout (3x7)
         
@@ -533,7 +629,72 @@ class App(customtkinter.CTk):
         self.misc_opacity.insert("0", config["settings"]["opacity"])
         
         # Transition
+        self.misc_transition.insert("0", config["settings"]["transition"])
 
+# Sync gui to config
+    def saveSettings(self):
+        print("Saving Settings to config.toml")
+        config = toml.load("config.toml")
+
+    # User Settings
+
+        # User name
+        config["reddit"]["creds"]["username"] = self.user_name.get()
+
+        # User password
+        config["reddit"]["creds"]["password"] = self.user_password.get()
+
+        # Client secret
+        config["reddit"]["creds"]["client_secret"] = self.client_secret.get()
+
+        # Client id
+        config["reddit"]["creds"]["client_id"] = self.client_id.get()
+
+        # 2fa
+        config["reddit"]["creds"]["2fa"] = self.user_2fa.get()
+
+    # Thread Settings
+
+        # Random
+        config["reddit"]["thread"]["random"] = self.thread_random.get()
+
+        # Subreddit
+        config["reddit"]["thread"]["subreddit"] = self.thread_subreddit.get()
+
+        # Post id
+        config["reddit"]["thread"]["post_id"] = self.thread_post_id.get()
+
+        # Max comment length
+        config["reddit"]["thread"]["max_comment_length"] = self.thread_max_comment_length.get()
+
+        # Post langauge
+        config["reddit"]["thread"]["post_lang"] = self.thread_post_lang.get()
+
+        # Min comments
+        config["reddit"]["thread"]["min_comments"] = self.thread_min_comment_length.get()
+
+    # Misc Settings
+
+        # Allow nsfw
+        config["settings"]["allow_nsfw"] = self.misc_allow_nsfw.get()
+
+        # Theme
+        config["settings"]["theme"] = self.misc_theme.get()
+
+        # Times to run
+        config["settings"]["times_to_run"] = self.misc_times_to_run.get()
+
+        # Opacity
+        config["settings"]["opacity"] = self.misc_opacity.get()
+
+        # Transition
+        config["settings"]["transition"] = self.misc_transition.get()
+
+    # Dump new data into config.toml
+        configWrite = open("config.toml", "w")
+        toml.dump(config, configWrite)
+
+        print("Settings saved to config.toml")
 
     # Background file browse
     def backgroundBrowse(self):
@@ -563,6 +724,23 @@ class App(customtkinter.CTk):
             self.background_youtube_title.tkraise()
             self.background_youtube.tkraise()
 
+    # tts voice change
+    def ttsVoiceChange(self, type):
+        if type == "streamlabspolly":
+            print("1")
+
+        if type == "tiktok":
+            print("2")
+
+        if type == "googletranslate":
+            print("3")
+
+        if type == "awspolly":
+            print("4")
+
+        if type == "pyttsx":
+            print("5")
+
     # Show frame
     def showFrame(self, frame):
         frame.tkraise()
@@ -581,6 +759,7 @@ class App(customtkinter.CTk):
 
     # Start button event
     def btn_start(self):
+        self.saveSettings()
         print("Start Pressed!")
 
     # Appearance event
@@ -589,6 +768,7 @@ class App(customtkinter.CTk):
 
     # Close event
     def on_closing(self, event=0):
+        self.saveSettings()
         self.destroy()
         shutdown()
 

@@ -17,6 +17,7 @@ streamlabs_polly_voice = "Matthew"
 tiktok_voice = "en_us_006"
 python_voice = "1"
 py_voice_num = "2"
+silence_duration = "0.1"
 
 [reddit.creds]
 client_id = ""
