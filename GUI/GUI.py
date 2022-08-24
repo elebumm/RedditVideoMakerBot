@@ -1,4 +1,4 @@
-#from main import main, shutdown
+from main import main, shutdown
 
 from doctest import master
 import tkinter
@@ -187,7 +187,7 @@ class App(customtkinter.CTk):
     # 2fa option menu
         self.user_2fa = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["False", "True"]
+            values=["false", "true"]
         )
         self.user_2fa.grid(row=7, column=0, padx=15)
 
@@ -211,7 +211,7 @@ class App(customtkinter.CTk):
     # Random option menu
         self.thread_random = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["False", "True"]
+            values=["false", "true"]
         )
         self.thread_random.grid(row=3, column=2, padx=15)
 
