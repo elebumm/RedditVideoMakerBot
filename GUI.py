@@ -4,7 +4,8 @@ from doctest import master
 import tkinter
 import tkinter.messagebox
 import customtkinter
-from utils.settings import settings
+from utils.settings import check_toml
+from pathlib import Path
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -45,7 +46,6 @@ class App(customtkinter.CTk):
         # Home Frame
         self.frame_home = customtkinter.CTkFrame(master=self)
         self.frame_home.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
-
         # ============ frame_left ============
 
         # configure grid layout (1x11)
@@ -377,22 +377,15 @@ class App(customtkinter.CTk):
         self.progressbar = customtkinter.CTkProgressBar(master=self.frame_info)
         self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
 
-        
-        # set default values
-        self.optionmenu_1.set("Dark")
-        ###self.button_3.configure(state="disabled", text="Disabled CTkButton")
-        ###self.combobox_1.set("CTkCombobox")
-        ###self.radio_button_1.select()
-        ###self.slider_1.set(0.2)
-        ###self.slider_2.set(0.7)
-        ###self.progressbar.set(0.5)
-        ###self.switch_2.select()
-        ###self.radio_button_3.configure(state=tkinter.DISABLED)
-        ###self.check_box_1.configure(state=tkinter.DISABLED, text="CheckBox disabled")
-        ###self.check_box_2.select()
+        # set the default values for the settings
+        directory = Path().absolute()
+        config = check_toml(f"{directory}/utils/.config.template.toml", "config.toml")  
+        self.misc_allow_nsfw.set(str(config["settings"]["allow_nsfw"]))
+        self.misc_theme.set(config["settings"]["theme"])
+        self.misc_times_to_run.insert(0, config["settings"]["times_to_run"])
+        self.misc_opacity.insert(0, config["settings"]["opacity"])
+        print("Settings imported!")
 
-    def load_value_from_toml(self):
-        self.client_secret.set(config["settings"]["times_to_run"])
     # Show frame
     def showFrame(self, frame):
         frame.tkraise()
