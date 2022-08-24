@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import re
 from typing import Tuple, Dict
-
+from pathlib import Path
 import toml
 from rich.console import Console
 
@@ -159,4 +159,5 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 
 
 if __name__ == "__main__":
-    check_toml("utils/.config.template.toml", "config.toml")
+    directory = Path().absolute()
+    check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
