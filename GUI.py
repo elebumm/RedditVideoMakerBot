@@ -378,8 +378,7 @@ class App(customtkinter.CTk):
                                                    justify=tkinter.LEFT)
         self.label_info_1.grid(column=0, row=0, sticky="nwe", padx=15, pady=15)
 
-        self.progressbar = customtkinter.CTkProgressBar(master=self.frame_info)
-        self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
+
 
 # Settings sync
 
