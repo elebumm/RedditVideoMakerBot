@@ -98,6 +98,8 @@ class App(customtkinter.CTk):
                                                         values=["Light", "Dark", "System"],
                                                         command=self.change_appearance_mode)
         self.optionmenu_1.grid(row=10, column=0, pady=0, padx=20, sticky="w")
+        # Set default mode to system
+        self.optionmenu_1.set("System")
 
 ### Adds all the stuff for frame_settings ###
 
@@ -394,7 +396,7 @@ class App(customtkinter.CTk):
             command=self.switchBackgroundType
         )
         self.background_select.grid(row=3, column=4, padx=15)
-        
+
     # Custom title
         self.background_custom_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
