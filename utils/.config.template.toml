@@ -25,7 +25,7 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", ""], explanation = "Sets the background for the video based on game name" }
+background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck"], explanation = "Sets the background for the video based on game name" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
 #background_audio_volume = { optional = true, type = "float", default = 0.3, example = 0.1, explanation="Sets the volume of the background audio. only used if the background_audio is also set to true" }
 

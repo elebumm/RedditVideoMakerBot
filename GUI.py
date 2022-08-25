@@ -394,7 +394,7 @@ class App(customtkinter.CTk):
             command=self.switchBackgroundType
         )
         self.background_select.grid(row=3, column=4, padx=15)
-
+        
     # Custom title
         self.background_custom_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
@@ -432,9 +432,11 @@ class App(customtkinter.CTk):
         self.background_builtin_title.grid(row=4, column=4, padx=15)
 
     # Builtin
-        self.background_builtin = customtkinter.CTkEntry(
+    # Gets the config template toml options and creates a dropdown menu
+        configtemplate = toml.load("utils/.config.template.toml")
+        self.background_builtin = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            placeholder_text="minecraft, rocket-league"
+            values=configtemplate["settings"]["background"]["background_choice"]["options"]
         )
         self.background_builtin.grid(row=5, column=4, padx=15)
 
@@ -701,15 +703,21 @@ class App(customtkinter.CTk):
     def backgroundBrowse(self):
         filepath = filedialog.askopenfilename(
             initialdir="/",
-            title="Select a mp4 file"
+            title="Select a mp4 file",
+            multiple=False,
+            filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*"))
         )
-
         filename = Path(filepath).stem
 
         self.background_custom.configure(text=filename)
 
         if filepath == "":
             self.background_custom.configure(text="Select background")
+        else:
+            #get current path
+            current_path = os.getcwd()
+            Path("./assets/backgrounds/").mkdir(parents=True, exist_ok=True)
+            shutil.copy(filepath, f"{current_path}\\assets\\backgrounds\\{filename}.mp4")
 
     # Background type switch
     def switchBackgroundType(self, type):
