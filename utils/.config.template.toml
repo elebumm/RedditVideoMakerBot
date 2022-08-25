@@ -25,16 +25,16 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", ""], explanation = "Sets the background for the video based on game name" }
+background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["", "minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck"], explanation = "Sets the background for the video based on game name" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
 #background_audio_volume = { optional = true, type = "float", default = 0.3, example = 0.1, explanation="Sets the volume of the background audio. only used if the background_audio is also set to true" }
 
 
 [settings.tts]
-voice_choice = { optional = false, default = "", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
+voice_choice = { optional = false, default = "tiktok", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = false, default = "en_us_006", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
 python_voice = { optional = false, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
-py_voice_num = { optional = false, default = "2", example = "2", explanation = "the number of system voices(2 are pre-installed in windows)" }
-silence_duration = { optional = true, example = "0.1", explanation = "time in seconds between TTS comments", default = 0.3, type = "float" }
+py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
+silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
