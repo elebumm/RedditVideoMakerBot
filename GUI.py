@@ -477,7 +477,7 @@ class App(customtkinter.CTk):
     # aws_polly_voice
         self.tts_aws_polly_voice = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["Matthew"]
+            values=["Brian","Emma","Russell","Joey","Matthew","Joanna","Kimberly","Amy","Geraint","Nicole","Justin","Ivy","Kendra","Salli","Raveena"]
         )
         self.tts_aws_polly_voice.grid(row=12, column=2, padx=15)
 
@@ -491,7 +491,7 @@ class App(customtkinter.CTk):
     # streamlabs_polly_voice
         self.tts_streamlabs_polly_voice = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["Matthew"]
+            values=["Brian","Emma","Russell","Joey","Matthew","Joanna","Kimberly","Amy","Geraint","Nicole","Justin","Ivy","Kendra","Salli","Raveena"]
         )
         self.tts_streamlabs_polly_voice.grid(row=12, column=2, padx=15)
 
