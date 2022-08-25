@@ -88,8 +88,6 @@ class App(customtkinter.CTk):
             command=self.btn_start)
         self.start_btn.grid(row=5, column=0, pady=10, padx=40)
 
-
-
         # Appeareance Stuff
         self.label_mode = customtkinter.CTkLabel(master=self.frame_left, text="Appearance Mode:")
         self.label_mode.grid(row=9, column=0, pady=10, padx=20, sticky="w")
@@ -495,6 +493,21 @@ class App(customtkinter.CTk):
         )
         self.tts_streamlabs_polly_voice.grid(row=12, column=2, padx=15)
 
+    # GoogleTranslate title
+        self.tts_google_translate_voice_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Google Translate voice"
+        )
+        self.tts_aws_polly_voice_title.grid(row=11, column=2, padx=15)
+
+    # GoogleTranslate
+        self.tts_google_translate_voice = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["No options"],
+            state="disabled"
+        )
+        self.tts_google_translate_voice.grid(row=12, column=2, padx=15)
+    
     # python_voice title
         self.tts_python_voice_title = customtkinter.CTkLabel(
             master=self.frame_bg_settings,
@@ -505,9 +518,23 @@ class App(customtkinter.CTk):
     # python_voice
         self.tts_python_voice = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["1"]
+            values=["1", "2"]
         )
         self.tts_python_voice.grid(row=12, column=2, padx=15)
+
+    # py_voice_num title
+        self.py_voice_num_title = customtkinter.CTkLabel(
+            master=self.frame_bg_settings,
+            text="Python voice number"
+        )
+        self.py_voice_num_title.grid(row=11, column=2, padx=15)
+
+    # py_voice_num
+        self.tts_py_voice_num = customtkinter.CTkOptionMenu(
+            master=self.frame_bg_settings,
+            values=["1", "2"]
+        )
+        self.tts_py_voice_num.grid(row=12, column=2, padx=15)
 
     # tiktok_voice title
         self.tts_tiktok_voice_title = customtkinter.CTkLabel(
@@ -519,7 +546,7 @@ class App(customtkinter.CTk):
     # tiktok_voice
         self.tts_tiktok_voice = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["en_us_006"]
+            values=["en_au_001","en_au_002","en_uk_001","en_uk_003","en_us_001","en_us_002","en_us_006","en_us_007","en_us_009","en_us_010",]
         )
         self.tts_tiktok_voice.grid(row=12, column=2, padx=15)
 
@@ -636,6 +663,26 @@ class App(customtkinter.CTk):
         # Transition
         self.misc_transition.insert("0", config["settings"]["transition"])
 
+    # TTS settings
+
+        # Voice
+        self.tts_voice_choice.insert("0", config["settings"]["tts"]["voice_choice"])
+
+        # AWS polly voice
+        self.tts_aws_polly_voice.insert("0", config["settings"]["tts"]["aws_polly_voice"])
+
+        # Streamlabs polly voice
+        self.tts_streamlabs_polly_voice.insert("0", config["settings"]["tts"]["streamlabs_polly_voice"])
+
+        # Tiktok voice
+        self.tts_tiktok_voice.insert("0", config["settings"]["tts"]["tiktok_voice"])
+
+        # python_voice
+        self.tts_python_voice.insert("0", config["settings"]["tts"]["python_voice"])
+
+        # py_voice_num
+        self.tts_py_voice_num.insert("0", config["settings"]["tts"]["py_voice_num"])
+
 # Sync gui to config
     def saveSettings(self):
         print("Saving Settings to config.toml")
@@ -695,6 +742,8 @@ class App(customtkinter.CTk):
         # Transition
         config["settings"]["transition"] = self.misc_transition.get()
 
+        #TODO save TTS settings
+
     # Dump new data into config.toml
         configWrite = open("config.toml", "w")
         toml.dump(config, configWrite)
@@ -738,19 +787,24 @@ class App(customtkinter.CTk):
     # tts voice change
     def ttsVoiceChange(self, type):
         if type == "streamlabspolly":
-            print("1")
+            self.tts_streamlabs_polly_voice_title.tkraise()
+            self.tts_streamlabs_polly_voice.tkraise()
 
         if type == "tiktok":
-            print("2")
+            self.tts_tiktok_voice_title.tkraise()
+            self.tts_tiktok_voice.tkraise()
 
         if type == "googletranslate":
-            print("3")
+            self.tts_google_translate_voice_title.tkraise()
+            self.tts_google_translate_voice.tkraise()
 
         if type == "awspolly":
-            print("4")
+            self.tts_aws_polly_voice_title.tkraise()
+            self.tts_aws_polly_voice.tkraise()
 
         if type == "pyttsx":
-            print("5")
+            self.tts_python_voice_title.tkraise()
+            self.tts_python_voice.tkraise()
 
     # Show frame
     def showFrame(self, frame):
