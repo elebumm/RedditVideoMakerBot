@@ -1,5 +1,5 @@
 from genericpath import isfile
-from main import main, shutdown
+from main import main, shutdown, start
 
 from doctest import master
 import tkinter
@@ -771,6 +771,7 @@ class App(customtkinter.CTk):
     # Start button event
     def btn_start(self):
         self.saveSettings()
+        start()
         print("Start Pressed!")
 
     # Appearance event
