@@ -609,7 +609,7 @@ class App(customtkinter.CTk):
         self.thread_max_comment_length.insert("0", config["reddit"]["thread"]["max_comment_length"])
 
         # Post langauge
-        if not config["reddit"]["thread"]["post_language"] == "":
+        if not config["reddit"]["thread"]["post_lang"] == "":
             self.thread_post_lang.insert("0", config["reddit"]["thread"]["post_lang"])
 
         # Min comments
