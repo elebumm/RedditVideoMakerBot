@@ -133,13 +133,12 @@ def make_final_video(
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
 
-    # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
-    #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
-    #    audioclip = audioclip.fx( volumex, 0.2)
-    #    final_audio = mpe.CompositeAudioClip([final.audio, audioclip])
-    #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
-    #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
-    #    final.set_audio(final_audio)
+    if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+
+        audioclip = AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
+        audio_volume = settings.config["settings"]['background']["background_audio_volume"]
+        final.audio = CompositeAudioClip([volumex(audioclip,audio_volume),final.audio])
+            
     final = Video(final).add_watermark(
         text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
      )
