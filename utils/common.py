@@ -14,7 +14,6 @@ def getPlatform():
     return plt
 
 def clear():
-    print(getPlatform())
     if getPlatform() == "win":
         os.system('cls')
     elif getPlatform() == "lin" or getPlatform() == "mac":
