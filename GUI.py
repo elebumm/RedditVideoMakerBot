@@ -666,22 +666,22 @@ class App(customtkinter.CTk):
     # TTS settings
 
         # Voice
-        self.tts_voice_choice.insert("0", config["settings"]["tts"]["voice_choice"])
+        self.tts_voice_choice.set(config["settings"]["tts"]["voice_choice"])
 
         # AWS polly voice
-        self.tts_aws_polly_voice.insert("0", config["settings"]["tts"]["aws_polly_voice"])
+        self.tts_aws_polly_voice.set(config["settings"]["tts"]["aws_polly_voice"])
 
         # Streamlabs polly voice
-        self.tts_streamlabs_polly_voice.insert("0", config["settings"]["tts"]["streamlabs_polly_voice"])
+        self.tts_streamlabs_polly_voice.set(config["settings"]["tts"]["streamlabs_polly_voice"])
 
         # Tiktok voice
-        self.tts_tiktok_voice.insert("0", config["settings"]["tts"]["tiktok_voice"])
+        self.tts_tiktok_voice.set(config["settings"]["tts"]["tiktok_voice"])
 
         # python_voice
-        self.tts_python_voice.insert("0", config["settings"]["tts"]["python_voice"])
+        self.tts_python_voice.set(config["settings"]["tts"]["python_voice"])
 
         # py_voice_num
-        self.tts_py_voice_num.insert("0", config["settings"]["tts"]["py_voice_num"])
+        self.tts_py_voice_num.set(config["settings"]["tts"]["py_voice_num"])
 
 # Sync gui to config
     def saveSettings(self):
