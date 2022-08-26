@@ -11,6 +11,7 @@ from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 from moviepy.video.compositing.concatenate import concatenate_videoclips
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from moviepy.audio.fx.all import volumex
 from rich.console import Console
 
 from utils.cleanup import cleanup
