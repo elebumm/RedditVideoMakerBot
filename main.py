@@ -14,6 +14,7 @@ from utils.console import print_markdown, print_step, print_substep
 from utils import settings
 from utils.id import id
 from utils.version import checkversion
+from utils.common import clear, setConsoleSize
 
 from video_creation.background import (
     download_background,
@@ -26,43 +27,11 @@ from video_creation.voices import save_text_to_mp3
 
 __VERSION__ = "2.4.1"
 
-### 3 util functions. by github.com/notcooler ###
-def getPlatform():
-    plt = "unknown"
-    if platform == "linux" or platform == "linux2":
-        plt = "lin"
-    elif platform == "win32":
-        plt = "win"
-    elif platform == "darwin":
-        plt = "mac"
-    return plt
-
-def clear():
-    if getPlatform() == "win":
-        os.system('cls')
-    elif getPlatform() == "lin" or getPlatform() == "mac":
-        os.system('clear')
-    else:
-        pass
-def setConsoleSize(*_x, **_y):
-    x = '23'
-    y = '78'
-    if _x != None and len(_x) != 0: x = str(_x[0])
-    if _y != None and len(_x) != 0: y = str(_x[1])
-    if getPlatform() == "win":
-        os.system(f'mode {y},{x}')
-    elif getPlatform() == "lin" or getPlatform() == "mac":
-        os.system(f'resize -s {x} {y}')
-    else:
-        pass
-
-### end util functions ###
+# Set console size so the banner looks good. #
+setConsoleSize(389, 20);
 
 # Clear console #
 clear()
-
-# Set console size so the banner looks good. #
-setConsoleSize(389, 20);
 
 # Print Banner
 print(
