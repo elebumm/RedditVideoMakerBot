@@ -1,11 +1,10 @@
 import re
 
+import praw
+from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
 from utils import settings
-import praw
-from praw.models import MoreComments
-
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
@@ -41,9 +40,8 @@ def get_subreddit_threads(POST_ID: str):
             check_for_async=False,
         )
     except ResponseException as e:
-        match e.response.status_code:
-            case 401:
-                print("Invalid credentials - please check them in config.toml")
+        if e.response.status_code == 401:
+            print("Invalid credentials - please check them in config.toml")
     except:
         print("Something went wrong...")
 
@@ -105,12 +103,9 @@ def get_subreddit_threads(POST_ID: str):
             sanitised = sanitize_text(top_level_comment.body)
             if not sanitised or sanitised == " ":
                 continue
-            if len(top_level_comment.body) <= int(
-                settings.config["reddit"]["thread"]["max_comment_length"]
-            ):
+            if len(top_level_comment.body) <= int(settings.config["reddit"]["thread"]["max_comment_length"]):
                 if (
-                    top_level_comment.author is not None
-                    and sanitize_text(top_level_comment.body) is not None
+                    top_level_comment.author is not None and sanitize_text(top_level_comment.body) is not None
                 ):  # if errors occur with this change to if not.
                     content["comments"].append(
                         {

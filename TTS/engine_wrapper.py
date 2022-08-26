@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
+import re
 from pathlib import Path
 from typing import Tuple
-import re
 
 # import sox
 # from mutagen import MutagenError
 # from mutagen.mp3 import MP3, HeaderNotFoundError
 import translators as ts
-from rich.progress import track
 from moviepy.editor import AudioFileClip, CompositeAudioClip, concatenate_audioclips
+from rich.progress import track
+
+from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
-from utils import settings
 
 DEFAULT_MAX_LENGTH: int = 50  # video length variable
 
@@ -70,9 +71,7 @@ class TTSEngine:
                 self.length -= self.last_clip_length
                 idx -= 1
                 break
-            if (
-                len(comment["comment_body"]) > self.tts_module.max_chars
-            ):  # Split the comment if it is too long
+            if len(comment["comment_body"]) > self.tts_module.max_chars:  # Split the comment if it is too long
                 self.split_post(comment["comment_body"], idx)  # Split the comment
             else:  # If the comment is not too long, just call the tts engine
                 self.call_tts(f"{idx}", process_text(comment["comment_body"]))
@@ -83,10 +82,7 @@ class TTSEngine:
     def split_post(self, text: str, idx: int):
         split_files = []
         split_text = [
-            x.group().strip()
-            for x in re.finditer(
-                r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text
-            )
+            x.group().strip() for x in re.finditer(r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text)
         ]
         offset = 0
         for idy, text_cut in enumerate(split_text):
