@@ -588,7 +588,22 @@ class App(customtkinter.CTk):
                                                    justify=tkinter.LEFT)
         self.label_info_1.grid(column=0, row=0, sticky="nwe", padx=15, pady=15)
 
+# Results frame
+        # Background within frame
+        self.frame_results_bg = customtkinter.CTkFrame(master=self.frame_results)
+        self.frame_results_bg.grid(row=0, column=0, pady=15, padx=15, ipadx=18, sticky=("nswe"))
 
+        self.frame_results_bg.rowconfigure(10, weight=1)
+        self.frame_results_bg.columnconfigure(10, weight=1)
+
+        # Title
+        self.results_title = customtkinter.CTkLabel(
+            master=self.frame_results_bg,
+            text="Results",
+            text_font=("Courier_Bold", 24)
+        )
+        self.results_title.grid(row=0, column=0, columnspan=8, pady=15, padx=15)
+        #TODO center title
 
 # Settings sync
 
@@ -820,7 +835,8 @@ class App(customtkinter.CTk):
 
     # Results button event
     def btn_results(self):
-        print("Results Pressed!")
+        self.showFrame(self.frame_results)
+        print("Results Pressed!") #Left it here for debugging purposes
 
     # Start button event
     def btn_start(self):
