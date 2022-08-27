@@ -1,0 +1,263 @@
+{% extends "layout.html" %}
+{% block main %}
+
+<!-- Delete Background Modal -->
+<div class="modal fade" id="deleteBtnModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete background</h5>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this background?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form action="background/delete" method="post">
+                    <input type="hidden" id="background-key" name="background-key" value="">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Background Modal -->
+<div class="modal fade" id="backgroundAddModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add background video</h5>
+            </div>
+            <div class="modal-body">
+
+                <!-- Add video form -->
+                <form id="addBgForm" action="background/add" method="post" novalidate>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" for="youtube_uri">YouTube URI</label>
+                        <div class="col-8">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <i class="bi bi-youtube"></i>
+                                </div>
+                                <input name="youtube_uri" placeholder="https://www.youtube.com/watch?v=..." type="text"
+                                    class="form-control">
+                            </div>
+                            <span id="feedbackYT" class="form-text feedback-invalid"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="filename" class="col-4 col-form-label">Filename</label>
+                        <div class="col-8">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <i class="bi bi-file-earmark"></i>
+                                </div>
+                                <input name="filename" placeholder="Example: cool-background" type="text"
+                                    class="form-control">
+                            </div>
+                            <span id="feedbackFilename" class="form-text feedback-invalid"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="citation" class="col-4 col-form-label">Credits (owner of the video)</label>
+                        <div class="col-8">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <input name="citation" placeholder="YouTube Channel" type="text" class="form-control">
+                            </div>
+                            <span class="form-text text-muted">Include the channel name of the
+                                owner of the background video you are adding.</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="position" class="col-4 col-form-label">Position of screenshots</label>
+                        <div class="col-8">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </div>
+                                <input name="position" placeholder="Example: center" type="text" class="form-control">
+                            </div>
+                            <span class="form-text text-muted">Advanced option (you can leave it
+                                empty). Valid options are "center" and decimal numbers</span>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button name="submit" type="submit" class="btn btn-success">Add background</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main>
+    <div class="album py-2 bg-light">
+        <div class="container">
+
+            <div class="row justify-content-between mt-2">
+                <div class="col-12 col-md-3 mb-3">
+                    <input type="text" class="form-control searchFilter" placeholder="Search backgrounds"
+                        onkeyup="searchFilter()">
+                </div>
+                <div class="col-12 col-md-2 mb-3">
+                    <button type="button" class="btn btn-primary form-control" data-toggle="modal"
+                        data-target="#backgroundAddModal">
+                        Add background video
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="backgrounds">
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    var keys = [];
+    var youtube_urls = [];
+
+    // Show background videos
+    $(document).ready(function () {
+        $.getJSON("backgrounds.json",
+            function (data) {
+                delete data["__comment"];
+                var background = '';
+                $.each(data, function (key, value) {
+                    // Add YT urls and keys (for validation)
+                    keys.push(key);
+                    youtube_urls.push(value[0]);
+
+                    background += '<div class="col">';
+                    background += '<div class="card shadow-sm">';
+                    background += '<iframe class="bd-placeholder-img card-img-top" width="100%" height="225" src="https://www.youtube-nocookie.com/embed/' + value[0].split("?v=")[1] + '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+                    background += '<div class="card-body">';
+                    background += '<p class="card-text">' + value[2] + ' • ' + key + '</p>';
+                    background += '<div class="d-flex justify-content-between align-items-center">';
+                    background += '<div class="btn-group">';
+                    background += '<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteBtnModal" data-background-key="' + key + '">Delete</button>';
+                    background += '</div>';
+                    background += '</div>';
+                    background += '</div>';
+                    background += '</div>';
+                    background += '</div>';
+                });
+
+                $('#backgrounds').append(background);
+            });
+    });
+
+    // Add background key when deleting
+    $('#deleteBtnModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var key = button.data('background-key');
+
+        $('#background-key').prop('value', key);
+    });
+
+    var searchFilter = () => {
+        const input = document.querySelector(".searchFilter");
+        const cards = document.getElementsByClassName("col");
+        console.log(cards[1])
+        let filter = input.value
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].querySelector(".card-text");
+            if (title.innerText.toLowerCase().indexOf(filter.toLowerCase()) > -1) {
+                cards[i].classList.remove("d-none")
+            } else {
+                cards[i].classList.add("d-none")
+            }
+        }
+    }
+
+    // Validate form
+    $("#addBgForm").submit(function (event) {
+        $("#addBgForm input").each(function () {
+            if (!(validate($(this)))) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    });
+
+    $('#addBgForm input[type="text"]').on("keyup", function () {
+        validate($(this));
+    });
+
+    function validate(object) {
+        let bool = check(object.prop("name"), object.prop("value"));
+
+        // Change class
+        if (bool) {
+            object.removeClass("is-invalid");
+            object.addClass("is-valid");
+        }
+        else {
+            object.removeClass("is-valid");
+            object.addClass("is-invalid");
+        }
+
+        return bool;
+
+        // Check values (return true/false)
+        function check(name, value) {
+            if (name == "youtube_uri") {
+                // URI validation
+                let regex = /(?:\/|%3D|v=|vi=)([0-9A-z-_]{11})(?:[%#?&]|$)/;
+                if (!(regex.test(value))) {
+                    $("#feedbackYT").html("Invalid URI");
+                    $("#feedbackYT").show();
+                    return false;
+                }
+
+                // Check if this background already exists
+                if (youtube_urls.includes(value)) {
+                    $("#feedbackYT").html("This background is already added");
+                    $("#feedbackYT").show();
+                    return false;
+                }
+
+                $("#feedbackYT").hide();
+                return true;
+            }
+
+            if (name == "filename") {
+                // Check if key is already taken
+                if (keys.includes(value)) {
+                    $("#feedbackFilename").html("This filename is already taken");
+                    $("#feedbackFilename").show();
+                    return false;
+                }
+
+                let regex = /^([a-zA-Z0-9\s_-]{1,100})$/;
+                if (!(regex.test(value))) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (name == "citation") {
+                if (value.trim()) {
+                    return true;
+                }
+            }
+
+            if (name == "position") {
+                if (!(value == "center" || value.length == 0 || value % 1 == 0)) {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+    }
+</script>
+
+{% endblock %}

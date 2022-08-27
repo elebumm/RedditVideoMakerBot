@@ -1,5 +1,3 @@
-import json
-import re
 import webbrowser
 from pathlib import Path
 
@@ -7,13 +5,14 @@ from pathlib import Path
 import tomlkit
 from flask import (
     Flask,
-    flash,
     redirect,
     render_template,
     request,
     send_from_directory,
     url_for,
 )
+
+import utils.gui_utils as gui
 
 # Set the hostname
 HOST = "localhost"
@@ -39,7 +38,53 @@ def after_request(response):
 # Display index.html
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", file="videos.json")
+
+
+@app.route("/backgrounds", methods=["GET"])
+def backgrounds():
+    return render_template("backgrounds.html", file="backgrounds.json")
+
+
+@app.route("/background/add", methods=["POST"])
+def background_add():
+    # Get form values
+    youtube_uri = request.form.get("youtube_uri").strip()
+    filename = request.form.get("filename").strip()
+    citation = request.form.get("citation").strip()
+    position = request.form.get("position").strip()
+
+    gui.add_background(youtube_uri, filename, citation, position)
+
+    return redirect(url_for("backgrounds"))
+
+
+@app.route("/background/delete", methods=["POST"])
+def background_delete():
+    key = request.form.get("background-key")
+    gui.delete_background(key)
+
+    return redirect(url_for("backgrounds"))
+
+
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    config_load = tomlkit.loads(Path("config.toml").read_text())
+    config = gui.get_config(config_load)
+
+    # Get checks for all values
+    checks = gui.get_checks()
+
+    if request.method == "POST":
+        # Get data from form as dict
+        data = request.form.to_dict()
+
+        # Change settings
+        config = gui.modify_settings(data, config_load, checks)
+
+    return render_template(
+        "settings.html", file="config.toml", data=config, checks=checks
+    )
 
 
 # Make videos.json accessible
@@ -48,77 +93,22 @@ def videos_json():
     return send_from_directory("video_creation/data", "videos.json")
 
 
+# Make backgrounds.json accessible
+@app.route("/backgrounds.json")
+def backgrounds_json():
+    return send_from_directory("utils", "backgrounds.json")
+
+
 # Make videos in results folder accessible
 @app.route("/results/<path:name>")
 def results(name):
     return send_from_directory("results", name, as_attachment=True)
 
 
-@app.route("/add_background", methods=["POST"])
-def add_background():
-    # Get form values
-    youtube_uri = request.form.get("youtube_uri").strip()
-    filename = request.form.get("filename").strip()
-    citation = request.form.get("citation").strip()
-    position = request.form.get("position").strip()
-
-    # Validate YouTube URI
-    regex = re.compile(
-        r"(?:\/|%3D|v=|vi=)([0-9A-z-_]{11})(?:[%#?&]|$)"
-    ).search(youtube_uri)
-
-    if not regex:
-        flash("YouTube URI is invalid!", "error")
-        return redirect(url_for("index"))
-
-    youtube_uri = f"https://www.youtube.com/watch?v={regex.group(1)}"
-
-    # Check if position is valid
-    if position == "" or position == "center":
-        position = "center"
-
-    elif position.isdecimal():
-        position = int(position)
-
-    else:
-        flash('Position is invalid! It can be "center" or decimal number.', "error")
-        return redirect(url_for("index"))
-
-    # Sanitize filename
-    filename = filename.replace(" ", "-").split(".")[0]
-
-    # Check if background doesn't already exist
-    with open("utils/backgrounds.json", "r", encoding="utf-8") as backgrounds:
-        data = json.load(backgrounds)
-
-        # Check if key isn't already taken
-        if filename in list(data.keys()):
-            flash("Background video with this name already exist!", "error")
-            return redirect(url_for("index"))
-
-        # Check if the YouTube URI isn't already used under different name
-        if youtube_uri in [data[i][0] for i in list(data.keys())]:
-            flash("Background video with this YouTube URI is already added!", "error")
-            return redirect(url_for("index"))
-
-    # Add background video to json file
-    with open("utils/backgrounds.json", "r+", encoding="utf-8") as backgrounds:
-        data = json.load(backgrounds)
-
-        data[filename] = [youtube_uri, filename + ".mp4", citation, position]
-        backgrounds.seek(0)
-        json.dump(data, backgrounds, ensure_ascii=False, indent=4)
-
-    # Add background video to ".config.template.toml" to make it accessible
-    config = tomlkit.loads(Path("utils/.config.template.toml").read_text())
-    config["settings"]["background"]["background_choice"]["options"].append(filename)
-
-    with Path("utils/.config.template.toml").open("w") as toml_file:
-        toml_file.write(tomlkit.dumps(config))
-
-    flash(f'Added "{citation}-{filename}.mp4" as a new background video!')
-
-    return redirect(url_for("index"))
+# Make voices samples in voices folder accessible
+@app.route("/voices/<path:name>")
+def voices(name):
+    return send_from_directory("GUI/voices", name, as_attachment=True)
 
 
 # Run browser and start the app
