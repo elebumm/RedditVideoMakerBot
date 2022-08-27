@@ -4,6 +4,7 @@ import sys
 from os import name
 from subprocess import Popen
 
+from pathlib import Path
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
@@ -77,7 +78,8 @@ def shutdown():
 
 if __name__ == "__main__":
     assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
-    config = settings.check_toml("utils/.config.template.toml", "config.toml")
+    directory = Path().absolute()
+    config = settings.check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:
         if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
