@@ -699,7 +699,7 @@ class App(customtkinter.CTk):
         self.tts_py_voice_num.set(config["settings"]["tts"]["py_voice_num"])
 
         # silence_duration
-        self.tts_silence_duration.insert(config["settings"]["tts"]["silence_duration"])
+        self.tts_silence_duration.insert("0", config["settings"]["tts"]["silence_duration"])
 
     # Background settings
 
