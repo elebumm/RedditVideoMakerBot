@@ -103,7 +103,7 @@ class App(customtkinter.CTk):
 
         # Background within frame
         self.frame_bg_settings = customtkinter.CTkFrame(master=self.frame_settings)
-        self.frame_bg_settings.grid(row=0, column=0, pady=15, padx=15, ipadx=18, sticky=("nswe"))
+        self.frame_bg_settings.grid(row=0, column=0, pady=15, padx=15, ipadx=18, ipady=16, sticky=("nswe"))
 
         self.frame_bg_settings.rowconfigure(10, weight=1)
         self.frame_bg_settings.columnconfigure(10, weight=1)
@@ -698,6 +698,14 @@ class App(customtkinter.CTk):
         # py_voice_num
         self.tts_py_voice_num.set(config["settings"]["tts"]["py_voice_num"])
 
+    # Background settings
+
+        # background choice
+        self.background_builtin.set(config["settings"]["background"]["background_choice"])
+
+        # background type
+        self.background_select.set(config["settings"]["background"]["background_type"])
+
 # Sync gui to config
     def saveSettings(self):
         print("Saving Settings to config.toml")
@@ -757,7 +765,38 @@ class App(customtkinter.CTk):
         # Transition
         config["settings"]["transition"] = self.misc_transition.get()
 
-        #TODO save TTS settings
+    # TTS Settings
+
+        # voice_choice
+        config["settings"]["tts"]["voice_choice"] = self.tts_voice_choice.get()
+
+        # aws_polly_voice
+        config ["settings"]["tts"]["aws_polly_voice"] = self.tts_aws_polly_voice.get()
+
+        # streamlabs_polly_voice
+        config ["settings"]["tts"]["streamlabs_polly_voice"] = self.tts_streamlabs_polly_voice.get()
+
+        # tiktok_voice
+        config ["settings"]["tts"]["tiktok_voice"] = self.tts_tiktok_voice.get()
+
+        # python_voice
+        config["settings"]["tts"]["python_voice"] = self.tts_python_voice.get()
+
+        # py_voice_num
+        config["settings"]["tts"]["py_voice_num"] = self.tts_py_voice_num.get()
+
+        # silence_duration
+        config["settings"]["tts"]["silence_duration"] = self.tts_silence_duration.get()
+
+    # Background settings
+
+        # background choice (For builtin)
+        config["settings"]["background"]["background_choice"] = self.background_builtin.get()
+
+        # background typ
+        config["settings"]["background"]["background_type"] = self.background_select.get()
+
+        #TODO Add support for youtube url and custom backgrounds
 
     # Dump new data into config.toml
         configWrite = open("config.toml", "w")
