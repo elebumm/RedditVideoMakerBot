@@ -698,6 +698,9 @@ class App(customtkinter.CTk):
         # py_voice_num
         self.tts_py_voice_num.set(config["settings"]["tts"]["py_voice_num"])
 
+        # silence_duration
+        self.tts_silence_duration.insert(config["settings"]["tts"]["silence_duration"])
+
     # Background settings
 
         # background choice
@@ -892,6 +895,7 @@ class App(customtkinter.CTk):
         self.saveSettings()
         self.destroy()
         shutdown()
+
 
 def launchGui():
     if __name__ == "__main__":
