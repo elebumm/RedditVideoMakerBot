@@ -74,33 +74,31 @@ def shutdown():
         print("Exiting...")
         exit()
 
+def generateVideo():
+    config = settings.check_toml("utils/.config.template.toml", "config.toml")
+    config is False and exit()
+    try:
+        if config["settings"]["times_to_run"]:
+            run_many(config["settings"]["times_to_run"])
 
-def start():
-    if __name__ == "__main__":
-        assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
-        config = settings.check_toml("utils/.config.template.toml", "config.toml")
-        config is False and exit()
-        try:
-            if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
-                for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
-                    index += 1
-                    print_step(
-                        f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
-                    )
-                    main(post_id)
-                    Popen("cls" if name == "nt" else "clear", shell=True).wait()
-            elif config["settings"]["times_to_run"]:
-                run_many(config["settings"]["times_to_run"])
-            else:
-                main()
-        except KeyboardInterrupt:
-            shutdown()
-        except ResponseException:
-            # error for invalid credentials
-            print_markdown("## Invalid credentials")
-            print_markdown("Please check your credentials in the config.toml file")
+        elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+                index += 1
+                print_step(
+                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
+                )
+                main(post_id)
+                Popen("cls" if name == "nt" else "clear", shell=True).wait()
+        else:
+            main()
+    except KeyboardInterrupt:
+        shutdown()
+    except ResponseException:
+        # error for invalid credentials
+        print_markdown("## Invalid credentials")
+        print_markdown("Please check your credentials in the config.toml file")
 
-            shutdown()
+        shutdown()
 
             # todo error
 

@@ -31,5 +31,5 @@ random = false
 subreddit = ""
 post_id = ""
 max_comment_length = 50
-post_lang = ""
+post_lang = "en"
 min_comments = 20

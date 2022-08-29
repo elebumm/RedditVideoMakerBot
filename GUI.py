@@ -1,5 +1,5 @@
 from genericpath import isfile
-from main import main, shutdown, start
+from main import main, shutdown, generateVideo
 
 from doctest import master
 import tkinter
@@ -9,9 +9,11 @@ from tkinter import filedialog
 import os
 import toml
 import shutil
+import multiprocessing
 from utils.settings import check_toml
 from utils import settings
 from pathlib import Path
+
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -192,7 +194,7 @@ class App(customtkinter.CTk):
     # 2fa option menu
         self.user_2fa = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["false", "true"]
+            values=["False", "True"]
         )
         self.user_2fa.grid(row=7, column=0, padx=15)
 
@@ -216,7 +218,7 @@ class App(customtkinter.CTk):
     # Random option menu
         self.thread_random = customtkinter.CTkOptionMenu(
             master=self.frame_bg_settings,
-            values=["false", "true"]
+            values=["False", "True"]
         )
         self.thread_random.grid(row=3, column=2, padx=15)
 
@@ -636,12 +638,18 @@ class App(customtkinter.CTk):
             self.client_id.insert("0", config["reddit"]["creds"]["client_id"])
 
         # 2fa
-        self.user_2fa.set(str(config["reddit"]["creds"]["2fa"]))
+        if config["reddit"]["creds"]["2fa"] == True:
+            self.user_2fa.set(str("True"))
+        else:
+            self.user_2fa.set(str("False"))
 
     # Thread Settings
 
         # Random
-        self.thread_random.set(str(config["reddit"]["thread"]["random"]))
+        if config["reddit"]["thread"]["random"] == True:
+            self.thread_random.set(str("True"))
+        else:
+            self.thread_random.set(str("False"))
 
         # Subreddit
         if not config["reddit"]["thread"]["subreddit"] == "":
@@ -664,7 +672,10 @@ class App(customtkinter.CTk):
     # Misc Settings
 
         # Allow nsfw
-        self.misc_allow_nsfw.set(str(config["settings"]["allow_nsfw"]))
+        if config["settings"]["allow_nsfw"] == True:
+            self.misc_allow_nsfw.set(str("True"))
+        else:
+            self.misc_allow_nsfw.set(str("False"))
 
         # Theme
         self.misc_theme.set(str(config["settings"]["theme"]))
@@ -729,12 +740,18 @@ class App(customtkinter.CTk):
         config["reddit"]["creds"]["client_id"] = self.client_id.get()
 
         # 2fa
-        config["reddit"]["creds"]["2fa"] = self.user_2fa.get()
+        if self.user_2fa.get() == "False":
+            config["reddit"]["creds"]["2fa"] = False
+        else:
+            config["reddit"]["creds"]["2fa"] = True
 
     # Thread Settings
 
         # Random
-        config["reddit"]["thread"]["random"] = self.thread_random.get()
+        if self.thread_random.get() == "True":
+            config["reddit"]["thread"]["random"] = True
+        else:
+            config["reddit"]["thread"]["random"] = False
 
         # Subreddit
         config["reddit"]["thread"]["subreddit"] = self.thread_subreddit.get()
@@ -754,7 +771,10 @@ class App(customtkinter.CTk):
     # Misc Settings
 
         # Allow nsfw
-        config["settings"]["allow_nsfw"] = self.misc_allow_nsfw.get()
+        if self.misc_allow_nsfw == "True":
+            config["settings"]["allow_nsfw"] = True
+        else:
+            config["settings"]["allow_nsfw"] = False
 
         # Theme
         config["settings"]["theme"] = self.misc_theme.get()
@@ -883,7 +903,8 @@ class App(customtkinter.CTk):
     # Start button event
     def btn_start(self):
         self.saveSettings()
-        start()
+        mpGen = multiprocessing.Process(target=generateVideo)
+        mpGen.start()
         print("Start Pressed!")
 
     # Appearance event
