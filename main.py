@@ -6,6 +6,7 @@ from subprocess import Popen
 from os import name
 from sys import platform
 
+from pathlib import Path
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
@@ -86,7 +87,9 @@ def shutdown():
         exit()
 
 if __name__ == "__main__":
-    config = settings.check_toml("utils/.config.template.toml", "config.toml")
+    assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
+    directory = Path().absolute()
+    config = settings.check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:
         if config["settings"]["times_to_run"]:
