@@ -1,12 +1,11 @@
 #!/usr/bin/env python
+import re
+from typing import Tuple, Dict
+from pathlib import Path
 import toml
 from rich.console import Console
-import re
-
-from typing import Tuple, Dict
 
 from utils.console import handle_input
-
 
 console = Console()
 config = dict  # autocomplete
@@ -35,17 +34,12 @@ def check(value, checks, name):
         except:
             incorrect = True
 
-    if (
-        not incorrect and "options" in checks and value not in checks["options"]
-    ):  # FAILSTATE Value is not one of the options
+    if not incorrect and "options" in checks and value not in checks["options"]:  # FAILSTATE Value is not one of the options
         incorrect = True
     if (
         not incorrect
         and "regex" in checks
-        and (
-            (isinstance(value, str) and re.match(checks["regex"], value) is None)
-            or not isinstance(value, str)
-        )
+        and ((isinstance(value, str) and re.match(checks["regex"], value) is None) or not isinstance(value, str))
     ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
         incorrect = True
 
@@ -85,9 +79,7 @@ def check(value, checks, name):
             err_message=get_check_value("input_error", "Incorrect input"),
             nmin=get_check_value("nmin", None),
             nmax=get_check_value("nmax", None),
-            oob_error=get_check_value(
-                "oob_error", "Input out of bounds(Value too high/low/long/short)"
-            ),
+            oob_error=get_check_value("oob_error", "Input out of bounds(Value too high/low/long/short)"),
             options=get_check_value("options", None),
             optional=get_check_value("optional", False),
         )
@@ -167,4 +159,5 @@ If you see any prompts, that means that you have unset/incorrectly set variables
 
 
 if __name__ == "__main__":
-    check_toml("utils/.config.template.toml", "config.toml")
+    directory = Path().absolute()
+    check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
