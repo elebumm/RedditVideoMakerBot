@@ -132,6 +132,7 @@ class TTSEngine:
                       "-c copy " + f"{self.path}/{filename}.mp3")
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
             self.length += clip.duration
+            self.last_clip_length = clip.duration
             clip.close()
             try:
                 name = [f"{filename}_no_silence.mp3", "silence.mp3", f"{filename}.txt"]
