@@ -1,7 +1,7 @@
 import re
 import sys
-from datetime import datetime
 import time as pytime
+from datetime import datetime
 from time import sleep
 
 from requests import Response
@@ -81,7 +81,7 @@ def sanitize_text(text: str) -> str:
     result = re.sub(regex_urls, " ", text)
 
     # note: not removing apostrophes
-    regex_expr = r"\s['|’]|['|’]\s|[\^_~@!&;#:\-–—%“”‘\"%\*/{}\[\]\(\)\\|<>=+]"
+    regex_expr = r"\s['|’]|['|’]\s|[\^_~@!&;#:\-%—“”‘\"%\*/{}\[\]\(\)\\|<>=+]"
     result = re.sub(regex_expr, " ", result)
     result = result.replace("+", "plus").replace("&", "and")
     # remove extra whitespace

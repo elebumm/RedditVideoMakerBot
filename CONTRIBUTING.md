@@ -28,7 +28,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 ## I Have a Question
 
-> If you want to ask a question, we assume that you have read the available [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/).
+> If you want to ask a question, we assume that you have read the available [Documentation](https://reddit-video-maker-bot.netlify.app/).
 
 Before you ask a question, it is best to search for existing [Issues](https://github.com/elebumm/RedditVideoMakerBot/issues) that might help you. In case you have found a suitable issue and still need clarification, you can write your question in this issue. It is also advisable to search the internet for answers first.
 
@@ -144,4 +144,4 @@ When making your PR, follow these guidelines:
 
 ### Improving The Documentation
 
-All updates to the documentation should be made in a pull request to [this repo](https://github.com/LukaHietala/reddit-bot-docs)
+All updates to the documentation should be made in a pull request to [this repo](https://github.com/LukaHietala/RedditVideoMakerBot-website)

@@ -1,8 +1,10 @@
 import base64
-from utils import settings
 import random
+
 import requests
 from requests.adapters import HTTPAdapter, Retry
+
+from utils import settings
 
 # from profanity_filter import ProfanityFilter
 # pf = ProfanityFilter()
@@ -79,10 +81,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         voice = (
             self.randomvoice()
             if random_voice
-            else (
-                settings.config["settings"]["tts"]["tiktok_voice"]
-                or random.choice(self.voices["human"])
-            )
+            else (settings.config["settings"]["tts"]["tiktok_voice"] or random.choice(self.voices["human"]))
         )
         try:      
             url = f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0&aid=1233"
