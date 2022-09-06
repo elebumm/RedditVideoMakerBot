@@ -63,7 +63,7 @@ noneng = [
 class TikTok:  # TikTok Text-to-Speech Wrapper
     def __init__(self):
         self.URI_BASE = (
-            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+            "https://api22-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
         )
         self.max_chars = 200
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
@@ -85,7 +85,7 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             )
         )
         try:      
-            url = f"https://api22-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/?text_speaker={voice}&req_text={text}&speaker_map_type=0&aid=1233"
+            url = f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0&aid=1233"
             r = requests.post(url, headers=self.headers)
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
