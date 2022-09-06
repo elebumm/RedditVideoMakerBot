@@ -28,7 +28,7 @@ human = [
     "en_us_006",  # English US - Male 1
     "en_us_007",  # English US - Male 2
     "en_us_009",  # English US - Male 3
-    "en_us_010",
+    "en_us_010",  # English US - Male 4
 ]
 voices = nonhuman + human
 
@@ -65,8 +65,12 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         self.URI_BASE = (
             "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
         )
-        self.max_chars = 300
+        self.max_chars = 200
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
+        self.headers = {
+                'User-Agent': 'com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)',
+                'Cookie': 'sessionid=57b7d8b3e04228a24cc1e6d25387603a'
+            }
 
     def run(self, text, filepath, random_voice: bool = False):
         # if censor:
@@ -80,8 +84,9 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
                 or random.choice(self.voices["human"])
             )
         )
-        try:
-            r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+        try:      
+            url = f"https://api22-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/?text_speaker={voice}&req_text={text}&speaker_map_type=0&aid=1233"
+            r = requests.post(url, headers=self.headers)
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
             session = requests.Session()
