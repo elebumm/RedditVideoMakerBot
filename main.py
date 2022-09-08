@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import math
-import re
-from subprocess import Popen
+import sys
 from os import name
+from subprocess import Popen
 
+from pathlib import Path
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
-from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step, print_substep
 from utils import settings
+from utils.cleanup import cleanup
+from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
-
 from video_creation.background import (
     download_background,
     chop_background_video,
@@ -22,7 +22,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.4.1"
+__VERSION__ = "2.4.2"
 
 print(
     """
@@ -36,7 +36,7 @@ print(
 )
 # Modified by JasonLovesDoggo
 print_markdown(
-    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)"
+    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](): https://reddit-video-maker-bot.netlify.app/"
 )
 checkversion(__VERSION__)
 
@@ -75,14 +75,14 @@ def shutdown():
         print("Exiting...")
         exit()
 
+
 if __name__ == "__main__":
-    config = settings.check_toml("utils/.config.template.toml", "config.toml")
+    assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
+    directory = Path().absolute()
+    config = settings.check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
     config is False and exit()
     try:
-        if config["settings"]["times_to_run"]:
-            run_many(config["settings"]["times_to_run"])
-
-        elif len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+        if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
             for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
@@ -90,6 +90,8 @@ if __name__ == "__main__":
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
+        elif config["settings"]["times_to_run"]:
+            run_many(config["settings"]["times_to_run"])
         else:
             main()
     except KeyboardInterrupt:
