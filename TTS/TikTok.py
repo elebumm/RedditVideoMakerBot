@@ -62,11 +62,14 @@ noneng = [
 
 class TikTok:  # TikTok Text-to-Speech Wrapper
     def __init__(self):
-        self.URI_BASE = (
-            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
-        )
-        self.max_chars = 300
+        self.URI_BASE = "https://api22-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+        self.max_chars = 200
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
+        self.headers = {
+            "User-Agent": "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)",
+            "Cookie": "sessionid="
+            + settings.config["settings"]["tts"]["tiktok_sessionid"],
+        }
 
     def run(self, text, filepath, random_voice: bool = False):
         # if censor:
@@ -81,7 +84,8 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             )
         )
         try:
-            r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            url = f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0&aid=1233"
+            r = requests.post(url, headers=self.headers)
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
             session = requests.Session()
@@ -89,7 +93,9 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             adapter = HTTPAdapter(max_retries=retry)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            r = session.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = session.post(
+                f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0"
+            )
         # print(r.text)
         vstr = [r.json()["data"]["v_str"]][0]
         b64d = base64.b64decode(vstr)
