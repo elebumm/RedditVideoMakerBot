@@ -1,18 +1,31 @@
-from pathlib import Path
+import json
 import random
-from random import randrange
 import re
+from pathlib import Path
+from random import randrange
 from typing import Any, Tuple
-
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
-
 from utils import settings
-from utils.CONSTANTS import background_options
 from utils.console import print_step, print_substep
+
+# Load background videos
+with open("utils/backgrounds.json") as json_file:
+    background_options = json.load(json_file)
+
+# Remove "__comment" from backgrounds
+background_options.pop("__comment", None)
+
+# Add position lambda function
+# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
+for name in list(background_options.keys()):
+    pos = background_options[name][3]
+
+    if pos != "center":
+        background_options[name][3] = lambda t: ("center", pos + t)
 
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
@@ -52,9 +65,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     uri, filename, credit, _ = background_config
     if Path(f"assets/backgrounds/{credit}-{filename}").is_file():
         return
-    print_step(
-        "We need to download the backgrounds videos. they are fairly large but it's only done once. 😎"
-    )
+    print_step("We need to download the backgrounds videos. they are fairly large but it's only done once. 😎")
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
     YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(

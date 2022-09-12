@@ -62,7 +62,13 @@ function install_macos(){
     fi
     # Install the required packages
     echo "Installing required Packages" 
-    brew install python@3.10 tcl-tk python-tk
+    if [! command --version python3 &> /dev/null ]; then
+	    echo "Installing python3"
+	    brew install python@3.10
+    else
+	    echo "python3 already installed."
+    fi
+    brew install tcl-tk python-tk
 } 
 
 # Function to install for arch (and other forks like manjaro)

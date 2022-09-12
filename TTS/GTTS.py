@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import random
-from utils import settings
+
 from gtts import gTTS
 
-max_chars = 0
+from utils import settings
 
 
 class GTTS:
