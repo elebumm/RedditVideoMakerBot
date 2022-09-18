@@ -54,9 +54,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
         print("all time filters have been checked you absolute madlad ")
 
     return get_subreddit_undone(
-        subreddit.top(
-            time_filter=VALID_TIME_FILTERS[index], limit=(50 if int(index) == 0 else index + 1 * 50)
-        ),
+        subreddit.top(time_filter=VALID_TIME_FILTERS[index], limit=(50 if int(index) == 0 else index + 1 * 50)),
         subreddit,
         times_checked=index,
     )  # all the videos in hot have already been done
