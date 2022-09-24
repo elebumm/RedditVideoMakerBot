@@ -33,7 +33,7 @@ class AWSPolly:
 
     def run(self, text, filepath, random_voice: bool = False):
         try:
-            session = Session(profile_name="polly")
+            session = Session(profile_name="default", region_name='us-west-1')
             polly = session.client("polly")
             if random_voice:
                 voice = self.randomvoice()
