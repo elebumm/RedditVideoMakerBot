@@ -79,6 +79,7 @@ vocals: Final[tuple] = (
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
 
+    max_chars: Final[int] = 300
     BASE_URL: Final[
         str
     ] = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
@@ -139,7 +140,7 @@ class TikTok:
 
     @staticmethod
     def random_voice():
-        return random.choice(eng_voices["human"])
+        return random.choice(eng_voices)
 
 
 class TikTokTTSException(Exception):
