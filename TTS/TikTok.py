@@ -88,6 +88,7 @@ class TikTok:
         }
 
         self._session = requests.Session()
+        # set the headers to the session, so we don't have to do it for every request
         self._session.headers = headers
 
     def run(self, text: str, filepath: str, random_voice: bool = False):
@@ -128,15 +129,13 @@ class TikTok:
         if voice is not None:
             params["text_speaker"] = voice
 
-        url = self.BASE_URL.format(text=text)
-
         # send request
         try:
-            response = self._session.post(url, params=params)
+            response = self._session.post(self.BASE_URL, params=params)
         except ConnectionError:
             time.sleep(random.randrange(1, 7))
-            response = self._session.post(url, params=params)
-
+            response = self._session.post(self.BASE_URL, params=params)
+        
         return response.json()
 
     @staticmethod
