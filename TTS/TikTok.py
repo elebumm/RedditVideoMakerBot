@@ -10,7 +10,7 @@ from utils import settings
 
 __all__ = ["TikTok", "TikTokTTSException"]
 
-disney_voices: Final = (
+disney_voices: Final[tuple] = (
     "en_us_ghostface",  # Ghost Face
     "en_us_chewbacca",  # Chewbacca
     "en_us_c3po",  # C3PO
@@ -22,7 +22,7 @@ disney_voices: Final = (
     "en_male_pirate",  # pirate
 )
 
-eng_voices: Final = (
+eng_voices: Final[tuple] = (
     "en_au_001",  # English AU - Female
     "en_au_002",  # English AU - Male
     "en_uk_001",  # English UK - Male 1
@@ -39,7 +39,7 @@ eng_voices: Final = (
     "en_male_cody",  # Serious
 )
 
-non_eng_voices: Final = (
+non_eng_voices: Final[tuple] = (
     # Western European voices
     "fr_001",  # French - Male 1
     "fr_002",  # French - Male 2
@@ -64,7 +64,7 @@ non_eng_voices: Final = (
     "kr_004",  # Korean - Male 2
 )
 
-vocals = (
+vocals: Final[tuple] = (
     "en_female_f08_salut_damour",  # Alto
     "en_male_m03_lobby",  # Tenor
     "en_male_m03_sunshine_soon",  # Sunshine Soon
@@ -78,13 +78,16 @@ vocals = (
 
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
-    BASE_URL: Final = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
+
+    BASE_URL: Final[
+        str
+    ] = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
 
     def __init__(self):
         headers = {
             "User-Agent": "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; "
-                          "Build/NRD90M;tt-ok/3.12.13.1)",
-            "Cookie": f"sessionid={settings.config['settings']['tts']['tiktok_sessionid']}"
+            "Build/NRD90M;tt-ok/3.12.13.1)",
+            "Cookie": f"sessionid={settings.config['settings']['tts']['tiktok_sessionid']}",
         }
 
         self._session = requests.Session()
@@ -120,11 +123,7 @@ class TikTok:
         text = text.replace("+", "plus").replace("&", "and").replace("r/", "")
 
         # prepare url request
-        params = {
-            "req_text": text,
-            "speaker_map_type": 0,
-            "aid": 1233
-        }
+        params = {"req_text": text, "speaker_map_type": 0, "aid": 1233}
 
         if voice is not None:
             params["text_speaker"] = voice
@@ -135,7 +134,7 @@ class TikTok:
         except ConnectionError:
             time.sleep(random.randrange(1, 7))
             response = self._session.post(self.BASE_URL, params=params)
-        
+
         return response.json()
 
     @staticmethod
@@ -148,12 +147,14 @@ class TikTokTTSException(Exception):
         self._code = code
         self._message = message
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self._code == 1:
             return f"Code: {self._message}, reason: probably the aid value isn't correct, message: {self._message}"
-        elif self._code == 2:
+
+        if self._code == 2:
             return f"Code: {self._message}, reason: the text is too long, message: {self._message}"
-        elif self._code == 4:
+
+        if self._code == 4:
             return f"Code: {self._message}, reason: the speaker doesn't exist, message: {self._message}"
-        else:
-            return f"Code: {self._message}, reason: unknown, message: {self._message}"
+
+        return f"Code: {self._message}, reason: unknown, message: {self._message}"
