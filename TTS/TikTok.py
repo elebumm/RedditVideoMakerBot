@@ -78,7 +78,6 @@ vocals = (
 
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
-    max_chars: Final = 300
     BASE_URL: Final = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
 
     def __init__(self):
@@ -95,8 +94,8 @@ class TikTok:
         if random_voice:
             voice = self.random_voice()
         else:
-            # if tiktok_voice is not set in the config file, then it will automatically choose one
-            voice = settings.config["settings"]["tts"].get("tiktok_voice")
+            # if tiktok_voice is not set in the config file, then use a random voice
+            voice = settings.config["settings"]["tts"].get("tiktok_voice", None)
 
         # get the audio from the TikTok API
         data = self.get_voices(voice=voice, text=text)
@@ -107,7 +106,7 @@ class TikTok:
             raise TikTokTTSException(status_code, data["message"])
 
         # decode data from base64 to binary
-        raw_voices = [data["data"]["v_str"]][0]
+        raw_voices = data["data"]["v_str"]
         decoded_voices = base64.b64decode(raw_voices)
 
         # write voices to specified filepath
@@ -117,7 +116,7 @@ class TikTok:
     def get_voices(self, text: str, voice: Optional[str] = None) -> dict:
         """If voice is not passed, the API will try to use the most fitting voice"""
         # sanitize text
-        text = text.replace("+", "plus").replace(" ", "+").replace("&", "and").replace("r/", "")
+        text = text.replace("+", "plus").replace("&", "and").replace("r/", "")
 
         # prepare url request
         params = {
