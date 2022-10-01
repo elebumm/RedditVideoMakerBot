@@ -1,8 +1,9 @@
-import multiprocessing
 import os
 import re
+import multiprocessing
 from os.path import exists
 from typing import Tuple, Any, Final
+import translators as ts
 
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
@@ -29,23 +30,19 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
-    name[:30]
 
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
-        import translators as ts
-
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
 
-    else:
-        return name
+    return name
 
 
-def prepare_background(id: str, W: int, H: int) -> VideoFileClip:
+def prepare_background(reddit_id: str, W: int, H: int) -> VideoFileClip:
     clip = (
-        VideoFileClip(f"assets/temp/{id}/background.mp4")
+        VideoFileClip(f"assets/temp/{reddit_id}/background.mp4")
         .without_audio()
         .resize(height=H)
     )
@@ -84,7 +81,7 @@ def make_final_video(
     #    print('No background audio volume found in config.toml. Using default value of 1.')
     #    VOLUME_MULTIPLIER = 1
 
-    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     print_step("Creating the final video 🎥")
 
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
@@ -93,13 +90,14 @@ def make_final_video(
     opacity = settings.config["settings"]["opacity"]
     transition = settings.config["settings"]["transition"]
 
-    background_clip = prepare_background(id, W=W, H=H)
+    background_clip = prepare_background(reddit_id, W=W, H=H)
 
     # Gather all audio clips
     audio_clips = [
-        AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3") for i in range(number_of_clips)
+        AudioFileClip(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
+        for i in range(number_of_clips)
     ]
-    audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
+    audio_clips.insert(0, AudioFileClip(f"assets/temp/{reddit_id}/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
@@ -114,7 +112,7 @@ def make_final_video(
     screenshow_width = int((W * 90) // 100)
     image_clips.insert(
         0,
-        ImageClip(f"assets/temp/{id}/png/title.png")
+        ImageClip(f"assets/temp/{reddit_id}/png/title.png")
         .set_duration(audio_clips[0].duration)
         .resize(width=screenshow_width)
         .set_opacity(new_opacity)
@@ -124,7 +122,7 @@ def make_final_video(
 
     for i in range(0, number_of_clips):
         image_clips.append(
-            ImageClip(f"assets/temp/{id}/png/comment_{i}.png")
+            ImageClip(f"assets/temp/{reddit_id}/png/comment_{i}.png")
             .set_duration(audio_clips[i + 1].duration)
             .resize(width=screenshow_width)
             .set_opacity(new_opacity)
@@ -173,7 +171,7 @@ def make_final_video(
         redditid=reddit_obj,
     )
     final.write_videofile(
-        f"assets/temp/{id}/temp.mp4",
+        f"assets/temp/{reddit_id}/temp.mp4",
         fps=30,
         audio_codec="aac",
         audio_bitrate="192k",
@@ -181,14 +179,14 @@ def make_final_video(
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_extract_subclip(
-        f"assets/temp/{id}/temp.mp4",
+        f"assets/temp/{reddit_id}/temp.mp4",
         0,
         length,
         targetname=f"results/{subreddit}/{filename}",
     )
     save_data(subreddit, filename, title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
-    cleanups = cleanup(id)
+    cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 

@@ -28,9 +28,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     storymode: Final[bool] = settings.config["settings"]["storymode"]
 
     print_step("Downloading screenshots of reddit posts...")
-    id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
+    reddit_id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     # ! Make sure the reddit screenshots folder exists
-    Path(f"assets/temp/{id}/png").mkdir(parents=True, exist_ok=True)
+    Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
@@ -59,6 +59,8 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                 "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
             )
         cookies = json.load(cookie_file)
+        cookie_file.close()
+
         context.add_cookies(cookies)  # load preference cookies
 
         # Get the thread screenshot
@@ -94,12 +96,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         else:
             print_substep("Skipping translation...")
 
-        postcontentpath = f"assets/temp/{id}/png/title.png"
+        postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if storymode:
             page.locator('[data-click-id="text"]').screenshot(
-                path=f"assets/temp/{id}/png/story_content.png"
+                path=f"assets/temp/{reddit_id}/png/story_content.png"
             )
         else:
             for idx, comment in enumerate(
@@ -130,7 +132,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                     )
                 try:
                     page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{id}/png/comment_{idx}.png"
+                        path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
                     )
                 except TimeoutError:
                     del reddit_object["comments"]
