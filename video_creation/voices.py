@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from typing import Tuple
 
 from rich.console import Console

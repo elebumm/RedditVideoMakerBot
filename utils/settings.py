@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import re
 from typing import Tuple, Dict
 from pathlib import Path
