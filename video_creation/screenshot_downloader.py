@@ -24,7 +24,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
-    lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"] 
+    lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"]
     storymode: Final[bool] = settings.config["settings"]["storymode"]
 
     print_step("Downloading screenshots of reddit posts...")
@@ -35,25 +35,29 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(headless=True)  # add headless=False for debug 
+        browser = p.chromium.launch(headless=True)  # add headless=False for debug
 
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
-        dsf = (W // 600)+1
+        dsf = (W // 600) + 1
 
         context = browser.new_context(
             locale=lang or "en-us",
             color_scheme="dark",
             viewport=ViewportSize(width=W, height=H),
-            device_scale_factor=dsf
-            )
+            device_scale_factor=dsf,
+        )
 
         # set the theme and disable non-essential cookies
         if settings.config["settings"]["theme"] == "dark":
-            cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
         else:
-            cookie_file = open("./video_creation/data/cookie-light-mode.json", encoding="utf-8")
+            cookie_file = open(
+                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
+            )
         cookies = json.load(cookie_file)
         context.add_cookies(cookies)  # load preference cookies
 
@@ -70,7 +74,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             page.wait_for_load_state()  # Wait for page to fully load
 
             if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator('[data-click-id="text"] button').click()  # Remove "Click to see nsfw" Button in Screenshot
+                page.locator(
+                    '[data-click-id="text"] button'
+                ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
         # translate code
 
@@ -92,9 +98,16 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if storymode:
-            page.locator('[data-click-id="text"]').screenshot(path=f"assets/temp/{id}/png/story_content.png")
+            page.locator('[data-click-id="text"]').screenshot(
+                path=f"assets/temp/{id}/png/story_content.png"
+            )
         else:
-            for idx, comment in enumerate(track(reddit_object["comments"][:screenshot_num], "Downloading screenshots...")):
+            for idx, comment in enumerate(
+                track(
+                    reddit_object["comments"][:screenshot_num],
+                    "Downloading screenshots...",
+                )
+            ):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
                     break
@@ -116,7 +129,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(path=f"assets/temp/{id}/png/comment_{idx}.png")
+                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                        path=f"assets/temp/{id}/png/comment_{idx}.png"
+                    )
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
@@ -125,5 +140,5 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
 
         # close browser instance when we are done using it
         browser.close()
-        
+
     print_substep("Screenshots downloaded Successfully.", style="bold green")

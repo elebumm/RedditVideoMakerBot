@@ -45,7 +45,11 @@ def name_normalize(name: str) -> str:
 
 
 def prepare_background(id: str, W: int, H: int) -> VideoFileClip:
-    clip = VideoFileClip(f"assets/temp/{id}/background.mp4").without_audio().resize(height=H)
+    clip = (
+        VideoFileClip(f"assets/temp/{id}/background.mp4")
+        .without_audio()
+        .resize(height=H)
+    )
 
     # calculate the center of the background clip
     c = clip.w // 2
@@ -83,7 +87,7 @@ def make_final_video(
 
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     print_step("Creating the final video 🎥")
-    
+
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
 
@@ -93,7 +97,9 @@ def make_final_video(
     background_clip = prepare_background(id, W=W, H=H)
 
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3") for i in range(number_of_clips)]
+    audio_clips = [
+        AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3") for i in range(number_of_clips)
+    ]
     audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
@@ -103,8 +109,10 @@ def make_final_video(
     image_clips = []
     # Gather all images
     new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    new_transition = 0 if transition is None or float(transition) > 2 else float(transition)
-    screenshow_width = int((W*90)//100)
+    new_transition = (
+        0 if transition is None or float(transition) > 2 else float(transition)
+    )
+    screenshow_width = int((W * 90) // 100)
     image_clips.insert(
         0,
         ImageClip(f"assets/temp/{id}/png/title.png")
@@ -137,7 +145,9 @@ def make_final_video(
     # else: story mode stuff
 
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        img_clip_pos
+    )  # note transition kwarg for delay in imgs
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -158,7 +168,11 @@ def make_final_video(
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
 
-    final = Video(final).add_watermark(text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj)
+    final = Video(final).add_watermark(
+        text=f"Background credit: {background_config[2]}",
+        opacity=0.4,
+        redditid=reddit_obj,
+    )
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
@@ -179,4 +193,6 @@ def make_final_video(
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')
+    print_step(
+        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
+    )
