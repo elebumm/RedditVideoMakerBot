@@ -39,6 +39,9 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
             continue
+        if  settings.config['settings']['storymode'] :
+                if  not submission.is_self   :
+                    continue
         return submission
     print("all submissions have been done going by top submission order")
     VALID_TIME_FILTERS = [

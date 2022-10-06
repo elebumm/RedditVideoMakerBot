@@ -74,10 +74,20 @@ def make_final_video(
         .resize(height=H)
         .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
     )
-
+    
     # Gather all audio clips
-    audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3") for i in range(number_of_clips)]
-    audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
+    if settings.config["settings"]["storymode"]:
+        if settings.config["settings"]["storymodemethode"] == 0:
+            audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/title.mp3")]
+            audio_clips.insert(1,AudioFileClip(f"assets/temp/{id}/mp3/postaudio.mp3"))
+        elif settings.config["settings"]["storymodemethode"] == 1:
+            #here work is not done14
+            audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/posttext-{i}.mp3") for i in range(number_of_clips+1)]
+            audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
+                
+    else:
+        audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3") for i in range(number_of_clips)]
+        audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
@@ -96,27 +106,40 @@ def make_final_video(
         .crossfadein(new_transition)
         .crossfadeout(new_transition),
     )
-
-    for i in range(0, number_of_clips):
-        image_clips.append(
-            ImageClip(f"assets/temp/{id}/png/comment_{i}.png")
-            .set_duration(audio_clips[i + 1].duration)
-            .resize(width=W - 100)
-            .set_opacity(new_opacity)
-            .crossfadein(new_transition)
-            .crossfadeout(new_transition)
-        )
-
-    # if os.path.exists("assets/mp3/posttext.mp3"):
-    #    image_clips.insert(
-    #        0,
-    #        ImageClip("assets/png/title.png")
-    #        .set_duration(audio_clips[0].duration + audio_clips[1].duration)
-    #        .set_position("center")
-    #        .resize(width=W - 100)
-    #        .set_opacity(float(opacity)),
-    #    )
-    # else: story mode stuff
+    if settings.config["settings"]["storymode"]:
+        if settings.config["settings"]["storymodemethode"] == 0:
+            if os.path.exists(f"assets/temp/{id}/png/story_content.png"):# else: story mode stuff
+                image_clips.insert(
+                1,
+                ImageClip(f"assets/temp/{id}/png/story_content.png")
+                .set_duration(audio_clips[1].duration)
+                .set_position("center")
+                .resize(width=W - 100)
+                .set_opacity(float(opacity)),
+            )
+        elif settings.config["settings"]["storymodemethode"] == 1:
+                for i in range(0, number_of_clips+1):
+                    image_clips.append(
+                        ImageClip(f"assets/temp/{id}/png/img{i}.png")
+                        .set_duration(audio_clips[i + 1].duration)
+                        .resize(width=W - 100)
+                        .set_opacity(new_opacity)
+                        # .crossfadein(new_transition)
+                        # .crossfadeout(new_transition)
+            )
+    else :
+        for i in range(0, number_of_clips):
+            image_clips.append(
+                ImageClip(f"assets/temp/{id}/png/comment_{i}.png")
+                .set_duration(audio_clips[i + 1].duration)
+                .resize(width=W - 100)
+                .set_opacity(new_opacity)
+                .crossfadein(new_transition)
+                .crossfadeout(new_transition)
+            )
+    
+    
+    
     img_clip_pos = background_config[3]
     image_concat = concatenate_videoclips(image_clips).set_position(
         img_clip_pos
@@ -143,6 +166,7 @@ def make_final_video(
     final = Video(final).add_watermark(
         text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
      )
+    
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
@@ -156,7 +180,7 @@ def make_final_video(
         0,
         length,
         targetname=f"results/{subreddit}/{filename}",
-    )
+    ) 
     save_data(subreddit, filename, title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(id)

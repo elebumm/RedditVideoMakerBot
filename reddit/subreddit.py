@@ -10,6 +10,7 @@ from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from utils.voice import sanitize_text
+from utils.posttextparser import posttextparser
 
 
 def get_subreddit_threads(POST_ID: str):
@@ -70,6 +71,7 @@ def get_subreddit_threads(POST_ID: str):
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
+        
     elif (
         settings.config["reddit"]["thread"]["post_id"]
         and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
@@ -92,32 +94,40 @@ def get_subreddit_threads(POST_ID: str):
 
     content["thread_url"] = f"https://reddit.com{submission.permalink}"
     content["thread_title"] = submission.title
-    content["thread_post"] = submission.selftext
     content["thread_id"] = submission.id
     content["comments"] = []
-
-    for top_level_comment in submission.comments:
-        if isinstance(top_level_comment, MoreComments):
-            continue
-        if top_level_comment.body in ["[removed]", "[deleted]"]:
-            continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
-        if not top_level_comment.stickied:
-            sanitised = sanitize_text(top_level_comment.body)
-            if not sanitised or sanitised == " ":
+    if settings.config["settings"]["storymode"]:
+        if settings.config["settings"]["storymodemethode"] == 1:
+            content["thread_post"] = posttextparser(submission.selftext)
+        else:
+            content["thread_post"] =submission.selftext
+    else:
+        for top_level_comment in submission.comments:
+            if isinstance(top_level_comment, MoreComments):
                 continue
-            if len(top_level_comment.body) <= int(
+            if top_level_comment.body in ["[removed]", "[deleted]"]:
+                continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
+            if not top_level_comment.stickied:
+                sanitised = sanitize_text(top_level_comment.body)
+                if not sanitised or sanitised == " ":
+                    continue
+                if len(top_level_comment.body) <= int(
                 settings.config["reddit"]["thread"]["max_comment_length"]
-            ):
-                if (
-                    top_level_comment.author is not None
-                    and sanitize_text(top_level_comment.body) is not None
-                ):  # if errors occur with this change to if not.
-                    content["comments"].append(
-                        {
-                            "comment_body": top_level_comment.body,
-                            "comment_url": top_level_comment.permalink,
-                            "comment_id": top_level_comment.id,
-                        }
-                    )
+                ):
+                    if len(top_level_comment.body)>= int(
+                    settings.config["reddit"]["thread"]["min_comment_length"]
+                ):
+                    
+                        if (
+                        top_level_comment.author is not None
+                        and sanitize_text(top_level_comment.body) is not None
+                    ):  # if errors occur with this change to if not.
+                            content["comments"].append(
+                            {
+                                "comment_body": top_level_comment.body,
+                                "comment_url": top_level_comment.permalink,
+                                "comment_id": top_level_comment.id,
+                            }
+                        )
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content
