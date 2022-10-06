@@ -1,6 +1,5 @@
 import json
 import time
-from typing import Dict
 
 from praw.models import Submission
 

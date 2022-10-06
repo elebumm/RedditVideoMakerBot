@@ -1,11 +1,10 @@
 import re
 
+import praw
+from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
 from utils import settings
-import praw
-from praw.models import MoreComments
-
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
@@ -42,9 +41,8 @@ def get_subreddit_threads(POST_ID: str):
             check_for_async=False,
         )
     except ResponseException as e:
-        match e.response.status_code:
-            case 401:
-                print("Invalid credentials - please check them in config.toml")
+        if e.response.status_code == 401:
+            print("Invalid credentials - please check them in config.toml")
     except:
         print("Something went wrong...")
 
@@ -105,6 +103,7 @@ def get_subreddit_threads(POST_ID: str):
         for top_level_comment in submission.comments:
             if isinstance(top_level_comment, MoreComments):
                 continue
+
             if top_level_comment.body in ["[removed]", "[deleted]"]:
                 continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
             if not top_level_comment.stickied:
@@ -129,5 +128,6 @@ def get_subreddit_threads(POST_ID: str):
                                 "comment_id": top_level_comment.id,
                             }
                         )
+
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content

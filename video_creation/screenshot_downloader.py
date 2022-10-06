@@ -1,21 +1,14 @@
 import json
-
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Dict
-from utils import settings
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
 
-# do not remove the above line
-
+import translators as ts
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
 import translators as ts
 from utils.imagenarator import imagemaker
 from utils.console import print_step, print_substep
-
-
-
 
 def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
@@ -32,7 +25,8 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch()  #headless=False #to check for chrome view 
+        browser = p.chromium.launch(headless=True)  # add headless=False for debug
+
         context = browser.new_context()
 
         if settings.config["settings"]["theme"] == "dark":
@@ -53,9 +47,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             page.wait_for_load_state()  # Wait for page to fully load
 
             if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator(
-                    '[data-click-id="text"] button'
-                ).click()  # Remove "Click to see nsfw" Button in Screenshot
+                page.locator('[data-click-id="text"] button').click()  # Remove "Click to see nsfw" Button in Screenshot
 
         # translate code
 
@@ -74,9 +66,9 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{id}/png/title.png"
-        page.locator('[data-test-id="post-content"]').screenshot(path= postcontentpath)
+        page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
-        if reddit_object["thread_post"] != "" and settings.config["settings"]["storymode"] == True:
+        if settings.config["settings"]["storymode"] == True:
             if settings.config["settings"]["storymodemethode"] == 0:
                 try :   #new change
                     page.locator('[data-click-id="text"]').first.screenshot(
@@ -88,10 +80,10 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                 for idx,item in enumerate(reddit_object["thread_post"]):
                     imagemaker(item,idx=idx,reddit_obj=reddit_object)
                 
+
+       
         else:
-            for idx, comment in enumerate(
-                track(reddit_object["comments"], "Downloading screenshots...")
-            ):
+            for idx, comment in enumerate(track(reddit_object["comments"], "Downloading screenshots...")):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
                     break
@@ -113,9 +105,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{id}/png/comment_{idx}.png"
-                    )
+                    page.locator(f"#t1_{comment['comment_id']}").screenshot(path=f"assets/temp/{id}/png/comment_{idx}.png")
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
