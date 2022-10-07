@@ -7,6 +7,7 @@ import translators as ts
 from playwright.sync_api import sync_playwright, ViewportSize
 from rich.progress import track
 import translators as ts
+from utils import settings
 from utils.imagenarator import imagemaker
 from utils.console import print_step, print_substep
 
@@ -69,14 +70,14 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if settings.config["settings"]["storymode"] == True:
-            if settings.config["settings"]["storymodemethode"] == 0:
+            if settings.config["settings"]["storymodemethod"] == 0:
                 try :   #new change
                     page.locator('[data-click-id="text"]').first.screenshot(
                         path=f"assets/temp/{id}/png/story_content.png"
                     )
                 except:
                     exit
-            elif settings.config["settings"]["storymodemethode"] == 1:
+            elif settings.config["settings"]["storymodemethod"] == 1:
                 for idx,item in enumerate(reddit_object["thread_post"]):
                     imagemaker(item,idx=idx,reddit_obj=reddit_object)
                 

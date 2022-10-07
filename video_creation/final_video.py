@@ -78,10 +78,10 @@ def make_final_video(
     
     # Gather all audio clips
     if settings.config["settings"]["storymode"]:
-        if settings.config["settings"]["storymodemethode"] == 0:
+        if settings.config["settings"]["storymodemethod"] == 0:
             audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/title.mp3")]
             audio_clips.insert(1,AudioFileClip(f"assets/temp/{id}/mp3/postaudio.mp3"))
-        elif settings.config["settings"]["storymodemethode"] == 1:
+        elif settings.config["settings"]["storymodemethod"] == 1:
             #here work is not done14
             audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/posttext-{i}.mp3") for i in range(number_of_clips+1)]
             audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
@@ -108,7 +108,7 @@ def make_final_video(
         .crossfadeout(new_transition),
     )
     if settings.config["settings"]["storymode"]:
-        if settings.config["settings"]["storymodemethode"] == 0:
+        if settings.config["settings"]["storymodemethod"] == 0:
             if os.path.exists(f"assets/temp/{id}/png/story_content.png"):# else: story mode stuff
                 image_clips.insert(
                 1,
@@ -118,7 +118,7 @@ def make_final_video(
                 .resize(width=W - 100)
                 .set_opacity(float(opacity)),
             )
-        elif settings.config["settings"]["storymodemethode"] == 1:
+        elif settings.config["settings"]["storymodemethod"] == 1:
                 for i in range(0, number_of_clips+1):
                     image_clips.append(
                         ImageClip(f"assets/temp/{id}/png/img{i}.png")

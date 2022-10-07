@@ -18,7 +18,7 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
-DEFAULT_MAX_LENGTH: int = 40 # video length variable
+DEFAULT_MAX_LENGTH: int = 50 # video length variable
 
 class TTSEngine:
 
@@ -61,12 +61,12 @@ class TTSEngine:
         idx = None
 
         if  settings.config["settings"]["storymode"] :
-            if settings.config["settings"]["storymodemethode"] == 0:
+            if settings.config["settings"]["storymodemethod"] == 0:
                 if  (len(self.reddit_object["thread_post"]) > self.tts_module.max_chars):
                     self.split_post(self.reddit_object["thread_post"], "postaudio")
                 else :
                     self.call_tts("postaudio",process_text(self.reddit_object["thread_post"]) )   
-            elif settings.config["settings"]["storymodemethode"] == 1:
+            elif settings.config["settings"]["storymodemethod"] == 1:
                 
                 for idx,text in enumerate(self.reddit_object["thread_post"]):
                     self.call_tts(f"posttext-{idx}",process_text(text) )

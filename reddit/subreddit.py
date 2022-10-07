@@ -95,7 +95,7 @@ def get_subreddit_threads(POST_ID: str):
     content["thread_id"] = submission.id
     content["comments"] = []
     if settings.config["settings"]["storymode"]:
-        if settings.config["settings"]["storymodemethode"] == 1:
+        if settings.config["settings"]["storymodemethod"] == 1:
             content["thread_post"] = posttextparser(submission.selftext)
         else:
             content["thread_post"] =submission.selftext
