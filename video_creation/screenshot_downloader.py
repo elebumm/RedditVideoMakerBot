@@ -72,7 +72,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             postcontentpath = f"assets/temp/{id}/png/title.png"
             page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
-            if not settings.config["settings"]["storymodemethode"]and settings.config["settings"]["storymode"]:
+            if not settings.config["settings"]["storymodemethod"]and settings.config["settings"]["storymode"]:
             
                 try :   #new change
                     page.locator('[data-click-id="text"]').first.screenshot(
@@ -125,10 +125,10 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         bgcolor=(255,255,255,255)
         txtcolor=(0,0,0)
     if settings.config["settings"]["storymode"] :
-                # if settings.config["settings"]["storymodemethode"] == 0:
+                # if settings.config["settings"]["storymodemethod"] == 0:
                 #     story=True
                         
-                if settings.config["settings"]["storymodemethode"] :
+                if settings.config["settings"]["storymodemethod"] :
                     # for idx,item in enumerate(reddit_object["thread_post"]):
                         imagemaker(theme=bgcolor,reddit_obj=reddit_object,txtclr=txtcolor)
     download(cookie_file)
