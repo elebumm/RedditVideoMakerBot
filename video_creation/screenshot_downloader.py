@@ -26,7 +26,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(headless=True)  # add headless=False for debug
+        browser = p.chromium.launch()  # add headless=False for debug
 
         context = browser.new_context()
 
@@ -69,7 +69,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         postcontentpath = f"assets/temp/{id}/png/title.png"
         page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
-        if settings.config["settings"]["storymode"] == True:
+        if settings.config["settings"]["storymode"] :
             if settings.config["settings"]["storymodemethod"] == 0:
                 try :   #new change
                     page.locator('[data-click-id="text"]').first.screenshot(
