@@ -4,7 +4,6 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
-
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
@@ -13,15 +12,16 @@ from moviepy.video.compositing.concatenate import concatenate_videoclips
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
+from rich.progress import track
 
-from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.video import Video
 from utils.videos import save_data
+from utils import settings
 
 console = Console()
-W, H = 1080, 1920
+W, H = 1080,1920
 
 
 def name_normalize(name: str) -> str:
@@ -83,7 +83,7 @@ def make_final_video(
             audio_clips.insert(1,AudioFileClip(f"assets/temp/{id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
             #here work is not done14
-            audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/postaudio-{i}.mp3") for i in range(number_of_clips+1)]
+            audio_clips = [AudioFileClip(f"assets/temp/{id}/mp3/posttext-{i}.mp3") for i in track(range(number_of_clips+1),"Collecting the audio files...")]
             audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
                 
     else:
@@ -119,7 +119,7 @@ def make_final_video(
                 .set_opacity(float(opacity)),
             )
         elif settings.config["settings"]["storymodemethod"] == 1:
-                for i in range(0, number_of_clips+1):
+                for i in track(range(0, number_of_clips+1),"Collecting the image files..."):
                     image_clips.append(
                         ImageClip(f"assets/temp/{id}/png/img{i}.png")
                         .set_duration(audio_clips[i + 1].duration)
@@ -142,7 +142,9 @@ def make_final_video(
     
     
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
+    image_concat = concatenate_videoclips(image_clips).set_position(
+        img_clip_pos
+    )  # note transition kwarg for delay in imgs
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])

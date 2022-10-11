@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw,ImageFont 
 import textwrap
 import re
+
+from rich.progress import track
 def draw_multiple_line_text(image, text, font, text_color,padding):
     '''
     Draw multiline text over given image
@@ -27,7 +29,7 @@ def imagemaker( theme,reddit_obj,
     size=(500,176) 
     textcolor=txtclr
 
-    for idx,text in enumerate(texts):
+    for idx,text in track(enumerate(texts),'Rendering Imaging..'):
         image =Image.new('RGBA',size,theme)
         draw = ImageDraw.Draw(image)
         if len(text)>50:
