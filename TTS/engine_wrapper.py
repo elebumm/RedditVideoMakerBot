@@ -68,7 +68,7 @@ class TTSEngine:
                     self.call_tts("postaudio",process_text(self.reddit_object["thread_post"]) )   
             elif settings.config["settings"]["storymodemethod"] == 1:
                 
-                for idx,text in enumerate(self.reddit_object["thread_post"]):
+                for idx,text in  track(enumerate(self.reddit_object["thread_post"])):
                     self.call_tts(f"postaudio-{idx}",process_text(text) )
 
         else :
