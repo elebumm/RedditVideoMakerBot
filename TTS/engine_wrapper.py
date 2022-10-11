@@ -69,7 +69,7 @@ class TTSEngine:
             elif settings.config["settings"]["storymodemethod"] == 1:
                 
                 for idx,text in enumerate(self.reddit_object["thread_post"]):
-                    self.call_tts(f"posttext-{idx}",process_text(text) )
+                    self.call_tts(f"postaudio-{idx}",process_text(text) )
 
         else :
             

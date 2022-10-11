@@ -23,7 +23,7 @@ def imagemaker( theme,reddit_obj,
                 ):
     texts=reddit_obj['thread_post']
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
-    font=ImageFont.truetype("arial.ttf", 20)
+    font=ImageFont.truetype("C:\\fonts\\NotoSans-Regular.ttf", 20)
     size=(500,176) 
     textcolor=txtclr
 
