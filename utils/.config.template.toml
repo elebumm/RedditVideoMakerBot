@@ -28,7 +28,10 @@ storymode = { optional = true, type = "bool", default = false, example = false, 
 background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["", "minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck"], explanation = "Sets the background for the video based on game name" }
 #background_audio = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
 #background_audio_volume = { optional = true, type = "float", default = 0.3, example = 0.1, explanation="Sets the volume of the background audio. only used if the background_audio is also set to true" }
-
+background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Sets a thumbnail to the video (put a thumbnail.png file in the assets/backgrounds directory for it to be used.)" }
+background_thumbnail_font_family = { optional = true, default = "arial", example = "arial", explanation = "Sets the font family for the thumbnail text" }
+background_thumbnail_font_size = { optional = true, type = "int", default = 96, example = 96, explanation = "Sets the font size in pixels for the thumbnail text" }
+background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Sets the font color for the thumbnail text" }
 
 [settings.tts]
 voice_choice = { optional = false, default = "tiktok", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }

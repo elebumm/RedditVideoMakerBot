@@ -232,6 +232,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 assets/
+/.vscode
 out
 .DS_Store
 .setup-done-before
