@@ -27,8 +27,6 @@ def create_thumbnail(thumbnail, font_family, font_size, font_color, width, heigh
             else:
                 arrayTitle.append(word)
 
-    print("arrayTitle: " + str(arrayTitle))
-
     draw = ImageDraw.Draw(thumbnail)
     # loop for put the title in the thumbnail
     for i in range(0, len(arrayTitle)):
