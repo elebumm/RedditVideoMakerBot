@@ -127,6 +127,7 @@ def make_final_video(
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    title_thumb = reddit_obj["thread_title"]
 
     filename = f"{name_normalize(title)[:150]}"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
@@ -150,7 +151,7 @@ def make_final_video(
         font_color = settingsbackground["background_thumbnail_font_color"]
         thumbnail = Image.open(f"assets/backgrounds/thumbnail.png")
         width, height = thumbnail.size
-        thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title)
+        thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title_thumb)
         thumbnailSave.save(f"./assets/temp/{id}/thumbnail.png")
         print_substep("Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
 
