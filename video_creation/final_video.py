@@ -152,6 +152,7 @@ def make_final_video(
         width, height = thumbnail.size
         thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title)
         thumbnailSave.save(f"./assets/temp/{id}/thumbnail.png")
+        print_substep("Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
 
     # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
     #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
