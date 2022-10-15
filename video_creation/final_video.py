@@ -5,6 +5,8 @@ import re
 from os.path import exists
 import shutil
 from typing import Tuple, Any
+from PIL import Image
+
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
@@ -21,7 +23,6 @@ from utils.video import Video
 from utils.videos import save_data
 from utils import settings
 from utils.thumbnail import create_thumbnail
-from PIL import Image
 
 console = Console()
 W, H = 1080, 1920
@@ -177,16 +178,27 @@ def make_final_video(
             print_substep(
                 "The results/thumbnails folder didn't exist so I made it")
             os.makedirs(f"./results/{subreddit}/thumbnails")
+        # get the first file with the .png extension from assets/backgrounds and use it as a background for the thumbnail
+        first_image = next(
+            (
+                file
+                for file in os.listdir("assets/backgrounds")
+                if file.endswith(".png")
+            ),
+            None,
+        )
+        if first_image is None:
+            print_substep("No png files found in assets/backgrounds", "red")
 
-    if settingsbackground["background_thumbnail"] and exists(f"assets/backgrounds/thumbnail.png"):
+    if settingsbackground["background_thumbnail"] and first_image:
         font_family = settingsbackground["background_thumbnail_font_family"]
         font_size = settingsbackground["background_thumbnail_font_size"]
         font_color = settingsbackground["background_thumbnail_font_color"]
-        thumbnail = Image.open(f"assets/backgrounds/thumbnail.png")
+        thumbnail = Image.open(f"assets/backgrounds/{first_image}")
         width, height = thumbnail.size
         thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title_thumb)
         thumbnailSave.save(f"./assets/temp/{id}/thumbnail.png")
-        print_substep("Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
+        print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
 
     # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
     #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
