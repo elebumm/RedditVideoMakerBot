@@ -235,7 +235,7 @@ assets/
 out
 .DS_Store
 .setup-done-before
-results/*
+results/*.mp4
 reddit-bot-351418-5560ebc49cac.json
 /.idea
 *.pyc
@@ -244,3 +244,6 @@ video_creation/data/envvars.txt
 
 config.toml
 video_creation/data/videos.json
+results/client_secrets.json
+results/client_secrets.json.template
+results/upload_video.py-oauth2.json
