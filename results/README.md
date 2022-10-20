@@ -26,7 +26,7 @@ I have left a .template for you to copy
 
 # Changes required
 
-## I reccomend copying and pasting your first video object in the `videos.json` and make sure the first object has a time, 4 hours before the first upload time, and `uploaded = True`.
+## I reccomend copying and pasting your first video object in the `videos.json` and make sure the first object has a time, 4 hours before you want your video to go public, and `uploaded = True`.
 
 The script needs at least one `uploaded : true` and `uploaded_at : <time>`. The next item will be set to upload 4 hours later.
 
