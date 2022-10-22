@@ -93,7 +93,9 @@ def get_authenticated_service(args):
     )
 
 
-def initialize_upload(youtube, options, i, next_upload_time):
+def initialize_upload(options, next_upload_time):
+    args = argparser.parse_args()
+    youtube = get_authenticated_service(args)
     tags = None
     if options["keywords"]:
         tags = options["keywords"].split(",")
@@ -120,12 +122,12 @@ def initialize_upload(youtube, options, i, next_upload_time):
         media_body=MediaFileUpload(options["file"], chunksize=-1, resumable=True),
     )
 
-    resumable_upload(insert_request, i, next_upload_time)
+    resumable_upload(insert_request, next_upload_time)
 
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
-def resumable_upload(insert_request, i, next_upload_time):
+def resumable_upload(insert_request, next_upload_time):
     response = None
     error = None
     retry = 0
@@ -135,7 +137,11 @@ def resumable_upload(insert_request, i, next_upload_time):
             status, response = insert_request.next_chunk()
             if response is not None:
                 if "id" in response:
-                    print("Video id '%s' was successfully uploaded." % response["id"])
+                    print(
+                        "Video id {0} was successfully uploaded and will be published at {1}".format(
+                            response["id"], next_upload_time
+                        )
+                    )
                     ## upload success
                     updateUploadedStatus(i, next_upload_time)
 
@@ -180,6 +186,49 @@ def updateUploadedStatus(currIndex, time):
         outfile.write(json_obj)
 
 
+def upload_youtube(video, prev_video):
+    format_data = "%Y-%m-%d %H:%M:%S"
+    next_upload = datetime.strptime(prev_video["uploaded_at"], format_data) + timedelta(
+        hours=4
+    )
+    file_name = video["subreddit"] + "/" + video["filename"]
+    title = "r/" + video["subreddit"] + " : " + video["reddit_title"]
+    description = (
+        "r/"
+        + video["subreddit"]
+        + " | "
+        + video["reddit_title"]
+        + "?"
+        + " 🔔 Hit the bell next to Subscribe so you never miss a video! ❤️ Like and Comment 🧍 Subscribe if you are new on the channel!"
+    )
+
+    if len(title) >= 99:
+        title = title[0:96] + "..."
+
+    if len(title) <= 99:
+        title = title + "?"
+
+    options = {
+        "file": file_name,
+        "title": title,
+        "description": description,
+        "category": "22",
+        "keywords": "reddit,shorts,askReddit",
+        "privacyStatus": "private",
+        "publishTime": next_upload.isoformat(),
+    }
+
+    if not os.path.exists(options["file"]):
+        # print(options["file"])
+        exit(
+            "could not find the specified file --> {0} / {1}".format(
+                options["file"].split("/")[0], options["file"].split("/")[1]
+            )
+        )
+
+    initialize_upload(options, next_upload)
+
+
 if __name__ == "__main__":
 
     # opens the json containing video_creation data (used for logic and upload data)
@@ -192,52 +241,10 @@ if __name__ == "__main__":
         if video["uploaded"] == False:
             if uploaded < 6:
                 prev_video = list(video_data)[i - 1]
-                ############# 2022-10-19 16:39:46.887878
-                format_data = "%Y-%m-%d %H:%M:%S"
-                next_upload = datetime.strptime(
-                    prev_video["uploaded_at"], format_data
-                ) + timedelta(hours=4)
-                file_name = video["subreddit"] + "/" + video["filename"]
-                title = "r/" + video["subreddit"] + " : " + video["reddit_title"]
-                description = (
-                    "r/"
-                    + video["subreddit"]
-                    + " | "
-                    + video["reddit_title"]
-                    + "?"
-                    + " 🔔 Hit the bell next to Subscribe so you never miss a video! ❤️ Like and Comment 🧍 Subscribe if you are new on the channel!"
-                )
-
-                if len(title) >= 99:
-                    title = title[0:96] + "..."
-
-                if len(title) <= 99:
-                    title = title + "?"
-
-                options = {
-                    "file": file_name,
-                    "title": title,
-                    "description": description,
-                    "category": "22",
-                    "keywords": "reddit,shorts,askReddit",
-                    "privacyStatus": "private",
-                    "publishTime": next_upload.isoformat(),
-                }
-
-                args = argparser.parse_args()
-
-                if not os.path.exists(options["file"]):
-                    print(options["file"])
-                    exit("Please specify a valid file using the --file= parameter ")
-
-                youtube = get_authenticated_service(args)
                 try:
-                    print(options)
-                    # initialize_upload(youtube, options, i, next_upload)
+                    upload_youtube(video, prev_video)
+                    video["uploaded_at"] = next_upload.strftime(format_data)
                     uploaded += 1
-                    # print(options["file"])
-                    # print(options["title"])
-                    # video["uploaded_at"] = next_upload.strftime(format_data)
 
                 except HttpError as e:
                     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
