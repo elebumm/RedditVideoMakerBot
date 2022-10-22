@@ -179,10 +179,6 @@ def updateUploadedStatus(currIndex, time):
     with open("..\\video_creation\\data\\videos.json", "w") as outfile:
         outfile.write(json_obj)
 
-    # print(datetime.datetime.now().isoformat())
-    # print(video_data[i - 1])
-    # print(video_data[i])
-
 
 if __name__ == "__main__":
 
@@ -190,44 +186,42 @@ if __name__ == "__main__":
     f = open("..\\video_creation\\data\\videos.json")
     # loads videos.json into a dictionary
     video_data = json.load(f)
-
-    descriptionBeginning = "r/askReddit | "
-    descriptionEnd = " 🔔 Hit the bell next to Subscribe so you never miss a video! ❤️ Like and Comment 🧍 Subscribe if you are new on the channel!"
-    # reddit​ #redditstories​ #askreddit​ #shorts​
-    titlebBeggining = "r/askReddit: "  # 13 characters
-
     options = {}
     uploaded = 0
     for i, video in enumerate(video_data):
         if video["uploaded"] == False:
-            if uploaded < 2:
+            if uploaded < 6:
                 prev_video = list(video_data)[i - 1]
                 ############# 2022-10-19 16:39:46.887878
                 format_data = "%Y-%m-%d %H:%M:%S"
-                # print("prev_video", prev_video)
-                # print("video", video)
                 next_upload = datetime.strptime(
                     prev_video["uploaded_at"], format_data
                 ) + timedelta(hours=4)
-                # print(next_upload)
-                titleEnding = "..."
-                if len(video["reddit_title"]) < 84:
-                    titleEnding = "?"
-                    # print(len(video["reddit_title"]))
+                file_name = video["subreddit"] + "/" + video["filename"]
+                title = "r/" + video["subreddit"] + " : " + video["reddit_title"]
+                description = (
+                    "r/"
+                    + video["subreddit"]
+                    + " | "
+                    + video["reddit_title"]
+                    + "?"
+                    + " 🔔 Hit the bell next to Subscribe so you never miss a video! ❤️ Like and Comment 🧍 Subscribe if you are new on the channel!"
+                )
+
+                if len(title) >= 99:
+                    title = title[0:96] + "..."
+
+                if len(title) <= 99:
+                    title = title + "?"
 
                 options = {
-                    "file": video["filename"],
-                    "title": titlebBeggining
-                    + video["reddit_title"][0:84]
-                    + titleEnding,
-                    "description": descriptionBeginning
-                    + video["reddit_title"]
-                    + descriptionEnd,
+                    "file": file_name,
+                    "title": title,
+                    "description": description,
                     "category": "22",
                     "keywords": "reddit,shorts,askReddit",
                     "privacyStatus": "private",
-                    "publishTime": next_upload.isoformat()
-                    # June 19th, 2022 at 8:20 AM
+                    "publishTime": next_upload.isoformat(),
                 }
 
                 args = argparser.parse_args()
@@ -236,14 +230,14 @@ if __name__ == "__main__":
                     print(options["file"])
                     exit("Please specify a valid file using the --file= parameter ")
 
-                youtube = get_authenticated_service(
-                    args
-                )  # args must be a new implementation of args object
+                youtube = get_authenticated_service(args)
                 try:
-                    initialize_upload(youtube, options, i, next_upload)
+                    print(options)
+                    # initialize_upload(youtube, options, i, next_upload)
                     uploaded += 1
-                    print(options["title"])
-                    video["uploaded_at"] = next_upload.strftime(format_data)
+                    # print(options["file"])
+                    # print(options["title"])
+                    # video["uploaded_at"] = next_upload.strftime(format_data)
 
                 except HttpError as e:
                     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
