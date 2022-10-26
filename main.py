@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from logging import error
 import math
 import sys
 from os import name
@@ -22,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import download_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.4.2"
+__VERSION__ = "2.5.0"
 
 print(
     """
@@ -102,5 +103,8 @@ if __name__ == "__main__":
         print_markdown("Please check your credentials in the config.toml file")
 
         shutdown()
-
+    except Exception as err :
+        
+        print_step('looks like some thing gone wrong in testing builts it happens report on us discord')
+        raise err
         # todo error

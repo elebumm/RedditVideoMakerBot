@@ -1,17 +1,20 @@
 import json
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Dict
+
+import translators as ts
+from playwright.async_api import \
+    async_playwright  # pylint: disable=unused-import
+from playwright.sync_api import ViewportSize, sync_playwright
+from rich.progress import track
+
 from utils import settings
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
+from utils.console import print_step, print_substep
+from utils.imagenarator import imagemaker
 
 # do not remove the above line
 
-from playwright.sync_api import sync_playwright, ViewportSize
-from rich.progress import track
-import translators as ts
-from utils.imagenarator import imagemaker
-from utils.console import print_step, print_substep
 
 
 
@@ -27,11 +30,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{id}/png").mkdir(parents=True, exist_ok=True)
-    def download(cookie_file):
+    def download(cookie_file,num=None):
+        screenshot_num=num
         with sync_playwright() as p:
             print_substep("Launching Headless Browser...")
 
-            browser = p.chromium.launch(headless=False)  # #to check for chrome view 
+            browser = p.chromium.launch()  #headless=False #to check for chrome view 
             context = browser.new_context()
             
             
@@ -41,7 +45,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             # Get the thread screenshot
             page = context.new_page()
             page.goto(reddit_object["thread_url"], timeout=0)
-            page.set_viewport_size(ViewportSize(width=1920, height=1080))
+            page.set_viewport_size(ViewportSize(width=1080, height=1920))
             if page.locator('[data-testid="content-gate"]').is_visible():
                 # This means the post is NSFW and requires to click the proceed button.
 
@@ -72,7 +76,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
             postcontentpath = f"assets/temp/{id}/png/title.png"
             page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
-            if not settings.config["settings"]["storymodemethod"]and settings.config["settings"]["storymode"]:
+            if settings.config["settings"]["storymode"]:
             
                 try :   #new change
                     page.locator('[data-click-id="text"]').first.screenshot(
@@ -110,11 +114,11 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                         )
                     except TimeoutError:
                         del reddit_object["comments"]
-                        screenshot_num += 1
+                        screenshot_num -= 1
                         print("TimeoutError: Skipping screenshot...")
                         continue
         print_substep("Screenshots downloaded Successfully.", style="bold green")
-    
+    # story=False
     theme=settings.config["settings"]["theme"]
     if theme == "dark":
         cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
@@ -125,10 +129,12 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         bgcolor=(255,255,255,255)
         txtcolor=(0,0,0)
     if settings.config["settings"]["storymode"] :
-                # if settings.config["settings"]["storymodemethod"] == 0:
+                # if settings.config["settings"]["storymodemethode"] == 0:
                 #     story=True
                         
                 if settings.config["settings"]["storymodemethod"] :
                     # for idx,item in enumerate(reddit_object["thread_post"]):
                         imagemaker(theme=bgcolor,reddit_obj=reddit_object,txtclr=txtcolor)
-    download(cookie_file)
+    
+    if settings.config["settings"]["storymodemethod"] == 0 or not settings.config["settings"]["storymode"] :
+        download(cookie_file, screenshot_num)
