@@ -11,7 +11,8 @@ def checkversion(__VERSION__:str):
         return True
     #FOR ERROR HANDLING, SO VERSION CAN EASILY BE DETECTED
     else:
-            print_step(f"You are using the test version ({__VERSION__}) of the bot from AMAN RAZA")
+         print_step(f"You are using the test version ({__VERSION__}) of the bot from AMAN RAZA")
+         #to be removed before released
     # else:
     #     print_step(
     #         f"You are using an older version ({__VERSION__}) of the bot. Download the newest version ({latestversion}) from https://github.com/elebumm/RedditVideoMakerBot/releases/latest"
