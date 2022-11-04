@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
-from typing import Dict, Tuple
+from typing import Tuple
 
 from rich.console import Console
 
-from TTS.engine_wrapper import TTSEngine
 from TTS.GTTS import GTTS
-from TTS.streamlabs_polly import StreamlabsPolly
-from TTS.aws_polly import AWSPolly
 from TTS.TikTok import TikTok
+from TTS.aws_polly import AWSPolly
+from TTS.engine_wrapper import TTSEngine
 from TTS.pyttsx import pyttsx
+from TTS.streamlabs_polly import StreamlabsPolly
 from utils import settings
 from utils.console import print_table, print_step
-
 
 console = Console()
 

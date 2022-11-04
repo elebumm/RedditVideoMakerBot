@@ -45,7 +45,7 @@ body:
 
         Python version : [e.g. Python 3.6]
 
-        App version / Branch [e.g. latest, V2.0, master, develop]
+        App version / Branch : [e.g. latest, V2.0, master, develop]
     validations:
       required: true
   - type: checkboxes
