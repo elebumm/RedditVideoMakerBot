@@ -105,6 +105,6 @@ if __name__ == "__main__":
         shutdown()
     except Exception as err :
         
-        print_step('looks like some thing gone wrong in testing builts it happens report on us discord')
+        print_step('Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.')
         raise err
         # todo error
