@@ -132,7 +132,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                 # if settings.config["settings"]["storymodemethode"] == 0:
                 #     story=True
                         
-                if settings.config["settings"]["storymodemethod"] :
+                if settings.config["settings"]["storymodemethod"] == 1:
                     # for idx,item in enumerate(reddit_object["thread_post"]):
                         imagemaker(theme=bgcolor,reddit_obj=reddit_object,txtclr=txtcolor)
     
