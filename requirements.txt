@@ -15,4 +15,3 @@ Pillow~=9.1.1
 tomlkit==0.11.4
 Flask==2.2.2
 spacy==3.4.1
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz
