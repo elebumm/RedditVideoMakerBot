@@ -1,5 +1,6 @@
 import re
 import spacy
+from utils.voice import sanitize_text
 
 #working good
 def posttextparser(obj):
@@ -15,10 +16,13 @@ def posttextparser(obj):
 
     doc= nlp(text)
 
-    newtext=[]
+    newtext:list = []
     
+
+    # to check for space str 
     for line in doc.sents:
-        newtext.append(line.text)
-        # print(line)
-    
+        if  sanitize_text(line.text):
+            newtext.append(line.text)
+            # print(line)
+        
     return newtext

@@ -26,8 +26,11 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to download
     """
+
     print_step("Downloading screenshots of reddit posts...")
+
     id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
+    
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{id}/png").mkdir(parents=True, exist_ok=True)
     def download(cookie_file,num=None):

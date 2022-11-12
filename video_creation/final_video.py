@@ -179,6 +179,8 @@ def make_final_video(
         audio_bitrate="192k",
         verbose=False,
         threads=multiprocessing.cpu_count(),
+        # preset="ultrafast" #for testings
+        
     )
     ffmpeg_extract_subclip(
         f"assets/temp/{id}/temp.mp4",

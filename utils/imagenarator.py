@@ -32,8 +32,8 @@ def imagemaker( theme,
     title=reddit_obj['thread_title']
     texts=reddit_obj['thread_post']
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
-    tfont=ImageFont.truetype("fonts\Roboto-Bold.ttf",27) # for title
-    font=ImageFont.truetype("fonts\Roboto-Regular.ttf", 20)# for despcription|comments
+    tfont=ImageFont.truetype("fonts\\Roboto-Bold.ttf",27) # for title
+    font=ImageFont.truetype("fonts\\Roboto-Regular.ttf", 20)# for despcription|comments
     size=(500,176) 
     
 
