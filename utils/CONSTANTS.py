@@ -49,13 +49,13 @@ background_options = {
         "center",
     ),
     "multiversus": ( # Multiversus gameplay
-        "https://www.youtube.com/watch?v=LeDRf_L2lOY",
+        "https://www.youtube.com/watch?v=66oK1Mktz6g",
         "multiversus.mp4",
         "MKIceAndFire",
         "center",
     ),
     "fall-guys": ( # Fall guys gameplay
-        "https://www.youtube.com/watch?v=No6RxV0fzPs",
+        "https://www.youtube.com/watch?v=oGSsgACIc6Q",
         "fall-guys.mp4",
         "Throneful",
         "center",
