@@ -18,7 +18,8 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
-DEFAULT_MAX_LENGTH: int = 50 # video length variable
+DEFAULT_MAX_LENGTH: int = 50  # video length variable
+
 
 class TTSEngine:
 
@@ -53,27 +54,31 @@ class TTSEngine:
 
     def run(self) -> Tuple[int, int]:
 
-        Path(self.path).mkdir(parents=True, exist_ok=True)      
+        Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
-        
+
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
         idx = None
 
-        if  settings.config["settings"]["storymode"] :
+        if settings.config["settings"]["storymode"]:
             if settings.config["settings"]["storymodemethod"] == 0:
-                if  (len(self.reddit_object["thread_post"]) > self.tts_module.max_chars):
+                if len(self.reddit_object["thread_post"]) > self.tts_module.max_chars:
                     self.split_post(self.reddit_object["thread_post"], "postaudio")
-                else :
-                    self.call_tts("postaudio",process_text(self.reddit_object["thread_post"]) )   
+                else:
+                    self.call_tts(
+                        "postaudio", process_text(self.reddit_object["thread_post"])
+                    )
             elif settings.config["settings"]["storymodemethod"] == 1:
-                
-                for idx,text in  track(enumerate(self.reddit_object["thread_post"])):
-                    self.call_tts(f"postaudio-{idx}",process_text(text) )
 
-        else :
-            
-            for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+                for idx, text in track(enumerate(self.reddit_object["thread_post"])):
+                    self.call_tts(f"postaudio-{idx}", process_text(text))
+
+        else:
+
+            for idx, comment in track(
+                enumerate(self.reddit_object["comments"]), "Saving..."
+            ):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
                     self.length -= self.last_clip_length
@@ -92,7 +97,10 @@ class TTSEngine:
     def split_post(self, text: str, idx):
         split_files = []
         split_text = [
-            x.group().strip() for x in re.finditer(r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text)
+            x.group().strip()
+            for x in re.finditer(
+                r" *(((.|\n){0," + str(self.tts_module.max_chars) + "})(\.|.$))", text
+            )
         ]
         self.create_silence_mp3()
 
@@ -106,15 +114,19 @@ class TTSEngine:
                 continue
             else:
                 self.call_tts(f"{idx}-{idy}.part", newtext)
-                with open(f"{self.path}/list.txt", 'w') as f:
+                with open(f"{self.path}/list.txt", "w") as f:
                     for idz in range(0, len(split_text)):
                         f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
                     split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     f.write("file " + f"'silence.mp3'" + "\n")
 
-                os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
-                          "-i " + f"{self.path}/list.txt " +
-                          "-c copy " + f"{self.path}/{idx}.mp3")
+                os.system(
+                    "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
+                    + "-i "
+                    + f"{self.path}/list.txt "
+                    + "-c copy "
+                    + f"{self.path}/{idx}.mp3"
+                )
         try:
             for i in range(0, len(split_files)):
                 os.unlink(split_files[i])
@@ -129,13 +141,17 @@ class TTSEngine:
             self.tts_module.run(text, filepath=f"{self.path}/{filename}_no_silence.mp3")
             self.create_silence_mp3()
 
-            with open(f"{self.path}/{filename}.txt", 'w') as f:
+            with open(f"{self.path}/{filename}.txt", "w") as f:
                 f.write("file " + f"'{filename}_no_silence.mp3'" + "\n")
                 f.write("file " + f"'silence.mp3'" + "\n")
             f.close()
-            os.system("ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 " +
-                      "-i " + f"{self.path}/{filename}.txt " +
-                      "-c copy " + f"{self.path}/{filename}.mp3")
+            os.system(
+                "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
+                + "-i "
+                + f"{self.path}/{filename}.txt "
+                + "-c copy "
+                + f"{self.path}/{filename}.mp3"
+            )
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
             self.length += clip.duration
             self.last_clip_length = clip.duration
@@ -153,9 +169,15 @@ class TTSEngine:
 
     def create_silence_mp3(self):
         silence_duration = settings.config["settings"]["tts"]["silence_duration"]
-        silence = AudioClip(make_frame=lambda t: np.sin(440 * 2 * np.pi * t), duration=silence_duration, fps=44100)
+        silence = AudioClip(
+            make_frame=lambda t: np.sin(440 * 2 * np.pi * t),
+            duration=silence_duration,
+            fps=44100,
+        )
         silence = volumex(silence, 0)
-        silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
+        silence.write_audiofile(
+            f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None
+        )
 
 
 def process_text(text: str):

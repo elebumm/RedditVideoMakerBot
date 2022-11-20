@@ -21,7 +21,9 @@ class pyttsx:
         if voice_id == "" or voice_num == "":
             voice_id = 2
             voice_num = 3
-            raise ValueError("set pyttsx values to a valid value, switching to defaults")
+            raise ValueError(
+                "set pyttsx values to a valid value, switching to defaults"
+            )
         else:
             voice_id = int(voice_id)
             voice_num = int(voice_num)
@@ -32,7 +34,9 @@ class pyttsx:
             voice_id = self.randomvoice()
         engine = pyttsx3.init()
         voices = engine.getProperty("voices")
-        engine.setProperty("voice", voices[voice_id].id)  # changing index changes voices but ony 0 and 1 are working here
+        engine.setProperty(
+            "voice", voices[voice_id].id
+        )  # changing index changes voices but ony 0 and 1 are working here
         engine.save_to_file(text, f"{filepath}")
         engine.runAndWait()
 

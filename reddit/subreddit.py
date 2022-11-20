@@ -21,7 +21,9 @@ def get_subreddit_threads(POST_ID: str):
 
     content = {}
     if settings.config["reddit"]["creds"]["2fa"]:
-        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
         code = input("> ")
         print()
         pw = settings.config["reddit"]["creds"]["password"]
@@ -41,7 +43,7 @@ def get_subreddit_threads(POST_ID: str):
             check_for_async=False,
         )
     except ResponseException as e:
-         if e.response.status_code == 401:
+        if e.response.status_code == 401:
             print("Invalid credentials - please check them in config.toml")
     except:
         print("Something went wrong...")
@@ -53,7 +55,9 @@ def get_subreddit_threads(POST_ID: str):
     ]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
         try:
             subreddit = reddit.subreddit(
-                re.sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+                re.sub(
+                    r"r\/", "", input("What subreddit would you like to pull from? ")
+                )
                 # removes the r/ from the input
             )
         except ValueError:
@@ -63,18 +67,22 @@ def get_subreddit_threads(POST_ID: str):
         sub = settings.config["reddit"]["thread"]["subreddit"]
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
-        if str(subreddit_choice).casefold().startswith("r/"):  # removes the r/ from the input
+        if (
+            str(subreddit_choice).casefold().startswith("r/")
+        ):  # removes the r/ from the input
             subreddit_choice = subreddit_choice[2:]
         subreddit = reddit.subreddit(subreddit_choice)
 
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
-        
+
     elif (
         settings.config["reddit"]["thread"]["post_id"]
         and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
     ):
-        submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
+        submission = reddit.submission(
+            id=settings.config["reddit"]["thread"]["post_id"]
+        )
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
@@ -98,7 +106,7 @@ def get_subreddit_threads(POST_ID: str):
         if settings.config["settings"]["storymodemethod"] == 1:
             content["thread_post"] = posttextparser(submission.selftext)
         else:
-            content["thread_post"] =submission.selftext
+            content["thread_post"] = submission.selftext
     else:
         for top_level_comment in submission.comments:
             if isinstance(top_level_comment, MoreComments):
@@ -111,23 +119,23 @@ def get_subreddit_threads(POST_ID: str):
                 if not sanitised or sanitised == " ":
                     continue
                 if len(top_level_comment.body) <= int(
-                settings.config["reddit"]["thread"]["max_comment_length"]
+                    settings.config["reddit"]["thread"]["max_comment_length"]
                 ):
-                    if len(top_level_comment.body)>= int(
-                    settings.config["reddit"]["thread"]["min_comment_length"]
-                ):
-                    
+                    if len(top_level_comment.body) >= int(
+                        settings.config["reddit"]["thread"]["min_comment_length"]
+                    ):
+
                         if (
-                        top_level_comment.author is not None
-                        and sanitize_text(top_level_comment.body) is not None
-                    ):  # if errors occur with this change to if not.
+                            top_level_comment.author is not None
+                            and sanitize_text(top_level_comment.body) is not None
+                        ):  # if errors occur with this change to if not.
                             content["comments"].append(
-                            {
-                                "comment_body": top_level_comment.body,
-                                "comment_url": top_level_comment.permalink,
-                                "comment_id": top_level_comment.id,
-                            }
-                        )
+                                {
+                                    "comment_body": top_level_comment.body,
+                                    "comment_url": top_level_comment.permalink,
+                                    "comment_id": top_level_comment.id,
+                                }
+                            )
 
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content
