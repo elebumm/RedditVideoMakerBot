@@ -58,7 +58,7 @@ This can also be used to update the installation
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 
-If you want to read more detailed guide about the bot, please refer to the [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)
+If you want to read more detailed guide about the bot, please refer to the [documentation](https://reddit-video-maker-bot.netlify.app/)
 
 ## Video
 
