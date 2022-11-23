@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from logging import error
 import math
 import sys
+from logging import error
 from os import name
+from pathlib import Path
 from subprocess import Popen
 
-from pathlib import Path
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
@@ -80,11 +80,15 @@ def shutdown():
 if __name__ == "__main__":
     assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
     directory = Path().absolute()
-    config = settings.check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
+    config = settings.check_toml(
+        f"{directory}/utils/.config.template.toml", "config.toml"
+    )
     config is False and exit()
     try:
         if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+            for index, post_id in enumerate(
+                config["reddit"]["thread"]["post_id"].split("+")
+            ):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
@@ -103,8 +107,9 @@ if __name__ == "__main__":
         print_markdown("Please check your credentials in the config.toml file")
 
         shutdown()
-    except Exception as err :
-        
-        print_step('Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.')
+    except Exception as err:
+        print_step(
+            "Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community."
+        )
         raise err
         # todo error
