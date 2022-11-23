@@ -3,7 +3,7 @@ import textwrap
 
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
-
+from TTS.engine_wrapper import process_text
 
 def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50):
     """
@@ -27,7 +27,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
     """
     Render Images for video
     """
-    title = reddit_obj["thread_title"]
+    title = process_text(reddit_obj["thread_title"])
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
@@ -60,7 +60,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
 
         image = Image.new("RGBA", size, theme)
         draw = ImageDraw.Draw(image)
-
+        text = process_text(text)
         if len(text) > 50:
             draw_multiple_line_text(image, text, font, txtclr, padding)
 
