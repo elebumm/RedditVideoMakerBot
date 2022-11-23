@@ -87,8 +87,25 @@ def get_subreddit_threads(POST_ID: str):
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
     submission = check_done(submission)  # double-checking
-    if submission is None or not submission.num_comments:
-        return get_subreddit_threads(POST_ID)  # submission already done. rerun
+    if submission is None:
+       return get_subreddit_threads(POST_ID)  # submission already done. rerun
+
+    if settings.config["settings"]["storymode"]:
+        if not submission.selftext and settings.config["reddit"]["thread"]["post_id"] != "":
+            print_substep("You are trying to use story mode on post with no post text")
+            exit()
+        elif not submission.selftext:
+            print_substep("You are trying to use story mode on post with no post text")
+            return get_subreddit_threads(POST_ID)
+        else:
+            # Check for the length of the post text
+            if len(submission.selftext) > (settings.config["settings"]["storymode_max_length"] or 2000):
+                print_substep(
+                    f"Post is too long ({len(submission.selftext)}), retrying with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
+                )
+                return get_subreddit_threads(POST_ID)
+    elif not submission.num_comments:
+        return get_subreddit_threads(POST_ID)
     upvotes = submission.score
     ratio = submission.upvote_ratio * 100
     num_comments = submission.num_comments
