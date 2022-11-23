@@ -38,7 +38,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
             continue
         if submission.num_comments <= int(
             settings.config["reddit"]["thread"]["min_comments"]
-        ):
+        ) and not settings.config["settings"]["storymode"]:
             print_substep(
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
