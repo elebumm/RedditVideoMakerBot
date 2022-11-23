@@ -2,6 +2,7 @@ import base64
 from utils import settings
 import random
 import requests
+import json
 from requests.adapters import HTTPAdapter, Retry
 
 # from profanity_filter import ProfanityFilter
@@ -63,7 +64,8 @@ noneng = [
 class TikTok:  # TikTok Text-to-Speech Wrapper
     def __init__(self):
         self.URI_BASE = (
-            "https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+            #"https://api16-normal-useast5.us.tiktokv.com/media/api/text/speech/invoke/?text_speaker="
+            "https://tiktok-tts.weilnet.workers.dev/api/generation"
         )
         self.max_chars = 300
         self.voices = {"human": human, "nonhuman": nonhuman, "noneng": noneng}
@@ -81,7 +83,21 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             )
         )
         try:
-            r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            payload = json.dumps({
+                "text": text,
+                "voice": voice
+            })
+
+            headers = {
+                'authority': 'tiktok-tts.weilnet.workers.dev',
+                'accept': '*/*',
+                'content-type': 'application/json',
+            }
+
+            #r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = requests.post(self.URI_BASE, headers=headers,  data=payload)
+            #print(r.text)
+            
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
             session = requests.Session()
@@ -89,9 +105,12 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             adapter = HTTPAdapter(max_retries=retry)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            r = session.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = requests.post(self.URI_BASE, headers=headers,  data=payload)
+
+        except Exception as e:
+            print(e)
         # print(r.text)
-        vstr = [r.json()["data"]["v_str"]][0]
+        vstr = r.json()["data"]
         b64d = base64.b64decode(vstr)
 
         with open(filepath, "wb") as out:
