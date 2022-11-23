@@ -14,6 +14,7 @@ max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000,
 min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "min_comment_length number of characters a comment can have. default is 0", example = 50, oob_error = "the max comment length should be between 1 and 100" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr" }
 min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
+post_url = { optional = true, default = "", regex = "^https:\\/\\/www\\.reddit\\.com\\/r\\/[a-zA-Z0-9]+\\/comments\\/[a-zA-Z0-9]+\\/[a-zA-Z0-9_]+\\/$", explanation = "Not working currently Used if you want to use a specific post.", example = "https://www.reddit.com/r/buildapc/comments/yzh07p/have_you_switched_to_windows_11/" }
 
 
 [settings]
