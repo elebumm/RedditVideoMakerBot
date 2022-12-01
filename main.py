@@ -43,7 +43,7 @@ checkversion(__VERSION__)
 
 
 def main(POST_ID=None):
-    reddit_object = get_subreddit_threads(POST_ID)
+    # reddit_object = get_subreddit_threads(POST_ID)
     global redditid
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     )
     config is False and exit()
     try:
-        if len(config["reddit"]["thread"]["post_id"].split("+")) > 1:
+        if config["reddit"]["thread"]["post_id"] :
             for index, post_id in enumerate(
                 config["reddit"]["thread"]["post_id"].split("+")
             ):

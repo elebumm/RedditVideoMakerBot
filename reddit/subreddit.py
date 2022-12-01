@@ -76,13 +76,13 @@ def get_subreddit_threads(POST_ID: str):
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
 
-    elif (
-        settings.config["reddit"]["thread"]["post_id"]
-        and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
-    ):
-        submission = reddit.submission(
-            id=settings.config["reddit"]["thread"]["post_id"]
-        )
+    # elif (
+    #     settings.config["reddit"]["thread"]["post_id"]
+    #     and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
+    # ):
+    #     submission = reddit.submission(
+    #         id=settings.config["reddit"]["thread"]["post_id"]
+    #     )
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
@@ -94,6 +94,9 @@ def get_subreddit_threads(POST_ID: str):
         if not submission.selftext and settings.config["reddit"]["thread"]["post_id"] != "":
             print_substep("You are trying to use story mode on post with no post text")
             exit()
+        elif not submission.selftext:
+            print_substep("You are trying to use story mode on post with no post text") # not allow postid post with no self text it story == true
+            return get_subreddit_threads(POST_ID)
         else:
             # Check for the length of the post text
             if len(submission.selftext) > (settings.config["settings"]["storymode_max_length"] or 2000):
@@ -112,7 +115,7 @@ def get_subreddit_threads(POST_ID: str):
     threadurl = f"https://reddit.com{submission.permalink}"
 
     print_substep(f"Video will be: {submission.title} :thumbsup:", style="bold green")
-    print_substep(f"Thread url is : {threadurl} :thumbsup:", style="bold green")
+    print_substep(f"Thread url is : {threadurl  } :thumbsup:", style="bold green")
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
