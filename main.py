@@ -43,8 +43,8 @@ checkversion(__VERSION__)
 
 
 def main(POST_ID=None):
+    global redditid ,reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
-    global redditid
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
@@ -109,7 +109,8 @@ if __name__ == "__main__":
         shutdown()
     except Exception as err:
         print_step(
-            "Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community."
+            "Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community." +
+            'stm'+ config["settings"]["storymode"] + 'stm m'+ config["settings"]["storymodemethod"] + 'ptc' + len(reddit_object["thread_post"])
         )
         raise err
         # todo error
