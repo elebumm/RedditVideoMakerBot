@@ -1,5 +1,5 @@
 import re
-from subprocess import Popen
+
 
 import spacy
 
