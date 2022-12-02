@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.5.0"
+__VERSION__ = "2.5.2"
 
 print(
     """
@@ -43,7 +43,7 @@ checkversion(__VERSION__)
 
 
 def main(POST_ID=None):
-    # reddit_object = get_subreddit_threads(POST_ID)
+    reddit_object = get_subreddit_threads(POST_ID)
     global redditid
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
