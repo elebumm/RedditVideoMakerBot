@@ -4,6 +4,7 @@ import os
 import re
 from os.path import exists
 from typing import Tuple, Any
+
 from moviepy.audio.AudioClip import concatenate_audioclips, CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.video.VideoClip import ImageClip
@@ -13,11 +14,11 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from rich.console import Console
 
+from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.video import Video
 from utils.videos import save_data
-from utils import settings
 
 console = Console()
 W, H = 1080, 1920
@@ -118,9 +119,7 @@ def make_final_video(
     #    )
     # else: story mode stuff
     img_clip_pos = background_config[3]
-    image_concat = concatenate_videoclips(image_clips).set_position(
-        img_clip_pos
-    )  # note transition kwarg for delay in imgs
+    image_concat = concatenate_videoclips(image_clips).set_position(img_clip_pos)  # note transition kwarg for delay in imgs
     image_concat.audio = audio_composite
     final = CompositeVideoClip([background_clip, image_concat])
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -140,9 +139,7 @@ def make_final_video(
     #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
-    final = Video(final).add_watermark(
-        text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
-     )
+    final = Video(final).add_watermark(text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj)
     final.write_videofile(
         f"assets/temp/{id}/temp.mp4",
         fps=30,
@@ -163,6 +160,4 @@ def make_final_video(
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
-    print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
-    )
+    print_step(f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}')
