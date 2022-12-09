@@ -27,7 +27,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
     """
     Render Images for video
     """
-    title = process_text(reddit_obj["thread_title"])
+    title = process_text(reddit_obj["thread_title"], False) #TODO if second argument cause any error
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
@@ -56,11 +56,11 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
 
     # for comment|description
 
-    for idx, text in track(enumerate(texts), "Rendering Image"):
+    for idx, text in track(enumerate(texts), "Rendering Image")#, total=len(texts)):
 
         image = Image.new("RGBA", size, theme)
         draw = ImageDraw.Draw(image)
-        text = process_text(text)
+        text = process_text(text,False)
         if len(text) > 50:
             draw_multiple_line_text(image, text, font, txtclr, padding)
 
