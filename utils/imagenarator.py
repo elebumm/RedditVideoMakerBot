@@ -56,7 +56,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
 
     # for comment|description
 
-    for idx, text in track(enumerate(texts), "Rendering Image")#, total=len(texts)):
+    for idx, text in track(enumerate(texts), "Rendering Image"):#, total=len(texts)):
 
         image = Image.new("RGBA", size, theme)
         draw = ImageDraw.Draw(image)
