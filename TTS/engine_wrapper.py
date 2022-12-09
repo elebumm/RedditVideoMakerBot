@@ -136,34 +136,16 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
-
+        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
+                # try:
+                #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+                # except (MutagenError, HeaderNotFoundError):
+                #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         try:
-            self.tts_module.run(text, filepath=f"{self.path}/{filename}_no_silence.mp3")
-            self.create_silence_mp3()
-
-            with open(f"{self.path}/{filename}.txt", "w") as f:
-                f.write("file " + f"'{filename}_no_silence.mp3'" + "\n")
-                f.write("file " + f"'silence.mp3'" + "\n")
-            f.close()
-            os.system(
-                "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
-                + "-i "
-                + f"{self.path}/{filename}.txt "
-                + "-c copy "
-                + f"{self.path}/{filename}.mp3"
-            )
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            self.length += clip.duration
             self.last_clip_length = clip.duration
+            self.length += clip.duration
             clip.close()
-            try:
-                name = [f"{filename}_no_silence.mp3", "silence.mp3", f"{filename}.txt"]
-                for i in range(0, len(name)):
-                    os.unlink(str(rf"{self.path}/" + name[i]))
-            except FileNotFoundError as e:
-                print("File not found: " + e.filename)
-            except OSError:
-                print("OSError")
         except:
             self.length = 0
 
@@ -180,9 +162,9 @@ class TTSEngine:
         )
 
 
-def process_text(text: str):
+def process_text(text: str , clean : bool = True):
     lang = settings.config["reddit"]["thread"]["post_lang"]
-    new_text = sanitize_text(text)
+    new_text = sanitize_text(text) if clean else text
     if lang:
         print_substep("Translating Text...")
         translated_text = ts.google(text, to_language=lang)

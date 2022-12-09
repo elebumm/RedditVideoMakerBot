@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.5.2"
+__VERSION__ = "2.5.3"
 
 print(
     """
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     except Exception as err:
         print_step(
             "Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community." +
-            'stm'+ config["settings"]["storymode"] + 'stm m'+ config["settings"]["storymodemethod"] + 'ptc' + len(reddit_object["thread_post"])
+            'stm'+ config["settings"]["storymode"] + 'stm m'+ str(config["settings"]["storymodemethod"]) + 'ptc' + len(reddit_object["thread_post"])
         )
         raise err
         # todo error
