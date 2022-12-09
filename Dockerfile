@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright
+FROM python:3.10.9-slim
 
 RUN apt update
 RUN apt install python3-pip -y
