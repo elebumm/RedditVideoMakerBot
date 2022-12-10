@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.5.3"
+__VERSION__ = "2.5.4"
 
 print(
     """
@@ -108,9 +108,7 @@ if __name__ == "__main__":
 
         shutdown()
     except Exception as err:
-        print_step(
-            "Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community." +
-            'stm'+ config["settings"]["storymode"] + 'stm m'+ str(config["settings"]["storymodemethod"]) + 'ptc' + len(reddit_object["thread_post"])
-        )
+        print_step(f'''Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
+{__VERSION__}stm{str(config["settings"]["storymode"])} stmm {str(config["settings"]["storymodemethod"])} ptl {str(len(reddit_object["thread_post"]))}''') 
         raise err
         # todo error
