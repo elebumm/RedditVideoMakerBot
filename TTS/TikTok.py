@@ -156,6 +156,6 @@ class TikTokTTSException(Exception):
             return f"Code: {self._message}, reason: the text is too long, message: {self._message}"
 
         if self._code == 4:
-            return f"Code: {self._message}, reason: the speaker doesn't exist, message: {self._message}"
+            return f"Code: {self._code}, reason: the speaker doesn't exist, message: {self._message}"
 
         return f"Code: {self._message}, reason: unknown, message: {self._message}"
