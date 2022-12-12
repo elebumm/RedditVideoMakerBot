@@ -38,3 +38,4 @@ tiktok_voice = { optional = false, default = "en_us_006", example = "en_us_006",
 python_voice = { optional = false, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
+no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }

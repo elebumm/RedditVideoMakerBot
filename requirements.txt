@@ -14,3 +14,4 @@ pyttsx3==2.90
 Pillow~=9.3.0
 tomlkit==0.11.4
 Flask==2.2.2
+clean-text==0.6.0
