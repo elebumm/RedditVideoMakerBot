@@ -11,3 +11,5 @@ toml==0.10.2
 translators==5.3.1
 pyttsx3==2.90
 Pillow~=9.3.0
+torch==1.12.1
+transformers==4.25.1
