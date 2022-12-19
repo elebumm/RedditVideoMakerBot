@@ -19,7 +19,9 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
     if not exists("./video_creation/data/videos.json"):
         with open("./video_creation/data/videos.json", "w+") as f:
             json.dump([], f)
-    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
+    with open(
+        "./video_creation/data/videos.json", "r", encoding="utf-8"
+    ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for submission in submissions:
         if already_done(done_videos, submission):
@@ -34,10 +36,14 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
-        if submission.num_comments <= int(settings.config["reddit"]["thread"]["min_comments"]):
+        if submission.num_comments <= int(
+            settings.config["reddit"]["thread"]["min_comments"]
+        ) and not settings.config["settings"]["storymode"]:
             print_substep(
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
+            continue
+        if settings.config["settings"]["storymode"] and not submission.is_self:
             continue
         return submission
     print("all submissions have been done going by top submission order")
@@ -54,7 +60,10 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
         print("all time filters have been checked you absolute madlad ")
 
     return get_subreddit_undone(
-        subreddit.top(time_filter=VALID_TIME_FILTERS[index], limit=(50 if int(index) == 0 else index + 1 * 50)),
+        subreddit.top(
+            time_filter=VALID_TIME_FILTERS[index],
+            limit=(50 if int(index) == 0 else index + 1 * 50),
+        ),
         subreddit,
         times_checked=index,
     )  # all the videos in hot have already been done

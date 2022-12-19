@@ -33,12 +33,17 @@ def check(value, checks, name):
         except:
             incorrect = True
 
-    if not incorrect and "options" in checks and value not in checks["options"]:  # FAILSTATE Value is not one of the options
+    if (
+        not incorrect and "options" in checks and value not in checks["options"]
+    ):  # FAILSTATE Value is not one of the options
         incorrect = True
     if (
         not incorrect
         and "regex" in checks
-        and ((isinstance(value, str) and re.match(checks["regex"], value) is None) or not isinstance(value, str))
+        and (
+            (isinstance(value, str) and re.match(checks["regex"], value) is None)
+            or not isinstance(value, str)
+        )
     ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
         incorrect = True
 
@@ -47,7 +52,11 @@ def check(value, checks, name):
         and not hasattr(value, "__iter__")
         and (
             ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and value > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -55,8 +64,16 @@ def check(value, checks, name):
         not incorrect
         and hasattr(value, "__iter__")
         and (
-            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+            (
+                "nmin" in checks
+                and checks["nmin"] is not None
+                and len(value) < checks["nmin"]
+            )
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and len(value) > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -64,9 +81,15 @@ def check(value, checks, name):
     if incorrect:
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
+                (
+                    ("[blue]Example: " + str(checks["example"]) + "\n")
+                    if "example" in checks
+                    else ""
+                )
                 + "[red]"
-                + ("Non-optional ", "Optional ")["optional" in checks and checks["optional"] is True]
+                + ("Non-optional ", "Optional ")[
+                    "optional" in checks and checks["optional"] is True
+                ]
             )
             + "[#C0CAF5 bold]"
             + str(name)
@@ -78,7 +101,9 @@ def check(value, checks, name):
             err_message=get_check_value("input_error", "Incorrect input"),
             nmin=get_check_value("nmin", None),
             nmax=get_check_value("nmax", None),
-            oob_error=get_check_value("oob_error", "Input out of bounds(Value too high/low/long/short)"),
+            oob_error=get_check_value(
+                "oob_error", "Input out of bounds(Value too high/low/long/short)"
+            ),
             options=get_check_value("options", None),
             optional=get_check_value("optional", False),
         )
@@ -105,7 +130,9 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     try:
         template = toml.load(template_file)
     except Exception as error:
-        console.print(f"[red bold]Encountered error when trying to to load {template_file}: {error}")
+        console.print(
+            f"[red bold]Encountered error when trying to to load {template_file}: {error}"
+        )
         return False
     try:
         config = toml.load(config_file)

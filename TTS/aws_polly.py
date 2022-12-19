@@ -38,11 +38,17 @@ class AWSPolly:
                 voice = self.randomvoice()
             else:
                 if not settings.config["settings"]["tts"]["aws_polly_voice"]:
-                    raise ValueError(f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}")
-                voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
+                    raise ValueError(
+                        f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
+                    )
+                voice = str(
+                    settings.config["settings"]["tts"]["aws_polly_voice"]
+                ).capitalize()
             try:
                 # Request speech synthesis
-                response = polly.synthesize_speech(Text=text, OutputFormat="mp3", VoiceId=voice, Engine="neural")
+                response = polly.synthesize_speech(
+                    Text=text, OutputFormat="mp3", VoiceId=voice, Engine="neural"
+                )
             except (BotoCoreError, ClientError) as error:
                 # The service returned an error, exit gracefully
                 print(error)

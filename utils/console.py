@@ -49,12 +49,19 @@ def handle_input(
     optional=False,
 ):
     if optional:
-        console.print(message + "\n[green]This is an optional value. Do you want to skip it? (y/n)")
+        console.print(
+            message
+            + "\n[green]This is an optional value. Do you want to skip it? (y/n)"
+        )
         if input().casefold().startswith("y"):
             return default if default is not NotImplemented else ""
     if default is not NotImplemented:
         console.print(
-            "[green]" + message + '\n[blue bold]The default value is "' + str(default) + '"\nDo you want to use it?(y/n)'
+            "[green]"
+            + message
+            + '\n[blue bold]The default value is "'
+            + str(default)
+            + '"\nDo you want to use it?(y/n)'
         )
         if input().casefold().startswith("y"):
             return default
@@ -67,7 +74,9 @@ def handle_input(
             if check_type is not False:
                 try:
                     user_input = check_type(user_input)
-                    if (nmin is not None and user_input < nmin) or (nmax is not None and user_input > nmax):
+                    if (nmin is not None and user_input < nmin) or (
+                        nmax is not None and user_input > nmax
+                    ):
                         # FAILSTATE Input out of bounds
                         console.print("[red]" + oob_error)
                         continue
@@ -77,13 +86,19 @@ def handle_input(
                     console.print("[red]" + err_message)
                     continue
             elif match != "" and re.match(match, user_input) is None:
-                console.print("[red]" + err_message + "\nAre you absolutely sure it's correct?(y/n)")
+                console.print(
+                    "[red]"
+                    + err_message
+                    + "\nAre you absolutely sure it's correct?(y/n)"
+                )
                 if input().casefold().startswith("y"):
                     break
                 continue
             else:
                 # FAILSTATE Input STRING out of bounds
-                if (nmin is not None and len(user_input) < nmin) or (nmax is not None and len(user_input) > nmax):
+                if (nmin is not None and len(user_input) < nmin) or (
+                    nmax is not None and len(user_input) > nmax
+                ):
                     console.print("[red bold]" + oob_error)
                     continue
                 break  # SUCCESS Input STRING in bounds
@@ -97,8 +112,20 @@ def handle_input(
                 isinstance(eval(user_input), check_type)
                 return check_type(user_input)
             except:
-                console.print("[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + ".")
+                console.print(
+                    "[red bold]"
+                    + err_message
+                    + "\nValid options are: "
+                    + ", ".join(map(str, options))
+                    + "."
+                )
                 continue
         if user_input in options:
             return user_input
-        console.print("[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + ".")
+        console.print(
+            "[red bold]"
+            + err_message
+            + "\nValid options are: "
+            + ", ".join(map(str, options))
+            + "."
+        )

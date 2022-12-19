@@ -1,20 +1,21 @@
-import re
 import json
+import re
 from pathlib import Path
-from typing import Final
+from typing import Dict, Final
 
 import translators as ts
-from playwright.sync_api import sync_playwright, ViewportSize
+from playwright.async_api import async_playwright  # pylint: disable=unused-import
+from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
 
 from utils import settings
 from utils.console import print_step, print_substep
+from utils.imagenarator import imagemaker
 
 
 __all__ = ["download_screenshots_of_reddit_posts"]
 
-
-def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
+def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
@@ -32,10 +33,13 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as p:
-        print_substep("Launching Headless Browser...")
+    def download(cookie_file, num=None):
+        screenshot_num = num
+        with sync_playwright() as p:
+            print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(headless=True)  # add headless=False for debug
+            browser = p.chromium.launch()  # headless=False #to check for chrome view
+            context = browser.new_context()
 
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
@@ -80,7 +84,7 @@ def download_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: in
                     '[data-click-id="text"] button'
                 ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
-        # translate code
+            # translate code
 
         if lang:
             print_substep("Translating post...")
