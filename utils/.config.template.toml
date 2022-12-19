@@ -14,6 +14,9 @@ max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000,
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr" }
 min_comments = { default = 20, optional = false, nmin = 15, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
 
+[ai]
+ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
+ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to allow NSFW content, True or False" }
