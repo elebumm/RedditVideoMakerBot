@@ -12,20 +12,18 @@ def cleanup(id) -> int:
     Returns:
         int: How many files were deleted
     """
-    if exists("./assets/temp"):
+    if exists(f"../assets/temp/{id}/"):
         count = 0
-        files = [
-            f for f in os.listdir(".") if f.endswith(".mp4") and "temp" in f.lower()
-        ]
+        files = [f for f in os.listdir(f"../assets/temp/{id}/") if f.endswith(".mp4")]
         count += len(files)
         for f in files:
-            os.remove(f)
-        REMOVE_DIRS = [f"./assets/temp/{id}/mp3/", f"./assets/temp/{id}/png/"]
-        files_to_remove = list(map(_listdir, REMOVE_DIRS))
-        for directory in files_to_remove:
-            for file in directory:
-                count += 1
-                os.remove(file)
+            os.remove(f"../assets/temp/{id}/{f}")
+        REMOVE_DIRS = [f"../assets/temp/{id}/mp3/", f"../assets/temp/{id}/png/"]
+        for d in REMOVE_DIRS:
+            if exists(d):
+                count += len(_listdir(d))
+                for f in _listdir(d):
+                    os.remove(f)
+                os.rmdir(d)
+        os.rmdir(f"../assets/temp/{id}/")
         return count
-
-    return 0
