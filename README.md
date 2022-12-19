@@ -87,9 +87,11 @@ Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
 
 Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo (Maintainer)
 
+Simon (OpenSourceSimon) - https://github.com/OpenSourceSimon
+
 CallumIO (c.#6837) - https://github.com/CallumIO
 
-Verq (Verq#2338) - https://github.com/CordlessCoder 
+Verq (Verq#2338) - https://github.com/CordlessCoder
 
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
