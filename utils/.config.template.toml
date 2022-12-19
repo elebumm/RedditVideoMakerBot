@@ -16,6 +16,9 @@ post_lang = { default = "", optional = true, explanation = "The language you wou
 min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
 #post_url = { optional = true, default = "", regex = "^https:\\/\\/www\\.reddit\\.com\\/r\\/[a-zA-Z0-9]+\\/comments\\/[a-zA-Z0-9]+\\/[a-zA-Z0-9_]+\\/$", explanation = "Not working currently Use if you want to use a specific post.", example = "https://www.reddit.com/r/buildapc/comments/yzh07p/have_you_switched_to_windows_11/" }
 
+[ai]
+ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
+ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }

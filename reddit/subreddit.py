@@ -1,15 +1,18 @@
 import re
 
+from prawcore.exceptions import ResponseException
+
+from utils import settings
 import praw
 from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
-from utils import settings
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from utils.voice import sanitize_text
 from utils.posttextparser import posttextparser
+from utils.ai_methods import sort_by_similarity
 
 
 def get_subreddit_threads(POST_ID: str):
@@ -50,6 +53,7 @@ def get_subreddit_threads(POST_ID: str):
 
     # Ask user for subreddit input
     print_step("Getting subreddit threads...")
+    similarity_score = 0
     if not settings.config["reddit"]["thread"][
         "subreddit"
     ]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
@@ -76,6 +80,20 @@ def get_subreddit_threads(POST_ID: str):
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
 
+    elif (
+        settings.config["reddit"]["thread"]["post_id"]
+        and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
+    ):
+        submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
+    elif settings.config["ai"]["ai_similarity_enabled"]: # ai sorting based on comparison
+        threads = subreddit.hot(limit=50)
+        keywords = settings.config["ai"]["ai_similarity_keywords"].split(',')
+        keywords = [keyword.strip() for keyword in keywords]
+        # Reformat the keywords for printing
+        keywords_print = ", ".join(keywords)
+        print(f'Sorting threads by similarity to the given keywords: {keywords_print}')
+        threads, similarity_scores = sort_by_similarity(threads, keywords)
+        submission, similarity_score = get_subreddit_undone(threads, subreddit, similarity_scores=similarity_scores)
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
@@ -99,7 +117,7 @@ def get_subreddit_threads(POST_ID: str):
         exit()
 
     submission = check_done(submission)  # double-checking
-    
+
     upvotes = submission.score
     ratio = submission.upvote_ratio * 100
     num_comments = submission.num_comments
@@ -110,6 +128,8 @@ def get_subreddit_threads(POST_ID: str):
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
+    if similarity_score:
+        print_substep(f"Thread has a similarity score up to {round(similarity_score * 100)}%", style="bold blue")
 
     content["thread_url"] = threadurl
     content["thread_title"] = submission.title

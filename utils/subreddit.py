@@ -3,9 +3,10 @@ from os.path import exists
 
 from utils import settings
 from utils.console import print_substep
+from utils.ai_methods import sort_by_similarity
 
 
-def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
+def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None):
     """_summary_
 
     Args:
@@ -15,6 +16,11 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
     Returns:
         Any: The submission that has not been done
     """
+    # Second try of getting a valid Submission
+    if times_checked and settings.config["ai"]["ai_similarity_enabled"]:
+        print('Sorting based on similarity for a different date filter and thread limit..')
+        submissions = sort_by_similarity(submissions, keywords=settings.config["ai"]["ai_similarity_enabled"])
+
     # recursively checks if the top submission in the list was already done.
     if not exists("./video_creation/data/videos.json"):
         with open("./video_creation/data/videos.json", "w+") as f:
@@ -23,7 +29,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
         "./video_creation/data/videos.json", "r", encoding="utf-8"
     ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
-    for submission in submissions:
+    for i, submission in enumerate(submissions):
         if already_done(done_videos, submission):
             continue
         if submission.over_18:
@@ -45,6 +51,8 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0):
             continue
         if settings.config["settings"]["storymode"] and not submission.is_self:
             continue
+        if similarity_scores is not None:
+            return submission, similarity_scores[i].item()
         return submission
     print("all submissions have been done going by top submission order")
     VALID_TIME_FILTERS = [
