@@ -75,10 +75,15 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
         voice = (
             self.randomvoice()
             if random_voice
-            else (settings.config["settings"]["tts"]["tiktok_voice"] or random.choice(self.voices["human"]))
+            else (
+                settings.config["settings"]["tts"]["tiktok_voice"]
+                or random.choice(self.voices["human"])
+            )
         )
         try:
-            r = requests.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = requests.post(
+                f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0"
+            )
         except requests.exceptions.SSLError:
             # https://stackoverflow.com/a/47475019/18516611
             session = requests.Session()
@@ -86,7 +91,9 @@ class TikTok:  # TikTok Text-to-Speech Wrapper
             adapter = HTTPAdapter(max_retries=retry)
             session.mount("http://", adapter)
             session.mount("https://", adapter)
-            r = session.post(f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0")
+            r = session.post(
+                f"{self.URI_BASE}{voice}&req_text={text}&speaker_map_type=0"
+            )
         # print(r.text)
         vstr = [r.json()["data"]["v_str"]][0]
         b64d = base64.b64decode(vstr)
