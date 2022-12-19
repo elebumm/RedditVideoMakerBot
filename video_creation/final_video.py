@@ -163,7 +163,7 @@ def make_final_video(
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     title_thumb = reddit_obj["thread_title"]
 
-    filename = f"{name_normalize(title)[:150]}"
+    filename = f"{name_normalize(title)[:251]}"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
