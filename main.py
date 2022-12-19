@@ -108,7 +108,11 @@ if __name__ == "__main__":
 
         shutdown()
     except Exception as err:
-        print_step(f'''Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
-{__VERSION__}stm{str(config["settings"]["storymode"])} stmm {str(config["settings"]["storymodemethod"])} ptl {str(len(reddit_object["thread_post"]))}''') 
+        print_step(f'''
+            Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
+            Version: {__VERSION__} \n
+            Story mode: {str(config["settings"]["storymode"])} \n
+            Story mode method: {str(config["settings"]["storymodemethod"])} 
+            ''')
         raise err
         # todo error
