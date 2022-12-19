@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
-import multiprocessing
 import os
 import re
+import multiprocessing
 from os.path import exists
+from typing import Tuple, Any, Final
+import translators as ts
 import shutil
 from typing import Tuple, Any
 from PIL import Image
@@ -26,7 +27,6 @@ from utils import settings
 from utils.thumbnail import create_thumbnail
 
 console = Console()
-W, H = 1080, 1920
 
 
 def name_normalize(name: str) -> str:
@@ -36,18 +36,32 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
-    name[:30]
 
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
-        import translators as ts
-
         print_substep("Translating filename...")
         translated_name = ts.google(name, to_language=lang)
         return translated_name
-
     else:
         return name
+
+
+def prepare_background(reddit_id: str, W: int, H: int) -> VideoFileClip:
+    clip = (
+        VideoFileClip(f"assets/temp/{reddit_id}/background.mp4")
+        .without_audio()
+        .resize(height=H)
+    )
+
+    # calculate the center of the background clip
+    c = clip.w // 2
+
+    # calculate the coordinates where to crop
+    half_w = W // 2
+    x1 = c - half_w
+    x2 = c + half_w
+
+    return clip.crop(x1=x1, y1=0, x2=x2, y2=H)
 
 
 def make_final_video(
@@ -63,23 +77,26 @@ def make_final_video(
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
+    # settings values
+    W: Final[int] = int(settings.config["settings"]["resolution_w"])
+    H: Final[int] = int(settings.config["settings"]["resolution_h"])
+
     # try:  # if it isn't found (i.e you just updated and copied over config.toml) it will throw an error
     #    VOLUME_MULTIPLIER = settings.config["settings"]['background']["background_audio_volume"]
     # except (TypeError, KeyError):
     #    print('No background audio volume found in config.toml. Using default value of 1.')
     #    VOLUME_MULTIPLIER = 1
-    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+
+    reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     print_step("Creating the final video 🎥")
+
     VideoFileClip.reW = lambda clip: clip.resize(width=W)
     VideoFileClip.reH = lambda clip: clip.resize(width=H)
+
     opacity = settings.config["settings"]["opacity"]
     transition = settings.config["settings"]["transition"]
-    background_clip = (
-        VideoFileClip(f"assets/temp/{id}/background.mp4")
-        .without_audio()
-        .resize(height=H)
-        .crop(x1=1166.6, y1=0, x2=2246.6, y2=1920)
-    )
+
+    background_clip = prepare_background(reddit_id, W=W, H=H)
 
     # Gather all audio clips
     if settings.config["settings"]["storymode"]:
@@ -112,11 +129,12 @@ def make_final_video(
     new_transition = (
         0 if transition is None or float(transition) > 2 else float(transition)
     )
+    screenshow_width = int((W * 90) // 100)
     image_clips.insert(
         0,
-        ImageClip(f"assets/temp/{id}/png/title.png")
+        ImageClip(f"assets/temp/{reddit_id}/png/title.png")
         .set_duration(audio_clips[0].duration)
-        .resize(width=W - 100)
+        .resize(width=screenshow_width)
         .set_opacity(new_opacity)
         .crossfadein(new_transition)
         .crossfadeout(new_transition),
@@ -238,15 +256,14 @@ def make_final_video(
     #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
     #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
     #    final.set_audio(final_audio)
-    # if
+
     final = Video(final).add_watermark(
-        text=f"Background credit: {background_config[2]}", opacity=0.4, redditid=reddit_obj
+        text=f"Background credit: {background_config[2]}",
+        opacity=0.4,
+        redditid=reddit_obj,
     )
-
-
-
     final.write_videofile(
-        f"assets/temp/{id}/temp.mp4",
+        f"assets/temp/{reddit_id}/temp.mp4",
         fps=int(settings.config["settings"]["fps"]),
         audio_codec="aac",
         audio_bitrate="192k",
@@ -254,7 +271,7 @@ def make_final_video(
         threads=multiprocessing.cpu_count(),
     )
     ffmpeg_extract_subclip(
-        f"assets/temp/{id}/temp.mp4",
+        f"assets/temp/{reddit_id}/temp.mp4",
         0,
         length,
         targetname=f"results/{subreddit}/{filename}.mp4",
@@ -265,7 +282,7 @@ def make_final_video(
 
     save_data(subreddit, filename+".mp4", title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
-    cleanups = cleanup(id)
+    cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_substep("See result in the results folder!")
 
