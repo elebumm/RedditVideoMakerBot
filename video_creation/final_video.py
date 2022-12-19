@@ -105,19 +105,19 @@ def make_final_video(
             audio_clips.insert(1, AudioFileClip(f"assets/temp/{id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
             audio_clips = [
-                AudioFileClip(f"assets/temp/{id}/mp3/postaudio-{i}.mp3")
+                AudioFileClip(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
                 for i in track(
                     range(number_of_clips + 1), "Collecting the audio files..."
                 )
             ]
-            audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
+            audio_clips.insert(0, AudioFileClip(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
         audio_clips = [
-            AudioFileClip(f"assets/temp/{id}/mp3/{i}.mp3")
+            AudioFileClip(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
             for i in range(number_of_clips)
         ]
-        audio_clips.insert(0, AudioFileClip(f"assets/temp/{id}/mp3/title.mp3"))
+        audio_clips.insert(0, AudioFileClip(f"assets/temp/{reddit_id}/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
     audio_composite = CompositeAudioClip([audio_concat])
 
@@ -129,12 +129,12 @@ def make_final_video(
     new_transition = (
         0 if transition is None or float(transition) > 2 else float(transition)
     )
-    screenshow_width = int((W * 90) // 100)
+    screenshot_width = int((W * 90) // 100)
     image_clips.insert(
         0,
         ImageClip(f"assets/temp/{reddit_id}/png/title.png")
         .set_duration(audio_clips[0].duration)
-        .resize(width=screenshow_width)
+        .resize(width=screenshot_width)
         .set_opacity(new_opacity)
         .crossfadein(new_transition)
         .crossfadeout(new_transition),
@@ -143,10 +143,10 @@ def make_final_video(
         if settings.config["settings"]["storymodemethod"] == 0:
             image_clips.insert(
                 1,
-                ImageClip(f"assets/temp/{id}/png/story_content.png")
+                ImageClip(f"assets/temp/{reddit_id}/png/story_content.png")
                 .set_duration(audio_clips[1].duration)
                 .set_position("center")
-                .resize(width=W - 100)
+                .resize(width=screenshot_width)
                 .set_opacity(float(opacity)),
             )
         elif settings.config["settings"]["storymodemethod"] == 1:
@@ -154,9 +154,9 @@ def make_final_video(
                 range(0, number_of_clips + 1), "Collecting the image files..."
             ):
                 image_clips.append(
-                    ImageClip(f"assets/temp/{id}/png/img{i}.png")
+                    ImageClip(f"assets/temp/{reddit_id}/png/img{i}.png")
                     .set_duration(audio_clips[i + 1].duration)
-                    .resize(width=W - 100)
+                    .resize(width=screenshot_width)
                     .set_opacity(new_opacity)
                     # .crossfadein(new_transition)
                     # .crossfadeout(new_transition)
@@ -164,9 +164,9 @@ def make_final_video(
     else:
         for i in range(0, number_of_clips):
             image_clips.append(
-                ImageClip(f"assets/temp/{id}/png/comment_{i}.png")
+                ImageClip(f"assets/temp/{reddit_id}/png/comment_{i}.png")
                 .set_duration(audio_clips[i + 1].duration)
-                .resize(width=W - 100)
+                .resize(width=screenshot_width)
                 .set_opacity(new_opacity)
                 .crossfadein(new_transition)
                 .crossfadeout(new_transition)
@@ -216,8 +216,8 @@ def make_final_video(
         thumbnail = Image.open(f"assets/backgrounds/{first_image}")
         width, height = thumbnail.size
         thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title_thumb)
-        thumbnailSave.save(f"./assets/temp/{id}/thumbnail.png")
-        print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
+        thumbnailSave.save(f"./assets/temp/{reddit_id}/thumbnail.png")
+        print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     # create a tumbnail for the video
     settingsbackground = settings.config["settings"]["background"]
@@ -246,8 +246,8 @@ def make_final_video(
         thumbnail = Image.open(f"assets/backgrounds/{first_image}")
         width, height = thumbnail.size
         thumbnailSave = create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title_thumb)
-        thumbnailSave.save(f"./assets/temp/{id}/thumbnail.png")
-        print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{id}/thumbnail.png")
+        thumbnailSave.save(f"./assets/temp/{reddit_id}/thumbnail.png")
+        print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     # if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
     #    audioclip = mpe.AudioFileClip(f"assets/backgrounds/background.mp3").set_duration(final.duration)
@@ -269,6 +269,7 @@ def make_final_video(
         audio_bitrate="192k",
         verbose=False,
         threads=multiprocessing.cpu_count(),
+        preset="ultrafast", #TODO debug
     )
     ffmpeg_extract_subclip(
         f"assets/temp/{reddit_id}/temp.mp4",

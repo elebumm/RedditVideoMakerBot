@@ -33,14 +33,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
-    def download(cookie_file, num=None):
-        screenshot_num = num
-        with sync_playwright() as p:
-            print_substep("Launching Headless Browser...")
+    screenshot_num: int
+    with sync_playwright() as p:
+        print_substep("Launching Headless Browser...")
 
-            browser = p.chromium.launch()  # headless=False #to check for chrome view
-            context = browser.new_context()
-
+        browser = p.chromium.launch()  # headless=False #to check for chrome view
+        context = browser.new_context()
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
@@ -52,7 +50,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
         )
-
+        if settings.config["settings"]["storymodemethod"] == 1:
+            # for idx,item in enumerate(reddit_object["thread_post"]):
+            bgcolor = (255, 255, 255, 255)
+            txtcolor = (0, 0, 0)
+            imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
         # set the theme and disable non-essential cookies
         if settings.config["settings"]["theme"] == "dark":
             cookie_file = open(
@@ -104,15 +106,15 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if storymode:
-            page.locator('[data-click-id="text"]').screenshot(
+            page.locator('[data-click-id="text"]').first.screenshot(
                 path=f"assets/temp/{reddit_id}/png/story_content.png"
             )
         else:
             for idx, comment in enumerate(
-                track(
-                    reddit_object["comments"][:screenshot_num],
-                    "Downloading screenshots...",
-                )
+                    track(
+                        reddit_object["comments"][:screenshot_num],
+                        "Downloading screenshots...",
+                    )
             ):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
@@ -146,5 +148,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         # close browser instance when we are done using it
         browser.close()
+
+
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
