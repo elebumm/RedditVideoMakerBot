@@ -81,7 +81,9 @@ def get_subreddit_threads(POST_ID: str):
         threads = subreddit.hot(limit=50)
         keywords = settings.config["ai"]["ai_similarity_keywords"].split(',')
         keywords = [keyword.strip() for keyword in keywords]
-        print(f'Sorting threads by similarity to the given keywords {keywords}')
+        # Reformat the keywords for printing
+        keywords_print = ", ".join(keywords)
+        print(f'Sorting threads by similarity to the given keywords: {keywords_print}')
         threads, similarity_scores = sort_by_similarity(threads, keywords)
         submission, similarity_score = get_subreddit_undone(threads, subreddit, similarity_scores=similarity_scores)
     else:
