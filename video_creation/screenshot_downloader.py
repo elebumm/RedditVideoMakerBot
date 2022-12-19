@@ -50,20 +50,22 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
         )
-        if settings.config["settings"]["storymodemethod"] == 1:
-            # for idx,item in enumerate(reddit_object["thread_post"]):
-            bgcolor = (255, 255, 255, 255)
-            txtcolor = (0, 0, 0)
-            imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
         # set the theme and disable non-essential cookies
         if settings.config["settings"]["theme"] == "dark":
             cookie_file = open(
                 "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
             )
+            bgcolor = (33, 33, 36, 255)
+            txtcolor = (240, 240, 240)
         else:
             cookie_file = open(
                 "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
             )
+            bgcolor = (255, 255, 255, 255)
+            txtcolor = (0, 0, 0)
+        if settings.config["settings"]["storymodemethod"] == 1:
+            # for idx,item in enumerate(reddit_object["thread_post"]):
+            imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
         cookies = json.load(cookie_file)
         cookie_file.close()
 
