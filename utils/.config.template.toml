@@ -34,7 +34,7 @@ background_choice = { optional = true, default = "minecraft", example = "rocket-
 voice_choice = { optional = false, default = "tiktok", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
-tiktok_voice = { optional = true, example = "en_us_006", explanation = "The voice used for TikTok TTS" }
+tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
 tiktok_sessionid = { optional = true, example = "c76bcc3a7625abcc27b508c7db457ff1", explanation = "TikTok sessionid needed for the TTS API request. Check documentation if you don't know how to obtain it." }
 python_voice = { optional = false, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
