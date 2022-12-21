@@ -150,10 +150,10 @@ class TikTokTTSException(Exception):
 
     def __str__(self) -> str:
         if self._code == 1:
-            return f"Code: {self._message}, reason: probably the aid value isn't correct, message: {self._message}"
+            return f"Code: {self._code}, reason: probably the aid value isn't correct, message: {self._message}"
 
         if self._code == 2:
-            return f"Code: {self._message}, reason: the text is too long, message: {self._message}"
+            return f"Code: {self._code}, reason: the text is too long, message: {self._message}"
 
         if self._code == 4:
             return f"Code: {self._code}, reason: the speaker doesn't exist, message: {self._message}"
