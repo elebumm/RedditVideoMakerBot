@@ -78,18 +78,15 @@ vocals: Final[tuple] = (
 
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
-
-    max_chars: Final[int] = 300
-    BASE_URL: Final[
-        str
-    ] = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
-
     def __init__(self):
         headers = {
             "User-Agent": "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; "
             "Build/NRD90M;tt-ok/3.12.13.1)",
             "Cookie": f"sessionid={settings.config['settings']['tts']['tiktok_sessionid']}",
         }
+        
+        self.URI_BASE = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
+        self.max_chars = 300
 
         self._session = requests.Session()
         # set the headers to the session, so we don't have to do it for every request
@@ -131,10 +128,10 @@ class TikTok:
 
         # send request
         try:
-            response = self._session.post(self.BASE_URL, params=params)
+            response = self._session.post(self.URI_BASE, params=params)
         except ConnectionError:
             time.sleep(random.randrange(1, 7))
-            response = self._session.post(self.BASE_URL, params=params)
+            response = self._session.post(self.URI_BASE, params=params)
 
         return response.json()
 
