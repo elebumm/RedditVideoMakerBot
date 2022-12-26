@@ -63,9 +63,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             )
             bgcolor = (255, 255, 255, 255)
             txtcolor = (0, 0, 0)
-        if settings.config["settings"]["storymodemethod"] == 1:
+        if storymode and settings.config["settings"]["storymodemethod"] == 1:
             # for idx,item in enumerate(reddit_object["thread_post"]):
-            imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
+            return imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
         cookies = json.load(cookie_file)
         cookie_file.close()
 
