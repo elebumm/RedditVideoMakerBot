@@ -89,22 +89,24 @@ def make_final_video(
         .filter('scale', 'iw-200', -1)
     )
 
-    for i in range(0, number_of_clips):
+    current_time = 0
+    for i in range(0, number_of_clips + 1):
         image_clips.append(
             ffmpeg.input(f"assets/temp/{id}/png/comment_{i}.png")['v']
             .filter('scale', 'iw-200', -1)
         )
-    
-    current_time = 0
-    for i in range(0, number_of_clips):
         video = video.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
         current_time += audio_clips_durations[i]
-
+    
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
     filename = f"{name_normalize(title)[:251]}.mp4"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
+
+    if not exists(f"./results/{subreddit}"):
+        print_substep("The results folder didn't exist so I made it")
+        os.makedirs(f"./results/{subreddit}")
 
     output = ffmpeg.output(video, audio, f"results/{subreddit}/{filename}", f='mp4', **{"c:v": "h264"}).overwrite_output()
     output.run()
