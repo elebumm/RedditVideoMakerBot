@@ -50,7 +50,7 @@ def name_normalize(name: str) -> str:
 
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
-    output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
+    output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264", "b:v": "8M", "b:a": "192k", "threads": multiprocessing.cpu_count()}).overwrite_output()
     output.run()
     return output_path
 
@@ -99,7 +99,7 @@ def make_final_video(
     audio_clips_durations = [float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/{i}.mp3")['format']['duration']) for i in range(number_of_clips)]
     audio_clips_durations.insert(0, float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")['format']['duration']))
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
-    ffmpeg.output(audio_concat, f"assets/temp/{reddit_id}/audio.mp3").overwrite_output().run()
+    ffmpeg.output(audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}).overwrite_output().run()
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # Gather all images
@@ -151,7 +151,7 @@ def make_final_video(
     filename = f"{name_normalize(title)[:251]}"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    final = ffmpeg.output(background_clip, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
+    final = ffmpeg.output(background_clip, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "8M", "b:a": "192k", "threads": multiprocessing.cpu_count()}).overwrite_output()
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
