@@ -50,10 +50,7 @@ def name_normalize(name: str) -> str:
 
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
-    if settings.config["settings"]["storymode"]:
-        output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").output(output_path, an=None, **{"c:v": "h264"}).overwrite_output()
-    else:
-        output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264"}).overwrite_output()
+    output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264"}).overwrite_output()
     output.run()
     return output_path
 
