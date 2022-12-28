@@ -50,7 +50,7 @@ def name_normalize(name: str) -> str:
 
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
-    output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264", "b:v": "5M", "b:a": "192k"}).overwrite_output()
+    output = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4").filter('crop', "ih*(9/16)", "ih").output(output_path, an=None, **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
     output.run()
     return output_path
 
@@ -159,7 +159,7 @@ def make_final_video(
     filename = f"{name_normalize(title)[:251]}"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    final = ffmpeg.output(video, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "5M", "b:a": "192k"}).overwrite_output()
+    final = ffmpeg.output(video, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
