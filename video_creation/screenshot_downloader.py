@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Dict, Final
 
 import translators as ts
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
-from playwright.sync_api import ViewportSize, sync_playwright
+from playwright.async_api import async_playwright
+from playwright.sync_api import ViewportSize
 from rich.progress import track
 
 from utils import settings
@@ -15,7 +15,7 @@ from utils.imagenarator import imagemaker
 
 __all__ = ["download_screenshots_of_reddit_posts"]
 
-def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
+async def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
@@ -34,17 +34,17 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
     screenshot_num: int
-    with sync_playwright() as p:
+    async with async_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch()  # headless=False #to check for chrome view
-        context = browser.new_context()
+        browser = await p.chromium.launch()  # headless=False #to check for chrome view
+        context = await browser.new_context()
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
         dsf = (W // 600) + 1
 
-        context = browser.new_context(
+        context = await browser.new_context(
             locale=lang or "en-us",
             color_scheme="dark",
             viewport=ViewportSize(width=W, height=H),
@@ -69,22 +69,22 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         cookies = json.load(cookie_file)
         cookie_file.close()
 
-        context.add_cookies(cookies)  # load preference cookies
+        await context.add_cookies(cookies)  # load preference cookies
 
         # Get the thread screenshot
-        page = context.new_page()
-        page.goto(reddit_object["thread_url"], timeout=0)
-        page.set_viewport_size(ViewportSize(width=W, height=H))
+        page = await context.new_page()
+        await page.goto(reddit_object["thread_url"], timeout=0)
+        await page.set_viewport_size(ViewportSize(width=W, height=H))
 
-        if page.locator('[data-testid="content-gate"]').is_visible():
+        if await page.locator('[data-testid="content-gate"]').is_visible():
             # This means the post is NSFW and requires to click the proceed button.
 
             print_substep("Post is NSFW. You are spicy...")
-            page.locator('[data-testid="content-gate"] button').click()
-            page.wait_for_load_state()  # Wait for page to fully load
+            await page.locator('[data-testid="content-gate"] button').click()
+            await page.wait_for_load_state()  # Wait for page to fully load
 
-            if page.locator('[data-click-id="text"] button').is_visible():
-                page.locator(
+            if await page.locator('[data-click-id="text"] button').is_visible():
+                await page.locator(
                     '[data-click-id="text"] button'
                 ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
@@ -97,7 +97,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 to_language=lang,
             )
 
-            page.evaluate(
+            await page.evaluate(
                 "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
                 texts_in_tl,
             )
@@ -105,10 +105,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
-        page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+        await page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
 
         if storymode:
-            page.locator('[data-click-id="text"]').first.screenshot(
+            await page.locator('[data-click-id="text"]').first.screenshot(
                 path=f"assets/temp/{reddit_id}/png/story_content.png"
             )
         else:
@@ -122,10 +122,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 if idx >= screenshot_num:
                     break
 
-                if page.locator('[data-testid="content-gate"]').is_visible():
-                    page.locator('[data-testid="content-gate"] button').click()
+                if await page.locator('[data-testid="content-gate"]').is_visible():
+                    await page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+                await page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
 
                 # translate code
 
@@ -134,12 +134,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         comment["comment_body"],
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
-                    page.evaluate(
+                    await page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                    await page.locator(f"#t1_{comment['comment_id']}").screenshot(
                         path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
                     )
                 except TimeoutError:
@@ -149,7 +149,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     continue
 
         # close browser instance when we are done using it
-        browser.close()
+        await browser.close()
 
 
 
