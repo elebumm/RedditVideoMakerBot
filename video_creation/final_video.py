@@ -75,9 +75,6 @@ def make_final_video(
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     print_step("Creating the final video 🎥")
 
-    opacity = settings.config["settings"]["opacity"]
-    transition = settings.config["settings"]["transition"]
-
     background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
 
     # Gather all audio clips
@@ -106,14 +103,9 @@ def make_final_video(
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
     # Gather all images
-    new_opacity = 1 if opacity is None or float(opacity) >= 1 else float(opacity)
-    new_transition = (
-        0 if transition is None or float(transition) > 2 else float(transition)
-    )
     screenshot_width = "iw-800"
 
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
-    video = ffmpeg.input(f"assets/temp/{reddit_id}/background_noaudio.mp4")
 
     image_clips = list()
 
@@ -131,7 +123,7 @@ def make_final_video(
                 ffmpeg.input(f"assets/temp/{reddit_id}/png/story_content.png")
                 .filter('scale', screenshot_width, -1)
             )
-            video = video.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
+            background_clip = background_clip.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
             current_time += audio_clips_durations[i]
         elif settings.config["settings"]["storymodemethod"] == 1:
             for i in track(
@@ -141,7 +133,7 @@ def make_final_video(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")['v']
                     .filter('scale', screenshot_width, -1)
                 )
-                video = video.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
+                background_clip = background_clip.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
                 current_time += audio_clips_durations[i]
     else:
         for i in range(0, number_of_clips + 1):
@@ -149,7 +141,7 @@ def make_final_video(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")['v']
                     .filter('scale', screenshot_width, -1)
             )
-            video = video.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
+            background_clip = background_clip.overlay(image_clips[i], enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})', x='(main_w-overlay_w)/2', y='(main_h-overlay_h)/2')
             current_time += audio_clips_durations[i]
 
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
@@ -159,7 +151,7 @@ def make_final_video(
     filename = f"{name_normalize(title)[:251]}"
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
-    final = ffmpeg.output(video, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
+    final = ffmpeg.output(background_clip, audio, f"results/{subreddit}/{filename}.mp4", f='mp4', **{"c:v": "h264", "b:v": "8M", "b:a": "192k"}).overwrite_output()
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
