@@ -24,9 +24,10 @@ background_options.pop("__comment", None)
 for name in list(background_options.keys()):
     pos = background_options[name][3]
 
-    if pos != "center":
-        background_options[name][3] = lambda t: ("center", pos + t)
+    if pos == "center":
+        pos = 0
 
+    background_options[name][3] = lambda t: ("center", pos + t)
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
     """Generates a random interval of time to be used as the background of the video.
