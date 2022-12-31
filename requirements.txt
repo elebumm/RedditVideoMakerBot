@@ -13,3 +13,4 @@ pyttsx3==2.90
 Pillow~=9.1.1
 tomlkit==0.11.4
 Flask==2.2.2
+customtkinter==4.6.3
