@@ -1,0 +1,63 @@
+{
+    "__comment": "Supported Backgrounds. Can add/remove background video here...",
+    "motor-gta": [
+        "https://www.youtube.com/watch?v=vw5L4xCPy9Q",
+        "bike-parkour-gta.mp4",
+        "Achy Gaming",
+        480
+    ],
+    "rocket-league": [
+        "https://www.youtube.com/watch?v=2X9QGY__0II",
+        "rocket_league.mp4",
+        "Orbital Gameplay",
+        200
+    ],
+    "minecraft": [
+        "https://www.youtube.com/watch?v=n_Dv4JMiwK8",
+        "parkour.mp4",
+        "bbswitzer",
+        "center"
+    ],
+    "gta": [
+        "https://www.youtube.com/watch?v=qGa9kWREOnE",
+        "gta-stunt-race.mp4",
+        "Achy Gaming",
+        480
+    ],
+    "csgo-surf": [
+        "https://www.youtube.com/watch?v=E-8JlyO59Io",
+        "csgo-surf.mp4",
+        "Aki",
+        "center"
+    ],
+    "cluster-truck": [
+        "https://www.youtube.com/watch?v=uVKxtdMgJVU",
+        "cluster_truck.mp4",
+        "No Copyright Gameplay",
+        480
+    ],
+    "minecraft-2": [
+        "https://www.youtube.com/watch?v=Pt5_GSKIWQM",
+        "minecraft-2.mp4",
+        "Itslpsn",
+        "center"
+    ],
+    "multiversus": [
+        "https://www.youtube.com/watch?v=66oK1Mktz6g",
+        "multiversus.mp4",
+        "MKIceAndFire",
+        "center"
+    ],
+    "fall-guys": [
+        "https://www.youtube.com/watch?v=oGSsgACIc6Q",
+        "fall-guys.mp4",
+        "Throneful",
+        "center"
+    ],
+    "steep": [
+        "https://www.youtube.com/watch?v=EnGiQrWBrko",
+        "steep.mp4",
+        "joel",
+        "center"
+    ]
+}

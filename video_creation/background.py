@@ -1,18 +1,31 @@
-from pathlib import Path
+import json
 import random
-from random import randrange
 import re
+from pathlib import Path
+from random import randrange
 from typing import Any, Tuple
-
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
-
 from utils import settings
-from utils.CONSTANTS import background_options
 from utils.console import print_step, print_substep
+
+# Load background videos
+with open("utils/backgrounds.json") as json_file:
+    background_options = json.load(json_file)
+
+# Remove "__comment" from backgrounds
+background_options.pop("__comment", None)
+
+# Add position lambda function
+# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
+for name in list(background_options.keys()):
+    pos = background_options[name][3]
+
+    if pos != "center":
+        background_options[name][3] = lambda t: ("center", pos + t)
 
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
@@ -32,7 +45,9 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
 def get_background_config():
     """Fetch the background/s configuration"""
     try:
-        choice = str(settings.config["settings"]["background"]["background_choice"]).casefold()
+        choice = str(
+            settings.config["settings"]["background"]["background_choice"]
+        ).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None
@@ -57,13 +72,15 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(res="1080p").first().download(
-        "assets/backgrounds", filename=f"{credit}-{filename}"
-    )
+    YouTube(uri, on_progress_callback=on_progress).streams.filter(
+        res="1080p"
+    ).first().download("assets/backgrounds", filename=f"{credit}-{filename}")
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
-def chop_background_video(background_config: Tuple[str, str, str, Any], video_length: int, reddit_object: dict):
+def chop_background_video(
+    background_config: Tuple[str, str, str, Any], video_length: int, reddit_object: dict
+):
     """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
 
     Args:
