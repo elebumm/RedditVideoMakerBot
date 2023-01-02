@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.5.0"
+__VERSION__ = "3.0"
 
 print(
     """
