@@ -13,7 +13,7 @@ from utils import settings
 from utils.console import print_step, print_substep
 
 # Load background videos
-with open("utils/backgrounds.json") as json_file:
+with open("./utils/backgrounds.json") as json_file:
     background_options = json.load(json_file)
 
 # Remove "__comment" from backgrounds

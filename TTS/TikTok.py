@@ -108,7 +108,11 @@ class TikTok:
             raise TikTokTTSException(status_code, data["message"])
 
         # decode data from base64 to binary
-        raw_voices = data["data"]["v_str"]
+        try:
+            raw_voices = data["data"]["v_str"]
+        except:
+            print("The TikTok TTS returned an invalid response. Please try again later, and report this bug.")
+            raise TikTokTTSException(0, "Invalid response")
         decoded_voices = base64.b64decode(raw_voices)
 
         # write voices to specified filepath
