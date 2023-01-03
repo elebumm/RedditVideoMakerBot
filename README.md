@@ -95,7 +95,7 @@ LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
 Freebiell (Freebie#3263) - https://github.com/FreebieII
 
-Aman Raza(electro199#8130) https://github.com/electro199
+Aman Raza (electro199#8130) https://github.com/electro199
 
 
 ## LICENSE
