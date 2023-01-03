@@ -93,3 +93,7 @@ Verq (Verq#2338) - https://github.com/CordlessCoder
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
 Freebiell (Freebie#3263) - https://github.com/FreebieII
+
+#
+## LICENSE
+Roboto font is/are licensed under The Apache License.[click here for more info](https://www.apache.org/licenses/LICENSE-2.0)
