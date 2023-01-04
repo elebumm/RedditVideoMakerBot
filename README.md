@@ -39,12 +39,11 @@ The only original thing being done is the editing and gathering of all materials
 
 1. Clone this repository
 2. Run `pip install -r requirements.txt`
-
 3. Run `python -m playwright install` and `python -m playwright install-deps`
 
 **EXPERIMENTAL!!!!**
 
-On MacOS and Linux (debian, arch, fedora and centos, and based on those), you can run an install script that will automatically install steps 1 to 3. (requires bash)
+On macOS and Linux (debian, arch, fedora and centos, and based on those), you can run an install script that will automatically install steps 1 to 3. (requires bash)
 
 `bash <(curl -sL https://raw.githubusercontent.com/elebumm/RedditVideoMakerBot/master/install.sh)`
 
@@ -58,7 +57,7 @@ This can also be used to update the installation
 
 (Note if you got an error installing or running the bot try first rerunning the command with a three after the name e.g. python3 or pip3)
 
-If you want to read more detailed guide about the bot, please refer to the [documentation](https://luka-hietala.gitbook.io/documentation-for-the-reddit-bot/)
+If you want to read more detailed guide about the bot, please refer to the [documentation](https://reddit-video-maker-bot.netlify.app/)
 
 ## Video
 
@@ -82,16 +81,26 @@ I have tried to simplify the code so anyone can read it and start contributing a
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
+### For any questions or support join the [Discord](https://discord.com/channels/897666935708352582/) server
+
 ## Developers and maintainers.
 
 Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
 
 Jason (JasonLovesDoggo#1904) - https://github.com/JasonLovesDoggo (Maintainer)
 
+Simon (OpenSourceSimon) - https://github.com/OpenSourceSimon
+
 CallumIO (c.#6837) - https://github.com/CallumIO
 
-Verq (Verq#2338) - https://github.com/CordlessCoder 
+Verq (Verq#2338) - https://github.com/CordlessCoder
 
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
 Freebiell (Freebie#3263) - https://github.com/FreebieII
+
+Aman Raza (electro199#8130) - https://github.com/electro199
+
+
+## LICENSE
+[Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
