@@ -9,7 +9,7 @@ ADD . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 RUN python -m playwright install
-RUN python -m playwright install
+
 
 # tricks for pytube : https://github.com/elebumm/RedditVideoMakerBot/issues/142 
 # (NOTE : This is no longer useful since pytube was removed from the dependencies)
