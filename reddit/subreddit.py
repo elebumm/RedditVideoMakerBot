@@ -1,5 +1,5 @@
 import re
-
+from random import choice
 from prawcore.exceptions import ResponseException
 
 from utils import settings
@@ -14,6 +14,7 @@ from utils.voice import sanitize_text
 from utils.posttextparser import posttextparser
 from utils.ai_methods import sort_by_similarity
 
+subs = ["announcements", "funny", "AskReddit", "gaming", "aww", "Music", "pics", "science", "worldnews", "videos", "todayilearned", "movies", "news", "Showerthoughts", "EarthPorn", "gifs", "IAmA", "food", "askscience", "Jokes", "LifeProTips", "explainlikeimfive", "Art", "books", "mildlyinteresting", "nottheonion", "DIY", "sports", "blog", "space", "gadgets"]
 
 def get_subreddit_threads(POST_ID: str):
     """
@@ -68,7 +69,8 @@ def get_subreddit_threads(POST_ID: str):
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
     else:
-        sub = settings.config["reddit"]["thread"]["subreddit"]
+        #sub = settings.config["reddit"]["thread"]["subreddit"]
+        sub = choice(subs)
         print_substep(f"Using subreddit: r/{sub} from TOML config")
         subreddit_choice = sub
         if (
