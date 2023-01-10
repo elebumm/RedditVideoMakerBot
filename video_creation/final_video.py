@@ -26,6 +26,8 @@ from utils.thumbnail import create_thumbnail
 from utils import settings
 from utils.thumbnail import create_thumbnail
 
+from reddit.subreddit import choice_sub
+
 console = Console()
 
 
@@ -183,7 +185,8 @@ def make_final_video(
     title_thumb = reddit_obj["thread_title"]
 
     filename = f"{name_normalize(title)[:251]}"
-    subreddit = settings.config["reddit"]["thread"]["subreddit"]
+    #subreddit = settings.config["reddit"]["thread"]["subreddit"]
+    subreddit = choice_sub()
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
