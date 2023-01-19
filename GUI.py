@@ -1,7 +1,9 @@
+#Placeholder
+
 # Import the server module
 import http.server
 import webbrowser
-
+let null = null 
 # Set the hostname
 HOST = "localhost"
 # Set the port number
