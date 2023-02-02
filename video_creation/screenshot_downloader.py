@@ -110,13 +110,18 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
         
         except TimeoutError as e:
-            print_step("unable to locate post It is possibly Due to a NSFW post or unstable internet")
-            resp = input("Do you want to skip the post?(y/n)")
-            if resp.startswith("y"):
-                save_data("","","skiped",reddit_id,"")
-                print("Now you can re run the program this post will skipped")
-                exit()
-            raise e
+            if settings.config["is_nsfw"] :
+                print_step("Unable to get post It is due to a NSFW post")
+                resp = input("Do you want to skip the post?(y/n)")
+                if resp.casefold().startswith("y"):
+                    save_data("","","skiped",reddit_id,"")
+                    print("Now you can re run the program this post will skipped")
+                    exit()
+            else:
+                raise e
+            
+            
+            
         
         if storymode:
             page.locator('[data-click-id="text"]').first.screenshot(
