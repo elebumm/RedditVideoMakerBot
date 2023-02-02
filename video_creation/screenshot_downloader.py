@@ -11,6 +11,8 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
 
+from utils.videos import save_data
+
 __all__ = ["download_screenshots_of_reddit_posts"]
 
 
@@ -118,7 +120,23 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
-        page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+        try:
+            page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+        except Exception as e:
+            OKGREEN = '\033[92m'
+            WARNING = '\033[93m'
+            ENDC = '\033[0m'
+            print_step(f"{WARNING}Something went wrong!{ENDC}")
+            resp = input("Something went wrong with making the screenshots! Do you want to skip the post? (y/n) ")
+            if resp.casefold().startswith("y"):
+                save_data("", "", "skipped", reddit_id, "")
+                print(f"{OKGREEN}The post is successfully skipped! You can now restart the program and this post will skipped.{ENDC}")
+            resp = input("Do you want the error traceback for debugging purposes? (y/n)")
+            if resp.casefold().startswith("y"):
+                print(e)
+                exit()
+            else:
+                exit()
 
         if storymode:
             page.locator('[data-click-id="text"]').first.screenshot(
