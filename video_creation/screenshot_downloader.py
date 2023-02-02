@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, Final
 
 import translators as ts
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
 
@@ -12,8 +11,8 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
 
-
 __all__ = ["download_screenshots_of_reddit_posts"]
+
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
@@ -37,7 +36,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch()  # headless=False #to check for chrome view
+        browser = p.chromium.launch(headless=False)  # headless=False #to check for chrome view
         context = browser.new_context()
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
@@ -70,6 +69,20 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         cookie_file.close()
 
         context.add_cookies(cookies)  # load preference cookies
+
+        # Login to Reddit
+        print_substep("Logging in to Reddit...")
+        page = context.new_page()
+        page.goto("https://www.reddit.com/login", timeout=0)
+        page.set_viewport_size(ViewportSize(width=1920, height=1080))
+        page.wait_for_load_state()
+
+        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
+        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+        page.locator("button:has-text('Log In')").click()
+
+        page.wait_for_load_state()  # Wait for page to fully load and add 5 seconds
+        page.wait_for_timeout(5000)
 
         # Get the thread screenshot
         page = context.new_page()
@@ -150,7 +163,5 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         # close browser instance when we are done using it
         browser.close()
-
-
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
