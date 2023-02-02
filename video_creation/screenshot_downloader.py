@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, Final
 
 import translators as ts
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
 
@@ -13,8 +12,8 @@ from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
 from utils.videos import save_data
 
-
 __all__ = ["download_screenshots_of_reddit_posts"]
+
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
@@ -106,23 +105,24 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
-        try :
+        try:
             page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
-        
-        except TimeoutError as e:
-            if settings.config["is_nsfw"] :
-                print_step("Unable to get post It is due to a NSFW post")
-                resp = input("Do you want to skip the post?(y/n)")
-                if resp.casefold().startswith("y"):
-                    save_data("","","skiped",reddit_id,"")
-                    print("Now you can re run the program this post will skipped")
-                    exit()
+        except Exception as e:
+            OKGREEN = '\033[92m'
+            WARNING = '\033[93m'
+            ENDC = '\033[0m'
+            print_step(f"{WARNING}Something went wrong!{ENDC}")
+            resp = input("Something went wrong with making the screenshots! Do you want to skip the post? (y/n) ")
+            if resp.casefold().startswith("y"):
+                save_data("", "", "skipped", reddit_id, "")
+                print(f"{OKGREEN}The post is successfully skipped! You can now restart the program and this post will skipped.{ENDC}")
+            resp = input("Do you want the error traceback for debugging purposes? (y/n)")
+            if resp.casefold().startswith("y"):
+                print(e)
+                exit()
             else:
-                raise e
-            
-            
-            
-        
+                exit()
+
         if storymode:
             page.locator('[data-click-id="text"]').first.screenshot(
                 path=f"assets/temp/{reddit_id}/png/story_content.png"
@@ -166,7 +166,5 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         # close browser instance when we are done using it
         browser.close()
-
-
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
