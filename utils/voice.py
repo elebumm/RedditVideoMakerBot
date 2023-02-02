@@ -13,7 +13,7 @@ if sys.version_info[0] >= 3:
     from datetime import timezone
 
 
-def check_ratelimit(response: Response):
+def check_ratelimit(response: Response) -> bool:
     """
     Checks if the response is a ratelimit response.
     If it is, it sleeps for the time specified in the response.
@@ -30,7 +30,7 @@ def check_ratelimit(response: Response):
     return True
 
 
-def sleep_until(time):
+def sleep_until(time) -> None:
     """
     Pause your program until a specific end time.
     'time' is either a valid datetime object or unix timestamp in seconds (i.e. seconds since Unix epoch)

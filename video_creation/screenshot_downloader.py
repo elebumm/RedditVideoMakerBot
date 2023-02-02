@@ -11,6 +11,7 @@ from rich.progress import track
 from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
+from utils.videos import save_data
 
 
 __all__ = ["download_screenshots_of_reddit_posts"]
@@ -105,8 +106,18 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
-        page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
-
+        try :
+            page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+        
+        except TimeoutError as e:
+            print_step("unable to locate post It is possibly Due to a NSFW post or unstable internet")
+            resp = input("Do you want to skip the post?(y/n)")
+            if resp.startswith("y"):
+                save_data("","","skiped",reddit_id,"")
+                print("Now you can re run the program this post will skipped")
+                exit()
+            raise e
+        
         if storymode:
             page.locator('[data-click-id="text"]').first.screenshot(
                 path=f"assets/temp/{reddit_id}/png/story_content.png"
