@@ -7,7 +7,7 @@ praw==7.6.1
 prawcore~=2.3.0
 pytube==12.1.0
 requests==2.28.1
-rich==12.5.1
+rich==13.3.1
 toml==0.10.2
 translators==5.3.1
 pyttsx3==2.90
