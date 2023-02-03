@@ -110,9 +110,8 @@ if __name__ == "__main__":
     except Exception as err:
         print_step(f'''
             Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
-            Version: {__VERSION__} \n
-            Story mode: {str(config["settings"]["storymode"])} \n
-            Story mode method: {str(config["settings"]["storymodemethod"])} 
+            Version: {__VERSION__},Story mode: {str(config["settings"]["storymode"])}, Story mode method: {str(config["settings"]["storymodemethod"])},
+            Postid : {str(config["settings"])},allownsfw :{config["settings"]["allow_nsfw"]},is_nsfw : {reddit_object["is_nsfw"]}
             ''')
         raise err
         # todo error
