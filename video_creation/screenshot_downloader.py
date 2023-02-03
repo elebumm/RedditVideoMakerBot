@@ -123,20 +123,18 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         try:
             page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
         except Exception as e:
-            OKGREEN = '\033[92m'
-            WARNING = '\033[93m'
-            ENDC = '\033[0m'
-            print_step(f"{WARNING}Something went wrong!{ENDC}")
+            print_substep("Something went wrong!",style="red")
             resp = input("Something went wrong with making the screenshots! Do you want to skip the post? (y/n) ")
+
             if resp.casefold().startswith("y"):
                 save_data("", "", "skipped", reddit_id, "")
-                print(f"{OKGREEN}The post is successfully skipped! You can now restart the program and this post will skipped.{ENDC}")
+                print_substep("The post is successfully skipped! You can now restart the program and this post will skipped.","green")
+
             resp = input("Do you want the error traceback for debugging purposes? (y/n)")
-            if resp.casefold().startswith("y"):
-                print(e)
+            if not resp.casefold().startswith("y"):
                 exit()
-            else:
-                exit()
+            
+            raise e
 
         if storymode:
             page.locator('[data-click-id="text"]').first.screenshot(
