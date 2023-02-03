@@ -1,11 +1,12 @@
 import re
 import textwrap
+import os
 
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 from TTS.engine_wrapper import process_text
 
-def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50):
+def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50) -> None:
     """
     Draw multiline text over given image
     """
@@ -23,7 +24,7 @@ def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50):
 
 
 # theme=bgcolor,reddit_obj=reddit_object,txtclr=txtcolor
-def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
+def imagemaker(theme, reddit_obj: dict, txtclr, padding=5) -> None:
     """
     Render Images for video
     """
@@ -31,9 +32,9 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
-    tfont = ImageFont.truetype("fonts\\Roboto-Bold.ttf", 27)  # for title
+    tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 27)  # for title
     font = ImageFont.truetype(
-        "fonts\\Roboto-Regular.ttf", 20
+        os.path.join("fonts", "Roboto-Regular.ttf"), 20
     )  # for despcription|comments
     size = (500, 176)
 

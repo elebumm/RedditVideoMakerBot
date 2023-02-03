@@ -81,6 +81,8 @@ I have tried to simplify the code so anyone can read it and start contributing a
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
+### For any questions or support join the [Discord](https://discord.com/channels/897666935708352582/) server
+
 ## Developers and maintainers.
 
 Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
@@ -96,3 +98,9 @@ Verq (Verq#2338) - https://github.com/CordlessCoder
 LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 
 Freebiell (Freebie#3263) - https://github.com/FreebieII
+
+Aman Raza (electro199#8130) - https://github.com/electro199
+
+
+## LICENSE
+[Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)

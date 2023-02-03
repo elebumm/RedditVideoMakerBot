@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "2.5.0"
+__VERSION__ = "3.0.1"
 
 print(
     """
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         shutdown()
     except Exception as err:
         print_step(f'''
-            Sorry, something went wrong with this test version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
+            Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
             Version: {__VERSION__} \n
             Story mode: {str(config["settings"]["storymode"])} \n
             Story mode method: {str(config["settings"]["storymodemethod"])} 
