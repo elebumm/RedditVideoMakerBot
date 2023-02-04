@@ -43,7 +43,7 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
             print("Unknown Choice")
             
         text_to_mp3 = TTSEngine(
-            get_case_insensitive_key_value(TTSProviders, choice), reddit_obj , max_length = settings.config["settings"]["len"]
+            get_case_insensitive_key_value(TTSProviders, choice), reddit_obj , max_length = settings.config["settings"]["max_video_lenght"]
         )
     return text_to_mp3.run()
 
