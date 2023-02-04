@@ -33,11 +33,7 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
     """
 
     voice = settings.config["settings"]["tts"]["voice_choice"]
-    if str(voice).casefold() in map(lambda _: _.casefold(), TTSProviders):
-        text_to_mp3 = TTSEngine(
-            get_case_insensitive_key_value(TTSProviders, voice), reddit_obj
-        )
-    else:
+    if not str(voice).casefold() in map(lambda _: _.casefold(), TTSProviders):
         while True:
             print_step("Please choose one of the following TTS providers: ")
             print_table(TTSProviders)
@@ -45,8 +41,9 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
             if choice.casefold() in map(lambda _: _.casefold(), TTSProviders):
                 break
             print("Unknown Choice")
+            
         text_to_mp3 = TTSEngine(
-            get_case_insensitive_key_value(TTSProviders, choice), reddit_obj
+            get_case_insensitive_key_value(TTSProviders, choice), reddit_obj , max_length = settings.config["settings"]["len"]
         )
     return text_to_mp3.run()
 
