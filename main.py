@@ -113,4 +113,3 @@ if __name__ == "__main__":
             f'Postid : {str(config["settings"])},allownsfw :{config["settings"]["allow_nsfw"]},is_nsfw : {str(reddit_object["is_nsfw"])}'
             )
         raise err
-        # todo error
