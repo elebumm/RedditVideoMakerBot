@@ -32,7 +32,7 @@ storymode_max_length = { optional = true, default = 1000, example = 1000, explan
 fps = { optional = false, default = 30, example = 30, explanation = "Sets the FPS of the video, 30 is default for best performance. 60 FPS is smoother.", type = "int", nmin = 1, nmax = 60, oob_error = "The FPS HAS to be between 1 and 60" }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
-max_video_lenght = { optional = false, default = 50, example = 30, explantation = "Sets the max lenght of the final video in seconds" type = "int",nmin = 5 }
+max_video_length = { optional = false, default = 50, example = 30, explantation = "Sets the max length of the final video in seconds" type = "int",nmin = 5 }
 
 [settings.background]
 background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
