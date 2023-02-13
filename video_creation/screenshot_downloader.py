@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Final
 
 import translators as ts
+from playwright.async_api import async_playwright
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
 
