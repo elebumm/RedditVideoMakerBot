@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 from TTS.engine_wrapper import process_text
 
-def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50):
+def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50) -> None:
     """
     Draw multiline text over given image
     """
@@ -24,7 +24,7 @@ def draw_multiple_line_text(image, text, font, text_color, padding, wrap=50):
 
 
 # theme=bgcolor,reddit_obj=reddit_object,txtclr=txtcolor
-def imagemaker(theme, reddit_obj: dict, txtclr, padding=5):
+def imagemaker(theme, reddit_obj: dict, txtclr, padding=5) -> None:
     """
     Render Images for video
     """

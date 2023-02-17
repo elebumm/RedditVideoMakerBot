@@ -51,11 +51,18 @@ class TTSEngine:
         self.length = 0
         self.last_clip_length = last_clip_length
 
+    def add_periods(self):  # adds periods to the end of paragraphs (where people often forget to put them) so tts doesn't blend sentences
+        for comment in self.reddit_object["comments"]:
+            comment["comment_body"] = comment["comment_body"].replace('\n', '. ')
+            if comment["comment_body"][-1] != '.': 
+                comment["comment_body"] += '.' 
+
     def run(self) -> Tuple[int, int]:
 
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
-
+	
+        self.add_periods()
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
         idx = None

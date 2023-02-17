@@ -23,7 +23,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
-__VERSION__ = "3.0"
+__VERSION__ = "3.0.1"
 
 print(
     """
@@ -42,7 +42,7 @@ print_markdown(
 checkversion(__VERSION__)
 
 
-def main(POST_ID=None):
+def main(POST_ID=None) -> None:
     global redditid ,reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
     redditid = id(reddit_object)
@@ -55,7 +55,7 @@ def main(POST_ID=None):
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 
-def run_many(times):
+def run_many(times) -> None:
     for x in range(1, times + 1):
         print_step(
             f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
@@ -108,11 +108,8 @@ if __name__ == "__main__":
 
         shutdown()
     except Exception as err:
-        print_step(f'''
-            Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n
-            Version: {__VERSION__} \n
-            Story mode: {str(config["settings"]["storymode"])} \n
-            Story mode method: {str(config["settings"]["storymodemethod"])} 
-            ''')
+        print_step(f'Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n'
+            f'Version: {__VERSION__},Story mode: {str(config["settings"]["storymode"])}, Story mode method: {str(config["settings"]["storymodemethod"])},\n'
+            f'Postid : {str(config["settings"])},allownsfw :{config["settings"]["allow_nsfw"]},is_nsfw : {str(reddit_object["is_nsfw"])}'
+            )
         raise err
-        # todo error
