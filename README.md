@@ -38,8 +38,7 @@ The only original thing being done is the editing and gathering of all materials
 ## Installation 👩‍💻
 
 1. Clone this repository
-2. Run `pip install -r requirements.txt`
-3. Run `python -m playwright install` and `python -m playwright install-deps`
+2. Run Install.x.x.bat
 
 **EXPERIMENTAL!!!!**
 
