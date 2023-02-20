@@ -147,7 +147,7 @@ class TikTok:
 
 
 class TikTokTTSException(Exception):
-    def __init__(self, code: int, message: str):
+    def __init__(self, code: int, message: str=""):
         self._code = code
         self._message = message
 
@@ -162,6 +162,6 @@ class TikTokTTSException(Exception):
             return f"Code: {self._code}, reason: the speaker doesn't exist, message: {self._message}"
         
         if self._code == 5:
-            return f"You have to add session id in config to use titok TTS"
+            return "You have to add session id in config to use titok TTS"
 
         return f"Code: {self._message}, reason: unknown, message: {self._message}"
