@@ -124,7 +124,7 @@ def get_subreddit_threads(POST_ID: str):
     threadurl = f"https://reddit.com{submission.permalink}"
 
     print_substep(f"Video will be: {submission.title} :thumbsup:", style="bold green")
-    print_substep(f"Thread url is : {threadurl  } :thumbsup:", style="bold green")
+    print_substep(f"Thread url is: {threadurl} :thumbsup:", style="bold green")
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
