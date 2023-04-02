@@ -1,4 +1,6 @@
+import os
 import re
+import sys
 from typing import Tuple, Dict
 from pathlib import Path
 import toml
@@ -123,6 +125,41 @@ def check_vars(path, checks):
     global config
     crawl_and_check(config, path, checks)
 
+argMap = {
+    "USERNAME": ["reddit", "creds", "username"],
+    "PASSWORD": ["reddit", "creds", "password"],
+}
+
+def recursive_update(path, value, obj):
+    if len(path) == 1:
+        obj[path[0]] = value
+        return obj
+    obj[path[0]] = recursive_update(path[1:], value, obj[path[0]])
+    return obj
+
+def enrich_config_with_env(config):
+    dict = {}
+    # Iterate all environment variables
+    for key, value in os.environ.items():
+        dict[key] = value
+    
+    # Iterate all program arguments
+    for str in sys.argv:
+        if "=" in str:
+            key, value = str.split("=")
+            dict[key] = value
+        else:
+            dict[str] = True
+    
+    # Iterate the argMap
+    for key, value in argMap.items():
+        # If the key is in the dict, overwrite the value in the config
+        if key in dict:
+            console.print(f"[blue]Using {key} from env/args")
+            config = recursive_update(value, dict[key], config)
+
+    return config
+    
 
 def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     global config
@@ -167,6 +204,9 @@ Creating it now."""
                 f"[red bold]Failed to write to {config_file}. Giving up.\nSuggestion: check the folder's permissions for the user."
             )
             return False
+        
+    # Enrich config with enviroment variables
+    config = enrich_config_with_env(config)
 
     console.print(
         """\
