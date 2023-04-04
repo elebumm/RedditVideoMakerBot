@@ -29,7 +29,6 @@ transition = { optional = true, default = 0.2, example = 0.2, explanation = "Set
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, great for subreddits with stories" }
 storymodemethod= { optional = true, default = 1, example = 1, explanation = "Style that's used for the storymode. Set to 0 for single picture display in whole video, set to 1 for fancy looking video ", type = "int", nmin = 0, oob_error = "It's very hard to run something less than once.", options = [0, 1] }
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
-fps = { optional = false, default = 30, example = 30, explanation = "Sets the FPS of the video, 30 is default for best performance. 60 FPS is smoother.", type = "int", nmin = 1, nmax = 60, oob_error = "The FPS HAS to be between 1 and 60" }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
 
