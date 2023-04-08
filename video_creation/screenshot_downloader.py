@@ -40,7 +40,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         print_substep("Launching Headless Browser...")
 
         browser = p.chromium.launch(headless=True)  # headless=False will show the browser for debugging purposes
-        context = browser.new_context()
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
@@ -66,6 +65,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 bgcolor = (0, 0, 0, 0)
                 txtcolor = (255, 255, 255)
                 transparent = True
+                cookie_file = open(
+                    "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+                )
             else:
                 # Switch to dark theme
                 cookie_file = open(
@@ -90,18 +92,19 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         context.add_cookies(cookies)  # load preference cookies
 
         # Login to Reddit
-        print_substep("Logging in to Reddit...")
-        page = context.new_page()
-        page.goto("https://www.reddit.com/login", timeout=0)
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
-        page.wait_for_load_state()
+        if storymode:
+            print_substep("Logging in to Reddit...")
+            page = context.new_page()
+            page.goto("https://www.reddit.com/login", timeout=0)
+            page.set_viewport_size(ViewportSize(width=1920, height=1080))
+            page.wait_for_load_state()
 
-        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
-        page.locator("button:has-text('Log In')").click()
+            page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
+            page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+            page.locator("button[class$='m-full-width']").click()
 
-        page.wait_for_load_state()  # Wait for page to fully load and add 5 seconds
-        page.wait_for_timeout(5000)
+            page.wait_for_load_state()  # Wait for page to fully load and add 5 seconds
+            page.wait_for_timeout(5000)
 
         # Get the thread screenshot
         page = context.new_page()
