@@ -79,8 +79,6 @@ vocals: Final[tuple] = (
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
     def __init__(self):
-        if not settings.config['settings']['tts']['tiktok_sessionid']:
-            raise TikTokTTSException(5)
         headers = {
             "User-Agent": "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; "
             "Build/NRD90M;tt-ok/3.12.13.1)",
@@ -160,8 +158,5 @@ class TikTokTTSException(Exception):
 
         if self._code == 4:
             return f"Code: {self._code}, reason: the speaker doesn't exist, message: {self._message}"
-        
-        if self._code == 5:
-            return f"You have to add session id in config to use titok TTS"
 
         return f"Code: {self._message}, reason: unknown, message: {self._message}"
