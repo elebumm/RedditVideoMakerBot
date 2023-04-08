@@ -176,7 +176,7 @@ def make_final_video(
             ):
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")['v']
-                    .filter('scale', screenshot_width, -1)
+                    .filter('scale', 1080, -1)
                 )
                 background_clip = background_clip.overlay(image_clips[i],
                                                           enable=f'between(t,{current_time},{current_time + audio_clips_durations[i]})',
@@ -235,7 +235,12 @@ def make_final_video(
             print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     text = f"Background by {background_config[2]}"
-
+    background_clip = ffmpeg.drawtext(background_clip,
+                                      text=text,
+                                      x=f'(w-text_w)', y=f'(h-text_h)',
+                                      fontsize=12,
+                                      fontcolor="White",
+                                      fontfile=os.path.join("fonts", "Roboto-Regular.ttf"))
     print_step("Rendering the video 🎥")
     from tqdm import tqdm
     pbar = tqdm(total=100, desc="Progress: ", bar_format="{l_bar}{bar}", unit=" %")
