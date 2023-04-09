@@ -81,7 +81,7 @@ I have tried to simplify the code so anyone can read it and start contributing a
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
-### For any questions or support join the [Discord](https://discord.com/channels/897666935708352582/) server
+### For any questions or support join the [Discord](https://discord.gg/Vkanmh6C8V) server
 
 ## Developers and maintainers.
 
