@@ -46,7 +46,7 @@ non_eng_voices: Final[tuple] = (
     "de_001",  # German - Female
     "de_002",  # German - Male
     "es_002",  # Spanish - Male
-    "it_male_m18"  # Italian - Male
+    "it_male_m18",  # Italian - Male
     # South american voices
     "es_mx_002",  # Spanish MX - Male
     "br_001",  # Portuguese BR - Female 1
