@@ -39,7 +39,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(headless=True)  # headless=False will show the browser for debugging purposes
+        browser = p.chromium.launch(headless=False)  # headless=False will show the browser for debugging purposes
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
@@ -124,6 +124,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 ).click()  # Remove "Click to see nsfw" Button in Screenshot
 
             # translate code
+        if page.locator("#SHORTCUT_FOCUSABLE_DIV > div:nth-child(7) > div > div > div > header > div > div._1m0iFpls1wkPZJVo38-LSh > button > i").is_visible():
+            page.locator("#SHORTCUT_FOCUSABLE_DIV > div:nth-child(7) > div > div > div > header > div > div._1m0iFpls1wkPZJVo38-LSh > button > i").click() # Interest popup is showing, this code will close it
 
         if lang:
             print_substep("Translating post...")
