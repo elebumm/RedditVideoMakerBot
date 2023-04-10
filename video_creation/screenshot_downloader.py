@@ -35,6 +35,43 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
+    # set the theme and disable non-essential cookies
+    if settings.config["settings"]["theme"] == "dark":
+        cookie_file = open(
+            "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+        )
+        bgcolor = (33, 33, 36, 255)
+        txtcolor = (240, 240, 240)
+        transparent = False
+    elif settings.config["settings"]["theme"] == "transparent":
+        if storymode:
+            # Transparent theme
+            bgcolor = (0, 0, 0, 0)
+            txtcolor = (255, 255, 255)
+            transparent = True
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
+        else:
+            # Switch to dark theme
+            cookie_file = open(
+                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
+            )
+            bgcolor = (33, 33, 36, 255)
+            txtcolor = (240, 240, 240)
+            transparent = False
+    else:
+        cookie_file = open(
+            "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
+        )
+        bgcolor = (255, 255, 255, 255)
+        txtcolor = (0, 0, 0)
+        transparent = False
+    if storymode and settings.config["settings"]["storymodemethod"] == 1:
+        # for idx,item in enumerate(reddit_object["thread_post"]):
+        print_substep("Generating images...")
+        return imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor, transparent=transparent)
+
     screenshot_num: int
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
@@ -51,41 +88,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
         )
-        # set the theme and disable non-essential cookies
-        if settings.config["settings"]["theme"] == "dark":
-            cookie_file = open(
-                "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
-            )
-            bgcolor = (33, 33, 36, 255)
-            txtcolor = (240, 240, 240)
-            transparent = False
-        elif settings.config["settings"]["theme"] == "transparent":
-            if storymode:
-                # Transparent theme
-                bgcolor = (0, 0, 0, 0)
-                txtcolor = (255, 255, 255)
-                transparent = True
-                cookie_file = open(
-                    "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
-                )
-            else:
-                # Switch to dark theme
-                cookie_file = open(
-                    "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
-                )
-                bgcolor = (33, 33, 36, 255)
-                txtcolor = (240, 240, 240)
-                transparent = False
-        else:
-            cookie_file = open(
-                "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
-            )
-            bgcolor = (255, 255, 255, 255)
-            txtcolor = (0, 0, 0)
-            transparent = False
-        if storymode and settings.config["settings"]["storymodemethod"] == 1:
-            # for idx,item in enumerate(reddit_object["thread_post"]):
-            return imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor, transparent=transparent)
         cookies = json.load(cookie_file)
         cookie_file.close()
 

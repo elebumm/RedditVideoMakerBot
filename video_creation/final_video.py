@@ -250,9 +250,6 @@ def make_final_video(
         old_percentage = pbar.n
         pbar.update(status - old_percentage)
 
-    position = W // 2, H - 20
-    ffmpeg.filter(filter_name='drawtext', stream_spec=background_clip, text=text, fontfile='fonts/Roboto-Regular.ttf', fontsize=12,
-                              fontcolor='white', x=position[0], y=position[1], box=1)
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(background_clip, audio, f"results/{subreddit}/{filename}.mp4", f='mp4',
                       **{"c:v": "h264", "b:v": "20M", "b:a": "192k",
