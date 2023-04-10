@@ -84,22 +84,28 @@ def get_subreddit_threads(POST_ID: str):
         settings.config["reddit"]["thread"]["post_id"]
         and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
     ):
-        submission = reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
-    elif settings.config["ai"]["ai_similarity_enabled"]: # ai sorting based on comparison
+        submission = reddit.submission(
+            id=settings.config["reddit"]["thread"]["post_id"]
+        )
+    elif settings.config["ai"][
+        "ai_similarity_enabled"
+    ]:  # ai sorting based on comparison
         threads = subreddit.hot(limit=50)
-        keywords = settings.config["ai"]["ai_similarity_keywords"].split(',')
+        keywords = settings.config["ai"]["ai_similarity_keywords"].split(",")
         keywords = [keyword.strip() for keyword in keywords]
         # Reformat the keywords for printing
         keywords_print = ", ".join(keywords)
-        print(f'Sorting threads by similarity to the given keywords: {keywords_print}')
+        print(f"Sorting threads by similarity to the given keywords: {keywords_print}")
         threads, similarity_scores = sort_by_similarity(threads, keywords)
-        submission, similarity_score = get_subreddit_undone(threads, subreddit, similarity_scores=similarity_scores)
+        submission, similarity_score = get_subreddit_undone(
+            threads, subreddit, similarity_scores=similarity_scores
+        )
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
 
     if submission is None:
-       return get_subreddit_threads(POST_ID)  # submission already done. rerun
+        return get_subreddit_threads(POST_ID)  # submission already done. rerun
 
     if settings.config["settings"]["storymode"]:
         if not submission.selftext:
@@ -107,7 +113,9 @@ def get_subreddit_threads(POST_ID: str):
             exit()
         else:
             # Check for the length of the post text
-            if len(submission.selftext) > (settings.config["settings"]["storymode_max_length"] or 2000):
+            if len(submission.selftext) > (
+                settings.config["settings"]["storymode_max_length"] or 2000
+            ):
                 print_substep(
                     f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
                 )
@@ -129,7 +137,10 @@ def get_subreddit_threads(POST_ID: str):
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
     if similarity_score:
-        print_substep(f"Thread has a similarity score up to {round(similarity_score * 100)}%", style="bold blue")
+        print_substep(
+            f"Thread has a similarity score up to {round(similarity_score * 100)}%",
+            style="bold blue",
+        )
 
     content["thread_url"] = threadurl
     content["thread_title"] = submission.title
@@ -158,7 +169,6 @@ def get_subreddit_threads(POST_ID: str):
                     if len(top_level_comment.body) >= int(
                         settings.config["reddit"]["thread"]["min_comment_length"]
                     ):
-
                         if (
                             top_level_comment.author is not None
                             and sanitize_text(top_level_comment.body) is not None
