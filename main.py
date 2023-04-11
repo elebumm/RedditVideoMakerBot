@@ -7,7 +7,7 @@ from pathlib import Path
 from subprocess import Popen
 
 from prawcore import ResponseException
-
+from utils.console import print_substep
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
 from utils.cleanup import cleanup
@@ -43,7 +43,7 @@ checkversion(__VERSION__)
 
 
 def main(POST_ID=None) -> None:
-    global redditid ,reddit_object
+    global redditid, reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -84,8 +84,17 @@ if __name__ == "__main__":
         f"{directory}/utils/.config.template.toml", "config.toml"
     )
     config is False and exit()
+    if (
+        not settings.config["settings"]["tts"]["tiktok_sessionid"]
+        or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
+    ) and config["settings"]["tts"]["voice_choice"] == "tiktok":
+        print_substep(
+            "TikTok voice requires a sessionid! Check our documentation on how to obtain one.",
+            "bold red",
+        )
+        exit()
     try:
-        if config["reddit"]["thread"]["post_id"] :
+        if config["reddit"]["thread"]["post_id"]:
             for index, post_id in enumerate(
                 config["reddit"]["thread"]["post_id"].split("+")
             ):
@@ -108,8 +117,11 @@ if __name__ == "__main__":
 
         shutdown()
     except Exception as err:
-        print_step(f'Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n'
-            f'Version: {__VERSION__},Story mode: {str(config["settings"]["storymode"])}, Story mode method: {str(config["settings"]["storymodemethod"])},\n'
-            f'Postid : {str(config["settings"])},allownsfw :{config["settings"]["allow_nsfw"]},is_nsfw : {str(reddit_object["is_nsfw"])}'
-            )
+        config["settings"]["tts"]["tiktok_sessionid"] = "REDACTED"
+        print_step(
+            f"Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n"
+            f"Version: {__VERSION__} \n"
+            f"Error: {err} \n"
+            f'Config: {config["settings"]}'
+        )
         raise err
