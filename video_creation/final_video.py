@@ -96,7 +96,11 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         )
         .overwrite_output()
     )
-    output.run(quiet=True)
+    try:
+        output.run(quiet=True)
+    except Exception as e:
+        print(e)
+        exit()
     return output_path
 
 

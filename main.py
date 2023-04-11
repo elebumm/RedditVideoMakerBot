@@ -22,6 +22,7 @@ from video_creation.background import (
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
+from utils.ffmpeg_install import ffmpeg_install
 
 __VERSION__ = "3.0.1"
 
@@ -79,6 +80,7 @@ def shutdown():
 
 if __name__ == "__main__":
     assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
+    ffmpeg_install() # install ffmpeg if not installed
     directory = Path().absolute()
     config = settings.check_toml(
         f"{directory}/utils/.config.template.toml", "config.toml"
