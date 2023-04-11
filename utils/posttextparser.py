@@ -14,7 +14,7 @@ def posttextparser(obj):
         nlp = spacy.load("en_core_web_sm")
     except OSError:
         print_step(
-            "The spacy model can't load. You need to install it with \npython -m spacy download en"
+            "The spacy model can't load. You need to install it with the command \npython -m spacy download spacy download en_core_web_sm"
         )
         exit()
 
