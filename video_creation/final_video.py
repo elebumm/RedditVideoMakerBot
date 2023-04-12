@@ -2,6 +2,7 @@ import multiprocessing
 import os
 import re
 import shutil
+from os.path import exists # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any
 
@@ -346,8 +347,4 @@ def make_final_video(
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
-    print_substep("See result in the results folder!")
-
-    print_step(
-        f'Reddit title: {reddit_obj["thread_title"]} \n Background Credit: {background_config[2]}'
-    )
+    print_step("Done! 🎉 The video is in the results folder 📁")
