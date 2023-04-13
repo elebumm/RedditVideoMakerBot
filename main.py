@@ -79,7 +79,8 @@ def shutdown():
 
 
 if __name__ == "__main__":
-    assert sys.version_info >= (3, 9), "Python 3.10 or higher is required"
+    if sys.version_info.major != 3 or sys.version_info.minor != 10:
+        print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
     ffmpeg_install() # install ffmpeg if not installed
     directory = Path().absolute()
     config = settings.check_toml(
