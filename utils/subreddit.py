@@ -6,7 +6,9 @@ from utils.console import print_substep
 from utils.ai_methods import sort_by_similarity
 
 
-def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None):
+def get_subreddit_undone(
+    submissions: list, subreddit, times_checked=0, similarity_scores=None
+):
     """_summary_
 
     Args:
@@ -18,8 +20,12 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
     """
     # Second try of getting a valid Submission
     if times_checked and settings.config["ai"]["ai_similarity_enabled"]:
-        print('Sorting based on similarity for a different date filter and thread limit..')
-        submissions = sort_by_similarity(submissions, keywords=settings.config["ai"]["ai_similarity_enabled"])
+        print(
+            "Sorting based on similarity for a different date filter and thread limit.."
+        )
+        submissions = sort_by_similarity(
+            submissions, keywords=settings.config["ai"]["ai_similarity_enabled"]
+        )
 
     # recursively checks if the top submission in the list was already done.
     if not exists("./video_creation/data/videos.json"):
@@ -42,9 +48,11 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
         if submission.stickied:
             print_substep("This post was pinned by moderators. Skipping...")
             continue
-        if submission.num_comments <= int(
-            settings.config["reddit"]["thread"]["min_comments"]
-        ) and not settings.config["settings"]["storymode"]:
+        if (
+            submission.num_comments
+            <= int(settings.config["reddit"]["thread"]["min_comments"])
+            and not settings.config["settings"]["storymode"]
+        ):
             print_substep(
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )

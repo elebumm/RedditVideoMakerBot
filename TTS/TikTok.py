@@ -46,7 +46,7 @@ non_eng_voices: Final[tuple] = (
     "de_001",  # German - Female
     "de_002",  # German - Male
     "es_002",  # Spanish - Male
-    "it_male_m18"  # Italian - Male
+    "it_male_m18",  # Italian - Male
     # South american voices
     "es_mx_002",  # Spanish MX - Male
     "br_001",  # Portuguese BR - Female 1
@@ -78,17 +78,18 @@ vocals: Final[tuple] = (
 
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
+
     def __init__(self):
-        if not settings.config['settings']['tts']['tiktok_sessionid']:
-            raise TikTokTTSException(5)
         headers = {
             "User-Agent": "com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; "
             "Build/NRD90M;tt-ok/3.12.13.1)",
             "Cookie": f"sessionid={settings.config['settings']['tts']['tiktok_sessionid']}",
         }
-        
-        self.URI_BASE = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
-        self.max_chars = 300
+
+        self.URI_BASE = (
+            "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
+        )
+        self.max_chars = 200
 
         self._session = requests.Session()
         # set the headers to the session, so we don't have to do it for every request
@@ -113,7 +114,9 @@ class TikTok:
         try:
             raw_voices = data["data"]["v_str"]
         except:
-            print("The TikTok TTS returned an invalid response. Please try again later, and report this bug.")
+            print(
+                "The TikTok TTS returned an invalid response. Please try again later, and report this bug."
+            )
             raise TikTokTTSException(0, "Invalid response")
         decoded_voices = base64.b64decode(raw_voices)
 
@@ -160,8 +163,5 @@ class TikTokTTSException(Exception):
 
         if self._code == 4:
             return f"Code: {self._code}, reason: the speaker doesn't exist, message: {self._message}"
-        
-        if self._code == 5:
-            return f"You have to add session id in config to use titok TTS"
 
         return f"Code: {self._message}, reason: unknown, message: {self._message}"
