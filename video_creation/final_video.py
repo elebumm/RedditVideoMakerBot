@@ -320,11 +320,15 @@ def make_final_video(
         old_percentage = pbar.n
         pbar.update(status - old_percentage)
 
+    path = f"results/{subreddit}/{filename}"
+    path = path[:251]
+    path = path + ".mp4"
+
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(
             background_clip,
             audio,
-            f"results/{subreddit}/{filename}.mp4",
+            path,
             f="mp4",
             **{
                 "c:v": "h264",
