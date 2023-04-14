@@ -233,7 +233,7 @@ format_data = "%Y-%m-%d %H:%M:%S"
 
 def init():
     if not(os.path.exists(CLIENT_SECRETS_FILE)):
-        print("video not automatically uploaded on youtube, please add youtube configuration in toml file if you want to upload videos automatically")
+        print("Video isn't automatically uploaded to YouTube. Add your YouTube credentials to the config if you'd like to let it upload videos automatically")
         return
     # opens the json containing video_creation data (used for logic and upload data)
     f = open(videos_json_file)
