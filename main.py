@@ -10,6 +10,7 @@ from prawcore import ResponseException
 from utils.console import print_substep
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
+from upload import youtube
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
 from utils.id import id
@@ -54,6 +55,8 @@ def main(POST_ID=None) -> None:
     download_background(bg_config)
     chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
+    youtube.init()
+     
 
 
 def run_many(times) -> None:
@@ -62,7 +65,7 @@ def run_many(times) -> None:
             f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
         )  # correct 1st 2nd 3rd 4th 5th....
         main()
-        Popen("cls" if name == "nt" else "clear", shell=True).wait()
+        # Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
 def shutdown():
@@ -87,6 +90,14 @@ if __name__ == "__main__":
         f"{directory}/utils/.config.template.toml", "config.toml"
     )
     config is False and exit()
+    
+    settings.saveYoutubeConfig("config.toml")
+    # if upload argument exists, upload to youtube
+    if len(sys.argv) > 1 and sys.argv[1] == "upload" and sys.argv[2]=="youtube":
+        del sys.argv[2]
+        del sys.argv[1]
+        youtube.init()
+        sys.exit()
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
         or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""

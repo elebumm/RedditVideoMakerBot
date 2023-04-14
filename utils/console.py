@@ -48,6 +48,7 @@ def handle_input(
     default=NotImplemented,
     optional=False,
 ):
+    console.print("[green bold]" + extra_info, no_wrap=True)
     if optional:
         console.print(
             message
@@ -67,7 +68,6 @@ def handle_input(
             return default
     if options is None:
         match = re.compile(match)
-        console.print("[green bold]" + extra_info, no_wrap=True)
         while True:
             console.print(message, end="")
             user_input = input("").strip()

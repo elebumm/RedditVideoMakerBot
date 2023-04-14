@@ -1,7 +1,7 @@
 import re
 from typing import Tuple, Dict
 from pathlib import Path
-import toml
+import toml, json, os
 from rich.console import Console
 
 from utils.console import handle_input
@@ -178,12 +178,42 @@ Creating it now."""
 If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
 """
     )
+
     crawl(template, check_vars)
     with open(config_file, "w") as f:
         toml.dump(config, f)
     return config
 
+def saveYoutubeConfig(config_file):
+    if os.path.exists('client_secrets.json'):
+        return
+    console.print(f"[blue]Saving YouTube API configuration...")
+    global config
+    # Load the configuration file
+    config = toml.load(config_file)
+
+    # Get the YouTube API credentials
+    client_id = config['youtube']['creds']['client_id']
+    client_secret = config['youtube']['creds']['client_secret']
+
+    if(client_id == "" or client_secret == ""):
+        return
+    # Create the client_secrets dictionary
+    client_secrets = {
+        "installed": {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://accounts.google.com/o/oauth2/token",
+        }
+    }
+
+    # Save the client_secrets dictionary to the client_secrets.json file
+    with open('client_secrets.json', 'w') as f:
+        json.dump(client_secrets, f)
 
 if __name__ == "__main__":
     directory = Path().absolute()
     check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
+

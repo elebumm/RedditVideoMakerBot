@@ -5,6 +5,10 @@ username = { optional = false, nmin = 3, nmax = 20, explanation = "The username 
 password = { optional = false, nmin = 8, explanation = "The password of your reddit account", example = "fFAGRNJru1FTz70BzhT3Zg", oob_error = "Password too short" }
 2fa = { optional = true, type = "bool", options = [true, false, ], default = false, explanation = "Whether you have Reddit 2FA enabled, Valid options are True and False", example = true }
 
+[youtube.creds]
+client_id = { optional = true, nmin = 12, nmax = 72, explanation = "The ID of your Youtube app of your app", example = "Youtube: 990756476661-jidf9qpp4m5r43ki5fk8fk706qc5mdfu.apps.googleusercontent.com", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The ID should be over 12 and under 30 characters, double check your input." }
+client_secret = { optional = true, nmin = 20, nmax = 40, explanation = "The SECRET of your Youtube app", example = "Youtube: fFAGRNJru1FTz70BzgthT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The secret should be over 20 and under 40 characters, double check your input." }
+
 
 [reddit.thread]
 random = { optional = true, options = [true, false, ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
@@ -51,3 +55,4 @@ python_voice = { optional = false, default = "1", example = "1", explanation = "
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
 no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
+

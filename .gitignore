@@ -242,6 +242,7 @@ reddit-bot-351418-5560ebc49cac.json
 *.pyc
 video_creation/data/videos.json
 video_creation/data/envvars.txt
+main.py-oauth2.json
+client_secrets.json
 
 config.toml
-video_creation/data/videos.json
