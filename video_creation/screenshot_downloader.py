@@ -120,8 +120,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # Get the thread screenshot
         page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=W, height=H))
-        if(settings.config["settings"]["zoom"] != 1):
-            page.evaluate("document.body.style.zoom="+str(settings.config["settings"]["zoom"]))
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
@@ -160,9 +158,20 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
-            page.locator('[data-test-id="post-content"]').screenshot(
-                path=postcontentpath
-            )
+            if(settings.config["settings"]["zoom"] != 1):
+                # store zoom settings
+                zoom = settings.config["settings"]["zoom"]
+                # zoom the body of the page
+                page.evaluate("document.body.style.zoom="+str(zoom))
+                # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
+                location = page.locator('[data-test-id="post-content"]').bounding_box()
+                for i in location:
+                    location[i] = float("{:.2f}".format(location[i]*zoom))
+                page.screenshot(clip=location, path=postcontentpath)
+            else:
+                page.locator('[data-test-id="post-content"]').screenshot(
+                    path=postcontentpath
+                )
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -216,9 +225,21 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
-                    )
+                    if(settings.config["settings"]["zoom"] != 1):
+                        # store zoom settings
+                        zoom = settings.config["settings"]["zoom"]
+                        # zoom the body of the page
+                        page.evaluate("document.body.style.zoom="+str(zoom))
+                        # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
+                        location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        for i in location:
+                            location[i] = float("{:.2f}".format(location[i]*zoom))
+                        page.screenshot(clip=location, path=f"assets/temp/{reddit_id}/png/comment_{idx}.png")
+                    else:
+                        page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                            path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
+                        )
+                    
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
