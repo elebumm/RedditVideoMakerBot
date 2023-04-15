@@ -17,6 +17,7 @@ from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+from utils.chatgpt import get_video_details
 
 console = Console()
 
@@ -355,6 +356,7 @@ def make_final_video(
     pbar.update(100 - old_percentage)
     pbar.close()
 
+    get_video_details(subreddit, filename, title)
     save_data(subreddit, filename + ".mp4", title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
