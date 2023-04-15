@@ -17,6 +17,7 @@ from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+from utils.chatgpt import get_video_details
 
 console = Console()
 
@@ -177,6 +178,14 @@ def make_final_video(
 
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
+    # adds background audio
+    if settings.config["settings"]['background']["background_audio"] and exists(f"assets/backgrounds/background.mp3"):
+        # sets volume to config
+        bg_audio = ffmpeg.input(f"assets/backgrounds/background.mp3").filter('volume', settings.config["settings"]['background']["background_audio_volume"])
+        # merges audio and bg_audio
+        merged_audio = ffmpeg.filter([audio, bg_audio], 'amix', duration='first')
+        # sets final audio to merged audio
+        audio = merged_audio
 
     image_clips = list()
 
@@ -347,6 +356,7 @@ def make_final_video(
     pbar.update(100 - old_percentage)
     pbar.close()
 
+    get_video_details(subreddit, filename, title)
     save_data(subreddit, filename + ".mp4", title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
