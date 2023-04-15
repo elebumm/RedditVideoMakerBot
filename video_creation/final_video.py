@@ -17,6 +17,8 @@ from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+from utils.chatgpt import get_video_details
+from utils.chatgpt import shorten_filename
 
 console = Console()
 
@@ -255,6 +257,8 @@ def make_final_video(
     title_thumb = reddit_obj["thread_title"]
 
     filename = f"{name_normalize(title)[:251]}"
+    if(settings.config["ai"]["use_openai"]):
+        filename = shorten_filename(title)
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
@@ -346,7 +350,8 @@ def make_final_video(
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
     pbar.close()
-
+    if(settings.config["ai"]["use_openai"]):
+        get_video_details(subreddit, filename, title)
     save_data(subreddit, filename + ".mp4", title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)

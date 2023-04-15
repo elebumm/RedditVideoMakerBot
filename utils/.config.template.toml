@@ -19,6 +19,9 @@ min_comments = { default = 20, optional = false, nmin = 10, type = "int", explan
 [ai]
 ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
 ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
+use_openai = { optional = true, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to use OpenAI" }
+openai_api_key = {optional = true, type="str", example= 'sk-1234-567', explanation = "If you want to access chatGPT you'll need to enter an API Key"}
+openai_model = { optional = true, default = "gpt-3.5-turbo", example = "light", options = ["gpt-4", "gpt-3.5-turbo", ], explanation = "Sets completion model for OpenAI." }
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
