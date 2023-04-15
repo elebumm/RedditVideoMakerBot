@@ -42,7 +42,7 @@ background_thumbnail_font_size = { optional = true, type = "int", default = 96, 
 background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "tiktok", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
+voice_choice = { optional = false, default = "streamlabspolly", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
