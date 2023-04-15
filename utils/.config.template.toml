@@ -31,6 +31,7 @@ storymodemethod= { optional = true, default = 1, example = 1, explanation = "Sty
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
+zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger." type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 
 [settings.background]
 background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }

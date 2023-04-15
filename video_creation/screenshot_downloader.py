@@ -120,6 +120,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # Get the thread screenshot
         page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=W, height=H))
+        if(settings.config["settings"]["zoom"] != 1):
+            page.evaluate("document.body.style.zoom="+str(settings.config["settings"]["zoom"]))
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
