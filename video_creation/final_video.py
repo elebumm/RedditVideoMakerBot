@@ -309,7 +309,7 @@ def make_final_video(
     text = f"Background by {background_config[2]}"
     background_clip = ffmpeg.drawtext(
         background_clip,
-        text=(''),
+        text=text,
         x=f"(w-text_w)",
         y=f"(h-text_h)",
         fontsize=12,
