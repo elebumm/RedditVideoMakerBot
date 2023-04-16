@@ -7,10 +7,9 @@ from typing import Any, Tuple
 
 from moviepy.editor import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-from pytube import YouTube
-from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
+import yt_dlp
 
 # Load background videos
 with open("./utils/backgrounds.json") as json_file:
@@ -72,9 +71,14 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(
-        res="1080p"
-    ).first().download("assets/backgrounds", filename=f"{credit}-{filename}")
+    ydl_opts = {
+        'format': "bestvideo[height<=1080][ext=mp4]",
+        "outtmpl": f"assets/backgrounds/{credit}-{filename}",
+        "retries": 10,
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(uri)
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 
