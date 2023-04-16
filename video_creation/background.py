@@ -6,10 +6,15 @@ from random import randrange
 from typing import Any, Tuple
 
 from moviepy.editor import VideoFileClip
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from utils import settings
 from utils.console import print_step, print_substep
 import yt_dlp
+
+from queue import Queue
+import sys
+from threading import Thread
+from tqdm import tqdm
+import ffmpeg
 
 # Load background videos
 with open("./utils/backgrounds.json") as json_file:
@@ -72,7 +77,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
     ydl_opts = {
-        'format': "bestvideo[height<=1080][ext=mp4]",
+        "format": "bestvideo[height<=1080][ext=mp4]",
         "outtmpl": f"assets/backgrounds/{credit}-{filename}",
         "retries": 10,
     }
@@ -80,6 +85,54 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(uri)
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
+
+
+def reader(pipe, queue):
+    try:
+        with pipe:
+            for line in iter(pipe.readline, b""):
+                queue.put((pipe, line))
+    finally:
+        queue.put(None)
+
+
+def extract_subclip(filename, start_time, end_time, output_file):
+    total_duration = float(ffmpeg.probe(filename)["format"]["duration"])
+    error = list()
+
+    try:
+        video = (
+            ffmpeg.input(filename, ss=start_time)
+            .trim(start=0, end=(end_time - start_time))
+            .setpts("PTS-STARTPTS")
+            .output(output_file, codec="copy", format="mp4")
+            .run_async(pipe_stdout=True, pipe_stderr=True)
+        )
+        q = Queue()
+        Thread(target=reader, args=[video.stdout, q]).start()
+        Thread(target=reader, args=[video.stderr, q]).start()
+        bar = tqdm(total=round(total_duration, 2))
+        for _ in range(2):
+            for source, line in iter(q.get, None):
+                line = line.decode()
+                if source == video.stderr:
+                    error.append(line)
+                else:
+                    line = line.rstrip()
+                    parts = line.split("=")
+                    key = parts[0] if len(parts) > 0 else None
+                    value = parts[1] if len(parts) > 1 else None
+                    if key == "out_time_ms":
+                        time = max(round(float(value) / 1000000.0, 2), 0)
+                        bar.update(time - bar.n)
+                    elif key == "progress" and value == "end":
+                        bar.update(bar.total - bar.n)
+        bar.update(bar.total)
+        bar.close()
+
+    except ffmpeg.Error as e:
+        print(error, file=sys.stderr)
+        sys.exit(1)
 
 
 def chop_background_video(
@@ -99,11 +152,11 @@ def chop_background_video(
 
     start_time, end_time = get_start_and_end_times(video_length, background.duration)
     try:
-        ffmpeg_extract_subclip(
+        extract_subclip(
             f"assets/backgrounds/{choice}",
             start_time,
             end_time,
-            targetname=f"assets/temp/{id}/background.mp4",
+            f"assets/temp/{id}/background.mp4",
         )
     except (OSError, IOError):  # ffmpeg issue see #348
         print_substep("FFMPEG issue. Trying again...")
