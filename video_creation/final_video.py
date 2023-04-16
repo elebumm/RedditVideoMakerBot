@@ -99,8 +99,15 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
     try:
         output.run(quiet=True)
     except Exception as e:
-        print(e)
-        exit()
+        print('An error occurred while running...')
+        print('trying auto error fixing...')
+        try:
+            os.remove(f"assets/temp/{reddit_id}/background.mp4")
+            os.remove(f"assets/temp/{reddit_id}/background_noaudio.mp4")
+            prepare_background(reddit_id, W, H)
+        except:
+            print('Please Rerun the script ')
+            exit()
     return output_path
 
 
@@ -303,7 +310,7 @@ def make_final_video(
     text = f"Background by {background_config[2]}"
     background_clip = ffmpeg.drawtext(
         background_clip,
-        text=text,
+        text=(''),
         x=f"(w-text_w)",
         y=f"(h-text_h)",
         fontsize=12,
