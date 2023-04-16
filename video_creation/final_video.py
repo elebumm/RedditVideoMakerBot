@@ -177,6 +177,35 @@ def make_final_video(
 
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
+    # adds background audio
+    if settings.config["settings"]["background"]["background_audio"]:
+        if not exists("assets/backgrounds/background.mp3"):
+            print_substep(
+                "No audio file found called background.mp3 in assets/backgrounds", "red"
+            )
+        else:
+            if (
+                    not settings.config["settings"]["background"]["background_audio_volume"]
+                    or settings.config["settings"]["background"]["background_audio_volume"] == 0
+                    or settings.config["settings"]["background"]["background_audio_volume"] == ""
+            ):
+                print_substep(
+                    "Background audio volume is set to 0, not adding background audio",
+                    "red",
+                )
+            else:
+                # sets volume to config
+                bg_audio = (
+                    ffmpeg.input("assets/backgrounds/background.mp3")
+                    .filter(
+                        "volume",
+                        settings.config["settings"]["background"]["background_audio_volume"],
+                    )
+                )
+                # merges audio and bg_audio
+                merged_audio = ffmpeg.filter([audio, bg_audio], "amix", duration="longest")
+                # sets final audio to merged audio
+                audio = merged_audio
 
     image_clips = list()
 
