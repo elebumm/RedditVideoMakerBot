@@ -100,7 +100,6 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         output.run(quiet=True)
     except Exception as e:
         print('An error occurred while running...')
-        print('trying auto error fixing...')
         try:
             os.remove(f"assets/temp/{reddit_id}/background.mp4")
             os.remove(f"assets/temp/{reddit_id}/background_noaudio.mp4")
