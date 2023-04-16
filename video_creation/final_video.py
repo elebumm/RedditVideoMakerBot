@@ -106,7 +106,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             os.remove(f"assets/temp/{reddit_id}/background_noaudio.mp4")
             prepare_background(reddit_id, W, H)
         except:
-            print('Please Rerun the script ')
+            print('Please re-run the script ')
             exit()
     return output_path
 
