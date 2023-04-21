@@ -49,8 +49,10 @@ def main(POST_ID=None) -> None:
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
+    bg_config = {}
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    bg_config = get_background_config()
+    bg_config["video"] = get_background_config("video")
+    bg_config["audio"] = get_background_config("audio")
     download_background(bg_config)
     chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)

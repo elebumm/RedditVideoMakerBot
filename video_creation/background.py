@@ -5,27 +5,37 @@ from pathlib import Path
 from random import randrange
 from typing import Any, Tuple
 
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip,AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
 
-# Load background videos
-with open("./utils/backgrounds.json") as json_file:
-    background_options = json.load(json_file)
+def load_background_options():
+    background_options = {}
+    # Load background videos
+    with open("./utils/background_videos.json") as json_file:
+        background_options["video"] = json.load(json_file)
 
-# Remove "__comment" from backgrounds
-background_options.pop("__comment", None)
+    # Load background audios
+    with open("./utils/background_audios.json") as json_file:
+        background_options["audio"] = json.load(json_file)
+    
+    # Remove "__comment" from backgrounds
+    background_options["video"].pop("__comment", None)
+    background_options["audio"].pop("__comment", None)
+    
+    # Add position lambda function
+    # (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
+    for name in list(background_options["video"].keys()):
+        pos = background_options["video"][name][3]
 
-# Add position lambda function
-# (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
-for name in list(background_options.keys()):
-    pos = background_options[name][3]
+        if pos != "center":
+            background_options["video"][name][3] = lambda t: ("center", pos + t)
 
-    if pos != "center":
-        background_options[name][3] = lambda t: ("center", pos + t)
+    return background_options
+
 
 
 def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int, int]:
@@ -42,11 +52,11 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
     return random_time, random_time + video_length
 
 
-def get_background_config():
+def get_background_config(mode: str):
     """Fetch the background/s configuration"""
     try:
         choice = str(
-            settings.config["settings"]["background"]["background_choice"]
+            settings.config["settings"]["background"][f"background_{mode}_choice"]
         ).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
@@ -54,10 +64,10 @@ def get_background_config():
 
     # Handle default / not supported background using default option.
     # Default : pick random from supported background.
-    if not choice or choice not in background_options:
-        choice = random.choice(list(background_options.keys()))
+    if not choice or choice not in background_options[mode]:
+        choice = random.choice(list(background_options[mode].keys()))
 
-    return background_options[choice]
+    return background_options[mode][choice]
 
 
 def download_background(background_config: Tuple[str, str, str, Any]):
@@ -76,6 +86,8 @@ def download_background(background_config: Tuple[str, str, str, Any]):
         res="1080p"
     ).first().download("assets/backgrounds", filename=f"{credit}-{filename}")
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
+
+
 
 
 def chop_background_video(
@@ -108,3 +120,6 @@ def chop_background_video(
             new.write_videofile(f"assets/temp/{id}/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
     return background_config[2]
+
+# Create a tuple for downloads background (background_audio_options, background_video_options)
+background_options = load_background_options()
