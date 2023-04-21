@@ -15,8 +15,9 @@ from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
 from video_creation.background import (
-    download_background,
-    chop_background_video,
+    download_background_video,
+    download_background_audio,
+    chop_background,
     get_background_config,
 )
 from video_creation.final_video import make_final_video
@@ -53,8 +54,9 @@ def main(POST_ID=None) -> None:
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config["video"] = get_background_config("video")
     bg_config["audio"] = get_background_config("audio")
-    download_background(bg_config)
-    chop_background_video(bg_config, length, reddit_object)
+    download_background_video(bg_config["video"])
+    download_background_audio(bg_config["audio"])
+    chop_background(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 
