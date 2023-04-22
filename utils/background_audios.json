@@ -4,5 +4,15 @@
         "https://www.youtube.com/watch?v=2p3nBYUaJz8",
         "minecraft.mp3",
         "adriPixs"
+    ],
+    "lofi":[
+        "https://www.youtube.com/watch?v=BEXL80LS0-I",
+        "lofi.mp3",
+        "stompsPlaylist"
+    ],
+    "undertale":[
+        "https://www.youtube.com/watch?v=TIokr8jJPkM",
+        "undertale.mp3",
+        "abby"
     ]
 }

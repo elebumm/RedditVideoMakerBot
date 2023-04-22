@@ -177,6 +177,8 @@ def make_final_video(
 
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
+    background_audio = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp3")
+    final_audio = ffmpeg.filter([audio, background_audio], "amix")
 
     image_clips = list()
 
@@ -327,7 +329,7 @@ def make_final_video(
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(
             background_clip,
-            audio,
+            final_audio,
             path,
             f="mp4",
             **{
