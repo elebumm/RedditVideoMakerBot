@@ -4,7 +4,7 @@ import re
 import shutil
 from os.path import exists # Needs to be imported specifically
 from typing import Final
-from typing import Tuple, Any
+from typing import Tuple, Any, Dict
 
 import ffmpeg
 import translators as ts
@@ -108,7 +108,7 @@ def make_final_video(
     number_of_clips: int,
     length: int,
     reddit_obj: dict,
-    background_config: Tuple[str, str, str, Any],
+    background_config: Dict[str,Tuple[str, str, str, Any]],
 ):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
@@ -300,7 +300,7 @@ def make_final_video(
                 f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
             )
 
-    text = f"Background by {background_config[2]}"
+    text = f"Background by {background_config['video'][2]}"
     background_clip = ffmpeg.drawtext(
         background_clip,
         text=text,
@@ -347,7 +347,7 @@ def make_final_video(
     pbar.update(100 - old_percentage)
     pbar.close()
 
-    save_data(subreddit, filename + ".mp4", title, idx, background_config[2])
+    save_data(subreddit, filename + ".mp4", title, idx, background_config['video'][2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")

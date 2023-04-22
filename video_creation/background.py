@@ -5,7 +5,7 @@ from pathlib import Path
 from random import randrange
 from typing import Any, Tuple,Dict
 
-from moviepy.editor import VideoFileClip,AudioFileClip
+from moviepy.editor import VideoFileClip,AudioFileClip,afx
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
@@ -115,12 +115,23 @@ def chop_background(
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
     audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
     id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
+    
+    #    audioclip = audioclip.fx( volumex, 0.2)
+    #    final_audio = mpe.CompositeAudioClip([final.audio, audioclip])
+    #    # lowered_audio = audio_background.multiply_volume( # todo get this to work
+    #    #    VOLUME_MULTIPLIER)  # lower volume by background_audio_volume, use with fx
+    #    final.set_audio(final_audio)
     background_video = VideoFileClip(f"assets/backgrounds/video/{video_choice}")
     background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
     start_time_video, end_time_video = get_start_and_end_times(video_length, background_video.duration)
     start_time_audio, end_time_audio = get_start_and_end_times(video_length, background_audio.duration)
-    background_audio.subclip(start_time_audio,end_time_audio)
+    #background_audio.set_start(start_time_audio)
+    #background_audio.set_end(end_time_audio)
+    background_audio = background_audio.fx(afx.volumex,0.1)
+    #background_audio = background_audio.subclip(start_time_audio,end_time_audio)
+    background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
     background_video.set_audio(background_audio)
+
 
     try:
         ffmpeg_extract_subclip(
@@ -135,7 +146,7 @@ def chop_background(
             new = video.subclip(start_time_video, end_time_video)
             new.write_videofile(f"assets/temp/{id}/background.mp4")
     print_substep("Background video chopped successfully!", style="bold green")
-    return background_config[2]
+    return background_config["video"][2]
 
 # Create a tuple for downloads background (background_audio_options, background_video_options)
 background_options = load_background_options()
