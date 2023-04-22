@@ -108,7 +108,7 @@ def make_final_video(
     number_of_clips: int,
     length: int,
     reddit_obj: dict,
-    background_config: Dict[str,Tuple[str, str, str, Any]],
+    background_config: Dict[str,Tuple],
 ):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
@@ -262,6 +262,10 @@ def make_final_video(
     if not exists(f"./results/{subreddit}"):
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
+    
+    if not exists(f"./results/{subreddit}/{filename}"):
+        print_substep("The results folder didn't exist so I made it")
+        os.makedirs(f"./results/{subreddit}/{filename}")
 
     # create a thumbnail for the video
     settingsbackground = settings.config["settings"]["background"]
@@ -324,13 +328,32 @@ def make_final_video(
 
     path = f"results/{subreddit}/{filename}"
     path = path[:251]
-    path = path + ".mp4"
+    #path = path + ".mp4"
 
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(
             background_clip,
             final_audio,
-            path,
+            path+f"/{filename}.mp4",
+            f="mp4",
+            **{
+                "c:v": "h264",
+                "b:v": "20M",
+                "b:a": "192k",
+                "threads": multiprocessing.cpu_count(),
+            },
+        ).overwrite_output().global_args("-progress", progress.output_file.name).run(
+            quiet=True,
+            overwrite_output=True,
+            capture_stdout=False,
+            capture_stderr=False,
+        )
+    
+    with ProgressFfmpeg(length, on_update_example) as progress:
+        ffmpeg.output(
+            background_clip,
+            audio,
+            path+"/NoBackgroundAudio.mp4",
             f="mp4",
             **{
                 "c:v": "h264",

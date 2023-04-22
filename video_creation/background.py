@@ -98,16 +98,18 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     )
     print_substep("Downloading the backgrounds audio... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(only_audio=True).first().download("assets/backgrounds/audio", filename=f"{credit}-{filename}")
+    YouTube(uri, on_progress_callback=on_progress).streams.filter(
+        only_audio=True
+    ).first().download("assets/backgrounds/audio", filename=f"{credit}-{filename}")
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
 
 def chop_background(
-    background_config: Dict[str,Tuple[str, str, str, Any]], video_length: int, reddit_object: dict
+    background_config: Dict[str,Tuple], video_length: int, reddit_object: dict
 ):
-    """Generates the background footage to be used in the video and writes it to assets/temp/background.mp4
+    """Generates the background audio and footage to be used in the video and writes it to assets/temp/background.mp3 and assets/temp/background.mp4
 
     Args:
-        background_config (Tuple[str, str, str, Any]) : Current background configuration
+        background_config (Dict[str,Tuple]]) : Current background configuration
         video_length (int): Length of the clip where the background footage is to be taken out of
     """
 
@@ -119,10 +121,12 @@ def chop_background(
     background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
     start_time_video, end_time_video = get_start_and_end_times(video_length, background_video.duration)
     start_time_audio, end_time_audio = get_start_and_end_times(video_length, background_audio.duration)
-    background_audio = background_audio.fx(afx.volumex,0.07)
+    # Create a audio clip
+    background_audio_volume = settings.config["settings"]["background"][f"background_audio_volume"]
+    background_audio = background_audio.fx(afx.volumex,background_audio_volume)
     background_audio = background_audio.subclip(start_time_audio,end_time_audio)
     background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
-    background_video.set_audio(background_audio)
+    #background_video.set_audio(background_audio)
 
 
     try:
