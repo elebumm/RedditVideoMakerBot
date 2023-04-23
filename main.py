@@ -6,6 +6,7 @@ from os import name
 from pathlib import Path
 from subprocess import Popen
 
+import ffmpeg
 from prawcore import ResponseException
 from utils.console import print_substep
 from reddit.subreddit import get_subreddit_threads
@@ -57,7 +58,11 @@ def main(POST_ID=None) -> None:
     download_background_video(bg_config["video"])
     download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
-    make_final_video(number_of_comments, length, reddit_object, bg_config)
+    try:
+        make_final_video(number_of_comments, length, reddit_object, bg_config)
+    except ffmpeg.Error as e:
+        print(e.stderr.decode("utf8"))
+        exit(1)
 
 
 def run_many(times) -> None:

@@ -7,7 +7,6 @@ from typing import Any, Tuple,Dict
 
 from moviepy.editor import VideoFileClip,AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-from pytube import YouTube
 from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
@@ -104,9 +103,18 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     )
     print_substep("Downloading the backgrounds audio... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(
-        only_audio=True
-    ).first().download("assets/backgrounds/audio", filename=f"{credit}-{filename}")
+    ydl_opts = {
+        'outtmpl': f'./assets/backgrounds/audio/{credit}-{filename}',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([uri])
+
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
 
 

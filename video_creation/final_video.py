@@ -398,11 +398,7 @@ def make_final_video(
             )
         old_percentage = pbar.n
         pbar.update(100 - old_percentage)
-
     pbar.close()
-
-
- 
 
     save_data(subreddit, filename + ".mp4", title, idx, background_config['video'][2])
     print_step("Removing temporary files 🗑")
