@@ -7,7 +7,6 @@ from typing import Any, Tuple,Dict
 
 from moviepy.editor import VideoFileClip,AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
 import yt_dlp
@@ -106,10 +105,7 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     ydl_opts = {
         'outtmpl': f'./assets/backgrounds/audio/{credit}-{filename}',
         'format': 'bestaudio/best',
-        'postprocessors': [{
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
+        'extract_audio': True,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
