@@ -68,9 +68,9 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
         tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 50)
     else:
         tfont = ImageFont.truetype(
-            os.path.join("fonts", "Roboto-Bold.ttf"), 35
+            os.path.join("fonts", "Roboto-Bold.ttf"), 100
         )  # for title
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 30)
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 90)
     size = (1920, 1080)
 
     image = Image.new("RGBA", size, theme)
