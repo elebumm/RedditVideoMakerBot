@@ -103,6 +103,28 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         exit()
     return output_path
 
+def merge_background_audio(audio: ffmpeg, reddit_id: str):
+    """Gather an audio and merge with assets/backgrounds/background.mp3
+    Args:
+        audio (ffmpeg): The TTS final audio but without background.
+        reddit_id (str): The ID of subreddit
+    """
+    background_audio_volume = settings.config["settings"]["background"]["background_audio_volume"]
+    if (background_audio_volume == 0):
+        return audio # Return the original audio
+    else:
+        # sets volume to config
+        bg_audio = (
+            ffmpeg.input(f"assets/temp/{reddit_id}/background.mp3")
+            .filter(
+                "volume",
+                background_audio_volume,
+            )
+        )
+        # Merges audio and background_audio
+        merged_audio = ffmpeg.filter([audio, bg_audio], "amix", duration="longest")
+        return merged_audio # Return merged audio
+
 
 def make_final_video(
     number_of_clips: int,
@@ -122,6 +144,10 @@ def make_final_video(
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
 
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+
+    allowOnlyTTSFolder: bool = settings.config["settings"]["background"]["allow_only_tts"] \
+                            and settings.config["settings"]["background"]["background_audio_volume"] != 0
+
     print_step("Creating the final video 🎥")
 
     background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
@@ -177,8 +203,7 @@ def make_final_video(
 
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
-    background_audio = ffmpeg.input(f"assets/temp/{reddit_id}/background.mp3")
-    final_audio = ffmpeg.filter([audio, background_audio], "amix")
+    final_audio = merge_background_audio(audio,reddit_id)
 
     image_clips = list()
 
@@ -263,9 +288,9 @@ def make_final_video(
         print_substep("The results folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
     
-    if not exists(f"./results/{subreddit}/{filename}"):
-        print_substep("The results folder didn't exist so I made it")
-        os.makedirs(f"./results/{subreddit}/{filename}")
+    if not exists(f"./results/{subreddit}/OnlyTTS") and allowOnlyTTSFolder:
+        print_substep("The 'OnlyTTS' folder didn't exist so I made it")
+        os.makedirs(f"./results/{subreddit}/OnlyTTS")
 
     # create a thumbnail for the video
     settingsbackground = settings.config["settings"]["background"]
@@ -326,9 +351,10 @@ def make_final_video(
         old_percentage = pbar.n
         pbar.update(status - old_percentage)
 
-    path = f"results/{subreddit}/{filename}"
-    path = path[:251]
+    path = f"results/{subreddit}"
     #path = path + ".mp4"
+    if(allowOnlyTTSFolder):
+        processingLength = 2*length
 
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(
@@ -348,29 +374,35 @@ def make_final_video(
             capture_stdout=False,
             capture_stderr=False,
         )
-    
-    with ProgressFfmpeg(length, on_update_example) as progress:
-        ffmpeg.output(
-            background_clip,
-            audio,
-            path+"/NoBackgroundAudio.mp4",
-            f="mp4",
-            **{
-                "c:v": "h264",
-                "b:v": "20M",
-                "b:a": "192k",
-                "threads": multiprocessing.cpu_count(),
-            },
-        ).overwrite_output().global_args("-progress", progress.output_file.name).run(
-            quiet=True,
-            overwrite_output=True,
-            capture_stdout=False,
-            capture_stderr=False,
-        )
-
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
+    if(allowOnlyTTSFolder):
+        print_step("Rendering the Only TTS Video 🎥")
+        with ProgressFfmpeg(length, on_update_example) as progress:
+            ffmpeg.output(
+                background_clip,
+                audio,
+                path+f"/OnlyTTS/{filename}.mp4",
+                f="mp4",
+                **{
+                    "c:v": "h264",
+                    "b:v": "20M",
+                    "b:a": "192k",
+                    "threads": multiprocessing.cpu_count(),
+                },
+            ).overwrite_output().global_args("-progress", progress.output_file.name).run(
+                quiet=True,
+                overwrite_output=True,
+                capture_stdout=False,
+                capture_stderr=False,
+            )
+        old_percentage = pbar.n
+        pbar.update(100 - old_percentage)
+
     pbar.close()
+
+
+ 
 
     save_data(subreddit, filename + ".mp4", title, idx, background_config['video'][2])
     print_step("Removing temporary files 🗑")

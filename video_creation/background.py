@@ -5,12 +5,13 @@ from pathlib import Path
 from random import randrange
 from typing import Any, Tuple,Dict
 
-from moviepy.editor import VideoFileClip,AudioFileClip,afx
+from moviepy.editor import VideoFileClip,AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from pytube import YouTube
 from pytube.cli import on_progress
 from utils import settings
 from utils.console import print_step, print_substep
+import yt_dlp
 
 def load_background_options():
     background_options = {}
@@ -81,9 +82,14 @@ def download_background_video(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(
-        res="1080p"
-    ).first().download("assets/backgrounds/video", filename=f"{credit}-{filename}")
+    ydl_opts = {
+        'format': "bestvideo[height<=1080][ext=mp4]",
+        "outtmpl": f"assets/backgrounds/video/{credit}-{filename}",
+        "retries": 10,
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(uri)
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
 
 def download_background_audio(background_config: Tuple[str, str, str]):
@@ -103,6 +109,8 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     ).first().download("assets/backgrounds/audio", filename=f"{credit}-{filename}")
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
 
+
+
 def chop_background(
     background_config: Dict[str,Tuple], video_length: int, reddit_object: dict
 ):
@@ -112,23 +120,23 @@ def chop_background(
         background_config (Dict[str,Tuple]]) : Current background configuration
         video_length (int): Length of the clip where the background footage is to be taken out of
     """
+    id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
+
+    if(settings.config["settings"]["background"][f"background_audio_volume"] == 0):
+        print_step("Volume was set to 0. Skipping background audio creation . . .")
+    else:
+        print_step("Finding a spot in the backgrounds audio to chop...✂️")
+        audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
+        background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
+        start_time_audio, end_time_audio = get_start_and_end_times(video_length, background_audio.duration)
+        background_audio = background_audio.subclip(start_time_audio,end_time_audio)
+        background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
 
     print_step("Finding a spot in the backgrounds video to chop...✂️")
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
-    audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
-    id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     background_video = VideoFileClip(f"assets/backgrounds/video/{video_choice}")
-    background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
     start_time_video, end_time_video = get_start_and_end_times(video_length, background_video.duration)
-    start_time_audio, end_time_audio = get_start_and_end_times(video_length, background_audio.duration)
-    # Create a audio clip
-    background_audio_volume = settings.config["settings"]["background"][f"background_audio_volume"]
-    background_audio = background_audio.fx(afx.volumex,background_audio_volume)
-    background_audio = background_audio.subclip(start_time_audio,end_time_audio)
-    background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
-    #background_video.set_audio(background_audio)
-
-
+    # Extract video subclip
     try:
         ffmpeg_extract_subclip(
             f"assets/backgrounds/video/{video_choice}",
