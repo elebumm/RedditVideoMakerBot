@@ -145,7 +145,7 @@ def make_final_video(
 
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
-    allowOnlyTTSFolder: bool = settings.config["settings"]["background"]["allow_only_tts"] \
+    allowOnlyTTSFolder: bool = settings.config["settings"]["background"]["enable_extra_audio"] \
                             and settings.config["settings"]["background"]["background_audio_volume"] != 0
 
     print_step("Creating the final video 🎥")
@@ -285,7 +285,7 @@ def make_final_video(
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
-        print_substep("The results folder didn't exist so I made it")
+        print_substep("The 'results' folder didn't exist so I made it")
         os.makedirs(f"./results/{subreddit}")
     
     if not exists(f"./results/{subreddit}/OnlyTTS") and allowOnlyTTSFolder:
@@ -352,9 +352,6 @@ def make_final_video(
         pbar.update(status - old_percentage)
 
     path = f"results/{subreddit}"
-    #path = path + ".mp4"
-    if(allowOnlyTTSFolder):
-        processingLength = 2*length
 
     with ProgressFfmpeg(length, on_update_example) as progress:
         ffmpeg.output(
