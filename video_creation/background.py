@@ -22,8 +22,8 @@ def load_background_options():
         background_options["audio"] = json.load(json_file)
     
     # Remove "__comment" from backgrounds
-    background_options["video"].pop("__comment", None)
-    background_options["audio"].pop("__comment", None)
+    del background_options["video"]["__comment"]
+    del background_options["audio"]["__comment"]
     
     # Add position lambda function
     # (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)

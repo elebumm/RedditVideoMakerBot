@@ -285,11 +285,11 @@ def make_final_video(
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
-        print_substep("The 'results' folder didn't exist so I made it")
+        print_substep("The 'results' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}")
     
     if not exists(f"./results/{subreddit}/OnlyTTS") and allowOnlyTTSFolder:
-        print_substep("The 'OnlyTTS' folder didn't exist so I made it")
+        print_substep("The 'OnlyTTS' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}/OnlyTTS")
 
     # create a thumbnail for the video
@@ -297,7 +297,7 @@ def make_final_video(
 
     if settingsbackground["background_thumbnail"]:
         if not exists(f"./results/{subreddit}/thumbnails"):
-            print_substep("The results/thumbnails folder didn't exist so I made it")
+            print_substep("The 'results/thumbnails' folder could not be found so it was automatically created.")
             os.makedirs(f"./results/{subreddit}/thumbnails")
         # get the first file with the .png extension from assets/backgrounds and use it as a background for the thumbnail
         first_image = next(
@@ -351,13 +351,14 @@ def make_final_video(
         old_percentage = pbar.n
         pbar.update(status - old_percentage)
 
-    path = f"results/{subreddit}"
-
+    defaultPath = f"results/{subreddit}"
     with ProgressFfmpeg(length, on_update_example) as progress:
+        path = defaultPath + f"/{filename}"
+        path = path[:251] + ".mp4" #Prevent a error by limiting the path length, do not change this.
         ffmpeg.output(
             background_clip,
             final_audio,
-            path+f"/{filename}.mp4",
+            path, 
             f="mp4",
             **{
                 "c:v": "h264",
@@ -374,12 +375,14 @@ def make_final_video(
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
     if(allowOnlyTTSFolder):
+        path = defaultPath + f"/OnlyTTS/{filename}"
+        path = path[:251] + ".mp4" #Prevent a error by limiting the path length, do not change this.
         print_step("Rendering the Only TTS Video 🎥")
         with ProgressFfmpeg(length, on_update_example) as progress:
             ffmpeg.output(
                 background_clip,
                 audio,
-                path+f"/OnlyTTS/{filename}.mp4",
+                path,
                 f="mp4",
                 **{
                     "c:v": "h264",
