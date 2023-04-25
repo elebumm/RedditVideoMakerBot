@@ -1,18 +1,18 @@
 {
     "__comment": "Supported Backgrounds Audio. Can add/remove background audio here...",
-    "minecraft": [
-        "https://www.youtube.com/watch?v=2p3nBYUaJz8",
-        "minecraft.mp3",
-        "adriPixs"
-    ],
-    "lofi":[
-        "https://www.youtube.com/watch?v=BEXL80LS0-I",
+    "lofi": [
+        "https://www.youtube.com/watch?v=LTphVIore3A",
         "lofi.mp3",
+        "Super Lofi World"
+    ],
+    "lofi-2":[
+        "https://www.youtube.com/watch?v=BEXL80LS0-I",
+        "lofi-2.mp3",
         "stompsPlaylist"
     ],
-    "undertale":[
-        "https://www.youtube.com/watch?v=TIokr8jJPkM",
-        "undertale.mp3",
-        "abby"
+    "chill-summer":[
+        "https://www.youtube.com/watch?v=EZE8JagnBI8",
+        "chill-summer.mp3",
+        "Mellow Vibes Radio"
     ]
 }
