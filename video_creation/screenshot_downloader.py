@@ -115,6 +115,19 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         )
         page.locator("button[class$='m-full-width']").click()
         page.wait_for_timeout(5000)
+        
+        login_error_div = page.locator(".AnimatedForm__errorMessage").first
+        if login_error_div.is_visible():
+            login_error_message = login_error_div.inner_text()
+            if login_error_message.strip() == "":
+                # The div element is empty, no error
+                pass
+            else:
+                # The div contains an error message
+                print_substep("Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.", style="red")
+                exit()
+        else:
+            pass
 
         page.wait_for_load_state()
         # Get the thread screenshot
