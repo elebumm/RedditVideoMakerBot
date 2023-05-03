@@ -51,7 +51,7 @@ def main(POST_ID=None) -> None:
     length = math.ceil(length)
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = get_background_config()
-    download_background(bg_config)
+    #download_background(bg_config)
     chop_background_video(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 

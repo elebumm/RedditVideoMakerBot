@@ -300,15 +300,15 @@ def make_final_video(
                 f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
             )
 
-    text = f"Background by {background_config[2]}"
+    text = f""
     background_clip = ffmpeg.drawtext(
         background_clip,
         text=text,
-        x=f"(w-text_w)",
+        x=f"(w-text_w)/2",
         y=f"(h-text_h)",
         fontsize=12,
         fontcolor="White",
-        fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
+        fontfile=os.path.join("fonts", "Montserrat-Regular.ttf"),
     )
     print_step("Rendering the video 🎥")
     from tqdm import tqdm
