@@ -4,26 +4,34 @@ from elevenlabs import generate, save
 
 from utils import settings
 
+voices = [
+    "Adam",
+    "Antoni",
+    "Arnold",
+    "Bella",
+    "Domi",
+    "Elli",
+    "Josh",
+    "Rachel",
+    "Sam",
+]
 
 class elevenlabs:
     def __init__(self):
         self.max_chars = 5000
-        self.voices = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam"]
+        self.voices = voices
 
-    def run(
-        self,
-        text: str,
-        filepath: str,
-        random_voice=False,
-    ):
-        voice_name = settings.config["settings"]["tts"]["elevenlabs_voice_name"]
-        if voice_name == "":
-            voice_name = "Bella"
-            raise ValueError(
-                "set elevenlabs name value to a valid value, switching to default voice (Bella)"
-            )
+    def run(self, text, filepath, random_voice: bool = False):
         if random_voice:
-            voice_name = self.randomvoice()
+            voice = self.randomvoice()
+        else:
+            if not settings.config["settings"]["tts"]["elevenlabs_voice_name"]:
+                print(f"Please set the config variable ELEVENLABS_VOICE_NAME to a valid voice. options are: {voices}. Using random voice.")
+                voice = self.randomvoice()
+            else:
+                voice = str(
+                    settings.config["settings"]["tts"]["elevenlabs_voice_name"]
+                ).capitalize()
 
         if settings.config["settings"]["tts"]["elevenlabs_api_key"]:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
@@ -34,7 +42,7 @@ class elevenlabs:
         audio = generate(
             api_key=api_key,
             text=text,
-            voice=voice_name,
+            voice=voice,
             model="eleven_monolingual_v1"
         )
         save(
