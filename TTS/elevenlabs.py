@@ -29,7 +29,7 @@ class elevenlabs:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
         else:
             api_key = None
-            print("set elevenlabs api key value to a valid value or quota will be limited")
+            print("You didn't set an Elevenlabs API key! Trying without API key, but you'll probably hit an error.")
         
         audio = generate(
             api_key=api_key,
