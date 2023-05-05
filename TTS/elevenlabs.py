@@ -36,8 +36,9 @@ class elevenlabs:
         if settings.config["settings"]["tts"]["elevenlabs_api_key"]:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
         else:
-            api_key = None
-            print("You didn't set an Elevenlabs API key! Trying without API key, but you'll probably hit an error.")
+            raise ValueError(
+                    "You didn't set an Elevenlabs API key! Please set the config variable ELEVENLABS_API_KEY to a valid API key."
+                )
         
         audio = generate(
             api_key=api_key,
