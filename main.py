@@ -6,6 +6,7 @@ from os import name
 from pathlib import Path
 from subprocess import Popen
 
+import ffmpeg
 from prawcore import ResponseException
 from utils.console import print_substep
 from reddit.subreddit import get_subreddit_threads
@@ -15,8 +16,9 @@ from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
 from video_creation.background import (
-    download_background,
-    chop_background_video,
+    download_background_video,
+    download_background_audio,
+    chop_background,
     get_background_config,
 )
 from video_creation.final_video import make_final_video
@@ -50,10 +52,18 @@ def main(POST_ID=None) -> None:
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    bg_config = get_background_config()
-    download_background(bg_config)
-    chop_background_video(bg_config, length, reddit_object)
-    make_final_video(number_of_comments, length, reddit_object, bg_config)
+    bg_config = {
+        "video": get_background_config("video"),
+        "audio": get_background_config("audio"),
+    }
+    download_background_video(bg_config["video"])
+    download_background_audio(bg_config["audio"])
+    chop_background(bg_config, length, reddit_object)
+    try:
+        make_final_video(number_of_comments, length, reddit_object, bg_config)
+    except ffmpeg.Error as e:
+        print(e.stderr.decode("utf8"))
+        exit(1)
 
 
 def run_many(times) -> None:
@@ -81,6 +91,7 @@ def shutdown():
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
         print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
+        exit()
     ffmpeg_install() # install ffmpeg if not installed
     directory = Path().absolute()
     config = settings.check_toml(
