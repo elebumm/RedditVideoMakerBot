@@ -120,6 +120,7 @@ def make_final_video(
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
+    opacity = int(settings.config["settings"]["opacity"])
 
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     print_step("Creating the final video 🎥")
@@ -242,8 +243,9 @@ def make_final_video(
                     "v"
                 ].filter("scale", screenshot_width, -1)
             )
+            image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
             background_clip = background_clip.overlay(
-                image_clips[i],
+                image_overlay,
                 enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
                 x="(main_w-overlay_w)/2",
                 y="(main_h-overlay_h)/2",
@@ -346,8 +348,8 @@ def make_final_video(
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
     pbar.close()
-
-    save_data(subreddit, filename + ".mp4", title, idx, background_config[2])
+    path = r"~/Library/Mobile Documents/com~apple~CloudDocs/reddit/"
+    save_data(path+subreddit, filename + ".mp4", title, idx, background_config[2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
