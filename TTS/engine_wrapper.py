@@ -81,7 +81,6 @@ class TTSEngine:
             for acronym in acronyms_json:
                 if re.search(acronym, self.reddit_object["thread_title"]):
                     self.reddit_object["thread_title"] = self.reddit_object["thread_title"].replace(acronym, acronyms_json[acronym])
-                print(self.reddit_object["thread_title"])
 
                 for idx, post in enumerate(self.reddit_object["thread_post"]):
                     if re.search(acronym, post):
