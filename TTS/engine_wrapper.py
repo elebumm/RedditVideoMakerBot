@@ -76,19 +76,16 @@ class TTSEngine:
         with open("./utils/acronyms.json") as json_file:
 
             acronyms_json = json.load(json_file)
-            # for acronym in acronyms_json:
-            #     print(acronym, ":", acronyms_json[acronym])
+            
+            # Repalcing each acronym in acronyms_json for the whole post & comments
             for acronym in acronyms_json:
-                print(type(self.reddit_object["thread_title"]))
                 if re.search(acronym, self.reddit_object["thread_title"]):
                     self.reddit_object["thread_title"] = self.reddit_object["thread_title"].replace(acronym, acronyms_json[acronym])
                 print(self.reddit_object["thread_title"])
 
-                print(type(self.reddit_object["thread_post"]))
                 for idx, post in enumerate(self.reddit_object["thread_post"]):
                     if re.search(acronym, post):
                         self.reddit_object["thread_post"][idx] = self.reddit_object["thread_post"][idx].replace(acronym, acronyms_json[acronym])
-                #print(self.reddit_object["thread_post"])
 
                 for comment in self.reddit_object["comments"]:
                     if re.search(acronym, comment["comment_body"]):
