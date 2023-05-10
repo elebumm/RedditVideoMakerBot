@@ -1,7 +1,6 @@
 import multiprocessing
 import os
 import re
-import shutil
 from os.path import exists # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any
