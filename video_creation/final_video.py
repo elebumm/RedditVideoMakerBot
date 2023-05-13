@@ -2,7 +2,7 @@ import multiprocessing
 import os
 import re
 import shutil
-from os.path import exists # Needs to be imported specifically
+from os.path import exists  # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any
 
@@ -299,17 +299,20 @@ def make_final_video(
             print_substep(
                 f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
             )
-
-    text = f"Background by {background_config[2]}"
-    background_clip = ffmpeg.drawtext(
-        background_clip,
-        text=text,
-        x=f"(w-text_w)",
-        y=f"(h-text_h)",
-        fontsize=12,
-        fontcolor="White",
-        fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
-    )
+    if settingsbackground["background_watermark"]:
+        if settingsbackground["background_watermark_text"]:
+            text = settingsbackground["background_watermark_text"]
+        else:
+            text = f"Background by {background_config[2]}"
+        background_clip = ffmpeg.drawtext(
+            background_clip,
+            text=text,
+            x=f"(w-text_w)",
+            y=f"(h-text_h)",
+            fontsize=12,
+            fontcolor="White",
+            fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
+        )
     print_step("Rendering the video 🎥")
     from tqdm import tqdm
 
