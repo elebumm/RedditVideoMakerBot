@@ -18,7 +18,7 @@ voices = [
 
 class elevenlabs:
     def __init__(self):
-        self.max_chars = 5000
+        self.max_chars = 2500
         self.voices = voices
 
     def run(self, text, filepath, random_voice: bool = False):
@@ -48,7 +48,7 @@ class elevenlabs:
         )
         save(
             audio=audio,         
-            filename=f"{filepath}"
+            filename=filepath
         )
 
     def randomvoice(self):
