@@ -158,9 +158,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
-            page.locator('[data-test-id="post-content"]').screenshot(
-                path=postcontentpath
-            )
+            page.locator("//shreddit-post").screenshot(path=postcontentpath)
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -214,9 +212,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
-                    )
+                    permalink_arr = comment["comment_url"].split("/")
+                    permalink_arr[-3] = "comment"
+                    permalink = "/".join(permalink_arr)
+                    page.locator(
+                        f"shreddit-comment[permalink='{permalink}']"
+                    ).screenshot(path=f"assets/temp/{reddit_id}/png/comment_{idx}.png")
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
