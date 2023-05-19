@@ -56,6 +56,13 @@
         .tooltip-inner {
             max-width: 500px !important;
         }
+        #hard-reload {
+            cursor: pointer;
+            color: darkblue;
+        }
+        #hard-reload:hover {
+            color: blue;
+        }
     </style>
 </head>
 
@@ -132,11 +139,17 @@
                 Theme by &copy; Bootstrap. <a
                     href="https://github.com/elebumm/RedditVideoMakerBot/blob/master/README.md#developers-and-maintainers"
                     target="_blank">Developers and Maintainers</a></p>
-            <p class="mb-0">If your data is not refreshing, try to hard reload(Ctrl + F5) and visit your local
+            <p class="mb-0">If your data is not refreshing, try to hard reload(Ctrl + F5) or click <a id="hard-reload">this</a> and visit your local
+
                 <strong>{{ file }}</strong> file.
             </p>
         </div>
     </footer>
+    <script>
+        document.getElementById("hard-reload").addEventListener("click", function () {
+            window.location.reload(true);
+        });
+    </script>
 </body>
 
 </html>
