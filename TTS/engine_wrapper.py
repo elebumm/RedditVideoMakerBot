@@ -2,6 +2,7 @@ import os
 import re
 from pathlib import Path
 from typing import Tuple
+import json
 
 # import sox
 # from mutagen import MutagenError
@@ -69,12 +70,35 @@ class TTSEngine:
             comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
             print(comment["comment_body"])
 
+    def replace_acronyms(
+            self,
+    ):
+        with open("./utils/acronyms.json") as json_file:
+
+            acronyms_json = json.load(json_file)
+            
+            # Repalcing each acronym in acronyms_json for the whole post & comments
+            for acronym in acronyms_json:
+                if re.search(acronym, self.reddit_object["thread_title"]):
+                    self.reddit_object["thread_title"] = self.reddit_object["thread_title"].replace(acronym, acronyms_json[acronym])
+
+                for idx, post in enumerate(self.reddit_object["thread_post"]):
+                    if re.search(acronym, post):
+                        self.reddit_object["thread_post"][idx] = self.reddit_object["thread_post"][idx].replace(acronym, acronyms_json[acronym])
+
+                for comment in self.reddit_object["comments"]:
+                    if re.search(acronym, comment["comment_body"]):
+                        comment["comment_body"] = comment["comment_body"].replace(acronym, acronyms_json[acronym])
 
     def run(self) -> Tuple[int, int]:
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
 
         self.add_periods()
+
+        if settings.config["settings"]["tts"]["replace_acronyms"]:
+            self.replace_acronyms()
+
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
         idx = None
