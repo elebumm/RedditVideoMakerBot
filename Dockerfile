@@ -1,6 +1,7 @@
 FROM python:3.10.9-slim
 
 RUN apt update
+RUN apt-get install -y ffmpeg
 RUN apt install python3-pip -y
 
 RUN mkdir /app
