@@ -25,9 +25,6 @@ class elevenlabs:
         if random_voice:
             voice = self.randomvoice()
         else:
-            if not settings.config["settings"]["tts"]["elevenlabs_voice_name"]:
-                print(f"Please set the config variable ELEVENLABS_VOICE_NAME to a valid voice. options are: {voices}. Using random voice.")
-                voice = self.randomvoice()
             else:
                 voice = str(
                     settings.config["settings"]["tts"]["elevenlabs_voice_name"]
