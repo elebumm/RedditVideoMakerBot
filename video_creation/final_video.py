@@ -142,7 +142,8 @@ def make_final_video(
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
-    opacity = int(settings.config["settings"]["opacity"])
+    """Fixed to allow fraction opacity Ea: 0.7"""
+    opacity = settings.config["settings"]["opacity"]
 
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
