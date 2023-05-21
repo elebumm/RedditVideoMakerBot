@@ -41,7 +41,7 @@ class elevenlabs:
             api_key=api_key,
             text=text,
             voice=voice,
-            model="eleven_monolingual_v1"
+            model="eleven_multilingual_v1"
         )
         save(
             audio=audio,         
