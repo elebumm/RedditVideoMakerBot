@@ -72,7 +72,7 @@ def download_background(background_config: Tuple[str, str, str, Any]):
     )
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
-    YouTube(uri, on_progress_callback=on_progress).streams.filter(
+    YouTube(uri, on_progress_callback=on_progress, use_oauth=True, allow_oauth_cache=True).streams.filter(
         res="1080p"
     ).first().download("assets/backgrounds", filename=f"{credit}-{filename}")
     print_substep("Background video downloaded successfully! 🎉", style="bold green")
