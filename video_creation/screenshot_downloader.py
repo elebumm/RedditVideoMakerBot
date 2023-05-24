@@ -11,6 +11,7 @@ from rich.progress import track
 from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
+from utils.playwright import clear_cookie_by_name
 
 from utils.videos import save_data
 
@@ -117,6 +118,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.wait_for_timeout(5000)
 
         page.wait_for_load_state()
+        # Handle the redesign
+        # Check if the redesign optout cookie is set
+        if page.locator("#redesign-beta-optin-btn").is_visible():
+            # Clear the redesign optout cookie
+            clear_cookie_by_name(context, "redesign_optout")
+            # Reload the page for the redesign to take effect
+            page.reload()
         # Get the thread screenshot
         page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=W, height=H))
