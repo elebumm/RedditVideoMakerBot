@@ -25,10 +25,9 @@ class elevenlabs:
         if random_voice:
             voice = self.randomvoice()
         else:
-            else:
-                voice = str(
-                    settings.config["settings"]["tts"]["elevenlabs_voice_name"]
-                ).capitalize()
+            voice = str(
+                settings.config["settings"]["tts"]["elevenlabs_voice_name"]
+            ).capitalize()
 
         if settings.config["settings"]["tts"]["elevenlabs_api_key"]:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
