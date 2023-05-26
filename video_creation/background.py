@@ -47,7 +47,14 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
     Returns:
         tuple[int,int]: Start and end time of the randomized interval
     """
-    random_time = randrange(180, int(length_of_clip) - int(video_length))
+    initialValue = 180
+    # Issue #1649 - Ensures that will be a valid interval in the video
+    while(int(length_of_clip) <= int(video_length+initialValue)):
+        if(initialValue == initialValue //2):
+            raise Exception("Your background is too short for this video length")
+        else:
+            initialValue //= 2 #Divides the initial value by 2 until reach 0
+    random_time = randrange(initialValue, int(length_of_clip) - int(video_length))
     return random_time, random_time + video_length
 
 
