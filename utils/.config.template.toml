@@ -16,30 +16,39 @@ post_lang = { default = "", optional = true, explanation = "The language you wou
 min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
 #post_url = { optional = true, default = "", regex = "^https:\\/\\/www\\.reddit\\.com\\/r\\/[a-zA-Z0-9]+\\/comments\\/[a-zA-Z0-9]+\\/[a-zA-Z0-9_]+\\/$", explanation = "Not working currently Use if you want to use a specific post.", example = "https://www.reddit.com/r/buildapc/comments/yzh07p/have_you_switched_to_windows_11/" }
 
+[ai]
+ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
+ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
-theme = { optional = false, default = "dark", example = "light", options = ["dark", "light", ], explanation = "Sets the Reddit theme, either LIGHT or DARK" }
+theme = { optional = false, default = "dark", example = "light", options = ["dark", "light", "transparent", ], explanation = "Sets the Reddit theme, either LIGHT or DARK. For story mode you can also use a transparent background." }
 times_to_run = { optional = false, default = 1, example = 2, explanation = "Used if you want to run multiple times. Set to an int e.g. 4 or 29 or 1", type = "int", nmin = 1, oob_error = "It's very hard to run something less than once." }
 opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
 transition = { optional = true, default = 0.2, example = 0.2, explanation = "Sets the transition time (in seconds) between the comments. Set to 0 if you want to disable it.", type = "float", nmin = 0, nmax = 2, oob_error = "The transition HAS to be between 0 and 2", input_error = "The opacity HAS to be a decimal number between 0 and 2" }
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, great for subreddits with stories" }
 storymodemethod= { optional = true, default = 1, example = 1, explanation = "Style that's used for the storymode. Set to 0 for single picture display in whole video, set to 1 for fancy looking video ", type = "int", nmin = 0, oob_error = "It's very hard to run something less than once.", options = [0, 1] }
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
-fps = { optional = true, default = 30, example = 30, explanation = "Sets the FPS of the video, 30 is default for best performance. 60 FPS is smoother.", type = "int", nmin = 1, nmax = 60, oob_error = "The FPS HAS to be between 1 and 60" }
-
+resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
+resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
 
 [settings.background]
-background_choice = { optional = true, default = "minecraft", example = "rocket-league", options = ["", "minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck"], explanation = "Sets the background for the video based on game name" }
-#background_audio = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Sets a audio to play in the background (put a background.mp3 file in the assets/backgrounds directory for it to be used.)" }
-#background_audio_volume = { optional = true, type = "float", default = 0.3, example = 0.1, explanation="Sets the volume of the background audio. only used if the background_audio is also set to true" }
-
+background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
+background_audio = { optional = true, default = "lofi", example = "chill-summer", options = ["lofi","lofi-2","chill-summer",""], explanation = "Sets the background audio for the video" }
+background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation="Sets the volume of the background audio. If you don't want background audio, set it to 0.", oob_error = "The volume HAS to be between 0 and 1", input_error = "The volume HAS to be a float number between 0 and 1"}
+enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation="Used if you want to render another video without background audio in a separate folder", input_error = "The value HAS to be true or false"}
+background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Generate a thumbnail for the video (put a thumbnail.png file in the assets/backgrounds directory.)" }
+background_thumbnail_font_family = { optional = true, default = "arial", example = "arial", explanation = "Font family for the thumbnail text" }
+background_thumbnail_font_size = { optional = true, type = "int", default = 96, example = 96, explanation = "Font size in pixels for the thumbnail text" }
+background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "googletranslate", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
-aws_polly_voice = { optional = true, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
-streamlabs_polly_voice = { optional = true, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
-tiktok_voice = { optional = true, default = "en_us_006", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
-python_voice = { optional = true, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
-py_voice_num = { optional = true, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
+voice_choice = { optional = false, default = "streamlabspolly", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
+aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
+streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
+tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
+tiktok_sessionid = { optional = true, example = "c76bcc3a7625abcc27b508c7db457ff1", explanation = "TikTok sessionid needed if you're using the TikTok TTS. Check documentation if you don't know how to obtain it." }
+python_voice = { optional = false, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
+py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
+no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }

@@ -1,15 +1,18 @@
 import re
 
+from prawcore.exceptions import ResponseException
+
+from utils import settings
 import praw
 from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
-from utils import settings
 from utils.console import print_step, print_substep
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from utils.voice import sanitize_text
 from utils.posttextparser import posttextparser
+from utils.ai_methods import sort_by_similarity
 
 
 def get_subreddit_threads(POST_ID: str):
@@ -50,6 +53,7 @@ def get_subreddit_threads(POST_ID: str):
 
     # Ask user for subreddit input
     print_step("Getting subreddit threads...")
+    similarity_score = 0
     if not settings.config["reddit"]["thread"][
         "subreddit"
     ]:  # note to user. you can have multiple subreddits via reddit.subreddit("redditdev+learnpython")
@@ -76,46 +80,72 @@ def get_subreddit_threads(POST_ID: str):
     if POST_ID:  # would only be called if there are multiple queued posts
         submission = reddit.submission(id=POST_ID)
 
+    elif (
+        settings.config["reddit"]["thread"]["post_id"]
+        and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
+    ):
+        submission = reddit.submission(
+            id=settings.config["reddit"]["thread"]["post_id"]
+        )
+    elif settings.config["ai"][
+        "ai_similarity_enabled"
+    ]:  # ai sorting based on comparison
+        threads = subreddit.hot(limit=50)
+        keywords = settings.config["ai"]["ai_similarity_keywords"].split(",")
+        keywords = [keyword.strip() for keyword in keywords]
+        # Reformat the keywords for printing
+        keywords_print = ", ".join(keywords)
+        print(f"Sorting threads by similarity to the given keywords: {keywords_print}")
+        threads, similarity_scores = sort_by_similarity(threads, keywords)
+        submission, similarity_score = get_subreddit_undone(
+            threads, subreddit, similarity_scores=similarity_scores
+        )
     else:
         threads = subreddit.hot(limit=25)
         submission = get_subreddit_undone(threads, subreddit)
 
     if submission is None:
-       return get_subreddit_threads(POST_ID)  # submission already done. rerun
+        return get_subreddit_threads(POST_ID)  # submission already done. rerun
 
     if settings.config["settings"]["storymode"]:
-        if not submission.selftext and settings.config["reddit"]["thread"]["post_id"] != "":
+        if not submission.selftext:
             print_substep("You are trying to use story mode on post with no post text")
             exit()
-        elif not submission.selftext:
-            print_substep("You are trying to use story mode on post with no post text") # not allow postid post with no self text it story == true
-            return get_subreddit_threads(POST_ID)
         else:
             # Check for the length of the post text
-            if len(submission.selftext) > (settings.config["settings"]["storymode_max_length"] or 2000):
+            if len(submission.selftext) > (
+                settings.config["settings"]["storymode_max_length"] or 2000
+            ):
                 print_substep(
-                    f"Post is too long ({len(submission.selftext)}), retrying with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
+                    f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
                 )
-                return get_subreddit_threads(POST_ID)
+                exit()
     elif not submission.num_comments:
-        return get_subreddit_threads(POST_ID)
+        print_substep("No comments found. Skipping.")
+        exit()
 
     submission = check_done(submission)  # double-checking
-    
+
     upvotes = submission.score
     ratio = submission.upvote_ratio * 100
     num_comments = submission.num_comments
     threadurl = f"https://reddit.com{submission.permalink}"
 
     print_substep(f"Video will be: {submission.title} :thumbsup:", style="bold green")
-    print_substep(f"Thread url is : {threadurl  } :thumbsup:", style="bold green")
+    print_substep(f"Thread url is: {threadurl} :thumbsup:", style="bold green")
     print_substep(f"Thread has {upvotes} upvotes", style="bold blue")
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
+    if similarity_score:
+        print_substep(
+            f"Thread has a similarity score up to {round(similarity_score * 100)}%",
+            style="bold blue",
+        )
 
     content["thread_url"] = threadurl
     content["thread_title"] = submission.title
     content["thread_id"] = submission.id
+    content["is_nsfw"] = submission.over_18
     content["comments"] = []
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 1:
@@ -139,7 +169,6 @@ def get_subreddit_threads(POST_ID: str):
                     if len(top_level_comment.body) >= int(
                         settings.config["reddit"]["thread"]["min_comment_length"]
                     ):
-
                         if (
                             top_level_comment.author is not None
                             and sanitize_text(top_level_comment.body) is not None

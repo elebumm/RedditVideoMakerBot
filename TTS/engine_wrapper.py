@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import re
 from pathlib import Path
@@ -52,11 +51,30 @@ class TTSEngine:
         self.length = 0
         self.last_clip_length = last_clip_length
 
-    def run(self) -> Tuple[int, int]:
+    def add_periods(
+        self,
+    ):  # adds periods to the end of paragraphs (where people often forget to put them) so tts doesn't blend sentences
+        for comment in self.reddit_object["comments"]:
+            # remove links
+            regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
+            comment["comment_body"] = re.sub(regex_urls, " ", comment["comment_body"])
+            comment["comment_body"] = comment["comment_body"].replace("\n", ". ")
+            comment["comment_body"] = re.sub(r'\bAI\b', 'A.I', comment["comment_body"])
+            comment["comment_body"] = re.sub(r'\bAGI\b', 'A.G.I', comment["comment_body"])
+            if comment["comment_body"][-1] != ".":
+                comment["comment_body"] += "."
+            comment["comment_body"] = comment["comment_body"].replace(". . .", ".")
+            comment["comment_body"] = comment["comment_body"].replace(".. . ", ".")
+            comment["comment_body"] = comment["comment_body"].replace(". . ", ".")
+            comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
+            print(comment["comment_body"])
 
+
+    def run(self) -> Tuple[int, int]:
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
 
+        self.add_periods()
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
         idx = None
@@ -70,12 +88,10 @@ class TTSEngine:
                         "postaudio", process_text(self.reddit_object["thread_post"])
                     )
             elif settings.config["settings"]["storymodemethod"] == 1:
-
                 for idx, text in track(enumerate(self.reddit_object["thread_post"])):
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
-
             for idx, comment in track(
                 enumerate(self.reddit_object["comments"]), "Saving..."
             ):
@@ -137,10 +153,10 @@ class TTSEngine:
 
     def call_tts(self, filename: str, text: str):
         self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
-                # try:
-                #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
-                # except (MutagenError, HeaderNotFoundError):
-                #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
+        # try:
+        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+        # except (MutagenError, HeaderNotFoundError):
+        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
         try:
             clip = AudioFileClip(f"{self.path}/{filename}.mp3")
             self.last_clip_length = clip.duration
@@ -162,7 +178,7 @@ class TTSEngine:
         )
 
 
-def process_text(text: str , clean : bool = True):
+def process_text(text: str, clean: bool = True):
     lang = settings.config["reddit"]["thread"]["post_lang"]
     new_text = sanitize_text(text) if clean else text
     if lang:

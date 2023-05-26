@@ -213,6 +213,38 @@
                             backgrounds</a></span>
                 </div>
             </div>
+            <div class="row mb-2">
+                <label for="background_thumbnail" class="col-4">Background Thumbnail</label>
+                <div class="col-8">
+                    <div class="form-check form-switch">
+                        <input name="background_thumbnail" class="form-check-input" type="checkbox" value="True"
+                            data-toggle="tooltip"
+                            data-original-title='If checked a thumbnail will be added to the video (put a thumbnail.png file in the assets/backgrounds directory for it to be used.)'>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="background_thumbnail_font_family" class="col-4">Background Thumbnail Font Family (.ttf)</label>
+                <div class="col-8">
+                    <input name="background_thumbnail_font_family" type="text" class="form-control"
+                        placeholder="arial" value="{{ data.background_thumbnail_font_family }}">
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="background_thumbnail_font_size" class="col-4">Background Thumbnail Font Size (px)</label>
+                <div class="col-8">
+                    <input name="background_thumbnail_font_size" type="number" class="form-control"
+                        placeholder="96" value="{{ data.background_thumbnail_font_size }}">
+                </div>
+            </div>
+            <!-- need to create a color picker -->
+            <div class="row mb-2">
+                <label for="background_thumbnail_font_color" class="col-4">Background Thumbnail Font Color (rgb)</label>
+                <div class="col-8">
+                    <input name="background_thumbnail_font_color" type="text" class="form-control"
+                        placeholder="255,255,255" value="{{ data.background_thumbnail_font_color }}">
+                </div>
+            </div>
 
             <!-- TTS Settings -->
             <p class="h4">TTS Settings</p>
@@ -334,6 +366,19 @@
 
                         <button type="button" class="btn btn-primary"><i id="tiktok_icon"
                                 class="bi-volume-up-fill"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="tiktok_sessionid" class="col-4">TikTok SessionId</label>
+                <div class="col-8">
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <i class="bi bi-mic-fill"></i>
+                        </div>
+                        <input value="{{ data.tiktok_sessionid }}" name="tiktok_sessionid" type="text" class="form-control"
+                            data-toggle="tooltip"
+                            data-original-title="TikTok sessionid needed for the TTS API request. Check documentation if you don't know how to obtain it.">
                     </div>
                 </div>
             </div>

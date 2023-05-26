@@ -1,0 +1,18 @@
+{
+    "__comment": "Supported Backgrounds Audio. Can add/remove background audio here...",
+    "lofi": [
+        "https://www.youtube.com/watch?v=LTphVIore3A",
+        "lofi.mp3",
+        "Super Lofi World"
+    ],
+    "lofi-2":[
+        "https://www.youtube.com/watch?v=BEXL80LS0-I",
+        "lofi-2.mp3",
+        "stompsPlaylist"
+    ],
+    "chill-summer":[
+        "https://www.youtube.com/watch?v=EZE8JagnBI8",
+        "chill-summer.mp3",
+        "Mellow Vibes Radio"
+    ]
+}
