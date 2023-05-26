@@ -1,4 +1,6 @@
+import os
 import re
+from typing import List
 
 import spacy
 
@@ -7,25 +9,25 @@ from utils.voice import sanitize_text
 
 
 # working good
-def posttextparser(obj):
-    text = re.sub("\n", "", obj)
+def posttextparser(obj,*,tried:bool=False) -> List[str]:
+    text:str = re.sub("\n", " ", obj)
 
     try:
         nlp = spacy.load("en_core_web_sm")
-    except OSError:
-        print_step(
-            "The spacy model can't load. You need to install it with the command \npython -m spacy download en_core_web_sm"
-        )
-        exit()
-
+    except OSError as e:
+        if not tried:
+            os.system("python -m spacy download en_core_web_sm")
+            return posttextparser(obj,tried)
+        
+        print_step(" The spacy model can't load. You need to install it with the command \npython -m spacy download en_core_web_sm ")
+        raise e
+    
     doc = nlp(text)
 
     newtext: list = []
 
-    # to check for space str
     for line in doc.sents:
         if sanitize_text(line.text):
             newtext.append(line.text)
-            # print(line)
 
     return newtext

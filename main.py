@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import math
 import sys
-from logging import error
 from os import name
 from pathlib import Path
 from subprocess import Popen
+from typing import NoReturn
 
 import ffmpeg
 from prawcore import ResponseException
@@ -59,11 +59,8 @@ def main(POST_ID=None) -> None:
     download_background_video(bg_config["video"])
     download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
-    try:
-        make_final_video(number_of_comments, length, reddit_object, bg_config)
-    except ffmpeg.Error as e:
-        print(e.stderr.decode("utf8"))
-        exit(1)
+    make_final_video(number_of_comments, length, reddit_object, bg_config)
+
 
 
 def run_many(times) -> None:
@@ -75,29 +72,31 @@ def run_many(times) -> None:
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
-def shutdown():
-    try:
-        redditid
-    except NameError:
-        print("Exiting...")
-        exit()
-    else:
+def shutdown() -> NoReturn:
+
+    if "redditid" in globals :
         print_markdown("## Clearing temp files")
         cleanup(redditid)
         print("Exiting...")
-        exit()
+        sys.exit()
+    
+    print("Exiting...")
+    sys.exit()
+
+        
 
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
         print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
-        exit()
+        sys.exit()
     ffmpeg_install() # install ffmpeg if not installed
     directory = Path().absolute()
     config = settings.check_toml(
-        f"{directory}/utils/.config.template.toml", "config.toml"
+        f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
-    config is False and exit()
+    if not config :
+        sys.exit()
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
         or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
@@ -106,7 +105,7 @@ if __name__ == "__main__":
             "TikTok voice requires a sessionid! Check our documentation on how to obtain one.",
             "bold red",
         )
-        exit()
+        sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
             for index, post_id in enumerate(

@@ -25,8 +25,6 @@ def load_background_options():
     del background_options["video"]["__comment"]
     del background_options["audio"]["__comment"]
     
-    # Add position lambda function
-    # (https://zulko.github.io/moviepy/ref/VideoClip/VideoClip.html#moviepy.video.VideoClip.VideoClip.set_position)
     for name in list(background_options["video"].keys()):
         pos = background_options["video"][name][3]
 

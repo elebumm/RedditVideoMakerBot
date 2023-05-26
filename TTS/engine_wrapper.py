@@ -77,7 +77,7 @@ class TTSEngine:
         self.add_periods()
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
-        idx = None
+        idx = 0
 
         if settings.config["settings"]["storymode"]:
             if settings.config["settings"]["storymodemethod"] == 0:
