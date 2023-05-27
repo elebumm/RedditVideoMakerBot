@@ -23,7 +23,7 @@ def ffmpeg_install_windows():
             os.remove(f"ffmpeg/doc/{file}")
         os.rmdir("ffmpeg/doc")
         # Add to the path
-        subprocess.run("setx /M PATH \"%PATH%;%CD%\\ffmpeg\"", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run("setx PATH \"%PATH%;%CD%\\ffmpeg\"", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("FFmpeg installed successfully! Please restart your computer and then re-run the program.")
         exit()
     except Exception as e:
