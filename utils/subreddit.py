@@ -59,12 +59,14 @@ def get_subreddit_undone(
             continue
         if settings.config["settings"]["storymode"]:
             if not submission.selftext:
-                print_substep("You are trying to use story mode on post with no post text")
+                print_substep(
+                    "You are trying to use story mode on post with no post text"
+                )
                 continue
             else:
                 # Check for the length of the post text
                 if len(submission.selftext) > (
-                        settings.config["settings"]["storymode_max_length"] or 2000
+                    settings.config["settings"]["storymode_max_length"] or 2000
                 ):
                     print_substep(
                         f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"

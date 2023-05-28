@@ -20,7 +20,7 @@ TTSProviders = {
     "StreamlabsPolly": StreamlabsPolly,
     "TikTok": TikTok,
     "pyttsx": pyttsx,
-    "ElevenLabs": elevenlabs
+    "ElevenLabs": elevenlabs,
 }
 
 

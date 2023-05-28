@@ -16,6 +16,7 @@ voices = [
     "Sam",
 ]
 
+
 class elevenlabs:
     def __init__(self):
         self.max_chars = 2500
@@ -33,19 +34,13 @@ class elevenlabs:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
         else:
             raise ValueError(
-                    "You didn't set an Elevenlabs API key! Please set the config variable ELEVENLABS_API_KEY to a valid API key."
-                )
-        
+                "You didn't set an Elevenlabs API key! Please set the config variable ELEVENLABS_API_KEY to a valid API key."
+            )
+
         audio = generate(
-            api_key=api_key,
-            text=text,
-            voice=voice,
-            model="eleven_multilingual_v1"
+            api_key=api_key, text=text, voice=voice, model="eleven_multilingual_v1"
         )
-        save(
-            audio=audio,         
-            filename=filepath
-        )
+        save(audio=audio, filename=filepath)
 
     def randomvoice(self):
         return random.choice(self.voices)

@@ -116,7 +116,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         )
         page.locator("button[class$='m-full-width']").click()
         page.wait_for_timeout(5000)
-        
+
         login_error_div = page.locator(".AnimatedForm__errorMessage").first
         if login_error_div.is_visible():
             login_error_message = login_error_div.inner_text()
@@ -125,7 +125,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 pass
             else:
                 # The div contains an error message
-                print_substep("Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.", style="red")
+                print_substep(
+                    "Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
+                    style="red",
+                )
                 exit()
         else:
             pass
@@ -183,11 +186,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 # store zoom settings
                 zoom = settings.config["settings"]["zoom"]
                 # zoom the body of the page
-                page.evaluate("document.body.style.zoom="+str(zoom))
+                page.evaluate("document.body.style.zoom=" + str(zoom))
                 # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
                 location = page.locator('[data-test-id="post-content"]').bounding_box()
                 for i in location:
-                    location[i] = float("{:.2f}".format(location[i]*zoom))
+                    location[i] = float("{:.2f}".format(location[i] * zoom))
                 page.screenshot(clip=location, path=postcontentpath)
             else:
                 page.locator('[data-test-id="post-content"]').screenshot(
@@ -250,14 +253,21 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         # store zoom settings
                         zoom = settings.config["settings"]["zoom"]
                         # zoom the body of the page
-                        page.evaluate("document.body.style.zoom="+str(zoom))
+                        page.evaluate("document.body.style.zoom=" + str(zoom))
                         # scroll comment into view
-                        page.locator(f"#t1_{comment['comment_id']}").scroll_into_view_if_needed()
+                        page.locator(
+                            f"#t1_{comment['comment_id']}"
+                        ).scroll_into_view_if_needed()
                         # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                        location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        location = page.locator(
+                            f"#t1_{comment['comment_id']}"
+                        ).bounding_box()
                         for i in location:
-                            location[i] = float("{:.2f}".format(location[i]*zoom))
-                        page.screenshot(clip=location, path=f"assets/temp/{reddit_id}/png/comment_{idx}.png")
+                            location[i] = float("{:.2f}".format(location[i] * zoom))
+                        page.screenshot(
+                            clip=location,
+                            path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
+                        )
                     else:
                         page.locator(f"#t1_{comment['comment_id']}").screenshot(
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"

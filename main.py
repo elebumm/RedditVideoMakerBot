@@ -91,7 +91,8 @@ def shutdown():
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
         print(
-            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
+            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
+        )
         exit()
     ffmpeg_install()  # install ffmpeg if not installed
     directory = Path().absolute()
@@ -100,8 +101,8 @@ if __name__ == "__main__":
     )
     config is False and exit()
     if (
-            not settings.config["settings"]["tts"]["tiktok_sessionid"]
-            or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
+        not settings.config["settings"]["tts"]["tiktok_sessionid"]
+        or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
     ) and config["settings"]["tts"]["voice_choice"] == "tiktok":
         print_substep(
             "TikTok voice requires a sessionid! Check our documentation on how to obtain one.",
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     try:
         if config["reddit"]["thread"]["post_id"]:
             for index, post_id in enumerate(
-                    config["reddit"]["thread"]["post_id"].split("+")
+                config["reddit"]["thread"]["post_id"].split("+")
             ):
                 index += 1
                 print_step(

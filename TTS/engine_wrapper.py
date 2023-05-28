@@ -56,8 +56,10 @@ class TTSEngine:
             regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
             comment["comment_body"] = re.sub(regex_urls, " ", comment["comment_body"])
             comment["comment_body"] = comment["comment_body"].replace("\n", ". ")
-            comment["comment_body"] = re.sub(r'\bAI\b', 'A.I', comment["comment_body"])
-            comment["comment_body"] = re.sub(r'\bAGI\b', 'A.G.I', comment["comment_body"])
+            comment["comment_body"] = re.sub(r"\bAI\b", "A.I", comment["comment_body"])
+            comment["comment_body"] = re.sub(
+                r"\bAGI\b", "A.G.I", comment["comment_body"]
+            )
             if comment["comment_body"][-1] != ".":
                 comment["comment_body"] += "."
             comment["comment_body"] = comment["comment_body"].replace(". . .", ".")
@@ -147,7 +149,11 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3", random_voice=settings.config["settings"]["tts"]["random_voice"])
+        self.tts_module.run(
+            text,
+            filepath=f"{self.path}/{filename}.mp3",
+            random_voice=settings.config["settings"]["tts"]["random_voice"],
+        )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
