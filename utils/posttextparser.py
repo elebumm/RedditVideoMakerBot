@@ -17,7 +17,7 @@ def posttextparser(obj,*,tried:bool=False) -> List[str]:
     except OSError as e:
         if not tried:
             os.system("python -m spacy download en_core_web_sm")
-            return posttextparser(obj,tried)
+            return posttextparser(obj,tried=True)
         
         print_step(" The spacy model can't load. You need to install it with the command \npython -m spacy download en_core_web_sm ")
         raise e

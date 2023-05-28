@@ -97,6 +97,7 @@ if __name__ == "__main__":
     )
     if not config :
         sys.exit()
+        
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
         or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
