@@ -26,7 +26,7 @@ from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
 
-__VERSION__ = "3.1"
+__VERSION__ = "3.2"
 
 print(
     """
@@ -40,7 +40,7 @@ print(
 )
 # Modified by JasonLovesDoggo
 print_markdown(
-    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](): https://reddit-video-maker-bot.netlify.app/"
+    "### Thanks for using this tool! Feel free to contribute to this project on GitHub! If you have any questions, feel free to join my Discord server or submit a GitHub issue. You can find solutions to many common problems in the documentation: https://reddit-video-maker-bot.netlify.app/"
 )
 checkversion(__VERSION__)
 
@@ -90,17 +90,18 @@ def shutdown():
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
-        print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
+        print(
+            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
         exit()
-    ffmpeg_install() # install ffmpeg if not installed
+    ffmpeg_install()  # install ffmpeg if not installed
     directory = Path().absolute()
     config = settings.check_toml(
         f"{directory}/utils/.config.template.toml", "config.toml"
     )
     config is False and exit()
     if (
-        not settings.config["settings"]["tts"]["tiktok_sessionid"]
-        or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
+            not settings.config["settings"]["tts"]["tiktok_sessionid"]
+            or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
     ) and config["settings"]["tts"]["voice_choice"] == "tiktok":
         print_substep(
             "TikTok voice requires a sessionid! Check our documentation on how to obtain one.",
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     try:
         if config["reddit"]["thread"]["post_id"]:
             for index, post_id in enumerate(
-                config["reddit"]["thread"]["post_id"].split("+")
+                    config["reddit"]["thread"]["post_id"].split("+")
             ):
                 index += 1
                 print_step(
