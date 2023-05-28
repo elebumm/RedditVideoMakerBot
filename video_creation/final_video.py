@@ -103,6 +103,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         exit()
     return output_path
 
+
 def merge_background_audio(audio: ffmpeg, reddit_id: str):
     """Gather an audio and merge with assets/backgrounds/background.mp3
     Args:

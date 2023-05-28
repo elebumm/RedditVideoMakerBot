@@ -67,8 +67,6 @@ class TTSEngine:
             comment["comment_body"] = comment["comment_body"].replace(".. . ", ".")
             comment["comment_body"] = comment["comment_body"].replace(". . ", ".")
             comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
-            print(comment["comment_body"])
-
 
     def run(self) -> Tuple[int, int]:
         Path(self.path).mkdir(parents=True, exist_ok=True)
@@ -152,7 +150,7 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
+        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3", random_voice=settings.config["settings"]["tts"]["random_voice"])
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
