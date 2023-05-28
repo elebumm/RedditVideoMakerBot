@@ -20,7 +20,8 @@ def posttextparser(obj, *, tried: bool = False) -> List[str]:
             time.sleep(5)
             return posttextparser(obj, tried=True)
         print_step(
-            "The spacy model can't load. You need to install it with the command \npython -m spacy download en_core_web_sm ")
+            "The spacy model can't load. You need to install it with the command \npython -m spacy download en_core_web_sm "
+        )
         raise e
 
     doc = nlp(text)

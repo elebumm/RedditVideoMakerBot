@@ -5,12 +5,8 @@ import torch
 
 # Mean Pooling - Take attention mask into account for correct averaging
 def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output[
-        0
-    ]  # First element of model_output contains all token embeddings
-    input_mask_expanded = (
-        attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-    )
+    token_embeddings = model_output[0]  # First element of model_output contains all token embeddings
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
         input_mask_expanded.sum(1), min=1e-9
     )
@@ -36,19 +32,13 @@ def sort_by_similarity(thread_objects, keywords):
     )
     with torch.no_grad():
         threads_embeddings = model(**encoded_threads)
-    threads_embeddings = mean_pooling(
-        threads_embeddings, encoded_threads["attention_mask"]
-    )
+    threads_embeddings = mean_pooling(threads_embeddings, encoded_threads["attention_mask"])
 
     # Keywords inference
-    encoded_keywords = tokenizer(
-        keywords, padding=True, truncation=True, return_tensors="pt"
-    )
+    encoded_keywords = tokenizer(keywords, padding=True, truncation=True, return_tensors="pt")
     with torch.no_grad():
         keywords_embeddings = model(**encoded_keywords)
-    keywords_embeddings = mean_pooling(
-        keywords_embeddings, encoded_keywords["attention_mask"]
-    )
+    keywords_embeddings = mean_pooling(keywords_embeddings, encoded_keywords["attention_mask"])
 
     # Compare every keyword w/ every thread embedding
     threads_embeddings_tensor = torch.tensor(threads_embeddings)
