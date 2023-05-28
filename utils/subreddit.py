@@ -70,6 +70,8 @@ def get_subreddit_undone(
                         f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
                     )
                     continue
+                elif len(submission.selftext) < 30:
+                    continue
         if settings.config["settings"]["storymode"] and not submission.is_self:
             continue
         if similarity_scores is not None:

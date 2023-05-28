@@ -142,7 +142,7 @@ def make_final_video(
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
-    """Fixed to allow fraction opacity Ea: 0.7"""
+
     opacity = settings.config["settings"]["opacity"]
 
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
@@ -156,7 +156,7 @@ def make_final_video(
 
     # Gather all audio clips
     audio_clips = list()
-    if number_of_clips == 0:
+    if number_of_clips == 0 and settings.config["settings"]["storymode"] == "false":
         print("No audio clips to gather. Please use a different TTS or post.") # This is to fix the TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
         exit()
     if settings.config["settings"]["storymode"]:
@@ -347,6 +347,7 @@ def make_final_video(
         fontcolor="White",
         fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
     )
+    background_clip = background_clip.filter("scale", W, H)
     print_step("Rendering the video 🎥")
     from tqdm import tqdm
 
