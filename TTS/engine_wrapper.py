@@ -3,11 +3,8 @@ import re
 from pathlib import Path
 from typing import Tuple
 
-# import sox
-# from mutagen import MutagenError
-# from mutagen.mp3 import MP3, HeaderNotFoundError
 import numpy as np
-import translators as ts
+import translators
 from moviepy.audio.AudioClip import AudioClip
 from moviepy.audio.fx.volumex import volumex
 from moviepy.editor import AudioFileClip
@@ -181,6 +178,6 @@ def process_text(text: str, clean: bool = True):
     new_text = sanitize_text(text) if clean else text
     if lang:
         print_substep("Translating Text...")
-        translated_text = ts.google(text, to_language=lang)
+        translated_text = translators.google(text, to_language=lang)
         new_text = sanitize_text(translated_text)
     return new_text
