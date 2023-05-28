@@ -1,13 +1,12 @@
 import multiprocessing
 import os
 import re
-import shutil
 from os.path import exists # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any
 
 import ffmpeg
-import translators as ts
+import translators
 from PIL import Image
 from rich.console import Console
 from rich.progress import track
@@ -18,11 +17,11 @@ from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
 
-console = Console()
-
 import tempfile
 import threading
 import time
+
+console = Console()
 
 
 class ProgressFfmpeg(threading.Thread):
@@ -73,7 +72,7 @@ def name_normalize(name: str) -> str:
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         print_substep("Translating filename...")
-        translated_name = ts.google(name, to_language=lang)
+        translated_name = translators.google(name, to_language=lang)
         return translated_name
     else:
         return name

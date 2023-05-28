@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Dict, Final
 
-import translators as ts
+import translators
 from playwright.async_api import async_playwright  # pylint: disable=unused-import
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
@@ -144,7 +144,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         if lang:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(
+            texts_in_tl = translators.google(
                 reddit_object["thread_title"],
                 to_language=lang,
             )
@@ -158,7 +158,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
-            if(settings.config["settings"]["zoom"] != 1):
+            if settings.config["settings"]["zoom"] != 1:
                 # store zoom settings
                 zoom = settings.config["settings"]["zoom"]
                 # zoom the body of the page
@@ -216,7 +216,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = ts.google(
+                    comment_tl = translators.google(
                         comment["comment_body"],
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
@@ -225,7 +225,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    if(settings.config["settings"]["zoom"] != 1):
+                    if settings.config["settings"]["zoom"] != 1:
                         # store zoom settings
                         zoom = settings.config["settings"]["zoom"]
                         # zoom the body of the page
