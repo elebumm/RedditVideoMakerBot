@@ -6,9 +6,6 @@ if exist "%VENV_DIR%" (
     call "%VENV_DIR%\Scripts\activate.bat"
 )
 
-echo Installing dependencies...
-pip install -r requirements.txt
-
 echo Running Python script...
 python main.py
 
