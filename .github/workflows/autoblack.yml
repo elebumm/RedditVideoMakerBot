@@ -6,7 +6,7 @@
 name: autoblack
 on:
   push:
-    branches: ["master"]
+    branches: ["develop"]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,9 +24,9 @@ jobs:
         if: failure()
         run: |
           black . --line-length 101
-          git config --global user.name 'autoblack'
-          git config --global user.email 'jasoncameron.all@gmail.com'
+          git config --global user.name github-actions
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git checkout $GITHUB_HEAD_REF
           git commit -am "fixup: Format Python code with Black"
-          git push origin HEAD:master
+          git push origin HEAD:develop
