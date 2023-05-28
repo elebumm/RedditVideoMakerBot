@@ -377,9 +377,9 @@ def make_final_video(
         )
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
-    if(allowOnlyTTSFolder):
+    if allowOnlyTTSFolder:
         path = defaultPath + f"/OnlyTTS/{filename}"
-        path = path[:251] + ".mp4" #Prevent a error by limiting the path length, do not change this.
+        path = path[:251] + ".mp4" # Prevent a error by limiting the path length, do not change this.
         print_step("Rendering the Only TTS Video 🎥")
         with ProgressFfmpeg(length, on_update_example) as progress:
             ffmpeg.output(
