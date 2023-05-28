@@ -74,7 +74,7 @@ def run_many(times) -> None:
 
 def shutdown() -> NoReturn:
 
-    if "redditid" in globals :
+    if "redditid" in globals() :
         print_markdown("## Clearing temp files")
         cleanup(redditid)
         print("Exiting...")
