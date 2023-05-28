@@ -210,10 +210,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 if idx >= screenshot_num:
                     break
 
-                    if page.locator('[data-testid="content-gate"]').is_visible():
-                        page.locator('[data-testid="content-gate"] button').click()
+                if page.locator('[data-testid="content-gate"]').is_visible():
+                    page.locator('[data-testid="content-gate"] button').click()
 
-                    page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
 
                     # translate code
 
@@ -241,27 +241,3 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
 
-    # story=False
-    theme = settings.config["settings"]["theme"]
-    if theme == "dark":
-        cookie_file = open(
-            "./video_creation/data/cookie-dark-mode.json", encoding="utf-8"
-        )
-        bgcolor = (33, 33, 36, 255)
-        txtcolor = (240, 240, 240)
-    else:
-        cookie_file = open(
-            "./video_creation/data/cookie-light-mode.json", encoding="utf-8"
-        )
-        bgcolor = (255, 255, 255, 255)
-        txtcolor = (0, 0, 0)
-    if settings.config["settings"]["storymode"]:
-        if settings.config["settings"]["storymodemethod"] == 1:
-            # for idx,item in enumerate(reddit_object["thread_post"]):
-            imagemaker(theme=bgcolor, reddit_obj=reddit_object, txtclr=txtcolor)
-
-    if (
-        settings.config["settings"]["storymodemethod"] == 0
-        or not settings.config["settings"]["storymode"]
-    ):
-        download(cookie_file, screenshot_num)
