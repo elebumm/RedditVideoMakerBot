@@ -107,20 +107,10 @@ def get_subreddit_threads(POST_ID: str):
     if submission is None:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
 
-    if settings.config["settings"]["storymode"]:
-        if not submission.selftext:
-            print_substep("You are trying to use story mode on post with no post text")
-            exit()
-        else:
-            # Check for the length of the post text
-            if len(submission.selftext) > (
-                settings.config["settings"]["storymode_max_length"] or 2000
-            ):
-                print_substep(
-                    f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
-                )
-                exit()
-    elif not submission.num_comments:
+    elif (
+        not submission.num_comments
+        and settings.config["settings"]["storymode"] == "false"
+    ):
         print_substep("No comments found. Skipping.")
         exit()
 

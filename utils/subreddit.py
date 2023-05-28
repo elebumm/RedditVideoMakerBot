@@ -57,6 +57,23 @@ def get_subreddit_undone(
                 f'This post has under the specified minimum of comments ({settings.config["reddit"]["thread"]["min_comments"]}). Skipping...'
             )
             continue
+        if settings.config["settings"]["storymode"]:
+            if not submission.selftext:
+                print_substep(
+                    "You are trying to use story mode on post with no post text"
+                )
+                continue
+            else:
+                # Check for the length of the post text
+                if len(submission.selftext) > (
+                    settings.config["settings"]["storymode_max_length"] or 2000
+                ):
+                    print_substep(
+                        f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
+                    )
+                    continue
+                elif len(submission.selftext) < 30:
+                    continue
         if settings.config["settings"]["storymode"] and not submission.is_self:
             continue
         if similarity_scores is not None:
@@ -73,7 +90,7 @@ def get_subreddit_undone(
     ]  # set doesn't have __getitem__
     index = times_checked + 1
     if index == len(VALID_TIME_FILTERS):
-        print("all time filters have been checked you absolute madlad ")
+        print("All submissions have been done.")
 
     return get_subreddit_undone(
         subreddit.top(
