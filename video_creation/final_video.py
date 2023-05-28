@@ -11,11 +11,11 @@ from PIL import Image
 from rich.console import Console
 from rich.progress import track
 
-from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+from utils import settings
 
 import tempfile
 import threading
@@ -97,9 +97,9 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
     )
     try:
         output.run(quiet=True)
-    except Exception as e:
-        print(e)
-        exit()
+    except ffmpeg.Error as e:
+        print(e.stderr.decode("utf8"))
+        exit(1)
     return output_path
 
 
@@ -352,7 +352,7 @@ def make_final_video(
         text=text,
         x=f"(w-text_w)",
         y=f"(h-text_h)",
-        fontsize=12,
+        fontsize=5,
         fontcolor="White",
         fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
     )
@@ -362,7 +362,7 @@ def make_final_video(
 
     pbar = tqdm(total=100, desc="Progress: ", bar_format="{l_bar}{bar}", unit=" %")
 
-    def on_update_example(progress):
+    def on_update_example(progress) -> None:
         status = round(progress * 100, 2)
         old_percentage = pbar.n
         pbar.update(status - old_percentage)
@@ -399,25 +399,28 @@ def make_final_video(
         )  # Prevent a error by limiting the path length, do not change this.
         print_step("Rendering the Only TTS Video 🎥")
         with ProgressFfmpeg(length, on_update_example) as progress:
-            ffmpeg.output(
-                background_clip,
-                audio,
-                path,
-                f="mp4",
-                **{
-                    "c:v": "h264",
-                    "b:v": "20M",
-                    "b:a": "192k",
-                    "threads": multiprocessing.cpu_count(),
-                },
-            ).overwrite_output().global_args(
-                "-progress", progress.output_file.name
-            ).run(
-                quiet=True,
-                overwrite_output=True,
-                capture_stdout=False,
-                capture_stderr=False,
-            )
+            try:
+                ffmpeg.output(
+                    background_clip,
+                    audio,
+                    path,
+                    f="mp4",
+                    **{
+                        "c:v": "h264",
+                        "b:v": "20M",
+                        "b:a": "192k",
+                        "threads": multiprocessing.cpu_count(),
+                    },
+                ).overwrite_output().global_args("-progress", progress.output_file.name).run(
+                    quiet=True,
+                    overwrite_output=True,
+                    capture_stdout=False,
+                    capture_stderr=False,
+                )
+            except ffmpeg.Error as e:
+                print(e.stderr.decode("utf8"))
+                exit(1)
+
         old_percentage = pbar.n
         pbar.update(100 - old_percentage)
     pbar.close()

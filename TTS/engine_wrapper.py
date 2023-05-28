@@ -14,7 +14,9 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
-DEFAULT_MAX_LENGTH: int = 50  # video length variable
+
+DEFAULT_MAX_LENGTH: int = 50  # Video length variable, edit this on your own risk. It should work, but it's not supported
+
 
 
 class TTSEngine:
@@ -74,7 +76,7 @@ class TTSEngine:
         self.add_periods()
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
         # processed_text = ##self.reddit_object["thread_post"] != ""
-        idx = None
+        idx = 0
 
         if settings.config["settings"]["storymode"]:
             if settings.config["settings"]["storymodemethod"] == 0:

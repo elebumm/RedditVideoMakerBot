@@ -237,7 +237,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
                 page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
 
-                # translate code
+                    # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
                     comment_tl = translators.google(
@@ -282,3 +282,4 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         browser.close()
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
+
