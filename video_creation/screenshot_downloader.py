@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Dict, Final
 
-import translators as ts
+import translators
 from playwright.async_api import async_playwright  # pylint: disable=unused-import
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
@@ -11,6 +11,7 @@ from rich.progress import track
 from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
+from utils.playwright import clear_cookie_by_name
 
 from utils.videos import save_data
 
@@ -115,7 +116,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         )
         page.locator("button[class$='m-full-width']").click()
         page.wait_for_timeout(5000)
-        
+
         login_error_div = page.locator(".AnimatedForm__errorMessage").first
         if login_error_div.is_visible():
             login_error_message = login_error_div.inner_text()
@@ -124,12 +125,22 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 pass
             else:
                 # The div contains an error message
-                print_substep("Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.", style="red")
+                print_substep(
+                    "Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
+                    style="red",
+                )
                 exit()
         else:
             pass
 
         page.wait_for_load_state()
+        # Handle the redesign
+        # Check if the redesign optout cookie is set
+        if page.locator("#redesign-beta-optin-btn").is_visible():
+            # Clear the redesign optout cookie
+            clear_cookie_by_name(context, "redesign_optout")
+            # Reload the page for the redesign to take effect
+            page.reload()
         # Get the thread screenshot
         page.goto(reddit_object["thread_url"], timeout=0)
         page.set_viewport_size(ViewportSize(width=W, height=H))
@@ -157,13 +168,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         if lang:
             print_substep("Translating post...")
-            texts_in_tl = ts.google(
+            texts_in_tl = translators.google(
                 reddit_object["thread_title"],
                 to_language=lang,
             )
 
             page.evaluate(
-                "tl_content => document.querySelector('[data-test-id=\"post-content\"] > div:nth-child(3) > div > div').textContent = tl_content",
+                "tl_content => document.querySelector('[data-adclicklocation=\"title\"] > div > div > h1').textContent = tl_content",
                 texts_in_tl,
             )
         else:
@@ -171,9 +182,20 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
-            page.locator('[data-test-id="post-content"]').screenshot(
-                path=postcontentpath
-            )
+            if settings.config["settings"]["zoom"] != 1:
+                # store zoom settings
+                zoom = settings.config["settings"]["zoom"]
+                # zoom the body of the page
+                page.evaluate("document.body.style.zoom=" + str(zoom))
+                # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
+                location = page.locator('[data-test-id="post-content"]').bounding_box()
+                for i in location:
+                    location[i] = float("{:.2f}".format(location[i] * zoom))
+                page.screenshot(clip=location, path=postcontentpath)
+            else:
+                page.locator('[data-test-id="post-content"]').screenshot(
+                    path=postcontentpath
+                )
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -218,7 +240,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = ts.google(
+                    comment_tl = translators.google(
                         comment["comment_body"],
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
@@ -227,9 +249,29 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    page.locator(f"#t1_{comment['comment_id']}").screenshot(
-                        path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
-                    )
+                    if settings.config["settings"]["zoom"] != 1:
+                        # store zoom settings
+                        zoom = settings.config["settings"]["zoom"]
+                        # zoom the body of the page
+                        page.evaluate("document.body.style.zoom=" + str(zoom))
+                        # scroll comment into view
+                        page.locator(
+                            f"#t1_{comment['comment_id']}"
+                        ).scroll_into_view_if_needed()
+                        # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
+                        location = page.locator(
+                            f"#t1_{comment['comment_id']}"
+                        ).bounding_box()
+                        for i in location:
+                            location[i] = float("{:.2f}".format(location[i] * zoom))
+                        page.screenshot(
+                            clip=location,
+                            path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
+                        )
+                    else:
+                        page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                            path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
+                        )
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1

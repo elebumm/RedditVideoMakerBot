@@ -26,7 +26,7 @@ from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
 
-__VERSION__ = "3.1"
+__VERSION__ = "3.2"
 
 print(
     """
@@ -40,7 +40,7 @@ print(
 )
 # Modified by JasonLovesDoggo
 print_markdown(
-    "### Thanks for using this tool! [Feel free to contribute to this project on GitHub!](https://lewismenelaws.com) If you have any questions, feel free to reach out to me on Twitter or submit a GitHub issue. You can find solutions to many common problems in the [Documentation](): https://reddit-video-maker-bot.netlify.app/"
+    "### Thanks for using this tool! Feel free to contribute to this project on GitHub! If you have any questions, feel free to join my Discord server or submit a GitHub issue. You can find solutions to many common problems in the documentation: https://reddit-video-maker-bot.netlify.app/"
 )
 checkversion(__VERSION__)
 
@@ -132,6 +132,7 @@ if __name__ == "__main__":
         shutdown()
     except Exception as err:
         config["settings"]["tts"]["tiktok_sessionid"] = "REDACTED"
+        config["settings"]["tts"]["elevenlabs_api_key"] = "REDACTED"
         print_step(
             f"Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n"
             f"Version: {__VERSION__} \n"

@@ -30,6 +30,7 @@ storymodemethod= { optional = true, default = 1, example = 1, explanation = "Sty
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
+zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 
 [settings.background]
 background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
@@ -42,7 +43,10 @@ background_thumbnail_font_size = { optional = true, type = "int", default = 96, 
 background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "streamlabspolly", options = ["streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. This can be left blank and you will be prompted to choose at runtime." }
+voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
+random_voice = { optional = false, default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
+elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
+elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }

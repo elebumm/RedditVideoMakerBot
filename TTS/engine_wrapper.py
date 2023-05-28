@@ -3,11 +3,8 @@ import re
 from pathlib import Path
 from typing import Tuple
 
-# import sox
-# from mutagen import MutagenError
-# from mutagen.mp3 import MP3, HeaderNotFoundError
 import numpy as np
-import translators as ts
+import translators
 from moviepy.audio.AudioClip import AudioClip
 from moviepy.audio.fx.volumex import volumex
 from moviepy.editor import AudioFileClip
@@ -61,16 +58,16 @@ class TTSEngine:
             regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
             comment["comment_body"] = re.sub(regex_urls, " ", comment["comment_body"])
             comment["comment_body"] = comment["comment_body"].replace("\n", ". ")
-            comment["comment_body"] = re.sub(r'\bAI\b', 'A.I', comment["comment_body"])
-            comment["comment_body"] = re.sub(r'\bAGI\b', 'A.G.I', comment["comment_body"])
+            comment["comment_body"] = re.sub(r"\bAI\b", "A.I", comment["comment_body"])
+            comment["comment_body"] = re.sub(
+                r"\bAGI\b", "A.G.I", comment["comment_body"]
+            )
             if comment["comment_body"][-1] != ".":
                 comment["comment_body"] += "."
             comment["comment_body"] = comment["comment_body"].replace(". . .", ".")
             comment["comment_body"] = comment["comment_body"].replace(".. . ", ".")
             comment["comment_body"] = comment["comment_body"].replace(". . ", ".")
             comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
-            print(comment["comment_body"])
-
 
     def run(self) -> Tuple[int, int]:
         Path(self.path).mkdir(parents=True, exist_ok=True)
@@ -154,7 +151,11 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(text, filepath=f"{self.path}/{filename}.mp3")
+        self.tts_module.run(
+            text,
+            filepath=f"{self.path}/{filename}.mp3",
+            random_voice=settings.config["settings"]["tts"]["random_voice"],
+        )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
@@ -185,6 +186,6 @@ def process_text(text: str, clean: bool = True):
     new_text = sanitize_text(text) if clean else text
     if lang:
         print_substep("Translating Text...")
-        translated_text = ts.google(text, to_language=lang)
+        translated_text = translators.google(text, to_language=lang)
         new_text = sanitize_text(translated_text)
     return new_text
