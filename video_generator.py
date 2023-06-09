@@ -49,7 +49,7 @@ class VideoGenerator():
         if not os.path.exists("long_form_videos_results"):
             os.mkdir("long_form_videos_results")
 
-        output_filename = f"long_form_videos_results{videos[0].split('/')[-1].split('.')[0]} + other threads from {subreddit}!.mp4"
+        output_filename = f"long_form_videos_results/{videos[0].split('/')[-1].split('.')[0]} + other threads from {subreddit}!.mp4"
         self._concatenate_videos(videos, output_filename)
 
         print("Done!")
