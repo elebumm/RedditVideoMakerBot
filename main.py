@@ -79,15 +79,11 @@ def shutdown() -> NoReturn:
     sys.exit()
 
 
-if __name__ == "__main__":
+def run(config):
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
         print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
         sys.exit()
     ffmpeg_install()
-    directory = Path().absolute()
-    config = settings.check_toml(
-        f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
-    )
     config is False and sys.exit()
         
     if (
@@ -130,3 +126,11 @@ if __name__ == "__main__":
             f'Config: {config["settings"]}'
         )
         raise err
+
+
+if __name__ == "__main__":
+    directory = Path().absolute()
+    config = settings.check_toml(
+        f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
+    )
+    run(config)

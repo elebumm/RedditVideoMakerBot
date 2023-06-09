@@ -2,8 +2,6 @@ import os, shutil
 from moviepy.editor import concatenate_videoclips, VideoFileClip
 from main import run
 
-# This class must be run from the top level, not from inside the containing directory
-
 class VideoGenerator():
     def __init__(self, config):
         self.config = config
