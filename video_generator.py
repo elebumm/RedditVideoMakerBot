@@ -37,15 +37,17 @@ class VideoGenerator():
             if os.path.exists("long_form_videos_results"):
                 shutil.rmtree("long_form_videos_results")
 
+        subreddit = self.config["reddit"]["thread"]["subreddit"]
+        videos_folder = f"results/{subreddit}"
+        videos_to_be_conc = []
         for i in range(num_of_videos_to_be_conc):
             print_markdown(f"# Iteration {i+1}")
             run(self.config)
+            videos_to_be_conc.append(os.listdir(videos_folder)[-1])
         
         print_markdown("# Concatinating videos...")
         videos = []
-        subreddit = self.config["reddit"]["thread"]["subreddit"]
-        videos_folder = f"results/{subreddit}"
-        for video in os.listdir(videos_folder):
+        for video in videos_to_be_conc:
             videos.append(os.path.join(videos_folder, video))
         
         if not os.path.exists("long_form_videos_results"):
