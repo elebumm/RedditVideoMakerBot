@@ -245,3 +245,6 @@ video_creation/data/envvars.txt
 
 config.toml
 *.exe
+
+long_form_videos_results/*
+long_form_videos_results

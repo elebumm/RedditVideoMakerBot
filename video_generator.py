@@ -1,5 +1,5 @@
 import os, shutil
-from moviepy.editor import concatenate_videoclips, VideoFileClip
+import ffmpeg
 from utils.console import print_markdown
 from main import run
 
@@ -7,15 +7,19 @@ class VideoGenerator():
     def __init__(self, config):
         self.config = config
     
-    def _concatenate_videos(self, video_paths, output_path):
-        video_clips = []
-        
-        for path in video_paths:
-            video_clip = VideoFileClip(path)
-            video_clips.append(video_clip)
-            
-        final_clip = concatenate_videoclips(video_clips)
-        final_clip.write_videofile(output_path, codec="libx264", fps=24)
+    def _concatenate_videos(self, video_list, output_file):
+        concat_file = 'concat.txt'
+
+        # Create a temporary file containing the list of videos
+        with open(concat_file, 'w') as file:
+            for video in video_list:
+                file.write(f"file '{video}'\n")
+
+        # Run ffmpeg to concatenate the videos
+        ffmpeg.input(concat_file, format='concat', safe=0).output(output_file, c='copy').run()
+
+        # Clean up temporary file
+        os.remove(concat_file)
     
     def generate_shorts(self, num_of_shorts, remove_past_results=True):
         if remove_past_results:
@@ -23,7 +27,7 @@ class VideoGenerator():
                 shutil.rmtree("results")
 
         for i in range(num_of_shorts):
-            print_markdown(f"# Iteration {i}")
+            print_markdown(f"# Iteration {i+1}")
             run(self.config)
         
         print(f"Videos have been made!")
@@ -34,10 +38,10 @@ class VideoGenerator():
                 shutil.rmtree("long_form_videos_results")
 
         for i in range(num_of_videos_to_be_conc):
-            print_markdown(f"# Iteration {i}")
+            print_markdown(f"# Iteration {i+1}")
             run(self.config)
         
-        print("Concatinating videos...")
+        print_markdown("# Concatinating videos...")
         videos = []
         subreddit = self.config["reddit"]["thread"]["subreddit"]
         videos_folder = f"results/{subreddit}"
