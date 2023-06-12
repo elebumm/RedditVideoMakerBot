@@ -1,5 +1,6 @@
 import os, shutil
 from moviepy.editor import concatenate_videoclips, VideoFileClip
+from utils.console import print_markdown
 from main import run
 
 class VideoGenerator():
@@ -21,22 +22,19 @@ class VideoGenerator():
             if os.path.exists("results"):
                 shutil.rmtree("results")
 
-        for _ in range(num_of_shorts):
-            print("="*50)
+        for i in range(num_of_shorts):
+            print_markdown(f"# Iteration {i}")
             run(self.config)
         
         print(f"Videos have been made!")
     
     def generate_long_video(self, num_of_videos_to_be_conc, remove_past_results=True):
-        if remove_past_results:
-            if os.path.exists("results"):
-                shutil.rmtree("results")
-            
+        if remove_past_results:            
             if os.path.exists("long_form_videos_results"):
                 shutil.rmtree("long_form_videos_results")
 
-        for _ in range(num_of_videos_to_be_conc):
-            print("="*50)
+        for i in range(num_of_videos_to_be_conc):
+            print_markdown(f"# Iteration {i}")
             run(self.config)
         
         print("Concatinating videos...")
