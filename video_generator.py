@@ -21,16 +21,6 @@ class VideoGenerator():
         # Clean up temporary file
         os.remove(concat_file)
     
-    def generate_shorts(self, num_of_shorts, remove_past_results=True):
-        if remove_past_results:
-            if os.path.exists("results"):
-                shutil.rmtree("results")
-
-        for i in range(num_of_shorts):
-            print_markdown(f"# Iteration {i+1}")
-            run(self.config)
-        
-        print(f"Videos have been made!")
     
     def generate_long_video(self, num_of_videos_to_be_conc, remove_past_results=True):
         if remove_past_results:            
