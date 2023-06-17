@@ -6,7 +6,7 @@ import sys
 abs_directory = Path().absolute()
 config = settings.check_toml(f"{abs_directory}/utils/.config.template.toml", f"{abs_directory}/config.toml")
 
-num_of_vids_to_be_conc = input("How many videos would you like to be concatenated into a single video? ")
+num_of_vids_to_be_conc = input("How many videos would you like to generate that will be concatenated into a single video? ")
 try:
     num_of_vids_to_be_conc = int(num_of_vids_to_be_conc)
 except:

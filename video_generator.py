@@ -8,7 +8,7 @@ class VideoGenerator():
         self.config = config
     
     def _concatenate_videos(self, video_list, output_file):
-        concat_file = 'concat.txt'
+        concat_file = 'assets/temp/concat.txt'
 
         # Create a temporary file containing the list of videos
         with open(concat_file, 'w') as file:
