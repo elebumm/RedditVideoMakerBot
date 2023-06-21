@@ -25,7 +25,9 @@ def ffmpeg_install_windows():
         os.remove("ffmpeg/LICENSE.txt")
         os.rmdir("ffmpeg/")
 
-        print("FFmpeg installed successfully! Please restart your computer and then re-run the program.")
+        print(
+            "FFmpeg installed successfully! Please restart your computer and then re-run the program."
+        )
 
     except Exception as e:
         print(
@@ -73,12 +75,16 @@ def ffmpeg_install_mac():
 def ffmpeg_install():
     try:
         # Try to run the FFmpeg command
-        subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(
+            ["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
     except FileNotFoundError as e:
         # Check if there's ffmpeg.exe in the current directory
         if os.path.exists("./ffmpeg.exe"):
-            print('FFmpeg is installed on this system! If you are seeing this error for the second time, restart your computer.')
-        print('FFmpeg is not installed on this system.')
+            print(
+                "FFmpeg is installed on this system! If you are seeing this error for the second time, restart your computer."
+            )
+        print("FFmpeg is not installed on this system.")
         resp = input(
             "We can try to automatically install it for you. Would you like to do that? (y/n): "
         )
@@ -91,9 +97,7 @@ def ffmpeg_install():
             elif os.name == "mac":
                 ffmpeg_install_mac()
             else:
-                print(
-                    "Your OS is not supported. Please install FFmpeg manually and try again."
-                )
+                print("Your OS is not supported. Please install FFmpeg manually and try again.")
                 exit()
         else:
             print("Please install FFmpeg manually and try again.")
