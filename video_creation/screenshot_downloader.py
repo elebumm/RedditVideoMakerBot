@@ -168,10 +168,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         if lang:
             print_substep("Translating post...")
-            texts_in_tl = translators.google(
-                reddit_object["thread_title"],
-                to_language=lang,
-            )
+            #texts_in_tl = translators.google(
+             #   reddit_object["thread_title"],
+              #  ,
+            #)
+            texts_in_tl = translators.translate_text(reddit_object["thread_title"], translator='google', to_language='en')
 
             page.evaluate(
                 "tl_content => document.querySelector('[data-adclicklocation=\"title\"] > div > div > h1').textContent = tl_content",
@@ -240,10 +241,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = translators.google(
-                        comment["comment_body"],
-                        to_language=settings.config["reddit"]["thread"]["post_lang"],
-                    )
+                    #comment_tl = translators.google(
+                     #   comment["comment_body"],
+                      #  to_language=settings.config["reddit"]["thread"]["post_lang"],
+                    #)
+                    comment_tl = translators.translate_text(comment["comment_body"], translator='google', to_language='en')
                     page.evaluate(
                         '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
                         [comment_tl, comment["comment_id"]],

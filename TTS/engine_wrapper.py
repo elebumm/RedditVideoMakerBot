@@ -186,6 +186,7 @@ def process_text(text: str, clean: bool = True):
     new_text = sanitize_text(text) if clean else text
     if lang:
         print_substep("Translating Text...")
-        translated_text = translators.google(text, to_language=lang)
+        #translated_text = translators.google(text, )
+        translated_text = translators.translate_text(text, translator='google', to_language='en')
         new_text = sanitize_text(translated_text)
     return new_text
