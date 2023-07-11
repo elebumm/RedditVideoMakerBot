@@ -154,7 +154,7 @@ class TTSEngine:
         self.tts_module.run(
             text,
             filepath=f"{self.path}/{filename}.mp3",
-            random_voice=settings.config["settings"]["tts"]["random_voice"],
+            # random_voice=settings.config["settings"]["tts"]["random_voice"],
         )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
