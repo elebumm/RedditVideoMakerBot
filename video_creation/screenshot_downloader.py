@@ -156,9 +156,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         if lang:
             print_substep("Translating post...")
-            texts_in_tl = translators.google(
+            texts_in_tl = translators.translate_text(
                 reddit_object["thread_title"],
                 to_language=lang,
+                translator="google",
             )
 
             page.evaluate(
@@ -224,8 +225,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 # translate code
 
                 if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = translators.google(
+                    comment_tl = translators.translate_text(
                         comment["comment_body"],
+                        translator="google",
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
                     page.evaluate(
