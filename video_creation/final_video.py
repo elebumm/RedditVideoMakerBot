@@ -338,23 +338,27 @@ def make_final_video(
         path = (
             path[:251] + ".mp4"
         )  # Prevent a error by limiting the path length, do not change this.
-        ffmpeg.output(
-            background_clip,
-            final_audio,
-            path,
-            f="mp4",
-            **{
-                "c:v": "h264",
-                "b:v": "20M",
-                "b:a": "192k",
-                "threads": multiprocessing.cpu_count(),
-            },
-        ).overwrite_output().global_args("-progress", progress.output_file.name).run(
-            quiet=True,
-            overwrite_output=True,
-            capture_stdout=False,
-            capture_stderr=False,
-        )
+        try:
+            ffmpeg.output(
+                background_clip,
+                final_audio,
+                path,
+                f="mp4",
+                **{
+                    "c:v": "h264",
+                    "b:v": "20M",
+                    "b:a": "192k",
+                    "threads": multiprocessing.cpu_count(),
+                },
+            ).overwrite_output().global_args("-progress", progress.output_file.name).run(
+                quiet=True,
+                overwrite_output=True,
+                capture_stdout=False,
+                capture_stderr=False,
+            )
+        except ffmpeg.Error as e:
+            print(e.stderr.decode("utf8"))
+            exit(1)
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
     if allowOnlyTTSFolder:
