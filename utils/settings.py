@@ -1,7 +1,6 @@
 import re
-from typing import Tuple, Dict
-from pathlib import Path
 import toml
+from pathlib import Path
 from rich.console import Console
 
 from utils.console import handle_input
@@ -106,37 +105,36 @@ def check_vars(path, checks):
     crawl_and_check(config, path, checks)
 
 
-def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
+def check_toml(template_file, config_file) -> dict:
     global config
     config = None
     try:
         template = toml.load(template_file)
     except Exception as error:
         console.print(f"[red bold]Encountered error when trying to to load {template_file}: {error}")
-        return False
+        raise
     try:
         config = toml.load(config_file)
     except toml.TomlDecodeError:
         console.print(
-            f"""[blue]Couldn't read {config_file}.
-Overwrite it?(y/n)"""
+            f"""[blue]Couldn't read {config_file}. Overwrite it?(y/n)"""
         )
         if not input().startswith("y"):
             print("Unable to read config, and not allowed to overwrite it. Giving up.")
-            return False
+            raise
         else:
             try:
                 with open(config_file, "w") as f:
                     f.write("")
             except:
                 console.print(
-                    f"[red bold]Failed to overwrite {config_file}. Giving up.\nSuggestion: check {config_file} permissions for the user."
+                    f"[red bold]Failed to overwrite {config_file}. Giving up."
+                    f"\nSuggestion: check {config_file} permissions for the user."
                 )
-                return False
+                raise
     except FileNotFoundError:
         console.print(
-            f"""[blue]Couldn't find {config_file}
-Creating it now."""
+            f"""[blue]Couldn't find {config_file} Creating it now."""
         )
         try:
             with open(config_file, "x") as f:
@@ -144,9 +142,10 @@ Creating it now."""
             config = {}
         except:
             console.print(
-                f"[red bold]Failed to write to {config_file}. Giving up.\nSuggestion: check the folder's permissions for the user."
+                f"[red bold]Failed to write to {config_file}. Giving up."
+                f"\nSuggestion: check the folder's permissions for the user."
             )
-            return False
+            raise
 
     console.print(
         """\

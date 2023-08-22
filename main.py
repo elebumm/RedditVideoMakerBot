@@ -82,7 +82,8 @@ def shutdown() -> NoReturn:
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
         print(
-            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
+            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). "
+            "Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
         )
         sys.exit()
     ffmpeg_install()
@@ -90,7 +91,6 @@ if __name__ == "__main__":
     config = settings.check_toml(
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
-    config is False and sys.exit()
 
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
