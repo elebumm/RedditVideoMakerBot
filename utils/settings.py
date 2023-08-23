@@ -112,16 +112,14 @@ def check_toml(template_file, config_file) -> dict:
         template = toml.load(template_file)
     except Exception as error:
         console.print(f"[red bold]Encountered error when trying to to load {template_file}: {error}")
-        raise
+        sys.exit()
     try:
         config = toml.load(config_file)
     except toml.TomlDecodeError:
-        console.print(
-            f"""[blue]Couldn't read {config_file}. Overwrite it?(y/n)"""
-        )
+        console.print(f"""[blue]Couldn't read {config_file}. Overwrite it?(y/n)""")
         if not input().startswith("y"):
             print("Unable to read config, and not allowed to overwrite it. Giving up.")
-            raise
+            sys.exit()
         else:
             try:
                 with open(config_file, "w") as f:
@@ -131,11 +129,9 @@ def check_toml(template_file, config_file) -> dict:
                     f"[red bold]Failed to overwrite {config_file}. Giving up."
                     f"\nSuggestion: check {config_file} permissions for the user."
                 )
-                raise
+                sys.exit()
     except FileNotFoundError:
-        console.print(
-            f"""[blue]Couldn't find {config_file} Creating it now."""
-        )
+        console.print(f"""[blue]Couldn't find {config_file} Creating it now.""")
         try:
             with open(config_file, "x") as f:
                 f.write("")
@@ -145,7 +141,7 @@ def check_toml(template_file, config_file) -> dict:
                 f"[red bold]Failed to write to {config_file}. Giving up."
                 f"\nSuggestion: check the folder's permissions for the user."
             )
-            raise
+            sys.exit()
 
     console.print(
         """\
