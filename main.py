@@ -25,7 +25,7 @@ from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
 
-__VERSION__ = "3.2"
+__VERSION__ = "3.2.1"
 
 print(
     """
@@ -74,14 +74,16 @@ def shutdown() -> NoReturn:
     if "redditid" in globals():
         print_markdown("## Clearing temp files")
         cleanup(redditid)
-    
+
     print("Exiting...")
     sys.exit()
 
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
-        print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
+        print(
+            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
+        )
         sys.exit()
     ffmpeg_install()
     directory = Path().absolute()
@@ -89,7 +91,7 @@ if __name__ == "__main__":
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
     config is False and sys.exit()
-        
+
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
         or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
@@ -101,9 +103,7 @@ if __name__ == "__main__":
         sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(
-                config["reddit"]["thread"]["post_id"].split("+")
-            ):
+            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'

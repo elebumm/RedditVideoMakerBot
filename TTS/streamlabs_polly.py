@@ -42,9 +42,7 @@ class StreamlabsPolly:
                 raise ValueError(
                     f"Please set the config variable STREAMLABS_POLLY_VOICE to a valid voice. options are: {voices}"
                 )
-            voice = str(
-                settings.config["settings"]["tts"]["streamlabs_polly_voice"]
-            ).capitalize()
+            voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
         if not check_ratelimit(response):

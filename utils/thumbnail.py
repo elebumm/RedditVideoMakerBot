@@ -1,15 +1,11 @@
 from PIL import ImageDraw, ImageFont
 
 
-def create_thumbnail(
-    thumbnail, font_family, font_size, font_color, width, height, title
-):
+def create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title):
     font = ImageFont.truetype(font_family + ".ttf", font_size)
     Xaxis = width - (width * 0.2)  # 20% of the width
     sizeLetterXaxis = font_size * 0.5  # 50% of the font size
-    XaxisLetterQty = round(
-        Xaxis / sizeLetterXaxis
-    )  # Quantity of letters that can fit in the X axis
+    XaxisLetterQty = round(Xaxis / sizeLetterXaxis)  # Quantity of letters that can fit in the X axis
     MarginYaxis = height * 0.12  # 12% of the height
     MarginXaxis = width * 0.05  # 5% of the width
     # 1.1 rem
@@ -34,8 +30,6 @@ def create_thumbnail(
     # loop for put the title in the thumbnail
     for i in range(0, len(arrayTitle)):
         # 1.1 rem
-        draw.text(
-            (MarginXaxis, MarginYaxis + (LineHeight * i)), arrayTitle[i], rgb, font=font
-        )
+        draw.text((MarginXaxis, MarginYaxis + (LineHeight * i)), arrayTitle[i], rgb, font=font)
 
     return thumbnail
