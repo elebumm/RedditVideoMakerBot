@@ -25,7 +25,7 @@ from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
 
-__VERSION__ = "3.2"
+__VERSION__ = "3.2.1"
 
 print(
     """
