@@ -5,11 +5,12 @@ from pathlib import Path
 from random import randrange
 from typing import Any, Tuple, Dict
 
+import yt_dlp
 from moviepy.editor import VideoFileClip, AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 from utils import settings
 from utils.console import print_step, print_substep
-import yt_dlp
 
 
 def load_background_options():
@@ -59,7 +60,9 @@ def get_start_and_end_times(video_length: int, length_of_clip: int) -> Tuple[int
 def get_background_config(mode: str):
     """Fetch the background/s configuration"""
     try:
-        choice = str(settings.config["settings"]["background"][f"background_{mode}"]).casefold()
+        choice = str(
+            settings.config["settings"]["background"][f"background_{mode}"]
+        ).casefold()
     except AttributeError:
         print_substep("No background selected. Picking random background'")
         choice = None
@@ -119,7 +122,9 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
 
 
-def chop_background(background_config: Dict[str, Tuple], video_length: int, reddit_object: dict):
+def chop_background(
+    background_config: Dict[str, Tuple], video_length: int, reddit_object: dict
+):
     """Generates the background audio and footage to be used in the video and writes it to assets/temp/background.mp3 and assets/temp/background.mp4
 
     Args:
@@ -132,7 +137,9 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
         print_step("Volume was set to 0. Skipping background audio creation . . .")
     else:
         print_step("Finding a spot in the backgrounds audio to chop...✂️")
-        audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
+        audio_choice = (
+            f"{background_config['audio'][2]}-{background_config['audio'][1]}"
+        )
         background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
         start_time_audio, end_time_audio = get_start_and_end_times(
             video_length, background_audio.duration

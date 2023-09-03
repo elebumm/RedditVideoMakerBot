@@ -7,11 +7,13 @@ from subprocess import Popen
 from typing import NoReturn
 
 from prawcore import ResponseException
-from utils.console import print_substep
+
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
+from utils.console import print_substep
+from utils.ffmpeg_install import ffmpeg_install
 from utils.id import id
 from utils.version import checkversion
 from video_creation.background import (
@@ -23,7 +25,6 @@ from video_creation.background import (
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
-from utils.ffmpeg_install import ffmpeg_install
 
 __VERSION__ = "3.2.1"
 
@@ -103,7 +104,9 @@ if __name__ == "__main__":
         sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+            for index, post_id in enumerate(
+                config["reddit"]["thread"]["post_id"].split("+")
+            ):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'

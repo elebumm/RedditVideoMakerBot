@@ -4,10 +4,10 @@ import time as pytime
 from datetime import datetime
 from time import sleep
 
+from cleantext import clean
 from requests import Response
 
 from utils import settings
-from cleantext import clean
 
 if sys.version_info[0] >= 3:
     from datetime import timezone
@@ -43,7 +43,9 @@ def sleep_until(time) -> None:
         if sys.version_info[0] >= 3 and time.tzinfo:
             end = time.astimezone(timezone.utc).timestamp()
         else:
-            zoneDiff = pytime.time() - (datetime.now() - datetime(1970, 1, 1)).total_seconds()
+            zoneDiff = (
+                pytime.time() - (datetime.now() - datetime(1970, 1, 1)).total_seconds()
+            )
             end = (time - datetime(1970, 1, 1)).total_seconds() + zoneDiff
 
     # Type check

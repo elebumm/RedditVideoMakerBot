@@ -1,14 +1,13 @@
-import zipfile
-import requests
 import os
 import subprocess
+import zipfile
+
+import requests
 
 
 def ffmpeg_install_windows():
     try:
-        ffmpeg_url = (
-            "https://github.com/GyanD/codexffmpeg/releases/download/6.0/ffmpeg-6.0-full_build.zip"
-        )
+        ffmpeg_url = "https://github.com/GyanD/codexffmpeg/releases/download/6.0/ffmpeg-6.0-full_build.zip"
         ffmpeg_zip_filename = "ffmpeg.zip"
         ffmpeg_extracted_folder = "ffmpeg"
 
@@ -39,7 +38,10 @@ def ffmpeg_install_windows():
         # Rename and move files
         os.rename(f"{ffmpeg_extracted_folder}-6.0-full_build", ffmpeg_extracted_folder)
         for file in os.listdir(os.path.join(ffmpeg_extracted_folder, "bin")):
-            os.rename(os.path.join(ffmpeg_extracted_folder, "bin", file), os.path.join(".", file))
+            os.rename(
+                os.path.join(ffmpeg_extracted_folder, "bin", file),
+                os.path.join(".", file),
+            )
         os.rmdir(os.path.join(ffmpeg_extracted_folder, "bin"))
         for file in os.listdir(os.path.join(ffmpeg_extracted_folder, "doc")):
             os.remove(os.path.join(ffmpeg_extracted_folder, "doc", file))
@@ -101,7 +103,10 @@ def ffmpeg_install():
     try:
         # Try to run the FFmpeg command
         subprocess.run(
-            ["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ["ffmpeg", "-version"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
     except FileNotFoundError as e:
         # Check if there's ffmpeg.exe in the current directory
@@ -122,7 +127,9 @@ def ffmpeg_install():
             elif os.name == "mac":
                 ffmpeg_install_mac()
             else:
-                print("Your OS is not supported. Please install FFmpeg manually and try again.")
+                print(
+                    "Your OS is not supported. Please install FFmpeg manually and try again."
+                )
                 exit()
         else:
             print("Please install FFmpeg manually and try again.")

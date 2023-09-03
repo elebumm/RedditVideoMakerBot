@@ -205,7 +205,7 @@
                     <select name="background_choice" class="form-select" data-toggle="tooltip"
                         data-original-title='Sets the background of the video'>
                         <option value=" ">Random Video</option>
-                        {% for background in checks["background_choice"]["options"][1:] %}
+                        {% for background in checks["background_video"]["options"][1:] %}
                         <option value="{{background}}">{{background}}</option>
                         {% endfor %}
                     </select>
