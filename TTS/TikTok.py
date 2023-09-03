@@ -86,7 +86,9 @@ class TikTok:
             "Cookie": f"sessionid={settings.config['settings']['tts']['tiktok_sessionid']}",
         }
 
-        self.URI_BASE = "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
+        self.URI_BASE = (
+            "https://api16-normal-c-useast1a.tiktokv.com/media/api/text/speech/invoke/"
+        )
         self.max_chars = 200
 
         self._session = requests.Session()

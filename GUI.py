@@ -82,7 +82,9 @@ def settings():
         # Change settings
         config = gui.modify_settings(data, config_load, checks)
 
-    return render_template("settings.html", file="config.toml", data=config, checks=checks)
+    return render_template(
+        "settings.html", file="config.toml", data=config, checks=checks
+    )
 
 
 # Make videos.json accessible

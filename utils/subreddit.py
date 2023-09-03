@@ -2,11 +2,13 @@ import json
 from os.path import exists
 
 from utils import settings
-from utils.console import print_substep
 from utils.ai_methods import sort_by_similarity
+from utils.console import print_substep
 
 
-def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None):
+def get_subreddit_undone(
+    submissions: list, subreddit, times_checked=0, similarity_scores=None
+):
     """_summary_
 
     Args:
@@ -18,7 +20,9 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
     """
     # Second try of getting a valid Submission
     if times_checked and settings.config["ai"]["ai_similarity_enabled"]:
-        print("Sorting based on similarity for a different date filter and thread limit..")
+        print(
+            "Sorting based on similarity for a different date filter and thread limit.."
+        )
         submissions = sort_by_similarity(
             submissions, keywords=settings.config["ai"]["ai_similarity_enabled"]
         )
@@ -27,7 +31,9 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
     if not exists("./video_creation/data/videos.json"):
         with open("./video_creation/data/videos.json", "w+") as f:
             json.dump([], f)
-    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
+    with open(
+        "./video_creation/data/videos.json", "r", encoding="utf-8"
+    ) as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for i, submission in enumerate(submissions):
         if already_done(done_videos, submission):
@@ -43,7 +49,8 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
             print_substep("This post was pinned by moderators. Skipping...")
             continue
         if (
-            submission.num_comments <= int(settings.config["reddit"]["thread"]["min_comments"])
+            submission.num_comments
+            <= int(settings.config["reddit"]["thread"]["min_comments"])
             and not settings.config["settings"]["storymode"]
         ):
             print_substep(
@@ -52,7 +59,9 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
             continue
         if settings.config["settings"]["storymode"]:
             if not submission.selftext:
-                print_substep("You are trying to use story mode on post with no post text")
+                print_substep(
+                    "You are trying to use story mode on post with no post text"
+                )
                 continue
             else:
                 # Check for the length of the post text
