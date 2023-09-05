@@ -1,7 +1,6 @@
 import multiprocessing
 import os
 import re
-import shutil
 import tempfile
 import threading
 import time
