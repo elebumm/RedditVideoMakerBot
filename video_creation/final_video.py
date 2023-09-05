@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 import re
+import shutil
 import tempfile
 import threading
 import time
@@ -436,9 +437,11 @@ def make_final_video(
 
         old_percentage = pbar.n
         pbar.update(100 - old_percentage)
+
     pbar.close()
     save_data(subreddit, filename + ".mp4", title, idx, background_config["video"][2])
+
     print_step("Removing temporary files 🗑")
-    cleanups = cleanup(reddit_id)
-    print_substep(f"Removed {cleanups} temporary files 🗑")
+    cleanup(reddit_id)
     print_step("Done! 🎉 The video is in the results folder 📁")
+    time.sleep(1)  # Prevents the last 2 print_step functions from not showing up
