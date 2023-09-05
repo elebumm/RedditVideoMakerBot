@@ -245,3 +245,4 @@ video_creation/data/envvars.txt
 
 config.toml
 *.exe
+video_creation/data/videos.json
