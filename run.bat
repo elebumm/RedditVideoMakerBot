@@ -7,6 +7,7 @@ echo [34m########[0m [36mMENU[0m [34m########[0m
 echo 1. [32mInstall[0m
 echo 2. [32mRun[0m
 echo 3. [32mOpen CMD (.vevn)[0m
+echo 4. [32mLaunch Web GUI [0m
 echo [34m######################[0m
 echo [33m
 set /p "choice=Please make a selection :"
@@ -28,10 +29,24 @@ echo [0m
             pause 
             goto menu
         )
+    ) else if /i "!choice!"=="4" (
+        if exist "%VENV_DIR%" (
+            echo Activating virtual environment...
+            call "%VENV_DIR%\Scripts\activate.bat"
+            echo Launching Web Graphical User Interface 
+            start python GUI.py
+        ) else (
+            cls
+            call:cecho red "No virtual environment detected"
+            call:cecho red "Please select Install from the menu"
+            pause 
+            goto menu
+        )
     )else (
         cls
         goto menu
     )
+goto:menu    
 :run
 if exist "%VENV_DIR%" (
     echo Activating virtual environment...
@@ -90,4 +105,12 @@ if !color! == cyan (
 )
 echo !colored_text!
 endlocal
+EXIT /B 0
+
+
+EXIT /B %ERRORLEVEL%
+:venv
+if exist "%VENV_DIR%" (
+    echo Activating virtual environment...
+    call "%VENV_DIR%\Scripts\activate.bat"
 EXIT /B 0
