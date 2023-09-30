@@ -43,7 +43,7 @@ def index():
 
 @app.route("/backgrounds", methods=["GET"])
 def backgrounds():
-    return render_template("backgrounds.html", file="backgrounds.json")
+    return render_template("backgrounds.html", file="background_videos.json")
 
 
 @app.route("/background/add", methods=["POST"])
@@ -91,10 +91,10 @@ def videos_json():
     return send_from_directory("video_creation/data", "videos.json")
 
 
-# Make backgrounds.json accessible
-@app.route("/backgrounds.json")
+# Make background_videos.json accessible
+@app.route("/background_videos.json")
 def backgrounds_json():
-    return send_from_directory("utils", "backgrounds.json")
+    return send_from_directory("utils", "background_videos.json")
 
 
 # Make videos in results folder accessible

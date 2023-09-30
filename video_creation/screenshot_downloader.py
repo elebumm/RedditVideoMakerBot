@@ -18,6 +18,37 @@ from utils.videos import save_data
 __all__ = ["download_screenshots_of_reddit_posts"]
 
 
+def translate_comment_body(page, comment: dict, lang: str):
+    """Translate a Reddit comment and update its content on the page.
+
+    Args:
+        page: The Playwright page object.
+        comment (dict): The Reddit comment data.
+        lang (str): The target language to which the comment should be translated.
+    """
+    # Check if language setting is present
+    if not lang:
+        return
+
+    # Translate the comment body
+    comment_tl = translators.translate_text(
+        comment["comment_body"],
+        translator="google",
+        to_language=lang
+    )
+
+    # Update the content on the page with the translated text
+    page.evaluate(
+        '''(tl_content, tl_id) => {
+            const commentElement = document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`);
+            if (commentElement) {
+                commentElement.textContent = tl_content;
+            }
+        }''',
+        comment_tl, comment["comment_id"]
+    )
+
+
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
@@ -28,8 +59,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
-    lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"]
-    storymode: Final[bool] = settings.config["settings"]["storymode"]
+    lang: Final[str] = str(settings.config["reddit"]["thread"]["post_lang"])
+    storymode: Final[bool] = bool(settings.config["settings"]["storymode"])
 
     print_step("Downloading screenshots of reddit posts...")
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
@@ -100,8 +131,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.wait_for_load_state()
 
-        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+        page.locator('[name="username"]').fill(str(settings.config["reddit"]["creds"]["username"]))
+        page.locator('[name="password"]').fill(str(settings.config["reddit"]["creds"]["password"]))
         page.locator("button[class$='m-full-width']").click()
         page.wait_for_timeout(5000)
 
@@ -179,12 +210,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
                 location = page.locator('[data-test-id="post-content"]').bounding_box()
                 for i in location:
-                    location[i] = float("{:.2f}".format(location[i] * zoom))
+                    location[i] = float("{:.2f}".format(location[i] * float(zoom)))
                 page.screenshot(clip=location, path=postcontentpath)
             else:
                 page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
         except Exception as e:
-            print_substep("Something went wrong!", style="red")
+            print_substep("Something went wrong inside screenshot_downloader!", style="red")
+            print_substep(f"Error: {str(e)}", style="red")
             resp = input(
                 "Something went wrong with making the screenshots! Do you want to skip the post? (y/n) "
             )
@@ -224,16 +256,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
                 # translate code
 
-                if settings.config["reddit"]["thread"]["post_lang"]:
-                    comment_tl = translators.translate_text(
-                        comment["comment_body"],
-                        translator="google",
-                        to_language=settings.config["reddit"]["thread"]["post_lang"],
-                    )
-                    page.evaluate(
-                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
-                        [comment_tl, comment["comment_id"]],
-                    )
+                translate_comment_body(page, comment, settings.config["reddit"]["thread"]["post_lang"])
+
                 try:
                     if settings.config["settings"]["zoom"] != 1:
                         # store zoom settings
@@ -245,7 +269,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
                         location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
                         for i in location:
-                            location[i] = float("{:.2f}".format(location[i] * zoom))
+                            location[i] = float("{:.2f}".format(location[i] * float(zoom)))
                         page.screenshot(
                             clip=location,
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",

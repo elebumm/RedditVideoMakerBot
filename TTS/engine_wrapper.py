@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Optional
 
 import numpy as np
 import translators
@@ -73,38 +73,38 @@ class TTSEngine:
         print_step("Saving Text to MP3 files...")
 
         self.add_periods()
-        self.call_tts("title", process_text(self.reddit_object["thread_title"]))
-        # processed_text = ##self.reddit_object["thread_post"] != ""
+        # Select a voice for the title and thread body if in story mode
+        voice = self.tts_module.random_voice() if settings.config["settings"]["tts"]["random_voice"] else None
+        self.call_tts("title", process_text(self.reddit_object["thread_title"]), voice)
+
         idx = 0
 
         if settings.config["settings"]["storymode"]:
             if settings.config["settings"]["storymodemethod"] == 0:
                 if len(self.reddit_object["thread_post"]) > self.tts_module.max_chars:
-                    self.split_post(self.reddit_object["thread_post"], "postaudio")
+                    self.split_post(self.reddit_object["thread_post"], "postaudio", voice)
                 else:
-                    self.call_tts("postaudio", process_text(self.reddit_object["thread_post"]))
+                    self.call_tts("postaudio", process_text(self.reddit_object["thread_post"]), voice)
             elif settings.config["settings"]["storymodemethod"] == 1:
                 for idx, text in track(enumerate(self.reddit_object["thread_post"])):
-                    self.call_tts(f"postaudio-{idx}", process_text(text))
-
+                    self.call_tts(f"postaudio-{idx}", process_text(text), voice)
         else:
             for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+                comment_voice = self.tts_module.random_voice() if settings.config["settings"]["tts"]["random_voice"] else None
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
                     self.length -= self.last_clip_length
                     idx -= 1
                     break
-                if (
-                    len(comment["comment_body"]) > self.tts_module.max_chars
-                ):  # Split the comment if it is too long
-                    self.split_post(comment["comment_body"], idx)  # Split the comment
+                if (len(comment["comment_body"]) > self.tts_module.max_chars):  # Split the comment if it is too long
+                    self.split_post(comment["comment_body"], idx, comment_voice)  # Split the comment
                 else:  # If the comment is not too long, just call the tts engine
-                    self.call_tts(f"{idx}", process_text(comment["comment_body"]))
+                    self.call_tts(f"{idx}", process_text(comment["comment_body"]), comment_voice)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
 
-    def split_post(self, text: str, idx):
+    def split_post(self, text: str, idx, voice: Optional[str] = None):
         split_files = []
         split_text = [
             x.group().strip()
@@ -123,7 +123,7 @@ class TTSEngine:
                 print("newtext was blank because sanitized split text resulted in none")
                 continue
             else:
-                self.call_tts(f"{idx}-{idy}.part", newtext)
+                self.call_tts(f"{idx}-{idy}.part", newtext, voice)
                 with open(f"{self.path}/list.txt", "w") as f:
                     for idz in range(0, len(split_text)):
                         f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
@@ -145,11 +145,12 @@ class TTSEngine:
         except OSError:
             print("OSError")
 
-    def call_tts(self, filename: str, text: str):
+    def call_tts(self, filename: str, text: str, voice: Optional[str] = None):
         self.tts_module.run(
             text,
             filepath=f"{self.path}/{filename}.mp3",
             random_voice=settings.config["settings"]["tts"]["random_voice"],
+            voice=voice
         )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length

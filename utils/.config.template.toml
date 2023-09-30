@@ -14,6 +14,8 @@ max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000,
 min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "min_comment_length number of characters a comment can have. default is 0", example = 50, oob_error = "the max comment length should be between 1 and 100" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr", options = ['','af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho', 'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da', 'de', 'doi', 'dv', 'ee', 'el', 'en', 'en-US', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu', 'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig', 'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn', 'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt', 'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr', 'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr', 'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo', 'zh-CN', 'zh-TW', 'zu'] }
 min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
+min_upvotes = { default = 20, optional = false, nmin = 1, type = "int", explanation = "The minimum number of upvotes a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
+sort_type = { default = "hot", optional = false, options = ["hot", "top", ], explanation = "the way to sort the reddit threads", example = "top" , oob_error = "the sort type needs to be hot, top, etc." }
 
 [ai]
 ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
@@ -55,3 +57,10 @@ python_voice = { optional = false, default = "1", example = "1", explanation = "
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
 no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
+
+[settings.codecs]
+VCODEC = { optional = false, default = "h264", example = "h264_nvenc", explanation = "The codec used to encode the videos. to find a list of avaliable codecs run ffmpeg " }
+VCODECPRESET = { optional = false, default = "slow", example = "fast", explanation = "The codec preset used to encode the videos. to find a list of avaliable codecs run ffmpeg " }
+VIDEO_BITRATE = { optional = false, default = "20M", example = "12M", explanation = "The bitrate of the video in megabytes per second ie 50M " }
+AUDIO_BITRATE = { optional = false, default = "192k", example = "256k", explanation = "The bitrate of the audio in kilobytes per second ie 256k " }
+CPUTHREADS = { optional = false, default = "4", example = "8", type = "int", explanation = "The amount of CPU threads to use during encoding " }
