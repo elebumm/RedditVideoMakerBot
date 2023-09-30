@@ -30,13 +30,16 @@ class AWSPolly:
         self.max_chars = 3000
         self.voices = voices
 
-    def run(self, text, filepath, random_voice: bool = False):
+    def run(self, text, filepath, random_voice: bool = False, voice: str = None):
         try:
             session = Session(profile_name="polly")
             polly = session.client("polly")
-            if random_voice:
-                voice = self.randomvoice()
-            else:
+
+            if voice:  # If voice is explicitly provided, use it
+                voice = voice.capitalize()
+            elif random_voice:  # Else if random_voice is set to True, pick a random voice
+                voice = self.random_voice()
+            else:  # If none of the above, use the voice from the settings
                 if not settings.config["settings"]["tts"]["aws_polly_voice"]:
                     raise ValueError(
                         f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
@@ -56,11 +59,8 @@ class AWSPolly:
 
             # Access the audio stream from the response
             if "AudioStream" in response:
-                file = open(filepath, "wb")
-                file.write(response["AudioStream"].read())
-                file.close()
-                # print_substep(f"Saved Text {idx} to MP3 files successfully.", style="bold green")
-
+                with open(filepath, "wb") as file:
+                    file.write(response["AudioStream"].read())
             else:
                 # The response didn't contain audio data, exit gracefully
                 print("Could not stream audio")
@@ -75,5 +75,5 @@ class AWSPolly:
             )
             sys.exit(-1)
 
-    def randomvoice(self):
+    def random_voice(self):
         return random.choice(self.voices)

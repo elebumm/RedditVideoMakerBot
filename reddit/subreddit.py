@@ -1,5 +1,4 @@
 import re
-
 import praw
 from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
@@ -14,9 +13,7 @@ from utils.voice import sanitize_text
 
 
 def get_subreddit_threads(POST_ID: str):
-    """
-    Returns a list of threads from the AskReddit subreddit.
-    """
+    """Returns a list of threads from the AskReddit subreddit."""
 
     print_substep("Logging into Reddit.")
 
@@ -40,7 +37,7 @@ def get_subreddit_threads(POST_ID: str):
             client_secret=settings.config["reddit"]["creds"]["client_secret"],
             user_agent="Accessing Reddit threads",
             username=username,
-            passkey=passkey,
+            password=passkey,
             check_for_async=False,
         )
     except ResponseException as e:
@@ -49,7 +46,10 @@ def get_subreddit_threads(POST_ID: str):
     except:
         print("Something went wrong...")
 
-    # Ask user for subreddit input
+    min_upvotes = settings.config["reddit"]["thread"]["min_upvotes"]
+    sort_type = settings.config["reddit"]["thread"]["sort_type"]
+    subreddit_choice = settings.config["reddit"]["thread"]["subreddit"].lstrip('r/')
+
     print_step("Getting subreddit threads...")
     similarity_score = 0
     if not settings.config["reddit"]["thread"][
@@ -99,9 +99,10 @@ def get_subreddit_threads(POST_ID: str):
             threads, subreddit, similarity_scores=similarity_scores
         )
     else:
-        threads = subreddit.hot(limit=25)
+        threads = list(getattr(subreddit, str(sort_type))(limit=25))
         submission = get_subreddit_undone(threads, subreddit)
 
+    # Check submission
     if submission is None:
         return get_subreddit_threads(POST_ID)  # submission already done. rerun
 
@@ -129,45 +130,43 @@ def get_subreddit_threads(POST_ID: str):
             f"Thread has a similarity score up to {round(similarity_score * 100)}%",
             style="bold blue",
         )
+    if submission.score < min_upvotes:
+        print_substep(
+            f"Thread has {submission.score} upvotes which is below the minimum threshold of {min_upvotes}. Skipping.")
+        return get_subreddit_threads(POST_ID)
 
     content["thread_url"] = threadurl
     content["thread_title"] = submission.title
     content["thread_id"] = submission.id
     content["is_nsfw"] = submission.over_18
     content["comments"] = []
+    content["thread_post"] = ""  # Default value
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 1:
             content["thread_post"] = posttextparser(submission.selftext)
         else:
             content["thread_post"] = submission.selftext
     else:
-        for top_level_comment in submission.comments:
-            if isinstance(top_level_comment, MoreComments):
+        # Process comments
+        min_comment_length = int(str(settings.config["reddit"]["thread"]["min_comment_length"]))
+        max_comment_length = int(str(settings.config["reddit"]["thread"]["max_comment_length"]))
+        min_comment_upvotes = int(str(settings.config["reddit"]["thread"]["min_comment_upvotes"]))
+
+        for comment in submission.comments:
+            if isinstance(comment, MoreComments) or comment.body in ["[removed]", "[deleted]"] or comment.stickied:
                 continue
 
-            if top_level_comment.body in ["[removed]", "[deleted]"]:
-                continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
-            if not top_level_comment.stickied:
-                sanitised = sanitize_text(top_level_comment.body)
-                if not sanitised or sanitised == " ":
-                    continue
-                if len(top_level_comment.body) <= int(
-                    settings.config["reddit"]["thread"]["max_comment_length"]
-                ):
-                    if len(top_level_comment.body) >= int(
-                        settings.config["reddit"]["thread"]["min_comment_length"]
-                    ):
-                        if (
-                            top_level_comment.author is not None
-                            and sanitize_text(top_level_comment.body) is not None
-                        ):  # if errors occur with this change to if not.
-                            content["comments"].append(
-                                {
-                                    "comment_body": top_level_comment.body,
-                                    "comment_url": top_level_comment.permalink,
-                                    "comment_id": top_level_comment.id,
-                                }
-                            )
+            sanitised = sanitize_text(comment.body)
+            if not sanitised or sanitised == " ":
+                continue
+
+            if min_comment_length <= len(comment.body) <= max_comment_length and comment.score >= min_comment_upvotes:
+                if comment.author and sanitised:
+                    content["comments"].append({
+                        "comment_body": comment.body,
+                        "comment_url": comment.permalink,
+                        "comment_id": comment.id,
+                    })
 
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content

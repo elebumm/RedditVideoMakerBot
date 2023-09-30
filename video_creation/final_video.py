@@ -65,12 +65,14 @@ class ProgressFfmpeg(threading.Thread):
 
 
 def name_normalize(name: str) -> str:
-    name = re.sub(r'[?\\"%*:|<>]', "", name)
-    name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
-    name = re.sub(r"( [w,W]\s?\/)", r" with", name)
-    name = re.sub(r"(\d+)\s?\/\s?(\d+)", r"\1 of \2", name)
-    name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
-    name = re.sub(r"\/", r"", name)
+    name = re.sub(r'[?\"%*:|<>]', "", name)
+    # Note: I've changed [w,W] to [wW] and [o,O,0] to [oO0]
+    name = re.sub(r"([wW])\s?/\s?([oO0])", r"without", name)
+    name = re.sub(r"([wW])\s?/", r"with", name)
+    name = re.sub(r"(\d+)\s?/\s?(\d+)", r"\1 of \2", name)
+    # This one handles "this/that" as "this or that". The words won't overlap with the earlier "w/ or w/o"
+    name = re.sub(r"(\w+)\s?/\s?(\w+)", r"\1 or \2", name)
+    name = re.sub(r"/", "", name)
 
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
@@ -83,7 +85,7 @@ def name_normalize(name: str) -> str:
         return name
 
 
-def prepare_background(reddit_id: str, W: int, H: int) -> str:
+def prepare_background(reddit_id: str, W: int, H: int) -> Tuple[str, float]:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
     output = (
         ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4")
@@ -92,10 +94,15 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             output_path,
             an=None,
             **{
-                "c:v": "h264",
-                "b:v": "20M",
-                "b:a": "192k",
-                "threads": multiprocessing.cpu_count(),
+                # these settings improve the encoding a lot and reduce visual errors in the video
+                # plus its now super easy to configure your codec settings
+                "c:v": str(settings.config["settings"]["codecs"]["VCODEC"]),
+                "preset": str(settings.config["settings"]["codecs"]["VCODECPRESET"]),
+                "b:v": str(settings.config["settings"]["codecs"]["VIDEO_BITRATE"]),
+                "b:a": str(settings.config["settings"]["codecs"]["AUDIO_BITRATE"]),
+                "threads": int(str(settings.config["settings"]["codecs"]["CPUTHREADS"])),
+                "force_key_frames": "expr:gte(t,n_forced*1)",
+                "g": 250,  # GOP size
             },
         )
         .overwrite_output()
@@ -144,8 +151,8 @@ def make_final_video(
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
     # settings values
-    W: Final[int] = int(settings.config["settings"]["resolution_w"])
-    H: Final[int] = int(settings.config["settings"]["resolution_h"])
+    W: Final[int] = int(str(settings.config["settings"]["resolution_w"]))
+    H: Final[int] = int(str(settings.config["settings"]["resolution_h"]))
 
     opacity = settings.config["settings"]["opacity"]
 
@@ -162,33 +169,28 @@ def make_final_video(
 
     # Gather all audio clips
     audio_clips = list()
-    if number_of_clips == 0 and settings.config["settings"]["storymode"] == "false":
-        print(
-            "No audio clips to gather. Please use a different TTS or post."
-        )  # This is to fix the TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
+    audio_clips_durations = []
+    storymode = settings.config.get("settings", {}).get("storymode")
+    storymodemethod = settings.config.get("settings", {}).get("storymodemethod")
+    if number_of_clips == 0 and not storymode:
+        print("No audio clips to gather. Please use a different TTS or post.")
         exit()
-    if settings.config["settings"]["storymode"]:
-        if settings.config["settings"]["storymodemethod"] == 0:
+
+    if storymode:
+
+        if storymodemethod == 0:
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
-            audio_clips.insert(
-                1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3")
-            )
-        elif settings.config["settings"]["storymodemethod"] == 1:
-            audio_clips = [
-                ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(
-                    range(number_of_clips + 1), "Collecting the audio files..."
-                )
-            ]
-            audio_clips.insert(
-                0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")
-            )
+            audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
+
+        elif storymodemethod == 1:
+            #i find it weird that I have to increase it by one to make it work, it kind of makes sense but not really
+            number_of_clips += 1
+            audio_clips.extend(
+                [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3") for i in track(range(number_of_clips))])
+            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
-        audio_clips = [
-            ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
-            for i in range(number_of_clips)
-        ]
+        audio_clips.extend([ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3") for i in range(number_of_clips + 1)])
         audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
         audio_clips_durations = [
@@ -228,24 +230,19 @@ def make_final_video(
     )
 
     current_time = 0
+
     if settings.config["settings"]["storymode"]:
-        audio_clips_durations = [
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")[
-                    "format"
-                ]["duration"]
-            )
-            for i in range(number_of_clips)
-        ]
-        audio_clips_durations.insert(
-            0,
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"][
-                    "duration"
-                ]
-            ),
-        )
+        #that logic didnt actually work seeing as the mp3 names are way different for each mode
         if settings.config["settings"]["storymodemethod"] == 0:
+            audio_clips_durations = [
+                float(
+                    ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio.mp3")["format"]["duration"]
+                )
+            ]
+            audio_clips_durations.insert(
+                0,
+                float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
+            )
             image_clips.insert(
                 1,
                 ffmpeg.input(f"assets/temp/{reddit_id}/png/story_content.png").filter(
@@ -254,15 +251,27 @@ def make_final_video(
             )
             background_clip = background_clip.overlay(
                 image_clips[0],
-                enable=f"between(t,{current_time},{current_time + audio_clips_durations[0]})",
                 x="(main_w-overlay_w)/2",
                 y="(main_h-overlay_h)/2",
             )
             current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(
-                range(0, number_of_clips + 1), "Collecting the image files..."
-            ):
+
+            audio_clips_durations = [
+                float(
+                    ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")["format"]["duration"]
+                )
+                for i in range(number_of_clips)
+            ]
+            audio_clips_durations.insert(
+                0,
+                float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
+            )
+
+            print("the number of clips originally is: " + str(int(number_of_clips)))
+            for i in track(range(number_of_clips + 1)):
+                print("appending image: " + str(i) + ".png")
+                print("at time :" + str(current_time))
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
                         "scale", screenshot_width, -1
@@ -274,6 +283,7 @@ def make_final_video(
                     x="(main_w-overlay_w)/2",
                     y="(main_h-overlay_h)/2",
                 )
+                print("Total image clips: " + str(len(image_clips)))
                 current_time += audio_clips_durations[i]
     else:
         for i in range(0, number_of_clips + 1):
@@ -290,6 +300,11 @@ def make_final_video(
                 y="(main_h-overlay_h)/2",
             )
             current_time += audio_clips_durations[i]
+
+    #fade and cut video at appropriate time
+    total_audio_duration = sum(audio_clips_durations)
+    background_clip = background_clip.filter('tpad', stop_duration=1)
+    background_clip = background_clip.filter('fade', type='out', start_time=total_audio_duration, duration=1)
 
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
@@ -346,10 +361,8 @@ def make_final_video(
                 height,
                 title_thumb,
             )
-            thumbnailSave.save(f"./assets/temp/{reddit_id}/thumbnail.png")
-            print_substep(
-                f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
-            )
+            thumbnailSave.save(f"results/{subreddit}/thumbnails/{filename}.png")
+            print_substep(f"Thumbnail - Building Thumbnail in results/{subreddit}/thumbnails/{filename}.png")
 
     text = f"Background by {background_config['video'][2]}"
     background_clip = ffmpeg.drawtext(
@@ -385,10 +398,13 @@ def make_final_video(
                 path,
                 f="mp4",
                 **{
-                    "c:v": "h264",
-                    "b:v": "20M",
-                    "b:a": "192k",
-                    "threads": multiprocessing.cpu_count(),
+                    "c:v": str(settings.config["settings"]["codecs"]["VCODEC"]),
+                    "preset": str(settings.config["settings"]["codecs"]["VCODECPRESET"]),
+                    "b:v": str(settings.config["settings"]["codecs"]["VIDEO_BITRATE"]),
+                    "b:a": str(settings.config["settings"]["codecs"]["AUDIO_BITRATE"]),
+                    "threads": int(settings.config["settings"]["codecs"]["CPUTHREADS"]),
+                    "g": 250,  # GOP size
+                    "force_key_frames": "expr:gte(t,n_forced*1)",
                 },
             ).overwrite_output().global_args(
                 "-progress", progress.output_file.name
@@ -417,10 +433,13 @@ def make_final_video(
                     path,
                     f="mp4",
                     **{
-                        "c:v": "h264",
-                        "b:v": "20M",
-                        "b:a": "192k",
-                        "threads": multiprocessing.cpu_count(),
+                        "c:v": str(settings.config["settings"]["codecs"]["VCODEC"]),
+                        "preset": str(settings.config["settings"]["codecs"]["VCODECPRESET"]),
+                        "b:v": str(settings.config["settings"]["codecs"]["VIDEO_BITRATE"]),
+                        "b:a": str(settings.config["settings"]["codecs"]["AUDIO_BITRATE"]),
+                        "threads": int(settings.config["settings"]["codecs"]["CPUTHREADS"]),
+                        "g": 250,  # GOP size
+                        "force_key_frames": "expr:gte(t,n_forced*1)",
                     },
                 ).overwrite_output().global_args(
                     "-progress", progress.output_file.name

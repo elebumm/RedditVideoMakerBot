@@ -75,6 +75,8 @@ vocals: Final[tuple] = (
     "en_female_ht_f08_wonderful_world",  # Dramatic
 )
 
+all_voices: Final[tuple] = disney_voices + eng_voices + non_eng_voices + vocals
+# comment out a voice to make it unavailable to be randomly selected
 
 class TikTok:
     """TikTok Text-to-Speech Wrapper"""
@@ -95,12 +97,13 @@ class TikTok:
         # set the headers to the session, so we don't have to do it for every request
         self._session.headers = headers
 
-    def run(self, text: str, filepath: str, random_voice: bool = False):
-        if random_voice:
-            voice = self.random_voice()
-        else:
-            # if tiktok_voice is not set in the config file, then use a random voice
-            voice = settings.config["settings"]["tts"].get("tiktok_voice", None)
+    def run(self, text: str, filepath: str, random_voice: bool = False, voice: Optional[str] = None):
+        if not voice:
+            if random_voice:
+                voice = self.random_voice()
+            else:
+                # if tiktok_voice is not set in the config file, then use a random voice
+                voice = settings.config["settings"]["tts"].get("tiktok_voice", self.random_voice())
 
         # get the audio from the TikTok API
         data = self.get_voices(voice=voice, text=text)
