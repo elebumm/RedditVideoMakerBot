@@ -18,10 +18,12 @@ An easy way to automagically upload the created videos using pyautogui and openC
     ```
    pip install -r requirements.txt
    ```
-3. Edit path variables in upload.py (line 6) and StartAll.bat (line 1) to be your corresponding paths 
+3. Edit path variables in upload.py (line 6) and StartAll.bat (line 1) to be your corresponding paths
+   
 (Make sure the upload.py folder is the subreddit's results folder and the StartAll.bat folder is just the repo folder)
+
 4. Make sure to either change the your windows and chrome theme to dark gray or change the images in the uploadImages folder to reflect your desktop
-5. Also, set view in file explorer to "list" and use Windows media player to open videos. 
+5. Also, set view in file explorer to "list" and use Windows media player to open videos
 
 If your environment is set up correctly, when you use upload.bat the python file should launch, upload the video to YT studio, update the COPPA agreement and publish, after this go into file explorer and delete the video.
 
