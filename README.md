@@ -27,5 +27,10 @@ An easy way to automagically upload the created videos using pyautogui and openC
 
 If your environment is set up correctly, when you use upload.bat the python file should launch, upload the video to YT studio, update the COPPA agreement and publish, after this go into file explorer and delete the video.
 
+## Upload in action
+
+https://github.com/BluJay131/RedditVideoMakerBot/assets/80910384/099fa437-3ae1-4c35-8209-a7965d19b5f9
+
+
 ## LICENSE
 [Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
