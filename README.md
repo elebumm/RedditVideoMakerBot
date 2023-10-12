@@ -1,6 +1,6 @@
 # Reddit Video Maker Bot 🎥
 
-### ![image](https://github.com/BluJay131/Cost-Effective-Twitch-Controlled-Lights/assets/80910384/346dc2a9-45f3-4372-8e4c-de62a3bc5e3f) Visit https://github.com/elebumm/RedditVideoMakerBot for instructions on use and to support their work!
+### ![image](https://github.com/BluJay131/Cost-Effective-Twitch-Controlled-Lights/assets/80910384/346dc2a9-45f3-4372-8e4c-de62a3bc5e3f) Visit <a target="_blank" href="https://github.com/elebumm/RedditVideoMakerBot">the creators of this project</a> for instructions on use and to support their work!
 
 
 
