@@ -3,6 +3,8 @@
 [![Socials](https://img.shields.io/badge/Socials-linktr.ee/blujay131-purple?style=flat&logo=world&logoColor=white)](https://linktr.ee/blujay_131)
 [![GitHub Repo stars](https://img.shields.io/github/stars/BluJay131/Cost-Effective-Twitch-Chat-Controlled-Lights?style=social)](https://github.com/BluJay131/RedditVideoMakerBot/stargazers)
 
+<hr/>
+
 ### ![image](https://github.com/BluJay131/Cost-Effective-Twitch-Controlled-Lights/assets/80910384/346dc2a9-45f3-4372-8e4c-de62a3bc5e3f) Visit the <a target="_blank" href="https://github.com/elebumm/RedditVideoMakerBot">creators of this project</a> for instructions on use and to support their work! 
 
 (Side note this works only on the Windows OS)
@@ -22,15 +24,17 @@ An easy way to automagically upload the created videos using pyautogui and openC
    
 (Make sure the upload.py folder is the subreddit's results folder and the StartAll.bat folder is just the repo folder)
 
-4. Make sure to either change the your windows and chrome theme to dark gray or change the images in the uploadImages folder to reflect your desktop
+4. Make sure to either change your windows and chrome theme to dark gray or change the images in the uploadImages folder to reflect your desktop
 5. Also, set view in file explorer to "list" and use Windows media player to open videos
-
+   
 If your environment is set up correctly, when you use upload.bat the python file should launch, upload the video to YT studio, update the COPPA agreement and publish, after this go into file explorer and delete the video.
 
 ## Upload in action
 
 https://github.com/BluJay131/RedditVideoMakerBot/assets/80910384/099fa437-3ae1-4c35-8209-a7965d19b5f9
 
+## Side Notes
+I am aware it is an inconvenience to set all of these settings up so I decided to go the route of using my home server with Task Scheduler to create and publish videos 5 times in a span of 24 hours, idk how long I'll upkeep my server in this regard but they are posted to the <a target="_blank" href="https://www.youtube.com/channel/UC4XvDmn7p5vo_XpwlIg54TA">channel here.</a> 
 
 ## LICENSE
 [Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
