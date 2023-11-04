@@ -127,6 +127,10 @@ class TTSEngine:
                 continue
             else:
                 self.call_tts(f"{idx}-{idy}.part", newtext)
+                if (
+                    self.length > self.max_length
+                ):  # This prevents the video from being longer than self.max_length seconds.
+                    return
                 with open(f"{self.path}/list.txt", "w") as f:
                     for idz in range(0, len(split_text)):
                         f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
