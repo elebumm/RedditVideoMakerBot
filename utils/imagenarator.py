@@ -1,10 +1,29 @@
 import re
 import textwrap
 import os
+import json
 
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 from TTS.engine_wrapper import process_text
+
+def load_text_replacements():
+    text_replacements = {}
+    # Load background videos
+    with open("./utils/text_replacements.json") as json_file:
+        text_replacements = json.load(json_file)
+    del text_replacements["__comment"]
+    return text_replacements
+
+def perform_text_replacements(text):
+    updated_text = text
+    for replacement in text_replacements['text-and-audio']:
+        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        updated_text = compiled.sub(replacement[1], updated_text)
+    for replacement in text_replacements['text-only']:
+        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        updated_text = compiled.sub(replacement[1], updated_text)
+    return updated_text
 
 
 def draw_multiple_line_text(
@@ -55,7 +74,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     """
     Render Images for video
     """
-    title = process_text(reddit_obj["thread_title"], False)
+    title = process_text(perform_text_replacements(reddit_obj["thread_title"]), False)
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
@@ -77,5 +96,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     for idx, text in track(enumerate(texts), "Rendering Image"):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
-        draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
+        draw_multiple_line_text(image, perform_text_replacements(text), font, txtclr, padding, wrap=30, transparent=transparent)
         image.save(f"assets/temp/{id}/png/img{idx}.png")
+
+text_replacements = load_text_replacements()

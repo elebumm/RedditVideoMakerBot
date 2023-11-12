@@ -1,5 +1,6 @@
 import re
 import sys
+import json
 import time as pytime
 from datetime import datetime
 from time import sleep
@@ -12,6 +13,23 @@ from cleantext import clean
 if sys.version_info[0] >= 3:
     from datetime import timezone
 
+def load_text_replacements():
+    text_replacements = {}
+    # Load background videos
+    with open("./utils/text_replacements.json") as json_file:
+        text_replacements = json.load(json_file)
+    del text_replacements["__comment"]
+    return text_replacements
+
+def perform_text_replacements(text):
+    updated_text = text
+    for replacement in text_replacements['text-and-audio']:
+        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        updated_text = compiled.sub(replacement[1], updated_text)
+    for replacement in text_replacements['audio-only']:
+        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        updated_text = compiled.sub(replacement[1], updated_text)
+    return updated_text
 
 def check_ratelimit(response: Response) -> bool:
     """
@@ -92,5 +110,9 @@ def sanitize_text(text: str) -> str:
     if settings.config["settings"]["tts"]["no_emojis"]:
         result = clean(result, no_emoji=True)
 
+    result = perform_text_replacements(result)
+
     # remove extra whitespace
     return " ".join(result.split())
+
+text_replacements = load_text_replacements()

@@ -1,0 +1,22 @@
+{
+    "__comment": "Input words to replace in the video",
+    "text-and-audio": [
+        ["killed", "unalived"],
+        ["killing", "unaliving"],
+        ["kill", "unalive"],
+        ["dead", "unalive"],
+        ["drug", "substance"],
+        ["gun", "boom stick"],
+        ["nude", "without clothes"],
+        ["naked", "without clothes"],
+        ["fuck", "fork"],
+        ["shit", "poo"],
+        ["weed", "oui'd"],
+        ["shoot", "hit"],
+        ["shot", "hit"]
+    ],
+    "text-only": [],
+    "audio-only": [
+        ["mic", "mike"]
+    ]
+}
