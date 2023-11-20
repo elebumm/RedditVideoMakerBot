@@ -13,6 +13,8 @@ from utils.console import print_step, print_substep
 import yt_dlp
 import ffmpeg
 
+from utils.ffmpeg import ffmpeg_progress_run
+
 
 def load_background_options():
     background_options = {}
@@ -145,12 +147,15 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
                     audio_file_path,
                     stream_loop=background_audio_loops
                 )
-                ffmpeg.output(
-                    background_audio_loop_input,
-                    background_looped_audio_file_path,
-                    vcodec="copy",
-                    acodec="copy"
-                ).overwrite_output().run(quiet=True)
+                ffmpeg_progress_run(
+                    ffmpeg.output(
+                        background_audio_loop_input,
+                        background_looped_audio_file_path,
+                        vcodec="copy",
+                        acodec="copy"
+                    ).overwrite_output(),
+                    background_audio_loops*background_audio_duration
+                )
                 audio_file_path = background_looped_audio_file_path
         print_step("Finding a spot in the background audio to chop...✂️")
         background_audio = AudioFileClip(audio_file_path)
@@ -173,12 +178,15 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
                 video_file_path,
                 stream_loop=background_video_loops
             )
-            ffmpeg.output(
-                background_video_loop_input,
-                background_looped_video_file_path,
-                vcodec="copy",
-                acodec="copy"
-            ).overwrite_output().run(quiet=True)
+            ffmpeg_progress_run(
+                ffmpeg.output(
+                    background_video_loop_input,
+                    background_looped_video_file_path,
+                    vcodec="copy",
+                    acodec="copy"
+                ).overwrite_output(),
+                background_video_loops*background_video_duration
+            )
             video_file_path = background_looped_video_file_path
 
     print_step("Finding a spot in the background video to chop...✂️")
