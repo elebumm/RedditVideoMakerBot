@@ -1,5 +1,6 @@
 import os
 import re
+import ffmpeg
 from pathlib import Path
 from typing import Tuple
 
@@ -13,6 +14,8 @@ from rich.progress import track
 from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
+
+from pydub import AudioSegment
 
 
 DEFAULT_MAX_LENGTH: int = (
@@ -84,11 +87,11 @@ class TTSEngine:
                 else:
                     self.call_tts("postaudio", process_text(self.reddit_object["thread_post"]))
             elif settings.config["settings"]["storymodemethod"] == 1:
-                for idx, text in track(enumerate(self.reddit_object["thread_post"])):
+                for idx, text in track(enumerate(self.reddit_object["thread_post"]), total=len(self.reddit_object["thread_post"])):
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
-            for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
+            for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving...", total=len(self.reddit_object["comments"])):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
                     self.length -= self.last_clip_length
@@ -124,19 +127,22 @@ class TTSEngine:
                 continue
             else:
                 self.call_tts(f"{idx}-{idy}.part", newtext)
-                with open(f"{self.path}/list.txt", "w") as f:
-                    for idz in range(0, len(split_text)):
-                        f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
-                    split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
-                    f.write("file " + f"'silence.mp3'" + "\n")
-
-                os.system(
-                    "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
-                    + "-i "
-                    + f"{self.path}/list.txt "
-                    + "-c copy "
-                    + f"{self.path}/{idx}.mp3"
-                )
+                concat_parts=[]
+                # with open(f"{self.path}/list.txt", "w") as f:
+                for idz in range(0, len(split_text)):
+                        # f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
+                    concat_parts.append(ffmpeg.input(f"{idx}-{idz}.part.mp3"))
+                split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
+                    # f.write("file " + f"'silence.mp3'" + "\n")
+                concat_parts.append('silence.mp3')
+                ffmpeg.concat(*concat_parts).output(f"{self.path}/{idx}.mp3").overwrite_output().global_args('-y -hide_banner -loglevel panic -safe 0').run(quiet=True)
+                # os.system(
+                #     "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
+                #     + "-i "
+                #     + f"{self.path}/list.txt "
+                #     + "-c copy "
+                #     + f"{self.path}/{idx}.mp3"
+                # )
         try:
             for i in range(0, len(split_files)):
                 os.unlink(split_files[i])
@@ -146,20 +152,31 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
+        mp3_filepath = f"{self.path}/{filename}.mp3"
+        audio_speed = settings.config["settings"]["tts"]["speed"]
+        mp3_speed_changed_filepath = f"{self.path}/{filename}-speed-{audio_speed}.mp3"
         self.tts_module.run(
             text,
-            filepath=f"{self.path}/{filename}.mp3",
+            filepath=mp3_filepath,
             random_voice=settings.config["settings"]["tts"]["random_voice"],
         )
+        if audio_speed != 1:
+            ffmpeg.input(mp3_filepath).filter("atempo", audio_speed).output(mp3_speed_changed_filepath).overwrite_output().run(quiet=True)
+            os.replace(mp3_speed_changed_filepath, mp3_filepath)
+
         # try:
-        #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
+        #     self.length += MP3(mp3_filepath).info.length
         # except (MutagenError, HeaderNotFoundError):
-        #     self.length += sox.file_info.duration(f"{self.path}/{filename}.mp3")
+        #     self.length += sox.file_info.duration(mp3_filepath)
         try:
-            clip = AudioFileClip(f"{self.path}/{filename}.mp3")
-            self.last_clip_length = clip.duration
-            self.length += clip.duration
-            clip.close()
+            clip = AudioSegment.from_mp3(mp3_filepath)
+            self.last_clip_length = clip.duration_seconds
+            self.length += clip.duration_seconds
+            # clip = AudioFileClip(mp3_filepath)
+            # self.last_clip_length = clip.duration
+            # self.length += clip.duration
+            # clip.close()
+            
         except:
             self.length = 0
 

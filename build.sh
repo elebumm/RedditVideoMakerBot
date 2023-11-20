@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -t rvmt .
+sudo docker build -t rvmt .

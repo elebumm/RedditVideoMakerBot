@@ -59,5 +59,47 @@
         "steep.mp4",
         "joel",
         "center"
+    ],
+    "custom_randy_bad_render": [
+        "https://www.youtube.com/watch?v=iAK7oisgAk0",
+        "l.mp4",
+        "iStackSlow",
+        "center"
+    ],
+    "custom": [
+        "https://www.youtube.com/watch?v=qXkTf1C_v0Y",
+        "deathstar_g1.mp4",
+        "iStackSlow",
+        "center"
+    ],
+    "custom_red_room": [
+        "https://www.youtube.com/watch?v=qXkTf1C_v0Y",
+        "crimson.mp4",
+        "iStackSlow",
+        "center"
+    ],
+    "custom_randy_hopping": [
+        "https://www.youtube.com/watch?v=7RmbJOWc9IQ",
+        "boy_b1.mp4",
+        "iStackSlow",
+        "center"
+    ],
+    "custom_randy_surf": [
+        "https://www.youtube.com/watch?v=FaeJBS51bH8",
+        "surf_forsaken.mp4",
+        "iStackSlow",
+        "center"
+    ],
+    "custom_scary": [
+        "https://www.youtube.com/watch?v=cIO95Xh5qLs",
+        "custom.mp4",
+        "GenericBomb",
+        "center"
+    ],
+    "custom1": [
+        "https://www.youtube.com/watch?v=GW_riy_jHRU",
+        "custom.mp4",
+        "KazzaGamesTV",
+        "center"
     ]
 }

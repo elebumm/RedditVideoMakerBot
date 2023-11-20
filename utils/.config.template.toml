@@ -10,7 +10,7 @@ password = { optional = false, nmin = 8, explanation = "The password of your red
 random = { optional = true, options = [true, false, ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
 subreddit = { optional = false, regex = "[_0-9a-zA-Z\\+]+$", nmin = 3, explanation = "What subreddit to pull posts from, the name of the sub, not the URL. You can have multiple subreddits, add an + with no spaces.", example = "AskReddit+Redditdev", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
 post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z0-9])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
-max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
+max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 100000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
 min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "min_comment_length number of characters a comment can have. default is 0", example = 50, oob_error = "the max comment length should be between 1 and 100" }
 post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr", options = ['','af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho', 'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da', 'de', 'doi', 'dv', 'ee', 'el', 'en', 'en-US', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu', 'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig', 'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn', 'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt', 'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr', 'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr', 'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo', 'zh-CN', 'zh-TW', 'zu'] }
 min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
@@ -18,6 +18,14 @@ min_comments = { default = 20, optional = false, nmin = 10, type = "int", explan
 [ai]
 ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
 ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
+openai_api_key = {optional = true, type="str", example= 'sk-', explanation = "OpenAI API Key"}
+openai_model = {optional = true, type="str", example= 'gpt-3.5-turbo', explanation = "OpenAI model name", default="gpt-3.5-turbo"}
+openai_rewrite = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Use OpenAI to rewrite the original story"}
+openai_api_base = {optional = true, type="str", example='http://localhost:4891/v1', explanation = "OpenAI API Base URL", default="https://api.openai.com/v1"}
+openai_rewrite_retries = { optional = true, type = "int", default = 5, example = 5, explanation = "Number of retries if the OpenAI response is too short or did not succeed" }
+openai_rewrite_chunk_max_tokens = { optional = true, type = "int", default = 2000, example = 1000, explanation = "Number of tokens to split the story at, when rewording, in order to stay under max tokens for the model." }
+openai_rewrite_length = { optional = true, default = 1, example = 1.1, explanation = "When rewriting the story with AI, aim for this length, as a percentage, compared to the original story", type = "float" }
+openai_retry_fail_error = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Use true to error if AI failed to rewrite, otherwise the original content is kept"}
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
@@ -33,8 +41,8 @@ resolution_h = { optional = false, default = 1920, example = 2560, explantation 
 zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 
 [settings.background]
-background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
-background_audio = { optional = true, default = "lofi", example = "chill-summer", options = ["lofi","lofi-2","chill-summer",""], explanation = "Sets the background audio for the video" }
+background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["custom", "minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
+background_audio = { optional = true, default = "lofi", example = "chill-summer", options = ["custom", "lofi","lofi-2","chill-summer",""], explanation = "Sets the background audio for the video" }
 background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation="Sets the volume of the background audio. If you don't want background audio, set it to 0.", oob_error = "The volume HAS to be between 0 and 1", input_error = "The volume HAS to be a float number between 0 and 1"}
 enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation="Used if you want to render another video without background audio in a separate folder", input_error = "The value HAS to be true or false"}
 background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Generate a thumbnail for the video (put a thumbnail.png file in the assets/backgrounds directory.)" }
@@ -55,3 +63,4 @@ python_voice = { optional = false, default = "1", example = "1", explanation = "
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
 no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
+speed = { optional = true, type = "float", nmin = 0.1, default = 1.0, example = 1.5, explanation="Sets the speed of the voice", oob_error = "The speed has to be equal to, or greater than 0.1", input_error = "The speed HAS to be a float number greater than 0.1"}

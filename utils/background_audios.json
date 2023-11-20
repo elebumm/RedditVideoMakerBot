@@ -14,5 +14,15 @@
         "https://www.youtube.com/watch?v=EZE8JagnBI8",
         "chill-summer.mp3",
         "Mellow Vibes Radio"
+    ],
+    "old_custom": [
+        "https://www.youtube.com/watch?v=_fVRA6XnvYc",
+        "custom.mp4",
+        "lofi geek"
+    ],
+    "custom": [
+        "https://www.youtube.com/watch?v=5oF5lS0sajs",
+        "custom.mp4",
+        "BreakingCopyright"
     ]
 }

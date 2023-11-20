@@ -5,6 +5,7 @@
         ["killing", "unaliving"],
         ["kill", "unalive"],
         ["dead", "unalive"],
+        ["drugged", "out of it, caused by substances,"],
         ["drug", "substance"],
         ["gun", "boom stick"],
         ["nude", "without clothes"],
@@ -13,10 +14,15 @@
         ["shit", "poo"],
         ["weed", "oui'd"],
         ["shoot", "hit"],
-        ["shot", "hit"]
+        ["shot", "hit"],
+        ["reddit", "tiktok"]
     ],
     "text-only": [],
     "audio-only": [
-        ["mic", "mike"]
+        ["mic", "mike"],
+        ["ai", "artificial intelligence"],
+        ["a.i.", "artificial intelligence"],
+        ["a.i", "artificial intelligence"],
+        ["mkultra", "em kay ultra"]
     ]
 }

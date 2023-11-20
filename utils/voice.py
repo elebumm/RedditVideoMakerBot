@@ -24,10 +24,11 @@ def load_text_replacements():
 def perform_text_replacements(text):
     updated_text = text
     for replacement in text_replacements['text-and-audio']:
-        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        regex_escaped_word=re.escape(replacement[0])
+        compiled = re.compile(r"\b{}\b".format(regex_escaped_word), re.IGNORECASE)
         updated_text = compiled.sub(replacement[1], updated_text)
-    for replacement in text_replacements['audio-only']:
-        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+    for replacement in text_replacements['text-only']:
+        compiled = re.compile(r"\b{}\b".format(regex_escaped_word), re.IGNORECASE)
         updated_text = compiled.sub(replacement[1], updated_text)
     return updated_text
 

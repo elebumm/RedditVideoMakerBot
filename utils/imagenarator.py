@@ -18,10 +18,11 @@ def load_text_replacements():
 def perform_text_replacements(text):
     updated_text = text
     for replacement in text_replacements['text-and-audio']:
-        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        regex_escaped_word=re.escape(replacement[0])
+        compiled = re.compile(r"\b{}\b".format(regex_escaped_word), re.IGNORECASE)
         updated_text = compiled.sub(replacement[1], updated_text)
     for replacement in text_replacements['text-only']:
-        compiled = re.compile(re.escape(replacement[0]), re.IGNORECASE)
+        compiled = re.compile(r"\b{}\b".format(regex_escaped_word), re.IGNORECASE)
         updated_text = compiled.sub(replacement[1], updated_text)
     return updated_text
 
@@ -93,7 +94,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
 
     image.save(f"assets/temp/{id}/png/title.png")
 
-    for idx, text in track(enumerate(texts), "Rendering Image"):
+    for idx, text in track(enumerate(texts), "Rendering Image", total=len(texts)):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
         draw_multiple_line_text(image, perform_text_replacements(text), font, txtclr, padding, wrap=30, transparent=transparent)

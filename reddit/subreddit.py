@@ -1,4 +1,5 @@
 import re
+import math
 
 from prawcore.exceptions import ResponseException
 
@@ -8,12 +9,12 @@ from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
 from utils.console import print_step, print_substep
+from utils.openai import ai_rewrite_story
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from utils.voice import sanitize_text
 from utils.posttextparser import posttextparser
 from utils.ai_methods import sort_by_similarity
-
 
 def get_subreddit_threads(POST_ID: str):
     """
@@ -125,10 +126,13 @@ def get_subreddit_threads(POST_ID: str):
     content["is_nsfw"] = submission.over_18
     content["comments"] = []
     if settings.config["settings"]["storymode"]:
+        ai_selftext = submission.selftext
+        if settings.config["ai"]["openai_rewrite"]:
+            ai_selftext=ai_rewrite_story(submission.selftext)
         if settings.config["settings"]["storymodemethod"] == 1:
-            content["thread_post"] = posttextparser(submission.selftext)
+            content["thread_post"] = posttextparser(ai_selftext)
         else:
-            content["thread_post"] = submission.selftext
+            content["thread_post"] = ai_selftext
     else:
         for top_level_comment in submission.comments:
             if isinstance(top_level_comment, MoreComments):

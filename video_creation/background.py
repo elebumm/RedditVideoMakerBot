@@ -1,6 +1,7 @@
 import json
 import random
 import re
+import math
 from pathlib import Path
 from random import randrange
 from typing import Any, Tuple, Dict
@@ -10,6 +11,7 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from utils import settings
 from utils.console import print_step, print_substep
 import yt_dlp
+import ffmpeg
 
 
 def load_background_options():
@@ -131,34 +133,74 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
     if settings.config["settings"]["background"][f"background_audio_volume"] == 0:
         print_step("Volume was set to 0. Skipping background audio creation . . .")
     else:
-        print_step("Finding a spot in the backgrounds audio to chop...✂️")
         audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
-        background_audio = AudioFileClip(f"assets/backgrounds/audio/{audio_choice}")
+        audio_file_path=f"assets/backgrounds/audio/{audio_choice}"
+        if bool(settings.config["settings"]["background"][f"background_audio_loop"]):
+            background_looped_audio_file_path = f"assets/backgrounds/audio/looped-{audio_choice}"
+            background_audio_duration = float(ffmpeg.probe(audio_file_path)["format"]["duration"])
+            background_audio_loops = math.ceil(video_length / background_audio_duration)
+            if background_audio_loops > 1:
+                print_step(f"Looping background audio {background_audio_loops} times...🔁")
+                background_audio_loop_input = ffmpeg.input(
+                    audio_file_path,
+                    stream_loop=background_audio_loops
+                )
+                ffmpeg.output(
+                    background_audio_loop_input,
+                    background_looped_audio_file_path,
+                    vcodec="copy",
+                    acodec="copy"
+                ).overwrite_output().run(quiet=True)
+                audio_file_path = background_looped_audio_file_path
+        print_step("Finding a spot in the background audio to chop...✂️")
+        background_audio = AudioFileClip(audio_file_path)
         start_time_audio, end_time_audio = get_start_and_end_times(
             video_length, background_audio.duration
         )
         background_audio = background_audio.subclip(start_time_audio, end_time_audio)
         background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
+        background_audio.close()
 
-    print_step("Finding a spot in the backgrounds video to chop...✂️")
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
-    background_video = VideoFileClip(f"assets/backgrounds/video/{video_choice}")
+    video_file_path = f"assets/backgrounds/video/{video_choice}"
+    if bool(settings.config["settings"]["background"][f"background_video_loop"]):
+        background_looped_video_file_path = f"assets/backgrounds/video/looped-{video_choice}"
+        background_video_duration = float(ffmpeg.probe(video_file_path)["format"]["duration"])
+        background_video_loops = math.ceil(video_length / background_video_duration)
+        if background_video_loops > 1:
+            print_step(f"Looping background video {background_video_loops} times...🔁")
+            background_video_loop_input = ffmpeg.input(
+                video_file_path,
+                stream_loop=background_video_loops
+            )
+            ffmpeg.output(
+                background_video_loop_input,
+                background_looped_video_file_path,
+                vcodec="copy",
+                acodec="copy"
+            ).overwrite_output().run(quiet=True)
+            video_file_path = background_looped_video_file_path
+
+    print_step("Finding a spot in the background video to chop...✂️")
+    background_video = VideoFileClip(video_file_path)
     start_time_video, end_time_video = get_start_and_end_times(
         video_length, background_video.duration
     )
+    background_video.close()
     # Extract video subclip
     try:
         ffmpeg_extract_subclip(
-            f"assets/backgrounds/video/{video_choice}",
+            video_file_path,
             start_time_video,
             end_time_video,
             targetname=f"assets/temp/{id}/background.mp4",
         )
     except (OSError, IOError):  # ffmpeg issue see #348
         print_substep("FFMPEG issue. Trying again...")
-        with VideoFileClip(f"assets/backgrounds/video/{video_choice}") as video:
-            new = video.subclip(start_time_video, end_time_video)
-            new.write_videofile(f"assets/temp/{id}/background.mp4")
+        video=VideoFileClip(video_file_path)
+        new = video.subclip(start_time_video, end_time_video)
+        new.write_videofile(f"assets/temp/{id}/background.mp4")
+        video.close()
     print_substep("Background video chopped successfully!", style="bold green")
     return background_config["video"][2]
 
