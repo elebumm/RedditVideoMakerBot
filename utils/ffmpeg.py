@@ -56,10 +56,10 @@ def get_duration(filename):
     # print(f"Returning duration {duration} from ffprobe for {filename}...")
     return duration
 
-def ffmpeg_progress_run(ffmpeg_cmd, length):
+def ffmpeg_progress_run(ffmpeg_cmd, length, progress_text='Rendering...'):
     with Progress() as progress_bar:
         # pbar = tqdm(total=100, desc="Progress: ", bar_format="{l_bar}{bar}", unit=" %", dynamic_ncols=True, leave=False)
-        task = progress_bar.add_task("Rendering...", total=100)
+        task = progress_bar.add_task(progress_text, total=100)
         def progress_tracker(progress) -> None:
             new_progress=progress*100
             if new_progress >= progress_bar._tasks[task].completed:

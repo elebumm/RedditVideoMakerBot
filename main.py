@@ -5,6 +5,7 @@ from os import name
 from pathlib import Path
 from subprocess import Popen
 from typing import NoReturn
+from humanfriendly import format_timespan
 
 from prawcore import ResponseException
 from utils.console import print_substep
@@ -50,6 +51,7 @@ def main(POST_ID=None) -> None:
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
+    print_substep(f"Video will be {format_timespan(length)} long", style="bold blue")
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),

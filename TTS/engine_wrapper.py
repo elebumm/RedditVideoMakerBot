@@ -74,7 +74,7 @@ class TTSEngine:
 
     def run(self) -> Tuple[int, int]:
         Path(self.path).mkdir(parents=True, exist_ok=True)
-        print_step("Saving Text to MP3 files...")
+        # print_step("Saving Text to MP3 files...")
 
         self.add_periods()
         self.call_tts("title", process_text(self.reddit_object["thread_title"]))
@@ -88,11 +88,11 @@ class TTSEngine:
                 else:
                     self.call_tts("postaudio", process_text(self.reddit_object["thread_post"]))
             elif settings.config["settings"]["storymodemethod"] == 1:
-                for idx, text in track(enumerate(self.reddit_object["thread_post"]), total=len(self.reddit_object["thread_post"])):
+                for idx, text in track(enumerate(self.reddit_object["thread_post"]), "🎶 Creating audio from text...", total=len(self.reddit_object["thread_post"])):
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
-            for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving...", total=len(self.reddit_object["comments"])):
+            for idx, comment in track(enumerate(self.reddit_object["comments"]), "💾 Saving...", total=len(self.reddit_object["comments"])):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
                     self.length -= self.last_clip_length
@@ -105,7 +105,7 @@ class TTSEngine:
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
-        print_substep("Saved Text to MP3 files successfully.", style="bold green")
+        print_substep("Created audio from text successfully!", style="bold green")
         return self.length, idx
 
     def split_post(self, text: str, idx):

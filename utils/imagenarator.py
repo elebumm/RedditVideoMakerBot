@@ -6,6 +6,7 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 from TTS.engine_wrapper import process_text
+from utils.console import print_substep
 
 def load_text_replacements():
     text_replacements = {}
@@ -94,10 +95,11 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
 
     image.save(f"assets/temp/{id}/png/title.png")
 
-    for idx, text in track(enumerate(texts), "Rendering Image", total=len(texts)):
+    for idx, text in track(enumerate(texts), "💬 Rendering captions...", total=len(texts)):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
         draw_multiple_line_text(image, perform_text_replacements(text), font, txtclr, padding, wrap=30, transparent=transparent)
         image.save(f"assets/temp/{id}/png/img{idx}.png")
+    print_substep("Captions rendered successfully!", style="bold green")
 
 text_replacements = load_text_replacements()

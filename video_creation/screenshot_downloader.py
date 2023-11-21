@@ -31,7 +31,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"]
     storymode: Final[bool] = settings.config["settings"]["storymode"]
 
-    print_step("Downloading screenshots of reddit posts...")
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
@@ -62,7 +61,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         transparent = False
     if storymode and settings.config["settings"]["storymodemethod"] == 1:
         # for idx,item in enumerate(reddit_object["thread_post"]):
-        print_substep("Generating images...")
+        # print_substep("Generating images...")
         return imagemaker(
             theme=bgcolor,
             reddit_obj=reddit_object,
@@ -210,7 +209,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             for idx, comment in enumerate(
                 track(
                     reddit_object["comments"][:screenshot_num],
-                    "Downloading screenshots...",
+                    "📸 Downloading screenshots...",
                 )
             ):
                 # Stop if we have reached the screenshot_num
@@ -263,4 +262,4 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # close browser instance when we are done using it
         browser.close()
 
-    print_substep("Screenshots downloaded Successfully.", style="bold green")
+    print_substep("Screenshots downloaded Successfully!", style="bold green")

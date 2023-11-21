@@ -142,7 +142,6 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
             background_looped_audio_file_path = f"assets/backgrounds/audio/looped-{audio_choice}"
             background_audio_loops = math.ceil(video_length / audio_file_duration)
             if background_audio_loops > 1:
-                print_step(f"Looping background audio {background_audio_loops} times...🔁")
                 background_audio_loop_input = ffmpeg.input(
                     audio_file_path,
                     stream_loop=background_audio_loops
@@ -154,11 +153,12 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
                         vcodec="copy",
                         acodec="copy"
                     ).overwrite_output(),
-                    background_audio_loops*audio_file_duration
+                    background_audio_loops*audio_file_duration,
+                    "🔁 Looping background audio..."
                 )
+                print_substep("Background audio looped successfully!", style="bold green")
                 audio_file_path = background_looped_audio_file_path
                 audio_file_duration = audio_file_duration*background_audio_loops
-        print_step("Finding a spot in the background audio to chop...✂️")
         start_time_audio, end_time_audio = get_start_and_end_times(
             video_length, audio_file_duration
         )
@@ -174,8 +174,10 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
                 ss=start_time_audio,
                 to=end_time_audio
             ).overwrite_output(),
-            end_time_audio-start_time_audio
+            end_time_audio-start_time_audio,
+            "✂️ Chopping background audio..."
         )
+        print_substep("Background audio chopped successfully!", style="bold green")
 
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
     video_file_path = f"assets/backgrounds/video/{video_choice}"
@@ -185,7 +187,6 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
         background_looped_video_file_path = f"assets/backgrounds/video/looped-{video_choice}"
         background_video_loops = math.ceil(video_length / video_file_duration)
         if background_video_loops > 1:
-            print_step(f"Looping background video {background_video_loops} times...🔁")
             background_video_loop_input = ffmpeg.input(
                 video_file_path,
                 stream_loop=background_video_loops
@@ -197,14 +198,16 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
                     vcodec="copy",
                     acodec="copy"
                 ).overwrite_output(),
-                background_video_loops*video_file_duration
+                background_video_loops*video_file_duration,
+                "🔁 Looping background video..."
             )
+            print_substep("Background video looped successfully!", style="bold green")
             video_file_path = background_looped_video_file_path
             video_file_duration = video_file_duration * background_video_loops
 
     # print(f"Calculated duration after looping: {video_file_duration}")
     # print(f"Actual duration after looping: {get_duration(video_file_path)}")
-    print_step("Finding a spot in the background video to chop...✂️")
+    # print_step("Finding a spot in the background video to chop...✂️")
     start_time_video, end_time_video = get_start_and_end_times(
         video_length, video_file_duration
     )
@@ -212,7 +215,8 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
     # try:
     ffmpeg_progress_run(
         ffmpeg.input(video_file_path, ss=("%0.2f" % start_time_video), t=("%0.2f" % (end_time_video-start_time_video))).output(f"assets/temp/{id}/background.mp4", vcodec="copy", acodec="copy", map="0"),
-        end_time_video-start_time_video
+        end_time_video-start_time_video,
+        "✂️ Chopping background video..."
     )
         # ffmpeg_extract_subclip(
         #     video_file_path,

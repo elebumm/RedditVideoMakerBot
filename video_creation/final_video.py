@@ -40,7 +40,6 @@ def name_normalize(name: str) -> str:
 
 
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
-    print_substep('Preparing the background video...')
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
     input_path = f"assets/temp/{reddit_id}/background.mp4"
     input_duration=get_duration(input_path)
@@ -60,7 +59,8 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         .overwrite_output()
     )
     try:
-        ffmpeg_progress_run(output, input_duration)
+        ffmpeg_progress_run(output, input_duration, "🎥 Rendering background video...")
+        print_substep("Background video rendered successfully!", style="bold green")
     except ffmpeg.Error as e:
         print(e.stderr.decode("utf8"))
         exit(1)
@@ -113,8 +113,6 @@ def make_final_video(
         and settings.config["settings"]["background"]["background_audio_volume"] != 0
     )
 
-    print_step("Creating the final video 🎥")
-
     background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
 
     # Gather all audio clips
@@ -137,18 +135,21 @@ def make_final_video(
         elif settings.config["settings"]["storymodemethod"] == 1:
             audio_clips = [
                 ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
+                for i in range(number_of_clips + 1)
+                # for i in track(range(number_of_clips + 1), "🎶 Collecting audio files...")
             ]
             audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
             audio_clips_durations = [
                 get_duration(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(range(number_of_clips + 1), "Calculating the audio file durations...")
+                for i in track(range(number_of_clips + 1), "🎶 Calculating audio file durations...")
             ]
             audio_clips_durations.insert(
                 0,
                 get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3")
             )
+            print_substep("Calculated audio file durations successfully!", style="bold green")
+            
 
     else:
         audio_clips = [
@@ -169,10 +170,10 @@ def make_final_video(
         ffmpeg.output(
             audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
         ).overwrite_output(),
-        sum(audio_clips_durations)
+        sum(audio_clips_durations),
+        "🎶 Rendering joined audio..."
     )
-
-    print_substep(f"Video will be {format_timespan(length)} long", style="bold green")
+    print_substep("Joined audio rendered successfully!", style="bold green")
 
     screenshot_width = int((W * 45) // 100)
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
@@ -213,7 +214,8 @@ def make_final_video(
             )
             current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
+            for i in range(0, number_of_clips + 1):
+            # for i in track(range(0, number_of_clips + 1), "💬 Collecting caption images..."):
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
                         "scale", screenshot_width, -1
@@ -316,7 +318,8 @@ def make_final_video(
         fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
     )
     background_clip = background_clip.filter("scale", W, H)
-    print_step("Rendering the video 🎥")
+
+    # print_step("Creating the final video 🎥")
 
     defaultPath = f"results/{subreddit}"
     path = defaultPath + f"/{filename}"
@@ -337,8 +340,10 @@ def make_final_video(
                     "threads": multiprocessing.cpu_count(),
                 },
             ).overwrite_output(),
-            length
+            length,
+            "🎥 Rendering final video..."
         )
+        print_substep("Video rendered successfully!", style="bold green")
     except ffmpeg.Error as e:
         print(e.stderr.decode("utf8"))
         exit(1)
@@ -347,7 +352,7 @@ def make_final_video(
         path = (
             path[:251] + ".mp4"
         )  # Prevent a error by limiting the path length, do not change this.
-        print_step("Rendering the Only TTS Video 🎥")
+        # print_step("Rendering the Only TTS Video 🎥")
         try:
             ffmpeg_progress_run(
                 ffmpeg.output(
@@ -362,7 +367,8 @@ def make_final_video(
                         "threads": multiprocessing.cpu_count(),
                     },
                 ).overwrite_output(),
-                length
+                length,
+                "🎥 Rending TTS video..."
             )
         except ffmpeg.Error as e:
             print(e.stderr.decode("utf8"))
@@ -375,4 +381,4 @@ def make_final_video(
         print_substep(f"Removed {cleanups} temporary files 🗑")
     file_size=os.stat(f"{defaultPath}/{save_filename}").st_size
     file_size_human_readable=format_size(file_size)
-    print_step(f"Done! 🎉 The {file_size_human_readable} video is in the results folder 📁")
+    print_step(f"Done! 🎉 The {file_size_human_readable}, {format_timespan(length)} long, video is in the results folder 📁")
