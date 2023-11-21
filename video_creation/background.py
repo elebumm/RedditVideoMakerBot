@@ -180,6 +180,7 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
     video_file_path = f"assets/backgrounds/video/{video_choice}"
     video_file_duration=get_duration(video_file_path)
+    # print(f"Original duration before looping: {video_file_duration}")
     if bool(settings.config["settings"]["background"][f"background_video_loop"]):
         background_looped_video_file_path = f"assets/backgrounds/video/looped-{video_choice}"
         background_video_loops = math.ceil(video_length / video_file_duration)
@@ -201,6 +202,8 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
             video_file_path = background_looped_video_file_path
             video_file_duration = video_file_duration * background_video_loops
 
+    # print(f"Calculated duration after looping: {video_file_duration}")
+    # print(f"Actual duration after looping: {get_duration(video_file_path)}")
     print_step("Finding a spot in the background video to chop...✂️")
     start_time_video, end_time_video = get_start_and_end_times(
         video_length, video_file_duration
@@ -208,7 +211,7 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
     # Extract video subclip
     # try:
     ffmpeg_progress_run(
-        ffmpeg.input(video_file_path).output(f"assets/temp/{id}/background.mp4", vcodec="copy", acodec="copy", map="0", ss=start_time_video, to=end_time_video),
+        ffmpeg.input(video_file_path, ss=("%0.2f" % start_time_video), t=("%0.2f" % (end_time_video-start_time_video))).output(f"assets/temp/{id}/background.mp4", vcodec="copy", acodec="copy", map="0"),
         end_time_video-start_time_video
     )
         # ffmpeg_extract_subclip(
