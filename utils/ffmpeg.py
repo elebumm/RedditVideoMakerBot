@@ -11,38 +11,50 @@ def get_duration(filename):
     ffmpeg_stdout, ffmpeg_stderr = ffmpeg_cmd.run(capture_stdout=True, capture_stderr=True)
     stdout=ffmpeg_stdout.decode('UTF-8')
     stdout_lines=stdout.splitlines()
-    for line in stdout_lines:
+    for line in reversed(stdout_lines):
         if "out_time_ms" in line:
             out_time_ms_str = line.split("=")[1].strip()
             if out_time_ms_str.isnumeric():
-                return float(out_time_ms_str) / 1000000.0
+                duration=float(out_time_ms_str) / 1000000.0
+                # print(f"Returning duration {duration} from ffmpeg null muxer out_time_ms for {filename}...")
+                return duration
     stderr=ffmpeg_stderr.decode('UTF-8')
     stderr_lines=stderr.splitlines()
     stream_durations=[]
-    for line in stderr_lines:
+    for line in reversed(stderr_lines):
         if "Duration:" in line:
             timestamp = line.split("Duration:")[1].strip().split(',')[0].strip()
             h, m, s_ms = timestamp.split(':')
             s, ms = s_ms.split('.')
             stream_durations.append(int(h) * 3600 + int(m) * 60 + int(s) + float(f".{ms}"))
     if len(stream_durations) > 0:
-        return max(stream_durations)
+        duration=max(stream_durations) # sum?
+        # print(f"Returning duration {duration} from ffmpeg null muxer stream duration for {filename}...")
+        return duration
     if filename.lower().endswith('.mp3'):
         try:
-            return float(AudioSegment.from_mp3(filename).duration_seconds)
+            duration=float(AudioSegment.from_mp3(filename).duration_seconds)
+            # print(f"Returning duration {duration} from AudioSegment for {filename}...")
+            return duration
         except:
             pass
         try:
-            return float(AudioFileClip(filename).duration)
+            duration=float(AudioFileClip(filename).duration)
+            # print(f"Returning duration {duration} from AudioFileClip for {filename}...")
+            return duration
         except:
             pass
     if filename.lower().endswith('.mp4'):
         try:
-            return float(VideoFileClip(filename).duration)
+            duration=float(VideoFileClip(filename).duration)
+            # print(f"Returning duration {duration} from VideoFileClip for {filename}...")
+            return duration
         except:
             pass
     probe_info=ffmpeg.probe(filename)
-    return float(probe_info["format"]["duration"])
+    duration=float(probe_info["format"]["duration"])
+    # print(f"Returning duration {duration} from ffprobe for {filename}...")
+    return duration
 
 def ffmpeg_progress_run(ffmpeg_cmd, length):
     with Progress() as progress_bar:
