@@ -124,6 +124,7 @@ def get_subreddit_threads(POST_ID: str):
     content["thread_title"] = submission.title
     content["thread_id"] = submission.id
     content["is_nsfw"] = submission.over_18
+    content['subreddit'] = str(submission.subreddit)
     content["comments"] = []
     if settings.config["settings"]["storymode"]:
         ai_selftext = submission.selftext

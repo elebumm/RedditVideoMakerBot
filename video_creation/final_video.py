@@ -262,14 +262,14 @@ def make_final_video(
     title_thumb = reddit_obj["thread_title"]
 
     filename = f"{name_normalize(title)[:251]}"
-    subreddit = settings.config["reddit"]["thread"]["subreddit"]
+    subreddit = reddit_obj['subreddit'] # settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
-        print_substep("The 'results' folder could not be found so it was automatically created.")
+        # print_substep("The 'results' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}")
 
     if not exists(f"./results/{subreddit}/OnlyTTS") and allowOnlyTTSFolder:
-        print_substep("The 'OnlyTTS' folder could not be found so it was automatically created.")
+        # print_substep("The 'OnlyTTS' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}/OnlyTTS")
 
     # create a thumbnail for the video
@@ -277,9 +277,9 @@ def make_final_video(
 
     if settingsbackground["background_thumbnail"]:
         if not exists(f"./results/{subreddit}/thumbnails"):
-            print_substep(
-                "The 'results/thumbnails' folder could not be found so it was automatically created."
-            )
+            # print_substep(
+            #     "The 'results/thumbnails' folder could not be found so it was automatically created."
+            # )
             os.makedirs(f"./results/{subreddit}/thumbnails")
         # get the first file with the .png extension from assets/backgrounds and use it as a background for the thumbnail
         first_image = next(
