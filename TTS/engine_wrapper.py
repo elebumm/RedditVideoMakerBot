@@ -8,11 +8,12 @@ import numpy as np
 import translators
 from moviepy.audio.AudioClip import AudioClip
 from moviepy.audio.fx.volumex import volumex
-from moviepy.editor import AudioFileClip
+# from moviepy.editor import AudioFileClip
 from rich.progress import track
 
 from utils import settings
 from utils.console import print_step, print_substep
+from utils.ffmpeg import get_duration # , ffmpeg_progress_run
 from utils.voice import sanitize_text
 
 from pydub import AudioSegment
@@ -135,7 +136,14 @@ class TTSEngine:
                 split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     # f.write("file " + f"'silence.mp3'" + "\n")
                 concat_parts.append('silence.mp3')
+                # concat_parts_length = sum([
+                #     get_duration(post_audio_file)
+                #     for post_audio_file in track(concat_parts, "Calculating the audio file durations...")
+                # ])
+                # ffmpeg_progress_run(
                 ffmpeg.concat(*concat_parts).output(f"{self.path}/{idx}.mp3").overwrite_output().global_args('-y -hide_banner -loglevel panic -safe 0').run(quiet=True)
+                #     concat_parts_length
+                # )
                 # os.system(
                 #     "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
                 #     + "-i "
@@ -153,6 +161,7 @@ class TTSEngine:
 
     def call_tts(self, filename: str, text: str):
         mp3_filepath = f"{self.path}/{filename}.mp3"
+        # mp3_duration = get_duration(mp3_filepath)
         audio_speed = settings.config["settings"]["tts"]["speed"]
         mp3_speed_changed_filepath = f"{self.path}/{filename}-speed-{audio_speed}.mp3"
         self.tts_module.run(
@@ -161,7 +170,10 @@ class TTSEngine:
             random_voice=settings.config["settings"]["tts"]["random_voice"],
         )
         if audio_speed != 1:
+            # ffmpeg_progress_run(
             ffmpeg.input(mp3_filepath).filter("atempo", audio_speed).output(mp3_speed_changed_filepath).overwrite_output().run(quiet=True)
+                # mp3_duration*(1/audio_speed)
+            # )
             os.replace(mp3_speed_changed_filepath, mp3_filepath)
 
         # try:

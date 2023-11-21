@@ -15,11 +15,10 @@ class ProgressFfmpeg(threading.Thread):
             latest_progress = self.get_latest_ms_progress()
             completed_percent = latest_progress / self.vid_duration_seconds
             self.progress_update_callback(completed_percent)
-            time.sleep(1)
+            time.sleep(0.1)
 
     def get_latest_ms_progress(self):
         lines = self.output_file.readlines()
-
         if lines:
             for line in lines:
                 if "out_time_ms" in line:

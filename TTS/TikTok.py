@@ -114,6 +114,8 @@ class TikTok:
                 "The TikTok TTS returned an invalid response. Please try again later, and report this bug."
             )
             raise TikTokTTSException(0, "Invalid response")
+        if not raw_voices:
+            raise TikTokTTSException(0, "Invalid response")
         decoded_voices = base64.b64decode(raw_voices)
 
         # write voices to specified filepath
