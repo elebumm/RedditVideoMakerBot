@@ -1,6 +1,6 @@
 import ffmpeg
-from pydub import AudioSegment
-from moviepy.editor import VideoFileClip, AudioFileClip
+# from pydub import AudioSegment
+# from moviepy.editor import VideoFileClip, AudioFileClip
 # from tqdm import tqdm
 from rich.progress import Progress, BarColumn, TextColumn, TaskProgressColumn, TimeRemainingColumn
 
