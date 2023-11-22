@@ -3,6 +3,7 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.posttextparser import posttextparser
 from utils.timeout import timeout
+from rich.progress import track
 # import math
 import sys
 import tiktoken
@@ -37,7 +38,7 @@ def ai_rewrite_story(story_text):
     MAX_PART_REWORD_TOKENS=int(settings.config['ai']['openai_rewrite_chunk_max_tokens'])
     longer_or_shorter = "longer" if float(settings.config['ai']['openai_rewrite_length']) > 1.0 else "shorter"
     print_step(
-        f"Using OpenAI {settings.config['ai']['openai_model']} to rewrite the content..."
+        f"Using OpenAI {settings.config['ai']['openai_model']} to rewrite split portions of the story..."
     )
     client = OpenAI(
         base_url=settings.config["ai"]["openai_api_base"],
@@ -50,7 +51,7 @@ def ai_rewrite_story(story_text):
     ai_assistant_message = "Sure! What is the story?"
     base_tokens = num_tokens_from_string(ai_system_message+ai_user_message+ai_assistant_message, model_name)
     parts=posttextparser(story_text)
-    rewritten_parts=[]
+    parts_split_by_tokens=[]
     while len(parts) > 0:
         tmp_part_list=[]
         tmp_tokens = base_tokens
@@ -59,51 +60,58 @@ def ai_rewrite_story(story_text):
             tmp_tokens+=num_tokens_from_string(next_part, model_name)
             tmp_part_list.append(next_part)
         if len(tmp_part_list) > 0:
-            joined_part_list=" ".join(tmp_part_list)
-            part_chat_history = [
-                {"role":"system", "content":ai_system_message},
-                {"role":"user", "content":ai_user_message},
-                {"role":"assistant", "content":ai_assistant_message},
-                {"role":"user", "content":joined_part_list}
-            ]
-            joined_part_list_tokens=num_tokens_from_string(joined_part_list, model_name) * float(settings.config['ai']['openai_rewrite_length'])
-            ai_part_message=''
-            part_retry_num=0
-            while part_retry_num <= MAX_RETRIES and num_tokens_from_string(ai_part_message, model_name) < joined_part_list_tokens:
-                part_retry_text = '' if part_retry_num <= 0 else f"[Retry #{part_retry_num}]"
-                try:
-                    with timeout(seconds=60):
-                        part_log_message = f"{part_retry_text} Making request to OpenAI to make the portion of the story longer...".strip() if ai_part_message != '' else f"{part_retry_text} Making request to OpenAI to reword a portion of the story...".strip()
-                        print_substep(part_log_message)
-                        # print(part_chat_history)
-                        ai_part_response = client.chat.completions.create(
-                            model=model_name,
-                            messages=part_chat_history,
-                            temperature=0.9, # very creative
-                            timeout=60
-                            # max_tokens=math.ceil(num_tokens_from_string(ai_selftext, model_name)*2.5) # 2.5 because it counts all the messages in history
-                        )
-                        ai_part_message_updated=remove_ai_extras(ai_part_response.choices[0].message.content)
-                        old_part_tokens = num_tokens_from_string(ai_part_message, model_name)
-                        new_part_tokens = num_tokens_from_string(ai_part_message_updated, model_name)
-                        if new_part_tokens > old_part_tokens and is_valid_ai_response(ai_part_message_updated):
-                            ai_part_message = ai_part_message_updated
-                            print_substep(f"Got AI response: {ai_part_message}")
-                            part_chat_history.append({"role":"assistant", "content":ai_part_message})
-                            part_chat_history.append({"role":"user", "content":"Make the story longer/more detailed"})
-                except KeyboardInterrupt:
-                    sys.exit(1)
-                except Exception as e:
-                    print_substep(str(e), style="bold red")
-                    pass
-                part_retry_num+=1
-            if not bool(ai_part_message):
-                if bool(settings.config['ai']['openai_retry_fail_error']):
-                    raise ValueError('AI rewrite failed')
-                else:
-                    ai_part_message = joined_part_list
-            rewritten_parts.append(ai_part_message)
+            parts_split_by_tokens.append(tmp_part_list[:])
             tmp_part_list.clear()
+    rewritten_parts=[]
+    for part_list in track(parts_split_by_tokens, "✏️ Rewriting..."):
+        joined_part_list=" ".join(part_list)
+        part_chat_history = [
+            {"role":"system", "content":ai_system_message},
+            {"role":"user", "content":ai_user_message},
+            {"role":"assistant", "content":ai_assistant_message},
+            {"role":"user", "content":joined_part_list}
+        ]
+        joined_part_list_tokens=num_tokens_from_string(joined_part_list, model_name) * float(settings.config['ai']['openai_rewrite_length'])
+        ai_part_message=''
+        part_retry_num=0
+        while part_retry_num <= MAX_RETRIES and num_tokens_from_string(ai_part_message, model_name) < joined_part_list_tokens:
+            # part_retry_text = '' if part_retry_num <= 0 else f"[Retry #{part_retry_num}]"
+            try:
+                with timeout(seconds=60):
+                    # part_log_message = f"{part_retry_text} Making request to OpenAI to make the portion of the story longer...".strip() if ai_part_message != '' else f"{part_retry_text} Making request to OpenAI to reword a portion of the story...".strip()
+                    # print_substep(part_log_message)
+                    # print(part_chat_history)
+                    ai_part_response = client.chat.completions.create(
+                        model=model_name,
+                        messages=part_chat_history,
+                        temperature=0.9, # very creative
+                        timeout=60
+                        # max_tokens=math.ceil(num_tokens_from_string(ai_selftext, model_name)*2.5) # 2.5 because it counts all the messages in history
+                    )
+                    ai_part_message_updated=remove_ai_extras(ai_part_response.choices[0].message.content)
+                    old_part_tokens = num_tokens_from_string(ai_part_message, model_name)
+                    new_part_tokens = num_tokens_from_string(ai_part_message_updated, model_name)
+                    if new_part_tokens > old_part_tokens and is_valid_ai_response(ai_part_message_updated):
+                        ai_part_message = ai_part_message_updated
+                        # print_substep(f"Got AI response: {ai_part_message}")
+                        part_chat_history.append({"role":"assistant", "content":ai_part_message})
+                        part_chat_history.append({"role":"user", "content":"Make the story longer/more detailed"})
+            except KeyboardInterrupt:
+                sys.exit(1)
+            except Exception as e:
+                print_substep(str(e), style="bold red")
+                pass
+            part_retry_num+=1
+        if not bool(ai_part_message):
+            if bool(settings.config['ai']['openai_retry_fail_error']):
+                raise ValueError('AI rewrite failed')
+            else:
+                ai_part_message = joined_part_list
+        rewritten_parts.append(ai_part_message)
+    print_substep("Story sections rewritten successfully!", style="bold green")
+    print_step(
+        f"Using OpenAI {settings.config['ai']['openai_model']} to finalize the story..."
+    )
     try:
         joined_rewritten_parts=" ".join(rewritten_parts)
         chat_history=[
@@ -116,11 +124,11 @@ def ai_rewrite_story(story_text):
         ai_message=''
         retry_num=0
         while retry_num <= MAX_RETRIES and num_tokens_from_string(ai_message, model_name) < joined_rewritten_parts_tokens:
-            retry_text = '' if retry_num <= 0 else f"[Retry #{retry_num}]"
+            # retry_text = '' if retry_num <= 0 else f"[Retry #{retry_num}]"
             try:
                 with timeout(seconds=90):
-                    log_message = f"{retry_text} Making request to OpenAI to make the whole story longer...".strip() if ai_message != '' else f"{retry_text} Making request to OpenAI to finalize the whole story...".strip()
-                    print_substep(log_message)
+                    # log_message = f"{retry_text} Making request to OpenAI to make the whole story longer...".strip() if ai_message != '' else f"{retry_text} Making request to OpenAI to finalize the whole story...".strip()
+                    # print_substep(log_message)
                     # print(chat_history)
                     ai_response = client.chat.completions.create(
                         model=model_name,
@@ -134,7 +142,7 @@ def ai_rewrite_story(story_text):
                     new_tokens = num_tokens_from_string(ai_message_updated, model_name)
                     if new_tokens > old_tokens and is_valid_ai_response(ai_message_updated):
                         ai_message = ai_message_updated
-                        print_substep(f"Got AI response: {ai_message}")
+                        # print_substep(f"Got AI response: {ai_message}")
                         chat_history.append({"role":"assistant", "content":ai_message})
                         chat_history.append({"role":"user", "content":"Make the story longer/more detailed"})
             except KeyboardInterrupt:

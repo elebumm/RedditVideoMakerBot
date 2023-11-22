@@ -41,8 +41,8 @@ resolution_h = { optional = false, default = 1920, example = 2560, explantation 
 zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 
 [settings.background]
-background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["custom", "minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
-background_audio = { optional = true, default = "lofi", example = "chill-summer", options = ["custom", "lofi","lofi-2","chill-summer",""], explanation = "Sets the background audio for the video" }
+background_video = { optional = true, type="str", default = "minecraft", example = "rocket-league", explanation = "Sets the background for the video based on game name" }
+background_audio = { optional = true, type="str", default = "lofi", example = "chill-summer", explanation = "Sets the background audio for the video" }
 background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation="Sets the volume of the background audio. If you don't want background audio, set it to 0.", oob_error = "The volume HAS to be between 0 and 1", input_error = "The volume HAS to be a float number between 0 and 1"}
 enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation="Used if you want to render another video without background audio in a separate folder", input_error = "The value HAS to be true or false"}
 background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Generate a thumbnail for the video (put a thumbnail.png file in the assets/backgrounds directory.)" }
