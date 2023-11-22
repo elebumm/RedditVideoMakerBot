@@ -166,13 +166,11 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
         # background_audio.write_audiofile(f"assets/temp/{id}/background.mp3")
         # background_audio.close()
         ffmpeg_progress_run(
-            ffmpeg.input(audio_file_path).output(
+            ffmpeg.input(audio_file_path, ss=("%0.2f" % start_time_audio), t=("%0.2f" % (end_time_audio-start_time_audio))).output(
                 f"assets/temp/{id}/background.mp3",
                 # acodec="copy",
                 # acodec="libmp3lame",
                 map="0",
-                ss=start_time_audio,
-                to=end_time_audio
             ).overwrite_output(),
             end_time_audio-start_time_audio,
             "✂️ Chopping background audio..."
