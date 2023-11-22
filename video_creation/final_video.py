@@ -42,7 +42,7 @@ def name_normalize(name: str) -> str:
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
     input_path = f"assets/temp/{reddit_id}/background.mp4"
-    input_duration=get_duration(input_path)
+    input_duration=get_duration(input_path, True)
     output = (
         ffmpeg.input(input_path)
         .filter("crop", f"ih*({W}/{H})", "ih")
@@ -129,8 +129,8 @@ def make_final_video(
             audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
 
             audio_clips_durations = [
-                get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3"),
-                get_duration(f"assets/temp/{reddit_id}/mp3/postaudio.mp3")
+                get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3", True),
+                get_duration(f"assets/temp/{reddit_id}/mp3/postaudio.mp3", True)
             ]
         elif settings.config["settings"]["storymodemethod"] == 1:
             audio_clips = [
@@ -141,12 +141,12 @@ def make_final_video(
             audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
             audio_clips_durations = [
-                get_duration(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
+                get_duration(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3", True)
                 for i in track(range(number_of_clips + 1), "🎶 Calculating audio file durations...")
             ]
             audio_clips_durations.insert(
                 0,
-                get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3")
+                get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3", True)
             )
             print_substep("Calculated audio file durations successfully!", style="bold green")
             
@@ -158,12 +158,12 @@ def make_final_video(
         audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
         audio_clips_durations = [
-            get_duration(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
+            get_duration(f"assets/temp/{reddit_id}/mp3/{i}.mp3", True)
             for i in range(number_of_clips)
         ]
         audio_clips_durations.insert(
             0,
-            get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3")
+            get_duration(f"assets/temp/{reddit_id}/mp3/title.mp3", True)
         )
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
     ffmpeg_progress_run(

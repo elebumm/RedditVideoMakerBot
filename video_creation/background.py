@@ -137,7 +137,7 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
     else:
         audio_choice = f"{background_config['audio'][2]}-{background_config['audio'][1]}"
         audio_file_path=f"assets/backgrounds/audio/{audio_choice}"
-        audio_file_duration=get_duration(audio_file_path)
+        audio_file_duration=get_duration(audio_file_path, True)
         if bool(settings.config["settings"]["background"][f"background_audio_loop"]):
             background_looped_audio_file_path = f"assets/backgrounds/audio/looped-{audio_choice}"
             background_audio_loops = math.ceil(video_length / audio_file_duration)
@@ -179,7 +179,7 @@ def chop_background(background_config: Dict[str, Tuple], video_length: int, redd
 
     video_choice = f"{background_config['video'][2]}-{background_config['video'][1]}"
     video_file_path = f"assets/backgrounds/video/{video_choice}"
-    video_file_duration=get_duration(video_file_path)
+    video_file_duration=get_duration(video_file_path, True)
     # print(f"Original duration before looping: {video_file_duration}")
     if bool(settings.config["settings"]["background"][f"background_video_loop"]):
         background_looped_video_file_path = f"assets/backgrounds/video/looped-{video_choice}"

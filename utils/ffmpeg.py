@@ -32,26 +32,26 @@ def get_duration(filename, skip_accurate_decode=False):
             duration=max(stream_durations) # sum?
             # print(f"Returning duration {duration} from ffmpeg null muxer stream duration for {filename}...")
             return duration
-    if filename.lower().endswith('.mp3'):
-        try:
-            duration=float(AudioSegment.from_mp3(filename).duration_seconds)
-            # print(f"Returning duration {duration} from AudioSegment for {filename}...")
-            return duration
-        except:
-            pass
-        try:
-            duration=float(AudioFileClip(filename).duration)
-            # print(f"Returning duration {duration} from AudioFileClip for {filename}...")
-            return duration
-        except:
-            pass
-    if filename.lower().endswith('.mp4'):
-        try:
-            duration=float(VideoFileClip(filename).duration)
-            # print(f"Returning duration {duration} from VideoFileClip for {filename}...")
-            return duration
-        except:
-            pass
+    # if filename.lower().endswith('.mp3'):
+    #     try:
+    #         duration=float(AudioSegment.from_mp3(filename).duration_seconds)
+    #         # print(f"Returning duration {duration} from AudioSegment for {filename}...")
+    #         return duration
+    #     except:
+    #         pass
+    #     try:
+    #         duration=float(AudioFileClip(filename).duration)
+    #         # print(f"Returning duration {duration} from AudioFileClip for {filename}...")
+    #         return duration
+    #     except:
+    #         pass
+    # if filename.lower().endswith('.mp4'):
+    #     try:
+    #         duration=float(VideoFileClip(filename).duration)
+    #         # print(f"Returning duration {duration} from VideoFileClip for {filename}...")
+    #         return duration
+    #     except:
+    #         pass
     probe_info=ffmpeg.probe(filename)
     duration=float(probe_info["format"]["duration"])
     # print(f"Returning duration {duration} from ffprobe for {filename}...")
