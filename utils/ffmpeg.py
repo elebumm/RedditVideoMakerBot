@@ -57,6 +57,12 @@ def get_duration(filename, skip_accurate_decode=False):
     # print(f"Returning duration {duration} from ffprobe for {filename}...")
     return duration
 
+def ffmpeg_get_bit_rate(filename):
+    probe_info=ffmpeg.probe(filename)
+    duration=float(probe_info["format"]["bit_rate"])
+    return duration
+
+
 def ffmpeg_progress_run(ffmpeg_cmd, length, progress_text='Rendering...'):
     progress_bar_columns = [
         TextColumn("[progress.description]{task.description}"),

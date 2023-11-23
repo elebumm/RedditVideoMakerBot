@@ -51,8 +51,8 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             an=None,
             **{
                 "c:v": "h264",
-                "b:v": "20M",
-                "b:a": "192k",
+                "b:v": "20M", # TODO fetch highest bitrate from inputs
+                "b:a": "192k", # TODO fetch highest bitrate from inputs
                 "threads": multiprocessing.cpu_count(),
             },
         )
@@ -335,8 +335,8 @@ def make_final_video(
                 f="mp4",
                 **{
                     "c:v": "h264",
-                    "b:v": "20M",
-                    "b:a": "192k",
+                    "b:v": "20M", # TODO fetch highest bitrate from inputs
+                    "b:a": "192k", # TODO fetch highest bitrate from inputs
                     "threads": multiprocessing.cpu_count(),
                 },
             ).overwrite_output(),
@@ -362,8 +362,8 @@ def make_final_video(
                     f="mp4",
                     **{
                         "c:v": "h264",
-                        "b:v": "20M",
-                        "b:a": "192k",
+                        "b:v": "20M", # TODO fetch highest bitrate from inputs
+                        "b:a": "192k", # TODO fetch highest bitrate from inputs
                         "threads": multiprocessing.cpu_count(),
                     },
                 ).overwrite_output(),
