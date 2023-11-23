@@ -10,6 +10,7 @@ WORKDIR /app
 ADD requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 RUN python3 -m spacy download en_core_web_sm
+RUN playwright install && playwright install-deps
 
 # tricks for pytube : https://github.com/elebumm/RedditVideoMakerBot/issues/142 
 # (NOTE : This is no longer useful since pytube was removed from the dependencies)

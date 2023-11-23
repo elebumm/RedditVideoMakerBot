@@ -36,6 +36,7 @@ opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets 
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, great for subreddits with stories" }
 storymodemethod= { optional = true, default = 1, example = 1, explanation = "Style that's used for the storymode. Set to 0 for single picture display in whole video, set to 1 for fancy looking video ", type = "int", nmin = 0, oob_error = "It's very hard to run something less than once.", options = [0, 1] }
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
+title_screenshot = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Display reddit screenshot for title" }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
 text_size = { optional = false, default = 56, example = 75, explantation = "Sets the font size for the captions" }
