@@ -140,8 +140,25 @@ def get_title_screenshot(reddit_object: dict):
             )
         else:
             print_substep("Skipping translation...")
+        # Removes the body of the post
         page.evaluate(
             "document.querySelector('[data-adclicklocation=\"media\"]').style.display = 'none'"
+        )
+        # Removes the notify bell icon
+        page.evaluate(
+            "document.querySelector('[data-test-id=\"post-content\"] > div > button').style.display='none'"
+        )
+        # Removes the # comments/share/... buttons
+        page.evaluate(
+            "document.querySelector('[data-adclicklocation=\"media\"]').nextElementSibling.style.display='none'"
+        )
+        # Makes the title screenshot sized better because alert bell is hidden
+        page.evaluate(
+            "document.querySelector('[data-adclicklocation=\"media\"]').parentElement.style.width='fit-content'"
+        )
+        # Adds spacing around box to display more nicely
+        page.evaluate(
+            "document.querySelector('[data-test-id=\"post-content\"]').style.padding = '1px 1px 1px 1px'"
         )
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
