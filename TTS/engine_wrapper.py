@@ -135,7 +135,7 @@ class TTSEngine:
                     concat_parts.append(ffmpeg.input(f"{idx}-{idz}.part.mp3"))
                 split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     # f.write("file " + f"'silence.mp3'" + "\n")
-                concat_parts.append('silence.mp3')
+                concat_parts.append(ffmpeg.input('silence.mp3'))
                 # concat_parts_length = sum([
                 #     get_duration(post_audio_file)
                 #     for post_audio_file in track(concat_parts, "Calculating the audio file durations...")
