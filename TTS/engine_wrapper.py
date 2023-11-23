@@ -132,16 +132,16 @@ class TTSEngine:
                 # with open(f"{self.path}/list.txt", "w") as f:
                 for idz in range(0, len(split_text)):
                         # f.write("file " + f"'{idx}-{idz}.part.mp3'" + "\n")
-                    concat_parts.append(ffmpeg.input(f"{idx}-{idz}.part.mp3"))
+                    concat_parts.append(ffmpeg.input(f"{self.path}/{idx}-{idz}.part.mp3"))
                 split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     # f.write("file " + f"'silence.mp3'" + "\n")
-                concat_parts.append(ffmpeg.input('silence.mp3'))
+                concat_parts.append(ffmpeg.input(f"{self.path}/silence.mp3"))
                 # concat_parts_length = sum([
                 #     get_duration(post_audio_file)
                 #     for post_audio_file in track(concat_parts, "Calculating the audio file durations...")
                 # ])
                 # ffmpeg_progress_run(
-                ffmpeg.concat(*concat_parts).output(f"{self.path}/{idx}.mp3").overwrite_output().global_args('-y -hide_banner -loglevel panic -safe 0').run(quiet=True)
+                ffmpeg.concat(*concat_parts).output(f"{self.path}/{idx}.mp3").overwrite_output().run(quiet=True)
                 #     concat_parts_length
                 # )
                 # os.system(
