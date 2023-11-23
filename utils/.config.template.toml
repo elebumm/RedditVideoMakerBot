@@ -38,6 +38,9 @@ storymodemethod= { optional = true, default = 1, example = 1, explanation = "Sty
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
 resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
 resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
+text_size = { optional = false, default = 56, example = 75, explantation = "Sets the font size for the captions" }
+text_padding = { optional = false, default = 5, example = 10, explantation = "Sets the line spacing for the captions" }
+text_wrap = { optional = false, default = 30, example = 40, explantation = "Sets the number of characters per line, before it is wrapped to another line" }
 zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 
 [settings.background]
