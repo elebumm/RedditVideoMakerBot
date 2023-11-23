@@ -160,7 +160,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 to_language=lang,
                 translator="google",
             )
-
             page.evaluate(
                 "tl_content => document.querySelector('[data-adclicklocation=\"title\"] > div > div > h1').textContent = tl_content",
                 texts_in_tl,

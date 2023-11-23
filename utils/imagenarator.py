@@ -140,6 +140,9 @@ def get_title_screenshot(reddit_object: dict):
             )
         else:
             print_substep("Skipping translation...")
+        page.evaluate(
+            "document.querySelector('[data-adclicklocation=\"media\"]').style.display = 'none'"
+        )
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
