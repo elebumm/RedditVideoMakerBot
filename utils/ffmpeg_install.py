@@ -65,7 +65,7 @@ def ffmpeg_install_windows():
 def ffmpeg_install_linux():
     try:
         subprocess.run(
-            "sudo apt install ffmpeg",
+            "sudo apt-get update && sudo apt install ffmpeg",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
