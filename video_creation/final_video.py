@@ -235,7 +235,7 @@ def make_final_video(
                     "format"
                 ]["duration"]
             )
-            for i in range(number_of_clips + 1)
+            for i in range(number_of_clips + settings.config["settings"]["storymodemethod"])
         ]
         audio_clips_durations.insert(
             0,
