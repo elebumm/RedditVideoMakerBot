@@ -503,7 +503,7 @@
 
 
         // Get validation values
-        let validateChecks = JSON.parse('{{checks | tojson}}');
+        let validateChecks = JSON.parse(`{{checks | tojson | replace("\\", "\\\\")}}`);
 
         // Set default values
         $("#defaultSettingsBtn").click(function (event) {
