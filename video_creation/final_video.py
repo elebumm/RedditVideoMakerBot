@@ -235,7 +235,7 @@ def make_final_video(
                     "format"
                 ]["duration"]
             )
-            for i in range(number_of_clips)
+            for i in range(number_of_clips + 1)
         ]
         audio_clips_durations.insert(
             0,
@@ -260,6 +260,21 @@ def make_final_video(
             )
             current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
+            def add_background_clip(index):
+                return (
+                    background_clip.overlay(
+                        image_clips[index],
+                        enable=f"between(t,{current_time},{current_time + audio_clips_durations[index]})",
+                        x="(main_w-overlay_w)/2",
+                        y="(main_h-overlay_h)/2",
+                    ),
+                    audio_clips_durations[index]
+                )
+
+            # title:
+            (background_clip, audio_clip_duration) = add_background_clip(0) # title = clip at index 0
+            current_time += audio_clip_duration
+            # text in post:
             for i in track(
                 range(0, number_of_clips + 1), "Collecting the image files..."
             ):
@@ -268,13 +283,8 @@ def make_final_video(
                         "scale", screenshot_width, -1
                     )
                 )
-                background_clip = background_clip.overlay(
-                    image_clips[i],
-                    enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
-                    x="(main_w-overlay_w)/2",
-                    y="(main_h-overlay_h)/2",
-                )
-                current_time += audio_clips_durations[i]
+                (background_clip, audio_clip_duration) = add_background_clip(i + 1) # +1 because there's a title at index 0, so we need to start at 1 (and end at n+1)
+                current_time += audio_clip_duration
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(
