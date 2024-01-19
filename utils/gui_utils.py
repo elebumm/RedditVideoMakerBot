@@ -151,7 +151,7 @@ def delete_background(key):
 
     # Remove background video from ".config.template.toml"
     config = tomlkit.loads(Path("utils/.config.template.toml").read_text())
-    config["settings"]["background"]["background_choice"]["options"].remove(key)
+    config["settings"]["background"]["background_video"]["options"].remove(key)
 
     with Path("utils/.config.template.toml").open("w") as toml_file:
         toml_file.write(tomlkit.dumps(config))
@@ -216,7 +216,7 @@ def add_background(youtube_uri, filename, citation, position):
 
     # Add background video to ".config.template.toml"
     config = tomlkit.loads(Path("utils/.config.template.toml").read_text())
-    config["settings"]["background"]["background_choice"]["options"].append(filename)
+    config["settings"]["background"]["background_video"]["options"].append(filename)
 
     with Path("utils/.config.template.toml").open("w") as toml_file:
         toml_file.write(tomlkit.dumps(config))
