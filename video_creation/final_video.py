@@ -441,6 +441,7 @@ def make_final_video(
     save_data(subreddit, filename + ".mp4", title, idx, background_config["video"][2])
 
     print_step("Removing temporary files 🗑")
-    cleanup(reddit_id)
+    cleanups = cleanup(reddit_id)
+    print_substep(f"Removed {cleanups} temporary files 🗑")
     print_step("Done! 🎉 The video is in the results folder 📁")
     time.sleep(1)  # Prevents the last 2 print_step functions from not showing up

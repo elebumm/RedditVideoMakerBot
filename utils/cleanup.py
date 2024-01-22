@@ -14,7 +14,13 @@ def cleanup(reddit_id) -> int:
         int: How many files were deleted
     """
     directory = f"assets/temp/{reddit_id}/"
+    deleted_files_count = 0
+
     if exists(directory):
+        # Count the number of files before deleting
+        for root, dirs, files in os.walk(directory):
+            deleted_files_count += len(files)
+
         shutil.rmtree(directory)
 
-        return 1
+        return deleted_files_count
