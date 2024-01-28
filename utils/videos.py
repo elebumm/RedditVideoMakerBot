@@ -19,9 +19,7 @@ def check_done(
     Returns:
         Submission|None: Reddit object in args
     """
-    with open(
-        "./video_creation/data/videos.json", "r", encoding="utf-8"
-    ) as done_vids_raw:
+    with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):
@@ -35,9 +33,7 @@ def check_done(
     return redditobj
 
 
-def save_data(
-    subreddit: str, filename: str, reddit_title: str, reddit_id: str, credit: str
-):
+def save_data(subreddit: str, filename: str, reddit_title: str, reddit_id: str, credit: str):
     """Saves the videos that have already been generated to a JSON file in video_creation/data/videos.json
 
     Args:
