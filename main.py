@@ -104,9 +104,7 @@ if __name__ == "__main__":
         sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(
-                config["reddit"]["thread"]["post_id"].split("+")
-            ):
+            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'

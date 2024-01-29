@@ -26,9 +26,7 @@ class elevenlabs:
         if random_voice:
             voice = self.randomvoice()
         else:
-            voice = str(
-                settings.config["settings"]["tts"]["elevenlabs_voice_name"]
-            ).capitalize()
+            voice = str(settings.config["settings"]["tts"]["elevenlabs_voice_name"]).capitalize()
 
         if settings.config["settings"]["tts"]["elevenlabs_api_key"]:
             api_key = settings.config["settings"]["tts"]["elevenlabs_api_key"]
@@ -37,9 +35,7 @@ class elevenlabs:
                 "You didn't set an Elevenlabs API key! Please set the config variable ELEVENLABS_API_KEY to a valid API key."
             )
 
-        audio = generate(
-            api_key=api_key, text=text, voice=voice, model="eleven_multilingual_v1"
-        )
+        audio = generate(api_key=api_key, text=text, voice=voice, model="eleven_multilingual_v1")
         save(audio=audio, filename=filepath)
 
     def randomvoice(self):

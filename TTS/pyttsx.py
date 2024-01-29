@@ -21,9 +21,7 @@ class pyttsx:
         if voice_id == "" or voice_num == "":
             voice_id = 2
             voice_num = 3
-            raise ValueError(
-                "set pyttsx values to a valid value, switching to defaults"
-            )
+            raise ValueError("set pyttsx values to a valid value, switching to defaults")
         else:
             voice_id = int(voice_id)
             voice_num = int(voice_num)
