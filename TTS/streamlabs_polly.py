@@ -43,8 +43,9 @@ class StreamlabsPolly:
                     f"Please set the config variable STREAMLABS_POLLY_VOICE to a valid voice. options are: {voices}"
                 )
             voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
+        headers = {"referer": "https://streamlabs.com"}
         body = {"voice": voice, "text": text, "service": "polly"}
-        response = requests.post(self.url, data=body)
+        response = requests.post(self.url, headers=headers, data=body)
         if not check_ratelimit(response):
             self.run(text, filepath, random_voice)
 
