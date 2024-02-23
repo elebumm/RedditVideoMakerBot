@@ -99,9 +99,15 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.goto("https://www.reddit.com/login", timeout=0)
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.wait_for_load_state()
-        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
-        page.locator("button[class$='m-full-width']").click()
+        if selector_exists(page, "input#login-username"):
+
+            page.locator('input#login-username').fill(settings.config["reddit"]["creds"]["username"])
+            page.locator('input#login-password').fill(settings.config["reddit"]["creds"]["password"])
+            page.locator("div[slot='primaryButton'] button.login").click()
+        else:
+            page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
+            page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+            page.locator("button[class$='m-full-width']").click()
         page.wait_for_timeout(5000)
 
         login_error_div = page.locator(".AnimatedForm__errorMessage").first
@@ -176,12 +182,19 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 # zoom the body of the page
                 page.evaluate("document.body.style.zoom=" + str(zoom))
                 # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                location = page.locator(f'#t3_{reddit_id}').bounding_box()
+                if selector_exists(page, '[data-test-id="post-content"]'):
+                    location = page.locator('[data-test-id="post-content"]').bounding_box()
+                else:
+                    location = page.locator(f'#t3_{reddit_id}').bounding_box()
+
                 for i in location:
                     location[i] = float("{:.2f}".format(location[i] * zoom))
                 page.screenshot(clip=location, path=postcontentpath)
             else:
-                page.locator(f'#t3_{reddit_id}').screenshot(path=postcontentpath)
+                if selector_exists(page, '[data-test-id="post-content"]'):
+                    page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+                else:
+                    page.locator(f'#t3_{reddit_id}').screenshot(path=postcontentpath)
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -242,9 +255,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         # zoom the body of the page
                         page.evaluate("document.body.style.zoom=" + str(zoom))
                         # scroll comment into view
-                        page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").scroll_into_view_if_needed()
-                        # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                        location = page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").bounding_box()
+                        if selector_exists(page, '[data-testid="comment"]'):
+                            page.locator(f"#t1_{comment['comment_id']}").scroll_into_view_if_needed()
+                            location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        else:
+                            page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").scroll_into_view_if_needed()
+                            # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
+                            location = page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").bounding_box()
                         for i in location:
                             location[i] = float("{:.2f}".format(location[i] * zoom))
                         page.screenshot(
@@ -252,9 +269,14 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
                         )
                     else:
-                        page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").screenshot(
-                            path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
-                        )
+                        if selector_exists(page, f"#t1_{comment['comment_id']}"):
+                            page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                                path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
+                            )
+                        else:
+                            page.locator(f"#t1_{comment['comment_id']}-comment-rtjson-content").screenshot(
+                                path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
+                            )
                 except TimeoutError:
                     del reddit_object["comments"]
                     screenshot_num += 1
@@ -265,3 +287,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         browser.close()
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
+
+
+
+
+def selector_exists(page, selector, timeout=3000):
+    try:
+        element = page.locator(selector).is_visible(timeout=timeout)
+        return element
+    except:
+        return False
