@@ -5,11 +5,12 @@ from pathlib import Path
 from random import randrange
 from typing import Any, Tuple, Dict
 
+import yt_dlp
 from moviepy.editor import VideoFileClip, AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 from utils import settings
 from utils.console import print_step, print_substep
-import yt_dlp
 
 
 def load_background_options():

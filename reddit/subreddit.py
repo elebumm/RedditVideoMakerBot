@@ -1,18 +1,16 @@
 import re
 
-from prawcore.exceptions import ResponseException
-
-from utils import settings
 import praw
 from praw.models import MoreComments
 from prawcore.exceptions import ResponseException
 
+from utils import settings
+from utils.ai_methods import sort_by_similarity
 from utils.console import print_step, print_substep
+from utils.posttextparser import posttextparser
 from utils.subreddit import get_subreddit_undone
 from utils.videos import check_done
 from utils.voice import sanitize_text
-from utils.posttextparser import posttextparser
-from utils.ai_methods import sort_by_similarity
 
 
 def get_subreddit_threads(POST_ID: str):
