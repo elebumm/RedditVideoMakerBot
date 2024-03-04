@@ -126,7 +126,6 @@ def modify_settings(data: dict, config_load, checks: dict):
 # Delete background video
 def delete_background(key):
     # Read background_videos.json
-    breakpoint()
     with open("utils/background_videos.json", "r", encoding="utf-8") as backgrounds:
         data = json.load(backgrounds)
 
