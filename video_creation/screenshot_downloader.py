@@ -18,6 +18,26 @@ from utils.videos import save_data
 __all__ = ["download_screenshots_of_reddit_posts"]
 
 
+def set_preferred_theme(theme, page):
+    # Alternate method to try to set preferred theme
+    preferred_theme = 'dark' if theme == 'dark' else 'light'
+    dark_mode_switcher_loc = page.locator('faceplate-switch-input[value="darkmode-switch-value"]').first
+    if dark_mode_switcher_loc.count() == 1:
+        is_dark_mode_enabled = page.locator('html.theme-dark').first.count() > 0
+        if (preferred_theme == "dark" and not is_dark_mode_enabled) or (preferred_theme == "light" and is_dark_mode_enabled):
+            print("Try to set theme to " + (preferred_theme) + "...")
+            dark_mode_switcher_loc.dispatch_event('click')
+            # Ensure to set preferred theme
+            page.wait_for_function("""
+                preferred_theme => {
+                    if (!document.querySelector('html').classList.contains('theme-' + preferred_theme)) {
+                        document.querySelector('faceplate-switch-input[value="darkmode-switch-value"]').click();
+                    }
+                    return true;
+                }
+            """, arg=preferred_theme)
+            # breakpoint()
+
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
@@ -158,20 +178,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         else:
             pass
 
-        page.wait_for_load_state()
-        # Handle the redesign
-        # Check if the redesign optout cookie is set
-        if page.locator("#redesign-beta-optin-btn").is_visible():
-            # Clear the redesign optout cookie
-            clear_cookie_by_name(context, "redesign_optout")
-            # Reload the page for the redesign to take effect
-            page.reload()
-        # Get the thread screenshot
-        page.goto(reddit_object["thread_url"], timeout=0)
-        page.set_viewport_size(ViewportSize(width=W, height=H))
-        page.wait_for_load_state()
-        page.wait_for_timeout(5000)
-
+        # Try to set preferred theme from settings
+        set_preferred_theme(settings.config["settings"]["theme"], page)
+        
         if page.locator(
             "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
         ).is_visible():
