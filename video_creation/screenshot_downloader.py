@@ -102,12 +102,17 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
         dsf = (W // 600) + 1
 
+        # User Agent
+        ua = "Mozilla/5.0 (Linux; Android 8.0.0; MI 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.101 Mobile Safari/537.36"
+
         context = browser.new_context(
             locale=lang or "en-us",
             color_scheme="dark",
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
+            user_agent=ua,
         )
+
         cookies = json.load(cookie_file)
         cookie_file.close()
 
