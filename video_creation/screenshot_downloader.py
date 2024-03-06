@@ -75,7 +75,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         print_substep("Launching Headless Browser...")
 
         browser = p.chromium.launch(
-            headless=True
+            headless=False
         )  # headless=False will show the browser for debugging purposes
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
@@ -96,13 +96,50 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # Login to Reddit
         print_substep("Logging in to Reddit...")
         page = context.new_page()
-        page.goto("https://www.reddit.com/login", timeout=0)
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
-        page.wait_for_load_state()
+        
+        # Use old.reddit.com to login only (go to reddit.com for actual posts/comments later)
+        page.goto("https://old.reddit.com/login", timeout=0)
+        # page.set_viewport_size(ViewportSize(width=1920, height=1080))
+        page.set_viewport_size(ViewportSize(width=1200, height=720))
+        login_url = page.url
 
-        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
-        page.locator("button[class$='m-full-width']").click()
+        username_loc = page.locator("#login-form #user_login").first
+        password_loc = page.locator("#login-form #passwd_login").first
+        button_loc = page.locator("#login-form button[type='submit']").first
+
+        print("Logging in via old.reddit.com/login...")
+        username_loc.fill(settings.config["reddit"]["creds"]["username"])
+        password_loc.fill(settings.config["reddit"]["creds"]["password"])
+        button_loc.first.click()
+        
+        # Check for login error message
+        login_error_loc = page.locator("#login-form .c-form-control-feedback-error").first
+        if login_error_loc.is_visible():
+            print_substep(
+                "Login unsuccessful: probably your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
+                style="red",
+            )
+            exit()
+
+        # Wait for navigation to page different from the login one
+        not_login_url_regex = re.compile('^(?!' + login_url + ')')
+        page.wait_for_url(not_login_url_regex, wait_until="commit") # wait_until='commit' -> wait until another url started loading
+
+        current_url = page.url
+        if current_url == "https://old.reddit.com/":
+            print("Login successful!")
+        else:
+            print_substep(
+                "Login unsuccessful: probably your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
+                style="red",
+            )
+            exit()
+
+        # Goto thread url
+        page.goto(reddit_object["thread_url"], timeout=0)
+        page.set_viewport_size(ViewportSize(width=W, height=H))
+        page.set_viewport_size(ViewportSize(width=1200, height=720))
+        page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
         login_error_div = page.locator(".AnimatedForm__errorMessage").first
