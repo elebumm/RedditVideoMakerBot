@@ -38,6 +38,19 @@ def set_preferred_theme(theme, page):
             """, arg=preferred_theme)
             # breakpoint()
 
+def bypass_see_this_post_in(page):
+    # Bypass "See this post in..."
+    see_this_post_in_button = page.locator('#bottom-sheet button.continue').first
+    if see_this_post_in_button.is_visible():
+        print("See this post in... [CONTINUE]")
+        see_this_post_in_button.dispatch_event('click')
+        see_this_post_in_button.wait_for(state='hidden')
+    else:
+        # Ensure to hide backdrop
+        backdrop_loc = page.locator('#bottom-sheet #backdrop').first
+        if backdrop_loc.count() > 0:
+            backdrop_loc.evaluate('node => node.style.display="none"')
+
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
@@ -167,25 +180,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
-        login_error_div = page.locator(".AnimatedForm__errorMessage").first
-        if login_error_div.is_visible():
-            login_error_message = login_error_div.inner_text()
-            if login_error_message.strip() == "":
-                # The div element is empty, no error
-                pass
-            else:
-                # The div contains an error message
-                print_substep(
-                    "Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
-                    style="red",
-                )
-                exit()
-        else:
-            pass
-
         # Try to set preferred theme from settings
         set_preferred_theme(settings.config["settings"]["theme"], page)
         
+        # Bypass "See this post in..."
+        bypass_see_this_post_in(page)
+
         if page.locator(
             "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
         ).is_visible():
