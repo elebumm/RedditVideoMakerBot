@@ -51,6 +51,12 @@ def bypass_see_this_post_in(page):
         if backdrop_loc.count() > 0:
             backdrop_loc.evaluate('node => node.style.display="none"')
 
+def get_comment_excerpt(comment):
+    comment_excerpt = (comment["comment_body"].split("\n")[0])
+    if len(comment_excerpt) > 80: comment_excerpt = comment_excerpt[:80] + "…"
+
+    return comment_excerpt
+
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
@@ -135,6 +141,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         print_substep("Logging in to Reddit...")
         page = context.new_page()
         
+        screenshot_debug = True
+        
         # Use old.reddit.com to login only (go to reddit.com for actual posts/comments later)
         page.goto("https://old.reddit.com/login", timeout=0)
         # page.set_viewport_size(ViewportSize(width=1920, height=1080))
@@ -182,10 +190,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         # Try to set preferred theme from settings
         set_preferred_theme(settings.config["settings"]["theme"], page)
-        
+
         # Bypass "See this post in..."
         bypass_see_this_post_in(page)
-
+        
         if page.locator(
             "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
         ).is_visible():
@@ -264,10 +272,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             )
         else:
             for idx, comment in enumerate(
-                track(
-                    reddit_object["comments"][:screenshot_num],
-                    "Downloading screenshots...",
-                )
+                reddit_object["comments"][:screenshot_num]
+                # track(
+                    # reddit_object["comments"][:screenshot_num],
+                    # "Downloading screenshots...",
+                # )
             ):
                 # Stop if we have reached the screenshot_num
                 if idx >= screenshot_num:
@@ -277,6 +286,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     page.locator('[data-testid="content-gate"] button').click()
 
                 page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+                
+                # Try to set preferred theme from settings
+                set_preferred_theme(settings.config["settings"]["theme"], page)
+
+                if screenshot_debug:
+                    comment_excerpt = get_comment_excerpt(comment)
+                    print(f"[{idx + 1}/{screenshot_num} {comment['comment_id']}]: {comment_excerpt}")
 
                 # translate code
 
@@ -311,6 +327,26 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     else:
                         # Bypass "See this post in..."
                         bypass_see_this_post_in(page)
+
+                        # Click on "View more comments", if present
+                        view_more_comments_button = page.locator('.overflow-actions-dialog ~ button').first
+                        if view_more_comments_button.is_visible():
+                            print("View more comments... [CLICK]")
+                            view_more_comments_button.dispatch_event('click')
+                            view_more_comments_button.wait_for(state='hidden')
+
+                        # If the comment text itself is collapsed, expand it
+                        comment_text_loc = comment_loc.locator("p").first
+                        if not comment_text_loc.is_visible():
+                            self_expand_button_loc = comment_loc.locator('summary button').first
+                            if self_expand_button_loc.is_visible():
+                                self_expand_button_loc.dispatch_event('click')
+
+                        # If replies are expanded toggle them
+                        expanded_loc = comment_loc.locator('button[aria-expanded="true"]').first
+                        if expanded_loc.is_visible():
+                            #print("If replies are expanded toggle them")
+                            expanded_loc.dispatch_event("click")
 
                         # breakpoint()
                         comment_loc.first.screenshot(
