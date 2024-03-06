@@ -222,18 +222,23 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
         try:
+            post_loc = page.locator("shreddit-post")
+
+            # Bypass "See this post in..."
+            bypass_see_this_post_in(page)
+
             if settings.config["settings"]["zoom"] != 1:
                 # store zoom settings
                 zoom = settings.config["settings"]["zoom"]
                 # zoom the body of the page
                 page.evaluate("document.body.style.zoom=" + str(zoom))
                 # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                location = page.locator('[data-test-id="post-content"]').bounding_box()
-                for i in location:
-                    location[i] = float("{:.2f}".format(location[i] * zoom))
-                page.screenshot(clip=location, path=postcontentpath)
+                post_loc = post_loc.bounding_box()
+                for i in post_loc:
+                    post_loc[i] = float("{:.2f}".format(post_loc[i] * zoom))
+                page.screenshot(clip=post_loc, path=postcontentpath)
             else:
-                page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+                post_loc.first.screenshot(path=postcontentpath)
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -286,23 +291,29 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
+                    comment_selector = f'shreddit-comment[thingid="t1_{comment["comment_id"]}"]'
+                    comment_loc = page.locator(comment_selector)
                     if settings.config["settings"]["zoom"] != 1:
                         # store zoom settings
                         zoom = settings.config["settings"]["zoom"]
                         # zoom the body of the page
                         page.evaluate("document.body.style.zoom=" + str(zoom))
                         # scroll comment into view
-                        page.locator(f"#t1_{comment['comment_id']}").scroll_into_view_if_needed()
+                        comment_loc.scroll_into_view_if_needed()
                         # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                        location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        comment_loc.bounding_box()
                         for i in location:
                             location[i] = float("{:.2f}".format(location[i] * zoom))
                         page.screenshot(
-                            clip=location,
+                            clip=comment_loc,
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
                         )
                     else:
-                        page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                        # Bypass "See this post in..."
+                        bypass_see_this_post_in(page)
+
+                        # breakpoint()
+                        comment_loc.first.screenshot(
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
                         )
                 except TimeoutError:
