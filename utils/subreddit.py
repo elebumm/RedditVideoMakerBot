@@ -2,8 +2,8 @@ import json
 from os.path import exists
 
 from utils import settings
-from utils.console import print_substep
 from utils.ai_methods import sort_by_similarity
+from utils.console import print_substep
 
 
 def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None):

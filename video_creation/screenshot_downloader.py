@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, Final
 
 import translators
-from playwright.async_api import async_playwright  # pylint: disable=unused-import
 from playwright.sync_api import ViewportSize, sync_playwright
 from rich.progress import track
 
@@ -12,7 +11,6 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
-
 from utils.videos import save_data
 
 __all__ = ["download_screenshots_of_reddit_posts"]

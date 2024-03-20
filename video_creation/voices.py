@@ -5,9 +5,9 @@ from rich.console import Console
 from TTS.GTTS import GTTS
 from TTS.TikTok import TikTok
 from TTS.aws_polly import AWSPolly
+from TTS.elevenlabs import elevenlabs
 from TTS.engine_wrapper import TTSEngine
 from TTS.pyttsx import pyttsx
-from TTS.elevenlabs import elevenlabs
 from TTS.streamlabs_polly import StreamlabsPolly
 from utils import settings
 from utils.console import print_table, print_step
