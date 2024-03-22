@@ -28,6 +28,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
     lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"]
     storymode: Final[bool] = settings.config["settings"]["storymode"]
+    mememode: Final[bool] = settings.config["settings"]["mememode"]
 
     print_step("Downloading screenshots of reddit posts...")
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
@@ -168,6 +169,8 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             print_substep("Skipping translation...")
 
         postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
+
+
         try:
             if settings.config["settings"]["zoom"] != 1:
                 # store zoom settings
@@ -181,6 +184,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 page.screenshot(clip=location, path=postcontentpath)
             else:
                 page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -200,11 +204,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
             raise e
 
-        if storymode:
+        if storymode and not mememode:
             page.locator('[data-click-id="text"]').first.screenshot(
                 path=f"assets/temp/{reddit_id}/png/story_content.png"
             )
-        else:
+        elif not mememode:
             for idx, comment in enumerate(
                 track(
                     reddit_object["comments"][:screenshot_num],
