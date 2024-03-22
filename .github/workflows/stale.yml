@@ -12,7 +12,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v4
+      - uses: actions/stale@v9
         id: stale-issue
         name: stale-issue
         with:
@@ -31,7 +31,7 @@ jobs:
           ascending: true
           #debug-only: true
 
-      - uses: actions/stale@v4
+      - uses: actions/stale@v9
         id: stale-pr
         name: stale-pr
         with:
