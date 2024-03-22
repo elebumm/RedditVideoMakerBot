@@ -75,7 +75,7 @@ class TTSEngine:
         # processed_text = ##self.reddit_object["thread_post"] != ""
         idx = 0
 
-        if settings.config["settings"]["storymode"] and not settings.config["settings"]["mememode"]:
+        if settings.config["settings"]["storymode"]:
             if settings.config["settings"]["storymodemethod"] == 0:
                 if len(self.reddit_object["thread_post"]) > self.tts_module.max_chars:
                     self.split_post(self.reddit_object["thread_post"], "postaudio")

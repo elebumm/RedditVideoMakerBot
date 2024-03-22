@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import math
 import sys
-import os
 from os import name
 from pathlib import Path
 from subprocess import Popen
@@ -26,8 +25,6 @@ from video_creation.background import (
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
-
-from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 __VERSION__ = "3.2.1"
 
@@ -66,50 +63,13 @@ def main(POST_ID=None) -> None:
 
 
 def run_many(times) -> None:
-    if not settings.config["settings"]["mememode"]:
-        for x in range(1, times + 1):
-            print_step(
-                f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
-            )  # correct 1st 2nd 3rd 4th 5th....
-            main()
-            Popen("cls" if name == "nt" else "clear", shell=True).wait()
-    else:
-        for x in range(1, times + 1):
-            print_step(
-                f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
-            )  # correct 1st 2nd 3rd 4th 5th....
-            main()
-            Popen("cls" if name == "nt" else "clear", shell=True).wait()
+    for x in range(1, times + 1):
+        print_step(
+            f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
+        )  # correct 1st 2nd 3rd 4th 5th....
+        main()
+        Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
-        make_meme_video()
-
-def make_meme_video():
-    if not os.path.exists("./clipped"):
-        os.mkdir("./clipped")
-    directory = f'./results/{settings.config["reddit"]["thread"]["subreddit"]}'
-
-    print(directory)
-
-    # Get a list of all MP4 files in the directory
-    mp4_files = [f for f in os.listdir(directory) if f.endswith('.mp4')]
-
-    # Create a list of VideoFileClip objects
-    clips = [VideoFileClip(os.path.join(directory, f)) for f in mp4_files]
-
-    # Concatenate the clips into a single video
-    final_clip = concatenate_videoclips(clips)
-
-    # Write the final video to a file
-    output_file = './clipped/output.mp4'
-    final_clip.write_videofile(output_file)
-
-    # Close the video clips
-    for clip in clips:
-        clip.close()
-
-    # Delete the individual MP4 files
-    for f in mp4_files:
-        os.remove(os.path.join(directory, f))
 
 def shutdown() -> NoReturn:
     if "redditid" in globals():
