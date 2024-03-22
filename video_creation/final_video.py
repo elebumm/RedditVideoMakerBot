@@ -99,7 +99,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         .overwrite_output()
     )
     try:
-        output.run(quiet=True)
+        output.run(quiet=False)
     except ffmpeg.Error as e:
         print(e.stderr.decode("utf8"))
         exit(1)
@@ -166,12 +166,13 @@ def make_final_video(
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 0:
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
-            audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
+            #audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
-            audio_clips = [
-                ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
-            ]
+            if not settings.config["settings"]["mememode"]:
+                audio_clips = [
+                    ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
+                    for i in track(range(number_of_clips + 1), "Collecting the audio files...")
+                ]
             audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
@@ -191,7 +192,7 @@ def make_final_video(
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
     ffmpeg.output(
         audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
-    ).overwrite_output().run(quiet=True)
+    ).overwrite_output().run(quiet=False)
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
@@ -204,18 +205,20 @@ def make_final_video(
     image_clips.insert(
         0,
         ffmpeg.input(f"assets/temp/{reddit_id}/png/title.png")["v"].filter(
-            "scale", screenshot_width, -1
+            "scale", screenshot_width, -1,
         ),
     )
 
     current_time = 0
     if settings.config["settings"]["storymode"]:
-        audio_clips_durations = [
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")["format"]["duration"]
-            )
-            for i in range(number_of_clips)
-        ]
+        audio_clips_durations = []
+        if not settings.config["settings"]["mememode"]:
+            audio_clips_durations = [
+                float(
+                    ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")["format"]["duration"]
+                )
+                for i in range(number_of_clips)
+            ]
         audio_clips_durations.insert(
             0,
             float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
@@ -227,6 +230,8 @@ def make_final_video(
                     "scale", screenshot_width, -1
                 ),
             )
+            if settings.config["settings"]["mememode"]: audio_clips_durations[0] += 2
+
             background_clip = background_clip.overlay(
                 image_clips[0],
                 enable=f"between(t,{current_time},{current_time + audio_clips_durations[0]})",
@@ -234,7 +239,7 @@ def make_final_video(
                 y="(main_h-overlay_h)/2",
             )
             current_time += audio_clips_durations[0]
-        elif settings.config["settings"]["storymodemethod"] == 1:
+        elif settings.config["settings"]["storymodemethod"] == 1 and not settings.config["settings"]["mememode"]:
             for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
@@ -248,6 +253,8 @@ def make_final_video(
                     y="(main_h-overlay_h)/2",
                 )
                 current_time += audio_clips_durations[i]
+    elif settings.config["settings"]["mememode"]:
+        pass
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(
@@ -354,10 +361,10 @@ def make_final_video(
                     "threads": multiprocessing.cpu_count(),
                 },
             ).overwrite_output().global_args("-progress", progress.output_file.name).run(
-                quiet=True,
+                quiet=False,
                 overwrite_output=True,
                 capture_stdout=False,
-                capture_stderr=False,
+                capture_stderr=True,
             )
         except ffmpeg.Error as e:
             print(e.stderr.decode("utf8"))
@@ -384,10 +391,10 @@ def make_final_video(
                         "threads": multiprocessing.cpu_count(),
                     },
                 ).overwrite_output().global_args("-progress", progress.output_file.name).run(
-                    quiet=True,
+                    quiet=False,
                     overwrite_output=True,
                     capture_stdout=False,
-                    capture_stderr=False,
+                    capture_stderr=True,
                 )
             except ffmpeg.Error as e:
                 print(e.stderr.decode("utf8"))
