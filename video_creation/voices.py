@@ -8,6 +8,7 @@ from TTS.aws_polly import AWSPolly
 from TTS.engine_wrapper import TTSEngine
 from TTS.pyttsx import pyttsx
 from TTS.elevenlabs import elevenlabs
+from TTS.unreal_speech import UnrealSpeech
 from TTS.streamlabs_polly import StreamlabsPolly
 from utils import settings
 from utils.console import print_table, print_step
@@ -21,6 +22,7 @@ TTSProviders = {
     "TikTok": TikTok,
     "pyttsx": pyttsx,
     "ElevenLabs": elevenlabs,
+    "UnrealSpeech": UnrealSpeech,
 }
 
 
