@@ -1,3 +1,4 @@
+import json
 import re
 import textwrap
 import os
@@ -5,6 +6,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 from TTS.engine_wrapper import process_text
+from utils.process_post import process_post
 
 
 def draw_multiple_line_text(
@@ -56,7 +58,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     Render Images for video
     """
     title = process_text(reddit_obj["thread_title"], False)
-    texts = reddit_obj["thread_post"]
+    texts = process_post(reddit_obj["thread_post"])
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
     if transparent:
@@ -74,8 +76,22 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
 
     image.save(f"assets/temp/{id}/png/title.png")
 
+    weights = dict()
     for idx, text in track(enumerate(texts), "Rendering Image"):
-        image = Image.new("RGBA", size, theme)
-        text = process_text(text, False)
-        draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
-        image.save(f"assets/temp/{id}/png/img{idx}.png")
+        if isinstance(text, tuple):
+            total_text_length = sum(len(t) for t in text)
+            for i in range(len(text)):
+                sub_text = text[i]
+                image = Image.new("RGBA", size, theme)
+                sub_text = process_text(sub_text, False)
+                draw_multiple_line_text(image, sub_text, font, txtclr, padding, wrap=30, transparent=transparent)
+                image.save(f"assets/temp/{id}/png/img{idx}-{i+1}.png")
+                weights[f"{idx}-{i+1}"] = round(len(sub_text) / total_text_length, 3)
+        else:
+            image = Image.new("RGBA", size, theme)
+            text = process_text(text, False)
+            draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
+            image.save(f"assets/temp/{id}/png/img{idx}.png")
+    
+    with open(f"assets/temp/{id}/weights.json", 'w') as file:
+        file.write(json.dumps(weights, indent=4))

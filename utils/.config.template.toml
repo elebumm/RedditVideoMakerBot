@@ -49,6 +49,8 @@ elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella"
 elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
 unreal_speech_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Unreal Speech API key" }
 unreal_speech_voice_name = { optional = false, default = "Liv", example = "Liv", explanation = "The voice used for Unreal Speech", options = ["Scarlett", "Amy", "Liv", "Dan", "Will", ] }
+unreal_speech_voice_pitch = { optional = false, default = "1", example = "1.2", explanation = "The pitch of the voice used for Unreal Speech (0.5 to 1.5)", type = "float" }
+unreal_speech_voice_speed = { optional = false, default = "0", example = "-0.15", explanation = "The speed of the voice used for Unreal Speech (-1.0 to 1.0)", type = "float" }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
 streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
 tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }

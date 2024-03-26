@@ -1,15 +1,19 @@
+import json
 import multiprocessing
 import os
 import re
 from os.path import exists  # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any, Dict
+import glob
 
 import ffmpeg
 import translators
 from PIL import Image
 from rich.console import Console
 from rich.progress import track
+from pydub import AudioSegment
+from pydub.playback import play
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
@@ -155,7 +159,8 @@ def make_final_video(
 
     print_step("Creating the final video 🎥")
 
-    background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
+    # background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
+    background_clip = ffmpeg.input(f"assets/temp/{reddit_id}/background_noaudio.mp4")
 
     # Gather all audio clips
     audio_clips = list()
@@ -169,11 +174,12 @@ def make_final_video(
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
             audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
-            audio_clips = [
-                ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
-            ]
-            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
+            # audio_clips = [
+            #     ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
+            #     for i in track(range(number_of_clips + 1), "Collecting the audio files...")
+            # ]
+            # audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
+            pass
 
     else:
         audio_clips = [
@@ -189,14 +195,19 @@ def make_final_video(
             0,
             float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
-    audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
-    ffmpeg.output(
-        audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
-    ).overwrite_output().run(quiet=True)
+    # audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
+    # ffmpeg.output(
+    #     audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
+    # ).overwrite_output().run(quiet=True)
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
     screenshot_width = int((W * 45) // 100)
+
+    # audio = AudioSegment.from_mp3(f"assets/temp/{reddit_id}/audio.mp3")
+    # louder_audio = audio + 10
+    # louder_audio.export(f"assets/temp/{reddit_id}/audio.mp3", format='mp3')
+
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
     final_audio = merge_background_audio(audio, reddit_id)
 
@@ -221,6 +232,15 @@ def make_final_video(
             0,
             float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
+
+        background_clip = background_clip.overlay(
+            image_clips[0],
+            enable=f"between(t,{current_time},{current_time + audio_clips_durations[0]})",
+            x="(main_w-overlay_w)/2",
+            y="(main_h-overlay_h)/2",
+        )
+        current_time += audio_clips_durations[0]
+
         if settings.config["settings"]["storymodemethod"] == 0:
             image_clips.insert(
                 1,
@@ -228,26 +248,47 @@ def make_final_video(
                     "scale", screenshot_width, -1
                 ),
             )
-            background_clip = background_clip.overlay(
-                image_clips[0],
-                enable=f"between(t,{current_time},{current_time + audio_clips_durations[0]})",
-                x="(main_w-overlay_w)/2",
-                y="(main_h-overlay_h)/2",
-            )
-            current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
-                image_clips.append(
-                    ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
-                        "scale", screenshot_width, -1
+            with open(f"assets/temp/{reddit_id}/weights.json", 'r') as file:
+                weights = json.loads(file.read())
+            for i in track(range(1, number_of_clips + 1), "Collecting the image files..."):
+                # Get all sub images
+                sub_images = glob.glob(f"assets/temp/{reddit_id}/png/img{i-1}-*.png")
+                if sub_images:
+                    images = []
+                    for image in sub_images:
+                        weight_id = image.split("img")[-1][:-4]
+                        images.append(
+                            (
+                                ffmpeg.input(image)["v"].filter(
+                                    "scale", screenshot_width, -1
+                                ),
+                                weights[weight_id]
+                            )
+                        )
+                    image_clips.append(images)
+
+                    vid_time = current_time
+                    for image in image_clips[i]:
+                        background_clip = background_clip.overlay(
+                            image[0],
+                            enable=f"between(t,{vid_time},{vid_time + audio_clips_durations[i] * image[1]})",
+                            x="(main_w-overlay_w)/2",
+                            y="(main_h-overlay_h)/2",
+                        )
+                        vid_time += audio_clips_durations[i] * image[1]
+                else:
+                    image_clips.append(
+                        ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i-1}.png")["v"].filter(
+                            "scale", screenshot_width, -1
+                        )
                     )
-                )
-                background_clip = background_clip.overlay(
-                    image_clips[i],
-                    enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
-                    x="(main_w-overlay_w)/2",
-                    y="(main_h-overlay_h)/2",
-                )
+                    background_clip = background_clip.overlay(
+                        image_clips[i],
+                        enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
+                        x="(main_w-overlay_w)/2",
+                        y="(main_h-overlay_h)/2",
+                    )
                 current_time += audio_clips_durations[i]
     else:
         for i in range(0, number_of_clips + 1):

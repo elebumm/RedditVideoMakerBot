@@ -33,8 +33,8 @@ class UnrealSpeech:
             'Text': text, # Up to 1000 characters
             'VoiceId': voice, # Dan, Will, Scarlett, Liv, Amy
             'Bitrate': '192k', # 320k, 256k, 192k, ...
-            'Speed': '-0.15', # -1.0 to 1.0
-            'Pitch': '1.2', # -0.5 to 1.5
+            'Speed': settings.config["settings"]["tts"]["unreal_speech_voice_speed"],
+            'Pitch': settings.config["settings"]["tts"]["unreal_speech_voice_pitch"],
             'Codec': 'libmp3lame', # libmp3lame or pcm_mulaw
         }
         headers = {'Authorization' : f'Bearer {api_key}'}
