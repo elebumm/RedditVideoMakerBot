@@ -159,8 +159,8 @@ def make_final_video(
 
     print_step("Creating the final video 🎥")
 
-    # background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
-    background_clip = ffmpeg.input(f"assets/temp/{reddit_id}/background_noaudio.mp4")
+    background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
+    # background_clip = ffmpeg.input(f"assets/temp/{reddit_id}/background_noaudio.mp4")
 
     # Gather all audio clips
     audio_clips = list()
@@ -174,12 +174,12 @@ def make_final_video(
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
             audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
-            # audio_clips = [
-            #     ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-            #     for i in track(range(number_of_clips + 1), "Collecting the audio files...")
-            # ]
-            # audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
-            pass
+            audio_clips = [
+                ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
+                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
+            ]
+            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
+            # pass
 
     else:
         audio_clips = [
@@ -195,10 +195,11 @@ def make_final_video(
             0,
             float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
-    # audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
-    # ffmpeg.output(
-    #     audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
-    # ).overwrite_output().run(quiet=True)
+    # Comment those as well when testing
+    audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
+    ffmpeg.output(
+        audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
+    ).overwrite_output().run(quiet=True)
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 

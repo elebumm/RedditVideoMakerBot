@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import math
+import time
+import schedule
 import sys
 from os import name
 from pathlib import Path
@@ -50,6 +52,7 @@ def main(POST_ID=None) -> None:
     redditid = id(reddit_object)
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
+    # length, number_of_comments = 360, 43
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -78,6 +81,26 @@ def shutdown() -> NoReturn:
     print("Exiting...")
     sys.exit()
 
+def run():
+    if config["reddit"]["thread"]["post_id"]:
+        for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+            index += 1
+            print_step(
+                f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
+            )
+            main(post_id)
+            Popen("cls" if name == "nt" else "clear", shell=True).wait()
+    elif config["settings"]["times_to_run"]:
+        run_many(config["settings"]["times_to_run"])
+    else:
+        main()
+    
+    print_substep("The video was created successfully! 🎉", style="bold green")
+    print_substep(
+        f'Next run will be in {settings.config["settings"]["run_every"]} hours.',
+        style="bold green"
+    )
+
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
@@ -102,18 +125,11 @@ if __name__ == "__main__":
         )
         sys.exit()
     try:
-        if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
-                index += 1
-                print_step(
-                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
-                )
-                main(post_id)
-                Popen("cls" if name == "nt" else "clear", shell=True).wait()
-        elif config["settings"]["times_to_run"]:
-            run_many(config["settings"]["times_to_run"])
-        else:
-            main()
+        run()
+        schedule.every(settings.config["settings"]["run_every"]).hours.do(run)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
     except KeyboardInterrupt:
         shutdown()
     except ResponseException:

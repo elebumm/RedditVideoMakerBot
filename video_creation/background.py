@@ -1,9 +1,12 @@
 import json
+import os
 import random
 import re
+import math
 from pathlib import Path
 from random import randrange
 from typing import Any, Tuple, Dict
+from pydub import AudioSegment
 
 from moviepy.editor import VideoFileClip, AudioFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
@@ -116,7 +119,18 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([uri])
 
+    sound = AudioSegment.from_file(f"./assets/backgrounds/audio/{credit}-{filename}")
+    new_sound = sound[:]
+
+    loops = math.ceil(1800 / sound.duration_seconds)
+    for _ in range(loops):
+        new_sound += sound
+
+    os.remove(f"./assets/backgrounds/audio/{credit}-{filename}")
+    new_sound.export(f"./assets/backgrounds/audio/{credit}-{filename}", format="mp3")
+
     print_substep("Background audio downloaded successfully! 🎉", style="bold green")
+    print(f"The audio duration was extended to be: {new_sound.duration_seconds} seconds")
 
 
 def chop_background(background_config: Dict[str, Tuple], video_length: int, reddit_object: dict):

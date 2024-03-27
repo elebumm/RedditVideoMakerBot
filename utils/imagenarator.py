@@ -57,6 +57,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     """
     Render Images for video
     """
+    # return
     title = process_text(reddit_obj["thread_title"], False)
     texts = process_post(reddit_obj["thread_post"])
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
