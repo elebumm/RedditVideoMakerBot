@@ -11,16 +11,16 @@ def split_text(text, threshold):
     new_text = ''
     texts = []
 
-    for i in text:
+    for i in range(len(text)):
         if new_text == '':
-            new_text = i
+            new_text = text[i]
             continue
 
-        new_text += ' ' + i
+        new_text += ' ' + text[i]
         if len(new_text) >= int(0.75 * threshold):
             go = True
             # Make sure that the text left is not so short
-            if i != text[-1]:
+            if i < len(text) - 1:
                 left = ' '.join(text[i+1:])
                 if len(left) < int(0.25 * threshold):
                     go = False
