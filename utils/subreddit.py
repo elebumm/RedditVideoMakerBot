@@ -57,15 +57,18 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
             else:
                 # Check for the length of the post text
                 if len(submission.selftext) > (
-                    settings.config["settings"]["storymode_max_length"] or 2000
+                    settings.config["settings"]["storymode_max_length"]
                 ):
                     print_substep(
                         f"Post is too long ({len(submission.selftext)}), try with a different post. ({settings.config['settings']['storymode_max_length']} character limit)"
                     )
                     continue
-                elif len(submission.selftext) < 30:
+                elif len(submission.selftext) < 400:
                     continue
         if settings.config["settings"]["storymode"] and not submission.is_self:
+            continue
+        if submission.upvote_ratio * 100 < 70 and not settings.config["reddit"]["thread"]["post_id"]:
+            print(f"Found a post with upvote ratio {submission.upvote_ratio*100}% which is less than 70%. Skipping...")
             continue
         if similarity_scores is not None:
             return submission, similarity_scores[i].item()

@@ -144,6 +144,16 @@ def make_final_video(
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
+    # title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+    # filename = f"{name_normalize(title)[:251]}"
+    # p = f'results/{settings.config["reddit"]["thread"]["subreddit"]}' + f"/{filename}"
+    # print((
+    #         p[:251] + ".mp4"
+    #     ))
+    # return (
+    #         p[:251] + ".mp4"
+    #     )
+
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
@@ -444,3 +454,4 @@ def make_final_video(
     cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
     print_step("Done! 🎉 The video is in the results folder 📁")
+    return path

@@ -50,9 +50,12 @@ def main(POST_ID=None) -> None:
     global redditid, reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
     redditid = id(reddit_object)
+    post_text = ' '.join(reddit_object['thread_post'])
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    # length, number_of_comments = 360, 43
+    # length, number_of_comments = 42, 5
+
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -61,7 +64,15 @@ def main(POST_ID=None) -> None:
     download_background_video(bg_config["video"])
     download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
-    make_final_video(number_of_comments, length, reddit_object, bg_config)
+    video_path = make_final_video(number_of_comments, length, reddit_object, bg_config)
+
+    video_data, thumbnail_text = get_video_data(post_text)
+    print("Video title:", video_data['title'])
+    print("Video description:", video_data['description'])
+    print("Video tags:", video_data['tags'])
+    # TODO: Generate thumbnail from text here
+    thumbnail = None
+    upload_video_to_youtube(video_path, video_data, thumbnail)
 
 
 def run_many(times) -> None:
@@ -114,6 +125,9 @@ if __name__ == "__main__":
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
     config is False and sys.exit()
+
+    from video_data_generation.gemini import get_video_data
+    from utils.youtube_uploader import upload_video_to_youtube
 
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
