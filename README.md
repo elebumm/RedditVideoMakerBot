@@ -1,6 +1,6 @@
 # Reddit Video Maker Bot 🎥
 
-If useing you want memes config should be: `storymode = true`, `storymodemethod = 0`, `mememode = true` and times_to_run should be amount of memes you want
+If you want memes instead of something like askreddit or stories, config should be: `storymode = true`, `storymodemethod = 0`, `mememode = true` and times_to_run should be amount of memes you want
 
 All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
 
