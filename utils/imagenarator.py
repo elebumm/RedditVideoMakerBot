@@ -20,6 +20,8 @@ def draw_multiple_line_text(
     image_width, image_height = image.size
     lines = textwrap.wrap(text, width=wrap)
     y = (image_height / 2) - (((Fontperm[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+    
+    c = 0
     for line in lines:
         line_width, line_height = font.getsize(line)
         if transparent:
@@ -49,7 +51,11 @@ def draw_multiple_line_text(
                     font=font,
                     fill=shadowcolor,
                 )
-        draw.text(((image_width - line_width) / 2, y), line, font=font, fill=text_color)
+        if isinstance(text_color, tuple) and len(text_color) == 3:
+            draw.text(((image_width - line_width) / 2, y), line, font=font, fill=text_color)
+        elif isinstance(text_color, list):
+            draw.text(((image_width - line_width) / 2, y), line, font=font, fill=text_color[c % len(text_color)])
+            c += 1
         y += line_height + padding
 
 

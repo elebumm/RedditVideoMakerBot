@@ -7,10 +7,12 @@ genai.configure(api_key=settings.config["settings"]["gemini"]["gemini_api_key"])
 
 prompt1 = """I make some youtube videos where I get subreddits about ghost stories and make a video of it.
     I will send a post to you and you should generate a YouTube video title, tags and description for it.
+    Also generate a short, relevant and catchy text to be written on the video thumbnail.
     Only respond with the following:
     title::: "The video title"
     description::: "The video description"
     tags::: "The video tags" without hashtags and separated by commas
+    thumbnail_text::: "The text to be wriiten on the video thumbnail"
     
     Here is the post:
     """
@@ -19,7 +21,7 @@ prompt2 = """Describe a thumbnail for a youtube video about ghosts and ghost sto
 Only respond with the thumbnail description.
 The description should be clear for an AI image generator model to generate it.
 
-The video tags are:
+The video description:
 """
 
 model = genai.GenerativeModel('gemini-pro')
@@ -27,19 +29,21 @@ model = genai.GenerativeModel('gemini-pro')
 def get_data(post):
     response = model.generate_content(prompt1 + post)
 
+    # print("Data:", response.prompt_feedback)
     text = response.text.split('\n')
     data = {i.split(':::')[0].strip(): i.split(':::')[1].strip() for i in text}
     return data
 
 def get_thumbnail(post):
-    thumbnail_response = model.generate_content(prompt2+post)
+    thumbnail_response = model.generate_content(prompt2 + post)
+    # print('Thumbnail:', thumbnail_response.prompt_feedback)
     return thumbnail_response.text
 
 def get_video_data(post):
     data = None
     thumbnail = None
     print("Generating video title & description...")
-    for i in range(2):
+    for i in range(3):
         if i != 0: print("Try:", i+1)
         try:
             if data is None: data = get_data(post)
@@ -47,7 +51,7 @@ def get_video_data(post):
                 thumbnail = get_thumbnail(data['tags'])
             break
         except Exception as e:
-            # print(e)
+            print(e)
             continue
     return data, thumbnail
 

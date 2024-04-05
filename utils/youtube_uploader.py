@@ -1,8 +1,12 @@
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 
+import os
 from video_data_generation import gemini
 
+
+if os.path.exists("./utils/credentials.storage"):
+    os.remove("./utils/credentials.storage")
 
 # logging into the channel
 channel = Channel()

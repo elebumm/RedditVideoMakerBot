@@ -1,12 +1,15 @@
+import os
 import requests
 from bs4 import BeautifulSoup
+from PIL import Image, ImageDraw, ImageFont
+
+from utils.imagenarator import draw_multiple_line_text
 
 
 s = requests.session()
 
-def renew_connection():
+def get_csrf_token():
     csrf_url = "https://image.plus/"
-    payload = {}
 
     csrf_headers = {
     'Host': 'image.plus',
@@ -26,18 +29,15 @@ def renew_connection():
     'Connection': 'close'
     }
 
-    s.cookies.clear()
     response = s.request("GET", csrf_url, headers=csrf_headers)
-    print(response.status_code)
     soup = BeautifulSoup(response.text, 'html.parser')
     return soup.find("meta", {"name":"csrf-token"})['content']
 
-
-def generate_image(csrf_token, prompt=None):
+def generate_image(prompt, save_path):
     url = "https://image.plus/images/generate"
+    csrf_token = get_csrf_token()
 
-    prompt = "A ghost flying with a person sitting scared on a couch."
-    payload = f"prompt={prompt.replace(' ', '+')}&negative_prompt=&model=1&style=cinematic&samples=1&size=1152x896"
+    payload = f"prompt={prompt.replace(' ', '+')}&negative_prompt=&model=1&style=comic-book&samples=1&size=1152x896"
     headers = {
         'Host': 'image.plus',
         'Content-Length': '106',
@@ -60,7 +60,43 @@ def generate_image(csrf_token, prompt=None):
     }
 
     response = s.request("POST", url, headers=headers, data=payload)
-    return response.json()
+    image_url = response.json()['images'][0]['src']
+    image = s.get(image_url).content
+    with open(save_path, 'wb') as file:
+        file.write(image)
+    return save_path
 
-image = generate_image(renew_connection())
-print(image)
+def add_text(thumbnail_path, text, save_path):
+    bg = "./assets/backgrounds/background.jpg"
+    if thumbnail_path is None:
+        thumbnail_path = "./assets/thumbnail_bg.png"
+    
+    img1 = Image.open(bg).convert("RGBA")
+    img2 = Image.open(thumbnail_path).resize((720, 720)).convert("RGBA")
+    img1.paste(img2, (0,0), mask=img2)
+    
+    # font = ImageFont.truetype(os.path.join("fonts", "Another-Danger.otf"), 50)
+    # font = ImageFont.truetype(os.path.join("fonts", "Foul-Fiend.ttf"), 30)
+    font = ImageFont.truetype(os.path.join("fonts", "Mystery-Lake.ttf"), 75)
+    size = (560, 720)
+    image = Image.new("RGBA", size, (0, 0, 0, 0))
+    draw_multiple_line_text(
+        image,
+        text,
+        font,
+        [(255, 255, 255), (165, 42, 42)],
+        20,
+        wrap=20,
+        transparent=True
+    )
+
+    img1.paste(image, (720,0), mask=image)
+    img1.show()
+    img1.save(save_path)
+    return save_path
+
+
+if __name__ == '__main__':
+    prompt = "A hyper-realistic, scary image of a ghost flying in a room and a person sitting on a couch very scared looking at the ghost."
+    image_path = generate_image(prompt)
+    print(image_path)

@@ -54,7 +54,7 @@ def main(POST_ID=None) -> None:
 
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    # length, number_of_comments = 42, 5
+    # length, number_of_comments = 120, 18
 
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
@@ -70,8 +70,15 @@ def main(POST_ID=None) -> None:
     print("Video title:", video_data['title'])
     print("Video description:", video_data['description'])
     print("Video tags:", video_data['tags'])
-    # TODO: Generate thumbnail from text here
-    thumbnail = None
+    
+    thumbnail = generate_image(thumbnail_text, f"./assets/temp/{reddit_object['thread_id']}/thumbnail_image.png")
+    # thumbnail = "thumbnail.png"
+    thumbnail = add_text(
+        thumbnail_path=thumbnail,
+        text=video_data["thumbnail_text"],
+        save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
+    )
+    print("Thumbnail generated successfully at:", thumbnail)
     upload_video_to_youtube(video_path, video_data, thumbnail)
 
 
@@ -127,6 +134,7 @@ if __name__ == "__main__":
     config is False and sys.exit()
 
     from video_data_generation.gemini import get_video_data
+    from video_data_generation.image_generation import generate_image, add_text
     from utils.youtube_uploader import upload_video_to_youtube
 
     if (
