@@ -26,6 +26,7 @@ from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
+from utils.compressor import compress_video
 
 __VERSION__ = "3.2.1"
 
@@ -54,9 +55,9 @@ def main(POST_ID=None) -> None:
 
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    # length, number_of_comments = 120, 18
+    reel = length <= 60
 
-    get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
+    get_screenshots_of_reddit_posts(reddit_object, number_of_comments, reel)
     bg_config = {
         "video": get_background_config("video"),
         "audio": get_background_config("audio"),
@@ -64,22 +65,23 @@ def main(POST_ID=None) -> None:
     download_background_video(bg_config["video"])
     download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
-    video_path = make_final_video(number_of_comments, length, reddit_object, bg_config)
+    video_path = make_final_video(number_of_comments, length, reddit_object, bg_config, reel)
+    video_path = compress_video(video_path)
 
-    video_data, thumbnail_text = get_video_data(post_text)
-    print("Video title:", video_data['title'])
-    print("Video description:", video_data['description'])
-    print("Video tags:", video_data['tags'])
+    # video_data, thumbnail_text = get_video_data(post_text)
+    # print("Video title:", video_data['title'])
+    # print("Video description:", video_data['description'])
+    # print("Video tags:", video_data['tags'])
     
-    thumbnail = generate_image(thumbnail_text, f"./assets/temp/{reddit_object['thread_id']}/thumbnail_image.png")
+    # thumbnail = generate_image(thumbnail_text, f"./assets/temp/{reddit_object['thread_id']}/thumbnail_image.png")
     # thumbnail = "thumbnail.png"
-    thumbnail = add_text(
-        thumbnail_path=thumbnail,
-        text=video_data["thumbnail_text"],
-        save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
-    )
-    print("Thumbnail generated successfully at:", thumbnail)
-    upload_video_to_youtube(video_path, video_data, thumbnail)
+    # thumbnail = add_text(
+    #     thumbnail_path=thumbnail,
+    #     text=video_data["thumbnail_text"],
+    #     save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
+    # )
+    # print("Thumbnail generated successfully at:", thumbnail)
+    # upload_video_to_youtube(video_path, video_data, thumbnail)
 
 
 def run_many(times) -> None:
@@ -135,7 +137,7 @@ if __name__ == "__main__":
 
     from video_data_generation.gemini import get_video_data
     from video_data_generation.image_generation import generate_image, add_text
-    from utils.youtube_uploader import upload_video_to_youtube
+    # from utils.youtube_uploader import upload_video_to_youtube
 
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]

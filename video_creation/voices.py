@@ -1,5 +1,7 @@
+import glob
 from typing import Tuple
 
+from pydub import AudioSegment
 from rich.console import Console
 
 from TTS.GTTS import GTTS
@@ -35,6 +37,11 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
     Returns:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
+
+    if settings.config["settings"]["debug"]["reuse_mp3"]:
+        comments = len(glob.glob(f"./assets/temp/{reddit_obj['thread_id']}/mp3/*")) - 2
+        audio = AudioSegment.from_mp3(f"./assets/temp/{reddit_obj['thread_id']}/audio.mp3")
+        return audio.duration_seconds, comments
 
     voice = settings.config["settings"]["tts"]["voice_choice"]
     if str(voice).casefold() in map(lambda _: _.casefold(), TTSProviders):

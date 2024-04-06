@@ -28,10 +28,14 @@ opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets 
 storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, great for subreddits with stories" }
 storymodemethod= { optional = true, default = 1, example = 1, explanation = "Style that's used for the storymode. Set to 0 for single picture display in whole video, set to 1 for fancy looking video ", type = "int", nmin = 0, oob_error = "It's very hard to run something less than once.", options = [0, 1] }
 storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
-resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
-resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
 zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
 run_every = { optional = false, default = 24, example = 5, explanation = "How often should the bot create a video (in hours).", type = "int", nmin = 4, nmax = 48, oob_error = "Please choose a number between 4 and 48." }
+
+[settings.debug]
+debug = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Debug mode (Whether to delete temp files after creating the video or not)" }
+reuse_mp3 = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use mp3 files from temp data" }
+reuse_images = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use images from temp data" }
+reuse_video = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use already generated video" }
 
 [settings.background]
 background_video = { optional = true, default = "mudrunner", example = "rocket-league", options = ["mudrunner", "granny-remake", ""], explanation = "Sets the background for the video based on game name" }

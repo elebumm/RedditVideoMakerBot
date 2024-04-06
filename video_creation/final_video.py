@@ -136,6 +136,7 @@ def make_final_video(
     length: int,
     reddit_obj: dict,
     background_config: Dict[str, Tuple],
+    reel = False
 ):
     """Gathers audio clips, gathers all screenshots, stitches them together and saves the final video to assets/temp
     Args:
@@ -144,19 +145,23 @@ def make_final_video(
         reddit_obj (dict): The reddit object that contains the posts to read.
         background_config (Tuple[str, str, str, Any]): The background config to use.
     """
-    # title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
-    # filename = f"{name_normalize(title)[:251]}"
-    # p = f'results/{settings.config["reddit"]["thread"]["subreddit"]}' + f"/{filename}"
-    # print((
-    #         p[:251] + ".mp4"
-    #     ))
-    # return (
-    #         p[:251] + ".mp4"
-    #     )
+    if settings.config["settings"]["debug"]["reuse_video"]:
+        title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+        filename = f"{name_normalize(title)[:251]}"
+        p = f'results/{settings.config["reddit"]["thread"]["subreddit"]}' + f"/{filename}"
+        print((
+                p[:251] + ".mp4"
+            ))
+        return (
+                p[:251] + ".mp4"
+            )
 
-    # settings values
-    W: Final[int] = int(settings.config["settings"]["resolution_w"])
-    H: Final[int] = int(settings.config["settings"]["resolution_h"])
+    if reel:
+        W: Final[int] = 1080
+        H: Final[int] = 1920
+    else:
+        W: Final[int] = 1920
+        H: Final[int] = 1080
 
     opacity = settings.config["settings"]["opacity"]
 
@@ -184,12 +189,12 @@ def make_final_video(
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
             audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
-            audio_clips = [
-                ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
-            ]
-            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
-            # pass
+            if not settings.config["settings"]["debug"]["reuse_mp3"]:
+                audio_clips = [
+                    ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
+                    for i in track(range(number_of_clips + 1), "Collecting the audio files...")
+                ]
+                audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
         audio_clips = [
@@ -205,15 +210,17 @@ def make_final_video(
             0,
             float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
-    # Comment those as well when testing
-    audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
-    ffmpeg.output(
-        audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
-    ).overwrite_output().run(quiet=True)
+    
+    if not settings.config["settings"]["debug"]["reuse_mp3"]:
+        audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
+        ffmpeg.output(
+            audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
+        ).overwrite_output().run(quiet=True)
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
-    screenshot_width = int((W * 45) // 100)
+    if reel: screenshot_width = int((W * 45) // 100)
+    else: screenshot_width = W
 
     # audio = AudioSegment.from_mp3(f"assets/temp/{reddit_id}/audio.mp3")
     # louder_audio = audio + 10

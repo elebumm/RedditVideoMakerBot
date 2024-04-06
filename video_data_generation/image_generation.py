@@ -1,7 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
 
 from utils.imagenarator import draw_multiple_line_text
 
@@ -60,10 +60,15 @@ def generate_image(prompt, save_path):
     }
 
     response = s.request("POST", url, headers=headers, data=payload)
-    image_url = response.json()['images'][0]['src']
-    image = s.get(image_url).content
-    with open(save_path, 'wb') as file:
-        file.write(image)
+    try:
+        image_url = response.json()['images'][0]['src']
+        image = s.get(image_url).content
+        with open(save_path, 'wb') as file:
+            file.write(image)
+    except Exception as e:
+        if response.json().get('error') is not None:
+            return "./assets/thumbnail_bg.png"
+        raise e
     return save_path
 
 def add_text(thumbnail_path, text, save_path):

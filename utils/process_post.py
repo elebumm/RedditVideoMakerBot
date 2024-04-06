@@ -1,6 +1,7 @@
-def process_post(reddit_thread_post):
+def process_post(reddit_thread_post, reel):
     texts = reddit_thread_post
-    threshold = 80
+    if reel: threshold = 80
+    else: threshold = 60
     for i in range(len(texts)):
         if len(texts[i]) > threshold:
             texts[i] = split_text(texts[i], threshold)

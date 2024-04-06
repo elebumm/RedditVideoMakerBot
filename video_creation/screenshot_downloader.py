@@ -18,7 +18,7 @@ from utils.videos import save_data
 __all__ = ["download_screenshots_of_reddit_posts"]
 
 
-def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
+def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int, reel=False):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
 
     Args:
@@ -26,10 +26,15 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         screenshot_num (int): Number of screenshots to download
     """
     # settings values
-    W: Final[int] = int(settings.config["settings"]["resolution_w"])
-    H: Final[int] = int(settings.config["settings"]["resolution_h"])
     lang: Final[str] = settings.config["reddit"]["thread"]["post_lang"]
     storymode: Final[bool] = settings.config["settings"]["storymode"]
+
+    if reel:
+        W: Final[int] = 1080
+        H: Final[int] = 1920
+    else:
+        W: Final[int] = 1920
+        H: Final[int] = 1080
 
     print_step("Downloading screenshots of reddit posts...")
     reddit_id = re.sub(r"[^\w\s-]", "", reddit_object["thread_id"])
@@ -68,6 +73,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             reddit_obj=reddit_object,
             txtclr=txtcolor,
             transparent=transparent,
+            reel=reel
         )
 
     screenshot_num: int
