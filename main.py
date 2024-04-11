@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import math
+import os
+import shutil
 import time
 import schedule
 import sys
@@ -53,6 +55,11 @@ def main(POST_ID=None) -> None:
     redditid = id(reddit_object)
     post_text = ' '.join(reddit_object['thread_post'])
 
+    if not os.path.exists(f"./assets/temp/{reddit_object['thread_id']}/"):
+        settings.config["settings"]["debug"]["reuse_images"] = False
+        settings.config["settings"]["debug"]["reuse_mp3"] = False
+        settings.config["settings"]["debug"]["reuse_video"] = False
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     reel = length <= 60
@@ -68,20 +75,22 @@ def main(POST_ID=None) -> None:
     video_path = make_final_video(number_of_comments, length, reddit_object, bg_config, reel)
     video_path = compress_video(video_path)
 
-    # video_data, thumbnail_text = get_video_data(post_text)
-    # print("Video title:", video_data['title'])
-    # print("Video description:", video_data['description'])
-    # print("Video tags:", video_data['tags'])
+    video_data, thumbnail_text = get_video_data(post_text)
+    print("Video title:", video_data['title'])
+    print("Video description:", video_data['description'])
+    print("Video tags:", video_data['tags'])
     
-    # thumbnail = generate_image(thumbnail_text, f"./assets/temp/{reddit_object['thread_id']}/thumbnail_image.png")
-    # thumbnail = "thumbnail.png"
-    # thumbnail = add_text(
-    #     thumbnail_path=thumbnail,
-    #     text=video_data["thumbnail_text"],
-    #     save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
-    # )
-    # print("Thumbnail generated successfully at:", thumbnail)
-    # upload_video_to_youtube(video_path, video_data, thumbnail)
+    thumbnail = generate_image(thumbnail_text, f"./assets/temp/{reddit_object['thread_id']}/thumbnail_image.png")
+    thumbnail = add_text(
+        thumbnail_path=thumbnail,
+        text=video_data["thumbnail_text"],
+        save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
+    )
+    print("Thumbnail generated successfully at:", thumbnail)
+    upload_video_to_youtube(video_path, video_data, thumbnail)
+
+    if settings.config["settings"]["debug"]["debug"]:
+        shutil.rmtree(f"./assets/temp/{reddit_object['thread_id']}/")
 
 
 def run_many(times) -> None:
@@ -137,7 +146,7 @@ if __name__ == "__main__":
 
     from video_data_generation.gemini import get_video_data
     from video_data_generation.image_generation import generate_image, add_text
-    # from utils.youtube_uploader import upload_video_to_youtube
+    from utils.youtube_uploader import upload_video_to_youtube
 
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
