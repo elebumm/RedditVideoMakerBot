@@ -11,10 +11,9 @@ The only original thing being done is the editing and gathering of all materials
 
 ... but what if we can automate that process? 🤔
 
-## Disclaimers 🚨
+## Updates 🚨
 
-- **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that
-  you will then have to upload manually.
+- **Finally**, the bot created in this repository can now upload the videos generated to YouTube. It also generates the video title, description, tags & thumbnail!
 
 ## Requirements
 

@@ -44,8 +44,8 @@ class StreamlabsPolly:
                 )
             voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
         body = {"voice": voice, "text": text, "service": "polly"}
-        headers = {"Referer" : "https://streamlabs.com/" }
-        response = requests.post(self.url,  headers=headers,data=body)
+        headers = {"Referer": "https://streamlabs.com/"}
+        response = requests.post(self.url, headers=headers, data=body)
         if not check_ratelimit(response):
             self.run(text, filepath, random_voice)
 
