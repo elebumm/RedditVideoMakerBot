@@ -22,6 +22,8 @@ ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twit
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
 theme = { optional = false, default = "dark", example = "light", options = ["dark", "light", "transparent", ], explanation = "Sets the Reddit theme, either LIGHT or DARK. For story mode you can also use a transparent background." }
+text_font_filename = { optional = false, default = "Roboto-Bold.ttf", example = "Roboto-Bold.ttf", explanation = "The font to be used for the video text." }
+text_font_size = { optional = false, default = 100, example = 100, explanation = "The size of the font to be used for the video text." }
 times_to_run = { optional = false, default = 1, example = 2, explanation = "Used if you want to run multiple times. Set to an int e.g. 4 or 29 or 1", type = "int", nmin = 1, oob_error = "It's very hard to run something less than once." }
 opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
 #transition = { optional = true, default = 0.2, example = 0.2, explanation = "Sets the transition time (in seconds) between the comments. Set to 0 if you want to disable it.", type = "float", nmin = 0, nmax = 2, oob_error = "The transition HAS to be between 0 and 2", input_error = "The opacity HAS to be a decimal number between 0 and 2" }
@@ -38,8 +40,8 @@ reuse_images = { optional = false, type = "bool", default = false, example = fal
 reuse_video = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use already generated video" }
 
 [settings.background]
-background_video = { optional = true, default = "mudrunner", example = "rocket-league", options = ["mudrunner", "granny-remake", ""], explanation = "Sets the background for the video based on game name" }
-background_audio = { optional = true, default = "eerie", example = "chill-summer", options = ["eerie", "mysterious", "hybrid",""], explanation = "Sets the background audio for the video" }
+background_video = { optional = true, default = "mudrunner", example = "granny-remake", explanation = "Sets the background for the video based on game name" }
+background_audio = { optional = true, default = "eerie", example = "hybrid", explanation = "Sets the background audio for the video" }
 background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation="Sets the volume of the background audio. If you don't want background audio, set it to 0.", oob_error = "The volume HAS to be between 0 and 1", input_error = "The volume HAS to be a float number between 0 and 1"}
 enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation="Used if you want to render another video without background audio in a separate folder", input_error = "The value HAS to be true or false"}
 background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Generate a thumbnail for the video (put a thumbnail.png file in the assets/backgrounds directory.)" }

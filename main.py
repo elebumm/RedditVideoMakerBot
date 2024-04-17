@@ -75,7 +75,7 @@ def main(POST_ID=None) -> None:
     video_path = make_final_video(number_of_comments, length, reddit_object, bg_config, reel)
     video_path = compress_video(video_path)
 
-    video_data, thumbnail_text = get_video_data(post_text)
+    video_data, thumbnail_text = get_video_data(post_text, bg_config)
     print("Video title:", video_data['title'])
     print("Video description:", video_data['description'])
     print("Video tags:", video_data['tags'])
@@ -89,7 +89,7 @@ def main(POST_ID=None) -> None:
     print("Thumbnail generated successfully at:", thumbnail)
     upload_video_to_youtube(video_path, video_data, thumbnail)
 
-    if settings.config["settings"]["debug"]["debug"]:
+    if not settings.config["settings"]["debug"]["debug"]:
         shutil.rmtree(f"./assets/temp/{reddit_object['thread_id']}/")
 
 

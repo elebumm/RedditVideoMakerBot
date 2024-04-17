@@ -1,4 +1,3 @@
-import json
 import google.generativeai as genai
 from utils import settings
 
@@ -24,7 +23,41 @@ The description should be clear for an AI image generator model to generate it.
 The video description:
 """
 
+default_tags = [
+    "scary stories",
+    "horror stories",
+    "true scary stories",
+    "ghost stories",
+    "true horror stories",
+    "scary story",
+    "scary",
+    "creepy stories",
+    "horror story",
+    "true stories",
+    "scary true stories",
+    "true ghost stories",
+    "paranormal stories",
+    "disturbing",
+    "scary video",
+    "ghost",
+    "true paranormal stories",
+    "true scary",
+    "scary true",
+]
+
+description_tags = "#Creepy #Scarystories #paranormal #supernatural #horrorstories #creepystories #truescary_stories #reddit_horror_stories #true_horror_stories\n"
+
 model = genai.GenerativeModel('gemini-pro')
+
+def get_credits(bg_config):
+    audio_credits = bg_config['audio'][-1]
+    video_credits = bg_config['video'][-2]
+    credits_template = f"""
+
+        Background audio by - {audio_credits}
+        Background video by - {video_credits}
+    """
+    return credits_template
 
 def get_data(post):
     response = model.generate_content(prompt1 + post)
@@ -39,7 +72,7 @@ def get_thumbnail(post):
     # print('Thumbnail:', thumbnail_response.prompt_feedback)
     return thumbnail_response.text
 
-def get_video_data(post):
+def get_video_data(post, bg_config):
     data = None
     thumbnail = None
     print("Generating video title & description...")
@@ -53,6 +86,11 @@ def get_video_data(post):
         except Exception as e:
             print(e)
             continue
+    
+    if data:
+        data['title'] = "True Scary Stories | " + data['title']
+        data['description'] = description_tags + data['description'] + get_credits(bg_config)
+        data['tags'] = data['tags'] + ', ' + ', '.join(default_tags)
     return data, thumbnail
 
 if __name__ == '__main__':

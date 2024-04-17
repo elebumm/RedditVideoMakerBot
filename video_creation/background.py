@@ -123,7 +123,7 @@ def download_background_audio(background_config: Tuple[str, str, str]):
     new_sound = sound[:]
 
     loops = math.ceil(1800 / sound.duration_seconds)
-    for _ in range(loops):
+    for _ in range(loops-1):
         new_sound += sound
 
     os.remove(f"./assets/backgrounds/audio/{credit}-{filename}")

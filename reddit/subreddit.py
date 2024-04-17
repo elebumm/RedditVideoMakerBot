@@ -91,7 +91,7 @@ def get_subreddit_threads(POST_ID: str):
             threads, subreddit, similarity_scores=similarity_scores
         )
     else:
-        threads = subreddit.hot(limit=25)
+        threads = subreddit.top(time_filter="all")
         submission = get_subreddit_undone(threads, subreddit)
 
     if submission is None:

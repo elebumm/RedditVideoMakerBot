@@ -1,5 +1,6 @@
 import os
 import ffmpeg
+import settings
 
 
 def compress_video(video_full_path):
@@ -8,6 +9,8 @@ def compress_video(video_full_path):
     max_audio_bitrate = 256000
 
     output_file_name = video_full_path[:-4] + '_compressed.mp4'
+    if settings.config["settings"]["debug"]["reuse_video"] and os.path.exists(output_file_name):
+        return output_file_name
 
     probe = ffmpeg.probe(video_full_path)
     # Video duration, in s.

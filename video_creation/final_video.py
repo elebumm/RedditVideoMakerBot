@@ -4,7 +4,7 @@ import os
 import re
 from os.path import exists  # Needs to be imported specifically
 from typing import Final
-from typing import Tuple, Any, Dict
+from typing import Tuple, Dict
 import glob
 
 import ffmpeg
@@ -12,8 +12,6 @@ import translators
 from PIL import Image
 from rich.console import Console
 from rich.progress import track
-from pydub import AudioSegment
-from pydub.playback import play
 
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep

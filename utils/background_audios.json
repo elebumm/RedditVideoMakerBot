@@ -1,18 +1,28 @@
 {
     "__comment": "Supported Backgrounds Audio. Can add/remove background audio here...",
-    "eerie":[
-        "https://www.youtube.com/watch?v=OozBNFEa4PM",
-        "eerie.mp3",
-        "Royalty Free Music"
+    "haunted_forest":[
+        "https://www.youtube.com/watch?v=Yb5XQ9i-gtI",
+        "haunted_forest.mp3",
+        "@RPGAmbientSounds"
     ],
-    "mysterious":[
-        "https://www.youtube.com/watch?v=lRwq7pfA4Gg",
-        "mysterious.mp3",
-        "Royalty Free Music"
+    "scary_forest":[
+        "https://www.youtube.com/watch?v=BzYPUjtEVqs",
+        "scary_forest.mp3",
+        "@GravitySound"
     ],
-    "hybrid":[
-        "https://www.youtube.com/watch?v=QbqkR5VNaU8",
-        "hybrid.mp3",
-        "Royalty Free Music"
+    "night_of_the_dead":[
+        "https://www.youtube.com/watch?v=tmlZeYnfw7g",
+        "night_of_the_dead.mp3",
+        "@MysticalSoundscapes"
+    ],
+    "hades":[
+        "https://www.youtube.com/watch?v=fBR1Qp3njCM",
+        "hades.mp3",
+        "@restforthewicked6842"
+    ],
+    "forest_at_night":[
+        "https://www.youtube.com/watch?v=3TNK916Pjto",
+        "forest_at_night.mp3",
+        "@HawaiiASMRNatureRelaxation"
     ]
 }
