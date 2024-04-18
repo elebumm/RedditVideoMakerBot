@@ -44,7 +44,7 @@ background_thumbnail_font_color = { optional = true, default = "255,255,255", ex
 
 [settings.tts]
 voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
-random_voice = { optional = false, default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
+random_voice = { optional = false, default = true, example = true, type = "bool", options = [true, false,], explanation = "Randomizes the voice used for each comment" }
 elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
 elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
 aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
