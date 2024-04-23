@@ -1,21 +1,21 @@
-#!/bin/bash 
+#!/bin/bash
 
 # If the install fails, then print an error and exit.
 function install_fail() {
-    echo "Installation failed" 
-    exit 1 
-} 
+    echo "Installation failed"
+    exit 1
+}
 
-# This is the help fuction. It helps users withe the options
-function Help(){ 
-    echo "Usage: install.sh [option]" 
-    echo "Options:" 
-    echo "  -h: Show this help message and exit" 
-    echo "  -d: Install only dependencies" 
-    echo "  -p: Install only python dependencies (including playwright)" 
+# This is the help fuction. It helps users with the options
+function Help(){
+    echo "Usage: install.sh [option]"
+    echo "Options:"
+    echo "  -h: Show this help message and exit"
+    echo "  -d: Install only dependencies"
+    echo "  -p: Install only python dependencies (including playwright)"
     echo "  -b: Install just the bot"
     echo "  -l: Install the bot and the python dependencies"
-} 
+}
 
 # Options
 while getopts ":hydpbl" option; do
@@ -42,7 +42,7 @@ while getopts ":hydpbl" option; do
         :)
             echo "Option -$OPTARG requires an argument." >&2 Help exit 1;;
     esac
-done 
+done
 
 # Install dependencies for MacOS
 function install_macos(){
@@ -50,7 +50,7 @@ function install_macos(){
     if [ ! command -v brew &> /dev/null ]; then
         echo "Installing Homebrew"
         # if it's is not installed, then install it in a NONINTERACTIVE way
-        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)" 
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
         # Check for what arcitecture, so you can place path.
         if [[ "uname -m" == "x86_64" ]]; then
             echo "export PATH=/usr/local/bin:$PATH" >> ~/.bash_profile && source ~/.bash_profile
@@ -61,7 +61,7 @@ function install_macos(){
         echo "Homebrew is already installed"
     fi
     # Install the required packages
-    echo "Installing required Packages" 
+    echo "Installing required Packages"
     if [! command --version python3 &> /dev/null ]; then
 	    echo "Installing python3"
 	    brew install python@3.10
@@ -69,72 +69,72 @@ function install_macos(){
 	    echo "python3 already installed."
     fi
     brew install tcl-tk python-tk
-} 
+}
 
 # Function to install for arch (and other forks like manjaro)
-function install_arch(){ 
+function install_arch(){
     echo "Installing required packages"
     sudo pacman -S --needed python3 tk git && python3 -m ensurepip unzip || install_fail
-} 
+}
 
 # Function to install for debian (and ubuntu)
-function install_deb(){ 
+function install_deb(){
     echo "Installing required packages"
     sudo apt install python3 python3-dev python3-tk python3-pip unzip || install_fail
-} 
+}
 
 # Function to install for fedora (and other forks)
-function install_fedora(){ 
-    echo "Installing required packages" 
+function install_fedora(){
+    echo "Installing required packages"
     sudo dnf install python3 python3-tkinter python3-pip python3-devel unzip || install_fail
-} 
+}
 
 # Function to install for centos (and other forks based on it)
 function install_centos(){
     echo "Installing required packages"
     sudo yum install -y python3 || install_fail
     sudo yum install -y python3-tkinter epel-release python3-pip unzip|| install_fail
-} 
+}
 
-function get_the_bot(){ 
-    echo "Downloading the bot" 
+function get_the_bot(){
+    echo "Downloading the bot"
     rm -rf RedditVideoMakerBot-master
     curl -sL https://github.com/elebumm/RedditVideoMakerBot/archive/refs/heads/master.zip -o master.zip
     unzip master.zip
     rm -rf master.zip
-} 
+}
 
 #install python dependencies
-function install_python_dep(){ 
+function install_python_dep(){
     # tell the user that the script is going to install the python dependencies
-    echo "Installing python dependencies" 
+    echo "Installing python dependencies"
     # cd into the directory
     cd RedditVideoMakerBot-master
     # install the dependencies
-    pip3 install -r requirements.txt 
+    pip3 install -r requirements.txt
     # cd out
     cd ..
-} 
+}
 
 # install playwright function
 function install_playwright(){
-    # tell the user that the script is going to install playwright 
+    # tell the user that the script is going to install playwright
     echo "Installing playwright"
     # cd into the directory where the script is downloaded
     cd RedditVideoMakerBot-master
     # run the install script
-    python3 -m playwright install 
-    python3 -m playwright install-deps 
+    python3 -m playwright install
+    python3 -m playwright install-deps
     # give a note
     printf "Note, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues"
     if [ -x "$(command -v pacman)" ]; then
         printf "It seems you are on and Arch based distro.\nTry installing these from the AUR for playwright to run:\nenchant1.6\nicu66\nlibwebp052\n"
     fi
     cd ..
-} 
+}
 
 # Install depndencies
-function install_deps(){ 
+function install_deps(){
     # if the platform is mac, install macos
     if [ "$(uname)" == "Darwin" ]; then
         install_macos || install_fail
@@ -164,30 +164,30 @@ https://github.com/elebumm/RedditVideoMakerBot"
 }
 
 # Main function
-function install_main(){ 
+function install_main(){
     # Print that are installing
-    echo "Installing..." 
-    # if -y (assume yes) continue 
+    echo "Installing..."
+    # if -y (assume yes) continue
     if [[ ASSUME_YES -eq 1 ]]; then
         echo "Assuming yes"
     # else, ask if they want to continue
     else
-        echo "Continue? (y/n)" 
-        read answer 
+        echo "Continue? (y/n)"
+        read answer
         # if the answer is not yes, then exit
         if [ "$answer" != "y" ]; then
-            echo "Aborting" 
+            echo "Aborting"
             exit 1
         fi
-    fi 
+    fi
     # if the -d (only dependencies) options is selected install just the dependencies
     if [[ DEPS_ONLY -eq 1 ]]; then
-        echo "Installing only dependencies" 
+        echo "Installing only dependencies"
         install_deps
     elif [[ PYTHON_ONLY -eq 1 ]]; then
     # if the -p (only python dependencies) options is selected install just the python dependencies and playwright
-        echo "Installing only python dependencies" 
-        install_python_dep 
+        echo "Installing only python dependencies"
+        install_python_dep
         install_playwright
     # if the -b (only the bot) options is selected install just the bot
     elif [[ JUST_BOT -eq 1 ]]; then
@@ -200,9 +200,9 @@ function install_main(){
         install_python_dep
     # else, install everything
     else
-        echo "Installing all" 
-        install_deps 
-        get_the_bot 
+        echo "Installing all"
+        install_deps
+        get_the_bot
         install_python_dep
         install_playwright
     fi
@@ -210,16 +210,16 @@ function install_main(){
     DIR="./RedditVideoMakerBot-master"
     if [ -d "$DIR" ]; then
         printf "\nThe bot is installed, want to run it?"
-        # if -y (assume yes) continue 
+        # if -y (assume yes) continue
         if [[ ASSUME_YES -eq 1 ]]; then
             echo "Assuming yes"
             # else, ask if they want to continue
         else
-            echo "Continue? (y/n)" 
-            read answer 
+            echo "Continue? (y/n)"
+            read answer
             # if the answer is not yes, then exit
             if [ "$answer" != "y" ]; then
-                echo "Aborting" 
+                echo "Aborting"
                 exit 1
             fi
         fi
