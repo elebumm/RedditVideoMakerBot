@@ -112,7 +112,7 @@ function install_python_dep() {
     # cd into the directory
     cd RedditVideoMakerBot-master
     # install the dependencies
-    pip3 install -r requirements.txt
+    pipx install -r requirements.txt
     # cd out
     cd ..
 }
