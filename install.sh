@@ -7,14 +7,15 @@ function install_fail() {
 }
 
 # This is the help fuction. It helps users with the options
+# This is the help fuction. It helps users with the options
 function Help(){
     echo "Usage: install.sh [option]"
     echo "Options:"
-    echo "  -h: Show this help message and exit"
-    echo "  -d: Install only dependencies"
-    echo "  -p: Install only python dependencies (including playwright)"
-    echo "  -b: Install just the bot"
-    echo "  -l: Install the bot and the python dependencies"
+    echo -e "\t-h: Show this help message and exit"
+    echo -e "\t-d: Install only dependencies"
+    echo -e "\t-p: Install only python dependencies (including playwright)"
+    echo -e "\t-b: Install just the bot"
+    echo -e "\t-l: Install the bot and the python dependencies"
 }
 
 # Options
