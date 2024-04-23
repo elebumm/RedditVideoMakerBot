@@ -8,7 +8,7 @@ function install_fail() {
 
 # This is the help fuction. It helps users with the options
 # This is the help fuction. It helps users with the options
-function Help(){
+function Help() {
     echo "Usage: install.sh [option]"
     echo "Options:"
     echo -e "\t-h: Show this help message and exit"
@@ -46,7 +46,7 @@ while getopts ":hydpbl" option; do
 done
 
 # Install dependencies for MacOS
-function install_macos(){
+function install_macos() {
     # Check if homebrew is installed
     if [ ! command -v brew &> /dev/null ]; then
         echo "Installing Homebrew"
@@ -73,31 +73,31 @@ function install_macos(){
 }
 
 # Function to install for arch (and other forks like manjaro)
-function install_arch(){
+function install_arch() {
     echo "Installing required packages"
     sudo pacman -S --needed python3 tk git && python3 -m ensurepip unzip || install_fail
 }
 
 # Function to install for debian (and ubuntu)
-function install_deb(){
+function install_deb() {
     echo "Installing required packages"
     sudo apt install python3 python3-dev python3-tk python3-pip unzip || install_fail
 }
 
 # Function to install for fedora (and other forks)
-function install_fedora(){
+function install_fedora() {
     echo "Installing required packages"
     sudo dnf install python3 python3-tkinter python3-pip python3-devel unzip || install_fail
 }
 
 # Function to install for centos (and other forks based on it)
-function install_centos(){
+function install_centos() {
     echo "Installing required packages"
     sudo yum install -y python3 || install_fail
     sudo yum install -y python3-tkinter epel-release python3-pip unzip|| install_fail
 }
 
-function get_the_bot(){
+function get_the_bot() {
     echo "Downloading the bot"
     rm -rf RedditVideoMakerBot-master
     curl -sL https://github.com/elebumm/RedditVideoMakerBot/archive/refs/heads/master.zip -o master.zip
@@ -106,7 +106,7 @@ function get_the_bot(){
 }
 
 #install python dependencies
-function install_python_dep(){
+function install_python_dep() {
     # tell the user that the script is going to install the python dependencies
     echo "Installing python dependencies"
     # cd into the directory
@@ -118,7 +118,7 @@ function install_python_dep(){
 }
 
 # install playwright function
-function install_playwright(){
+function install_playwright() {
     # tell the user that the script is going to install playwright
     echo "Installing playwright"
     # cd into the directory where the script is downloaded
@@ -135,7 +135,7 @@ function install_playwright(){
 }
 
 # Install depndencies
-function install_deps(){
+function install_deps() {
     # if the platform is mac, install macos
     if [ "$(uname)" == "Darwin" ]; then
         install_macos || install_fail
@@ -165,7 +165,7 @@ https://github.com/elebumm/RedditVideoMakerBot"
 }
 
 # Main function
-function install_main(){
+function install_main() {
     # Print that are installing
     echo "Installing..."
     # if -y (assume yes) continue
