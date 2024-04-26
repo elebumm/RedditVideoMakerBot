@@ -38,10 +38,14 @@ def save_text_to_mp3(reddit_obj) -> Tuple[int, int]:
         tuple[int,int]: (total length of the audio, the number of comments audio was generated for)
     """
 
-    if settings.config["settings"]["debug"]["reuse_mp3"]:
+    if settings.config["settings"]["debug"]["reuse_separate_mp3s"]:
         comments = len(glob.glob(f"./assets/temp/{reddit_obj['thread_id']}/mp3/*")) - 2
-        audio = AudioSegment.from_mp3(f"./assets/temp/{reddit_obj['thread_id']}/audio.mp3")
-        return audio.duration_seconds, comments
+        duration = 0
+        audios = glob.glob(f"./assets/temp/{reddit_obj['thread_id']}/mp3/*")
+        for audio in audios:
+            audio = AudioSegment.from_mp3(audio)
+            duration += audio.duration_seconds + settings.config["settings"]["tts"]["silence_duration"]
+        return duration, comments
 
     voice = settings.config["settings"]["tts"]["voice_choice"]
     if str(voice).casefold() in map(lambda _: _.casefold(), TTSProviders):

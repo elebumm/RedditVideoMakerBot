@@ -54,11 +54,14 @@ def main(POST_ID=None) -> None:
     reddit_object = get_subreddit_threads(POST_ID)
     redditid = id(reddit_object)
     post_text = ' '.join(reddit_object['thread_post'])
+    print(reddit_object['thread_post'])
+    print("================================================================")
+    print(post_text)
 
     if not os.path.exists(f"./assets/temp/{reddit_object['thread_id']}/"):
-        settings.config["settings"]["debug"]["reuse_images"] = False
-        settings.config["settings"]["debug"]["reuse_mp3"] = False
-        settings.config["settings"]["debug"]["reuse_video"] = False
+        for key in settings.config["settings"]["debug"].keys():
+            if key != "debug":
+                settings.config["settings"]["debug"][key] = False
 
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)

@@ -1,6 +1,6 @@
 import os
 import ffmpeg
-import settings
+from utils import settings
 
 
 def compress_video(video_full_path):

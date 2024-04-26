@@ -18,6 +18,8 @@ min_comments = { default = 20, optional = false, nmin = 10, type = "int", explan
 [ai]
 ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
 ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
+gemini_api_key = { optional = false, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Gemini API key" }
+openai_api_key = { optional = false, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "OpenAI API key" }
 
 [settings]
 allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
@@ -35,8 +37,10 @@ run_every = { optional = false, default = 24, example = 5, explanation = "How of
 
 [settings.debug]
 debug = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Debug mode (Whether to delete temp files after creating the video or not)" }
-reuse_mp3 = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use mp3 files from temp data" }
+reuse_separate_mp3s = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use mp3 files from temp data" }
+reuse_mp3 = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use the whole mp3 file from temp data" }
 reuse_images = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use images from temp data" }
+reuse_background = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use previously generated background audio & video." }
 reuse_video = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use already generated video" }
 
 [settings.background]
@@ -66,6 +70,3 @@ python_voice = { optional = false, default = "1", example = "1", explanation = "
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
 no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
-
-[settings.gemini]
-gemini_api_key = { optional = false, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Gemini API key" }
