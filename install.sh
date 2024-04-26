@@ -109,12 +109,13 @@ function get_the_bot() {
 function install_python_dep() {
     # tell the user that the script is going to install the python dependencies
     echo "Installing python dependencies"
-    # cd into the directory
-    cd RedditVideoMakerBot-master
     # install the dependencies
-    pipx install -r requirements.txt
-    # cd out
-    cd ..
+    DEP_LIST=./RedditVideoMakerBot-master/requirements.txt
+    if [[ -f $DEP_LIST ]]; then
+        while read -r DEPS; do
+            pipx install $DEPS
+        done < "$DEP_LIST"
+    fi
 }
 
 # install playwright function
