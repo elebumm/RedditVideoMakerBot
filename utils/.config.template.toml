@@ -42,6 +42,7 @@ reuse_mp3 = { optional = false, type = "bool", default = false, example = false,
 reuse_images = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use images from temp data" }
 reuse_background = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use previously generated background audio & video." }
 reuse_video = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Use already generated video" }
+no_youtube = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Upload to youtube" }
 
 [settings.background]
 background_video = { optional = true, default = "mudrunner", example = "granny-remake", explanation = "Sets the background for the video based on game name" }

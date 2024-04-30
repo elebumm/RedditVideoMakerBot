@@ -54,8 +54,8 @@ def get_credits(bg_config):
     video_credits = bg_config['video'][-2]
     credits_template = f"""
 
-Background audio by - {audio_credits}
-Background video by - {video_credits}
+Background audio by - @{audio_credits}
+Background video by - @{video_credits}
 """
     return credits_template
 

@@ -86,6 +86,8 @@ def name_normalize(name: str) -> str:
 
 def prepare_background(reddit_id: str, W: int, H: int) -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
+    if settings.config["settings"]["debug"]["reuse_background"]:
+        return output_path
     output = (
         ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4")
         .filter("crop", f"ih*({W}/{H})", "ih")
@@ -224,11 +226,12 @@ def make_final_video(
     # louder_audio = audio + 10
     # louder_audio.export(f"assets/temp/{reddit_id}/audio.mp3", format='mp3')
 
+    print("Merging background audio...")
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
     final_audio = merge_background_audio(audio, reddit_id)
 
     image_clips = list()
-
+    print("Adding image clips...")
     image_clips.insert(
         0,
         ffmpeg.input(f"assets/temp/{reddit_id}/png/title.png")["v"].filter(
@@ -322,6 +325,7 @@ def make_final_video(
             )
             current_time += audio_clips_durations[i]
 
+    print("Added clips successfully.")
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
     title_thumb = reddit_obj["thread_title"]
@@ -373,6 +377,7 @@ def make_final_video(
             print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     text = f"Background by {background_config['video'][2]}"
+    print("Drawing text:", text)
     background_clip = ffmpeg.drawtext(
         background_clip,
         text=text,
@@ -395,11 +400,12 @@ def make_final_video(
 
     defaultPath = f"results/{subreddit}"
     with ProgressFfmpeg(length, on_update_example) as progress:
-        path = defaultPath + f"/{filename}"
+        path = defaultPath + f"/{filename[:15]}"
         path = (
-            path[:251] + ".mp4"
+            path[:120] + ".mp4"
         )  # Prevent a error by limiting the path length, do not change this.
         try:
+            print(" DEBUG PATH:", path)
             ffmpeg.output(
                 background_clip,
                 final_audio,
@@ -417,9 +423,9 @@ def make_final_video(
                 capture_stdout=False,
                 capture_stderr=False,
             )
-        except ffmpeg.Error as e:
-            print(e.stderr.decode("utf8"))
-            exit(1)
+        except:
+            save_data(subreddit, filename + ".mp4", title, idx, background_config["video"][2])
+            return False
     old_percentage = pbar.n
     pbar.update(100 - old_percentage)
     if allowOnlyTTSFolder:

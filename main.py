@@ -53,14 +53,14 @@ def main(POST_ID=None) -> None:
     global redditid, reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
     redditid = id(reddit_object)
+    if not (settings.config["settings"]["debug"]["reuse_images"] and
+            settings.config["settings"]["debug"]["reuse_separate_mp3s"]):
+        reddit_object['thread_post'] = proofread_post(reddit_object['thread_post'])
     post_text = ' '.join(reddit_object['thread_post'])
-    print(reddit_object['thread_post'])
-    print("================================================================")
-    print(post_text)
 
     if not os.path.exists(f"./assets/temp/{reddit_object['thread_id']}/"):
         for key in settings.config["settings"]["debug"].keys():
-            if key != "debug":
+            if key != "debug" and key != "no_youtube":
                 settings.config["settings"]["debug"][key] = False
 
     length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -68,14 +68,21 @@ def main(POST_ID=None) -> None:
     reel = length <= 60
 
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments, reel)
-    bg_config = {
-        "video": get_background_config("video"),
-        "audio": get_background_config("audio"),
-    }
-    download_background_video(bg_config["video"])
-    download_background_audio(bg_config["audio"])
-    chop_background(bg_config, length, reddit_object)
+    if not settings.config["settings"]["debug"]["reuse_background"]:
+        bg_config = {
+            "video": get_background_config("video"),
+            "audio": get_background_config("audio"),
+        }
+        download_background_video(bg_config["video"])
+        download_background_audio(bg_config["audio"])
+        chop_background(bg_config, length, reddit_object)
+    else:
+        bg_config = {
+            "video": ["debug mode", "debug mode", "debug mode"],
+            "audio": ["debug mode", "debug mode", "debug mode"],
+        }
     video_path = make_final_video(number_of_comments, length, reddit_object, bg_config, reel)
+    if not video_path: return False
     video_path = compress_video(video_path)
 
     video_data, thumbnail_text = get_video_data(post_text, bg_config)
@@ -90,10 +97,12 @@ def main(POST_ID=None) -> None:
         save_path=f"./assets/temp/{reddit_object['thread_id']}/thumbnail.png"
     )
     print("Thumbnail generated successfully at:", thumbnail)
-    upload_video_to_youtube(video_path, video_data, thumbnail)
+    if not settings.config["settings"]["debug"]["no_youtube"]:
+        upload_video_to_youtube(video_path, video_data, thumbnail)
 
     if not settings.config["settings"]["debug"]["debug"]:
         shutil.rmtree(f"./assets/temp/{reddit_object['thread_id']}/")
+    return True
 
 
 def run_many(times) -> None:
@@ -122,10 +131,13 @@ def run():
             )
             main(post_id)
             Popen("cls" if name == "nt" else "clear", shell=True).wait()
-    elif config["settings"]["times_to_run"]:
-        run_many(config["settings"]["times_to_run"])
+    # elif config["settings"]["times_to_run"]:
+    #     run_many(config["settings"]["times_to_run"])
     else:
-        main()
+        while True:
+            status = main()
+            print("Status:", status)
+            if status: break
     
     print_substep("The video was created successfully! 🎉", style="bold green")
     print_substep(
@@ -149,7 +161,10 @@ if __name__ == "__main__":
 
     from video_data_generation.gemini import get_video_data
     from video_data_generation.image_generation import generate_image, add_text
-    from utils.youtube_uploader import upload_video_to_youtube
+    from utils.proofreading import proofread_post
+
+    if not settings.config["settings"]["debug"]["no_youtube"]:
+        from utils.youtube_uploader import upload_video_to_youtube
 
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
