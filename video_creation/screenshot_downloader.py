@@ -1,5 +1,7 @@
+import os
 import json
 import re
+
 from pathlib import Path
 from typing import Dict, Final
 
@@ -12,9 +14,9 @@ from utils.console import print_step, print_substep
 from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 from utils.videos import save_data
+from video_creation.final_video import name_normalize
 
 __all__ = ["download_screenshots_of_reddit_posts"]
-
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     """Downloads screenshots of reddit posts as seen on the web. Downloads to assets/temp/png
@@ -23,6 +25,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to download
     """
+
+    if settings.config["settings"]["storymodemethod"] == 0:
+        return
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
@@ -167,42 +172,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             )
         else:
             print_substep("Skipping translation...")
-
-        postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
-
-
-        try:
-            if settings.config["settings"]["zoom"] != 1:
-                # store zoom settings
-                zoom = settings.config["settings"]["zoom"]
-                # zoom the body of the page
-                page.evaluate("document.body.style.zoom=" + str(zoom))
-                # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                location = page.locator('[data-test-id="post-content"]').bounding_box()
-                for i in location:
-                    location[i] = float("{:.2f}".format(location[i] * zoom))
-                page.screenshot(clip=location, path=postcontentpath)
-            else:
-                page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
-
-        except Exception as e:
-            print_substep("Something went wrong!", style="red")
-            resp = input(
-                "Something went wrong with making the screenshots! Do you want to skip the post? (y/n) "
-            )
-
-            if resp.casefold().startswith("y"):
-                save_data("", "", "skipped", reddit_id, "")
-                print_substep(
-                    "The post is successfully skipped! You can now restart the program and this post will skipped.",
-                    "green",
-                )
-
-            resp = input("Do you want the error traceback for debugging purposes? (y/n)")
-            if not resp.casefold().startswith("y"):
-                exit()
-
-            raise e
 
         if storymode and not mememode:
             page.locator('[data-click-id="text"]').first.screenshot(
