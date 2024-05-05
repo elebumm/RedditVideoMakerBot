@@ -29,7 +29,7 @@ from video_creation.voices import save_text_to_mp3
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-__VERSION__ = "3.2.1-Cyteon-Dev-Fork"
+__VERSION__ = "3.2.1"
 
 print(
     """
