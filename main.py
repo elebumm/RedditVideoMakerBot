@@ -66,21 +66,13 @@ def main(POST_ID=None) -> None:
 
 
 def run_many(times) -> None:
-    if not settings.config["settings"]["mememode"]:
-        for x in range(1, times + 1):
-            print_step(
-                f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
-            )  # correct 1st 2nd 3rd 4th 5th....
-            main()
-            Popen("cls" if name == "nt" else "clear", shell=True).wait()
-    else:
-        for x in range(1, times + 1):
-            print_step(
-                f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
-            )  # correct 1st 2nd 3rd 4th 5th....
-            main()
-            Popen("cls" if name == "nt" else "clear", shell=True).wait()
-
+    for x in range(1, times + 1):
+        print_step(
+            f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
+        )  # correct 1st 2nd 3rd 4th 5th....
+        main()
+        Popen("cls" if name == "nt" else "clear", shell=True).wait()
+    if settings.config["settings"]["mememode"]:
         make_meme_video()
 
 def make_meme_video():
