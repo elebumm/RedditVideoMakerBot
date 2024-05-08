@@ -203,7 +203,7 @@ def make_final_video(
             "No audio clips to gather. Please use a different TTS or post."
         )  # This is to fix the TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
         exit()
-    if settings.config["settings"]["storymode"]:
+    if settings.config["settings"]["storymode"] and not settings.config["settings"]["mememode"]:
         if settings.config["settings"]["storymodemethod"] == 0:
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
             audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
@@ -231,7 +231,7 @@ def make_final_video(
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
     ffmpeg.output(
         audio_concat, f"assets/temp/{reddit_id}/audio.mp3", **{"b:a": "192k"}
-    ).overwrite_output().run(quiet=True)
+    ).overwrite_output().run(quiet=False)
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
@@ -241,7 +241,7 @@ def make_final_video(
 
     image_clips = list()
 
-    if settings.config["settings"]["storymode"]:
+    if not settings.config["settings"]["mememode"] and settings.config["settings"]["storymodemethod"] == 1:
         Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
         
         # Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.

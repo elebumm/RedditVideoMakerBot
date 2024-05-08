@@ -1,3 +1,4 @@
+import os
 from utils import settings
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips
