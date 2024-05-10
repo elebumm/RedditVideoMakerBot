@@ -1,11 +1,9 @@
-#!/usr/bin/env python
 import math
 import sys
 from os import name
 from pathlib import Path
 from subprocess import Popen
 from typing import NoReturn
-
 from prawcore import ResponseException
 from utils.console import print_substep
 from reddit.subreddit import get_subreddit_threads
@@ -14,16 +12,20 @@ from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
+from video_creation.final_video import make_final_video
+from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
+from video_creation.voices import save_text_to_mp3
+from utils.ffmpeg_install import ffmpeg_install
+import argparse
+
+#!/usr/bin/env python
+
 from video_creation.background import (
     download_background_video,
     download_background_audio,
     chop_background,
     get_background_config,
 )
-from video_creation.final_video import make_final_video
-from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
-from video_creation.voices import save_text_to_mp3
-from utils.ffmpeg_install import ffmpeg_install
 
 __VERSION__ = "3.2.1"
 
@@ -80,6 +82,12 @@ def shutdown() -> NoReturn:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Reddit Video Maker Bot")
+    parser.add_argument("--post-id", help="Specify the post ID")
+    parser.add_argument("--run-many", type=int, help="Run the program multiple times")
+    parser.add_argument("--id")
+    args = parser.parse_args()
+
     if sys.version_info.major != 3 or sys.version_info.minor not in [10, 11]:
         print(
             "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
@@ -102,16 +110,10 @@ if __name__ == "__main__":
         )
         sys.exit()
     try:
-        if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
-                index += 1
-                print_step(
-                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
-                )
-                main(post_id)
-                Popen("cls" if name == "nt" else "clear", shell=True).wait()
-        elif config["settings"]["times_to_run"]:
-            run_many(config["settings"]["times_to_run"])
+        if args.post_id:
+            main(args.post_id)
+        elif args.run_many:
+            run_many(args.run_many)
         else:
             main()
     except KeyboardInterrupt:
