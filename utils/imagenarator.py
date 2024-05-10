@@ -1,9 +1,10 @@
+import os
 import re
 import textwrap
-import os
 
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
+
 from TTS.engine_wrapper import process_text
 
 

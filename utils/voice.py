@@ -4,10 +4,10 @@ import time as pytime
 from datetime import datetime
 from time import sleep
 
+from cleantext import clean
 from requests import Response
 
 from utils import settings
-from cleantext import clean
 
 if sys.version_info[0] >= 3:
     from datetime import timezone
