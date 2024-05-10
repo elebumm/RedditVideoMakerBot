@@ -12,10 +12,6 @@ from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step
 from utils.id import id
 from utils.version import checkversion
-from video_creation.final_video import make_final_video
-from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
-from video_creation.voices import save_text_to_mp3
-from utils.ffmpeg_install import ffmpeg_install
 import argparse
 
 #!/usr/bin/env python
@@ -26,6 +22,10 @@ from video_creation.background import (
     chop_background,
     get_background_config,
 )
+from video_creation.final_video import make_final_video
+from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
+from video_creation.voices import save_text_to_mp3
+from utils.ffmpeg_install import ffmpeg_install
 
 __VERSION__ = "3.2.1"
 
