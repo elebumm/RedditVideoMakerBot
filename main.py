@@ -95,6 +95,13 @@ if __name__ == "__main__":
         sys.exit()
     ffmpeg_install()
     directory = Path().absolute()
+    if args.post_id:
+        main(args.post_id)
+    elif args.run_many:
+        run_many(args.run_many)
+    else:
+        main()
+
     config = settings.check_toml(
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
@@ -120,12 +127,6 @@ if __name__ == "__main__":
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         elif config["settings"]["times_to_run"]:
             run_many(config["settings"]["times_to_run"])
-        if args.post_id:
-            main(args.post_id)
-        elif args.run_many:
-            run_many(args.run_many)
-        else:
-            main()
     except KeyboardInterrupt:
         shutdown()
     except ResponseException:
