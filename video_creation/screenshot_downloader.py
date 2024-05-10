@@ -103,9 +103,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.goto("https://www.reddit.com/login", timeout=0)
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.wait_for_load_state()
-
-        page.locator(f'input[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator(f'input[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+        
+        page.locator('[autocomplete="username"]').fill(settings.config["reddit"]["creds"]["username"])
+        page.locator('[autocomplete="current-password"]').fill(settings.config["reddit"]["creds"]["password"])
         page.get_by_role("button", name="Log In").click()
         page.wait_for_timeout(5000)
 
@@ -173,7 +173,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         else:
             print_substep("Skipping translation...")
 
-        if mememode or settings.config["settings"]["storymodemethod"] == 0:
+        if mememode or settings.config["settings"]["storymodemethod"] == 0 and settings.config["settings"]["storymode"]:
             postcontentpath = f"assets/temp/{reddit_id}/png/title.png"
             try:
                 if settings.config["settings"]["zoom"] != 1:
@@ -227,7 +227,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f"https://www.reddit.com{comment['comment_url']}")
+                page.goto(f"https://www.reddit.com/{comment['comment_url']}")
 
                 # translate code
 
@@ -247,10 +247,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         zoom = settings.config["settings"]["zoom"]
                         # zoom the body of the page
                         page.evaluate("document.body.style.zoom=" + str(zoom))
+                        
                         # scroll comment into view
-                        page.locator(f"#t1_{comment['comment_id']}").scroll_into_view_if_needed()
+                        page.locator(f"#thing_t1_{comment['comment_id']} > div.entry.unvoted").scroll_into_view_if_needed()
                         # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                        location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        location = page.locator(f"#thing_t1_{comment['comment_id']} > div.entry.unvoted").bounding_box()#thing_t1_l37rczw > div.entry.unvoted
+                        
                         for i in location:
                             location[i] = float("{:.2f}".format(location[i] * zoom))
                         page.screenshot(

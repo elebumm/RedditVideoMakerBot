@@ -241,7 +241,7 @@ def make_final_video(
 
     image_clips = list()
 
-    if not settings.config["settings"]["mememode"] and settings.config["settings"]["storymodemethod"] == 1:
+    if not settings.config["settings"]["mememode"]:
         Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
         
         # Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
