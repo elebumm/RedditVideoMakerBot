@@ -128,6 +128,8 @@ if __name__ == "__main__":
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         elif config["settings"]["times_to_run"]:
             run_many(config["settings"]["times_to_run"])
+        else:
+            main()
     except KeyboardInterrupt:
         shutdown()
     except ResponseException:
