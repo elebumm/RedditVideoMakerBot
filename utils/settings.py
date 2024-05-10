@@ -1,6 +1,7 @@
 import re
-from typing import Tuple, Dict
 from pathlib import Path
+from typing import Tuple, Dict
+
 import toml
 from rich.console import Console
 

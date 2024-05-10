@@ -1,9 +1,12 @@
 import multiprocessing
 import os
 import re
+import tempfile
+import threading
+import time
 from os.path import exists  # Needs to be imported specifically
 from typing import Final
-from typing import Tuple, Any, Dict
+from typing import Tuple, Dict
 
 import ffmpeg
 import translators
@@ -11,15 +14,11 @@ from PIL import Image
 from rich.console import Console
 from rich.progress import track
 
+from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
-from utils import settings
-
-import tempfile
-import threading
-import time
 
 console = Console()
 

@@ -14,14 +14,12 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
-
 DEFAULT_MAX_LENGTH: int = (
     50  # Video length variable, edit this on your own risk. It should work, but it's not supported
 )
 
 
 class TTSEngine:
-
     """Calls the given TTS engine to reduce code duplication and allow multiple TTS engines.
 
     Args:
