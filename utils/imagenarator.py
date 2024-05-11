@@ -16,6 +16,8 @@ def draw_multiple_line_text(
     """
     Draw multiline text over given image
     """
+    # TODO: Optimize code for comments
+
     draw = ImageDraw.Draw(image)
     Fontperm = font.getsize(text)
     image_width, image_height = image.size
@@ -25,10 +27,7 @@ def draw_multiple_line_text(
         line_width, line_height = font.getsize(line)
         if transparent:
             shadowcolor = "black"
-            for i in range(
-                1, 
-                5 if settings.config["storymode"] else 8 # 5 was the normal value but increased to 8 for stuff like askreddit due to clipping
-                ):
+            for i in range(1, 5):
                 draw.text(
                     ((image_width - line_width) / 2 - i, y - i),
                     line,

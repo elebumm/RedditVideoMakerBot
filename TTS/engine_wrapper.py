@@ -93,7 +93,7 @@ class TTSEngine:
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
-            os.makedirs("assets/temp/" + self.redditid + "/png")
+            os.makedirs("assets/temp/" + self.redditid + "/png", exist_ok=True)
             for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
@@ -107,6 +107,7 @@ class TTSEngine:
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
+                    # TODO: Maybe move this somewhere better?
                     comment_image_maker((0, 0, 0, 0), self.reddit_object, comment["comment_body"], idx, (255, 255, 255), transparent=True)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
