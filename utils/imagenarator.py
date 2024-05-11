@@ -2,6 +2,8 @@ import os
 import re
 import textwrap
 
+from utils import settings
+
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 
@@ -23,7 +25,10 @@ def draw_multiple_line_text(
         line_width, line_height = font.getsize(line)
         if transparent:
             shadowcolor = "black"
-            for i in range(1, 5):
+            for i in range(
+                1, 
+                5 if settings.config["storymode"] else 8 # 5 was the normal value but increased to 8 for stuff like askreddit due to clipping
+                ):
                 draw.text(
                     ((image_width - line_width) / 2 - i, y - i),
                     line,
@@ -62,21 +67,30 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
 
     if transparent:
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
-        tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
     else:
-        tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)  # for title
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 100)
     size = (1920, 1080)
-
-    image = Image.new("RGBA", size, theme)
-
-    # for title
-    draw_multiple_line_text(image, title, tfont, txtclr, padding, wrap=30, transparent=transparent)
-
-    image.save(f"assets/temp/{id}/png/title.png")
 
     for idx, text in track(enumerate(texts), "Rendering Image"):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
         draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
         image.save(f"assets/temp/{id}/png/img{idx}.png")
+
+def comment_image_maker(theme, reddit_obj: dict, text, idx, txtclr, padding=5, transparent=False) -> None:
+    """
+    Render Images for video
+    """
+    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+
+    if transparent:
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
+    else:
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 100)
+    size = (1920, 1080)
+
+    #for idx, text in track(enumerate(texts), "Rendering Image"):
+    image = Image.new("RGBA", size, theme)
+    text = process_text(text, False)
+    draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
+    image.save(f"assets/temp/{id}/png/comment_{idx}.png")

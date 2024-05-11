@@ -14,6 +14,8 @@ from utils import settings
 from utils.console import print_step, print_substep
 from utils.voice import sanitize_text
 
+
+
 DEFAULT_MAX_LENGTH: int = (
     50  # Video length variable, edit this on your own risk. It should work, but it's not supported
 )
@@ -52,7 +54,10 @@ class TTSEngine:
     def add_periods(
         self,
     ):  # adds periods to the end of paragraphs (where people often forget to put them) so tts doesn't blend sentences
+        i = 1
+
         for comment in self.reddit_object["comments"]:
+            
             # remove links
             regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
             comment["comment_body"] = re.sub(regex_urls, " ", comment["comment_body"])
@@ -67,6 +72,8 @@ class TTSEngine:
             comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
 
     def run(self) -> Tuple[int, int]:
+        from utils.imagenarator import comment_image_maker
+        
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
 
@@ -86,6 +93,7 @@ class TTSEngine:
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
+            os.makedirs("assets/temp/" + self.redditid + "/png")
             for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
@@ -98,6 +106,8 @@ class TTSEngine:
                     self.split_post(comment["comment_body"], idx)  # Split the comment
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
+
+                    comment_image_maker((0, 0, 0, 0), self.reddit_object, comment["comment_body"], idx, (255, 255, 255), transparent=True)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
