@@ -75,7 +75,8 @@ function install_macos() {
 # Function to install for arch (and other forks like manjaro)
 function install_arch() {
     echo "Installing required packages"
-    sudo pacman -S --needed python3 python-pipx tk git && python3 -m ensurepip unzip || install_fail
+    sudo pacman -S --needed python3 python-pipx tk git unzip
+    python -m ensurepip || install_fail
 }
 
 # Function to install for debian (and ubuntu)
@@ -93,8 +94,7 @@ function install_fedora() {
 # Function to install for centos (and other forks based on it)
 function install_centos() {
     echo "Installing required packages"
-    sudo yum install -y python3 || install_fail
-    sudo yum install -y python3-tkinter pipx epel-release python3-pip unzip|| install_fail
+    sudo yum install -y python3-tkinter pipx epel-release python3-pip unzip python3 || install_fail
 }
 
 function get_the_bot() {
