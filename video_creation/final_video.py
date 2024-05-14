@@ -20,6 +20,7 @@ from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+from utils.process_post import split_text
 
 from pathlib import Path
 
@@ -112,7 +113,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
 
 # The following function is based on code under: Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
 def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
-    print_step(f"Creating fancy thumbnail for {text}")
+    print_step(f"Creating fancy thumbnail for: {text}")
     font_title_size = 47
     font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
     image_width, image_height = image.size
@@ -299,19 +300,33 @@ def make_final_video(
             )
             current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
+            total_audio_duration = float(
+                ffmpeg.probe(f"assets/temp/{reddit_id}/audio.mp3")["format"]["duration"]
+            ) - float(
+                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]
+            )
+
+            text = " ".join(reddit_obj["thread_post"])
+            number_of_clips_splitted = len(split_text(text))
+
+            # TODO:  Fix that it sometimes goes out of sync
+            for i in track(range(0, number_of_clips_splitted + 1), "Collecting the image files..."):
+                time_for_clip = total_audio_duration/(number_of_clips_splitted+1)
+                if i == 0:
+                    time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
                         "scale", screenshot_width, -1
                     )
                 )
+
                 background_clip = background_clip.overlay(
                     image_clips[i],
-                    enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
+                    enable=f"between(t,{current_time},{current_time + time_for_clip})",
                     x="(main_w-overlay_w)/2",
                     y="(main_h-overlay_h)/2",
                 )
-                current_time += audio_clips_durations[i]
+                current_time += time_for_clip
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(

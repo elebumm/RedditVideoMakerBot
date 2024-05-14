@@ -2,12 +2,11 @@ import os
 import re
 import textwrap
 
-from utils import settings
-
 from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 
 from TTS.engine_wrapper import process_text
+from utils.process_post import split_text
 
 
 def draw_multiple_line_text(
@@ -60,9 +59,11 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     """
     Render Images for video
     """
-    title = process_text(reddit_obj["thread_title"], False)
+
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+
+    texts = split_text(" ".join(texts))
 
     if transparent:
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
