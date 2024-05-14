@@ -125,8 +125,8 @@ function install_playwright() {
     # cd into the directory where the script is downloaded
     cd RedditVideoMakerBot-master
     # run the install script
-    python3 -m playwright install
-    python3 -m playwright install-deps
+    pipx run playwright install
+    pipx run playwright install-deps
     # give a note
     printf "Note, if these gave any errors, playwright may not be officially supported on your OS, check this issues page for support\nhttps://github.com/microsoft/playwright/issues"
     if [ -x "$(command -v pacman)" ]; then
