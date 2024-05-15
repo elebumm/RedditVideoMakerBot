@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 
 from TTS.engine_wrapper import process_text
+from utils.console import print_step, print_substep
 from utils.process_post import split_text
 
 
@@ -77,20 +78,28 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
         draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
         image.save(f"assets/temp/{id}/png/img{idx}.png")
 
-def comment_image_maker(theme, reddit_obj: dict, text, idx, txtclr, padding=5, transparent=False) -> None:
+def comment_image_maker(theme, reddit_obj: dict, comments, txtclr, padding=5, transparent=False) -> None:
     """
     Render Images for video
     """
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
     if transparent:
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 0)
     else:
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 100)
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 0)
     size = (1920, 1080)
 
-    #for idx, text in track(enumerate(texts), "Rendering Image"):
-    image = Image.new("RGBA", size, theme)
-    text = process_text(text, False)
-    draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
-    image.save(f"assets/temp/{id}/png/comment_{idx}.png")
+    print_step("Rendering Images")
+
+    i = 0
+    for comment in comments:
+        texts = split_text(comment)
+        for text in texts:
+            image = Image.new("RGBA", size, theme)
+            text = process_text(text, False)
+            draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
+            print_substep("Made image: " + str(i))
+            image.save(f"assets/temp/{id}/png/comment_{i}.png")
+
+            i+=1

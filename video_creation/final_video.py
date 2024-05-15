@@ -328,20 +328,37 @@ def make_final_video(
                 )
                 current_time += time_for_clip
     else:
-        for i in range(0, number_of_clips + 1):
+        total_audio_duration = float(
+            ffmpeg.probe(f"assets/temp/{reddit_id}/audio.mp3")["format"]["duration"]
+        ) - float(
+            ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]
+        )
+
+        dir_path = f"assets/temp/{reddit_id}/png"
+        num_files = len(
+            [
+                f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))
+                ]
+            )
+
+        for i in range(0, num_files):
+            time_for_clip = total_audio_duration/(num_files)
             image_clips.append(
                 ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")["v"].filter(
                     "scale", screenshot_width, -1
                 )
             )
+            if i == 0:
+                time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
+
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
             background_clip = background_clip.overlay(
                 image_overlay,
-                enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
+                enable=f"between(t,{current_time},{current_time + time_for_clip})",
                 x="(main_w-overlay_w)/2",
                 y="(main_h-overlay_h)/2",
             )
-            current_time += audio_clips_durations[i]
+            current_time += time_for_clip
 
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])

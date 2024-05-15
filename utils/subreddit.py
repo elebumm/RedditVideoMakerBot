@@ -90,7 +90,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
         ),
         subreddit,
         times_checked=index,
-    )  # all the videos in hot have already been done
+    )  # all the videos in top have already been done
 
 
 def already_done(done_videos: list, submission) -> bool:
