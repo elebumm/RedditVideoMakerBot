@@ -85,9 +85,9 @@ def comment_image_maker(theme, reddit_obj: dict, comments, txtclr, padding=5, tr
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
     if transparent:
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 0)
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 100)
     else:
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 0)
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 100)
     size = (1920, 1080)
 
     print_step("Rendering Images")
