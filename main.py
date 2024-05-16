@@ -114,8 +114,7 @@ if __name__ == "__main__":
         print_markdown("## Invalid credentials")
         print_markdown("Please check your credentials in the config.toml file")
         shutdown()
-    except Exception as err:
-        config["settings"]["tts"]["tiktok_sessionid"] = "REDACTED"
+    except Exception as err:        
         config["settings"]["tts"]["elevenlabs_api_key"] = "REDACTED"
         print_step(
             f"Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n"
