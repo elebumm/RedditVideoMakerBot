@@ -95,16 +95,6 @@ if __name__ == "__main__":
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
     config is False and sys.exit()
-
-    if (
-        not settings.config["settings"]["tts"]["tiktok_sessionid"]
-        or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
-    ) and config["settings"]["tts"]["voice_choice"] == "tiktok":
-        print_substep(
-            "TikTok voice requires a sessionid! Check our documentation on how to obtain one.",
-            "bold red",
-        )
-        sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
             for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
