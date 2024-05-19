@@ -58,6 +58,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         bgcolor = (255, 255, 255, 255)
         txtcolor = (0, 0, 0)
         transparent = False
+    
     if storymode and settings.config["settings"]["storymodemethod"] == 1:
         # for idx,item in enumerate(reddit_object["thread_post"]):
         print_substep("Generating images...")
@@ -67,10 +68,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             txtclr=txtcolor,
             transparent=transparent,
         )
-    
-    if settings.config["settings"]["storymodemethod"] == 1:
-        print_substep("Storymodemethod 1 does not need screnshoots")
-        return
 
     screenshot_num: int
     with sync_playwright() as p:
