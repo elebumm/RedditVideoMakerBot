@@ -67,6 +67,10 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             txtclr=txtcolor,
             transparent=transparent,
         )
+    
+    if settings.config["settings"]["storymodemethod"] == 1:
+        print_substep("Storymodemethod 1 does not need screnshoots")
+        return
 
     screenshot_num: int
     with sync_playwright() as p:
