@@ -5,6 +5,11 @@ username = { optional = false, nmin = 3, nmax = 20, explanation = "The username 
 password = { optional = false, nmin = 8, explanation = "The password of your reddit account", example = "fFAGRNJru1FTz70BzhT3Zg", oob_error = "Password too short" }
 2fa = { optional = true, type = "bool", options = [true, false, ], default = false, explanation = "Whether you have Reddit 2FA enabled, Valid options are True and False", example = true }
 
+[capcut]
+email = { optional = false, nmin = 3, nmax = 50, explanation = "The email of your CapCut account", example = ""}
+password = { optional = false, nmin = 8, explanation = "The password of your CapCut account", example = ""}
+cloud_id = { optional = false, nmin = 8, type="int", explanation = "The cloud id of your CapCut account", example = ""}
+preset_number = { optional = true, default=18, type="int", explanation = "The preset number of your CapCut account", example = 1}
 
 [reddit.thread]
 random = { optional = true, options = [true, false, ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }

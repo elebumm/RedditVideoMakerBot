@@ -16,6 +16,7 @@ from rich.console import Console
 from rich.progress import track
 
 from utils import settings
+from utils import capcut
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
 from utils.thumbnail import create_thumbnail
@@ -492,8 +493,16 @@ def make_final_video(
         old_percentage = pbar.n
         pbar.update(100 - old_percentage)
     pbar.close()
+
+
+    if settings.config["settings"]["storymodemethod"] == 0:
+        print_step("Adding CapCut captions 📝")
+        file_path = os.getcwd() + f"/results/{subreddit}/{filename}.mp4"
+        capcut.generate_captions(file_path, filename)
+
     save_data(subreddit, filename + ".mp4", title, idx, background_config["video"][2])
     print_step("Removing temporary files 🗑")
     cleanups = cleanup(reddit_id)
     print_substep(f"Removed {cleanups} temporary files 🗑")
+
     print_step("Done! 🎉 The video is in the results folder 📁")
