@@ -81,7 +81,7 @@ I have tried to simplify the code so anyone can read it and start contributing a
 
 Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
 
-### For any questions or support join the [Discord](https://discord.gg/WBQT52RrHV) server
+### For any questions or support join the [Discord](https://discord.gg/qfQSx45xCV) server
 
 ## Developers and maintainers.
 
@@ -100,6 +100,8 @@ LukaHietala (Pix.#0001) - https://github.com/LukaHietala
 Freebiell (Freebie#3263) - https://github.com/FreebieII
 
 Aman Raza (electro199#8130) - https://github.com/electro199
+
+Cyteon (cyteon) - https://github.com/cyteon
 
 
 ## LICENSE
