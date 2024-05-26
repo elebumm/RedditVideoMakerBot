@@ -61,26 +61,28 @@ def generate_captions(file_path, title):
                         
         except:
             pass
-                
+
         page.click("//div[@class='guide-modal-close-icon']")
 
-        page.hover("//div[@data-selectable-item-id]")
-                    
-        page.click("//*[@width='16']")
+        if page.is_visible("//div[@data-selectable-item-id]"):
 
-        page.click("//div[contains(text(),'Move to Trash')]")
+            page.hover("//div[@data-selectable-item-id]")
+                        
+            page.click("//*[@width='16']")
 
-        page.click("//span[contains(text(),'Confirm')]")
+            page.click("//div[contains(text(),'Move to Trash')]")
 
-        # time.sleep(2)
+            page.click("//span[contains(text(),'Confirm')]")
 
-        # page.click("//span[contains(text(),'Trash')]")
+            # time.sleep(2)
 
-        # page.hover("//div[@data-selectable-item-id]")
+            # page.click("//span[contains(text(),'Trash')]")
 
-        # page.screenshot(path="video_creation/Error3.png")
+            # page.hover("//div[@data-selectable-item-id]")
 
-        page.goto("https://www.capcut.com/editor?enter_from=create_new&current_page=landing_page&from_page=work_space&start_tab=video&__action_from=my_draft&position=my_draft&scenario=youtube_ads&scale=16%3A9")
+            # page.screenshot(path="video_creation/Error3.png")
+
+        page.goto("https://www.capcut.com/editor?enter_from=create_new&current_page=landing_page&from_page=work_space&start_tab=video&__action_from=my_draft&position=my_draft&scenario=youtube_ads&scale=9%3A16")
 
         page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
         
@@ -90,7 +92,12 @@ def generate_captions(file_path, title):
 
         page.set_input_files("(//input[@type='file'])[1]", file_path) 
 
-        time.sleep(20)
+        time.sleep(2)
+
+        page.click("//div[@class='tools-ZGlCP0']")
+        page.click("(//li[@role='option'])[5]")
+
+        time.sleep(18)
 
         page.click("//div[@id='siderMenuCaption']//div[@class='menu-inner-box']//*[name()='svg']")
 
@@ -114,7 +121,7 @@ def generate_captions(file_path, title):
 
         page.click("//div[@id='workbench-tool-bar-toolbarTextPreset']")
 
-        time.sleep(1)
+        time.sleep(20)
 
         page.click("//div[@id='lv-tabs-1-tab-1']")
 
@@ -128,7 +135,7 @@ def generate_captions(file_path, title):
 
         time.sleep(2)
 
-        page.fill("//input[@value='-255']", "0")
+        page.fill("//input[@value='-672']", "0")
 
         time.sleep(1)
 
@@ -177,8 +184,12 @@ def generate_captions(file_path, title):
 
         time.sleep(35)
 
+        while not page.locator("//a[@class='shadowAnchor_5bc06']").is_visible():
+            time.sleep(5)
+
         with page.expect_download() as download_info:
             page.locator("//a[@class='shadowAnchor_5bc06']").click()
+        
         dl = download_info.value
         print(dl.path())
         working_dir_path = os.getcwd()
