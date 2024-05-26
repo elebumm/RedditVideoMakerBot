@@ -139,7 +139,7 @@ def generate_captions(file_path, title):
 
         time.sleep(1)
 
-        page.fill("//input[@value='100' and @aria-valuemax='500']", "40")
+        page.fill("//input[@value='100' and @aria-valuemax='500']", "150")
 
         time.sleep(2)
 
