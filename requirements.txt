@@ -5,7 +5,7 @@ moviepy==1.0.3
 playwright==1.34.0
 praw==7.7.0
 prawcore~=2.3.0
-requests==2.31.0
+requests==2.32.3
 rich==13.4.1
 toml==0.10.2
 translators==5.9.1
