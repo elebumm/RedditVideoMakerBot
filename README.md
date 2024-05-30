@@ -26,9 +26,5 @@ The only original thing being done is the editing and gathering of all materials
 2. Run `pip install -r requirements.txt`
 3. Run `python -m playwright install` and `python -m playwright install-deps`
 
-## Video
-
-https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
-
 ## LICENSE
 [Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
