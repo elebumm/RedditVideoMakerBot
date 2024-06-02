@@ -264,7 +264,7 @@ def make_final_video(
 
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
-    # Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
+    # Credits to tim (beingbored)
     # get the title_template image and draw a text in the middle part of it with the title of the thread
     title_template = Image.open("assets/title_template.png")
 
@@ -279,9 +279,6 @@ def make_final_video(
     title_img = create_fancy_thumbnail(title_template, title, font_color, padding)
 
     title_img.save(f"assets/temp/{reddit_id}/png/title.png")
-
-    # Copyright end
-
     image_clips.insert(
         0,
         ffmpeg.input(f"assets/temp/{reddit_id}/png/title.png")["v"].filter(
