@@ -16,15 +16,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.10.14
-      - uses: isort/isort-action@v1
-      - name: Install Black
-        run: pip install black
+      - name: Install Black & isort
+        run: pip install black isort
       - name: Run black check
         run: black --check . --line-length 101
+      - name: Run isort check
+        run: isort . --check-only
       - name: If needed, commit black changes to the pull request
         if: failure()
         run: |
           black . --line-length 101
+          isort .
           git config --global user.name github-actions
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
