@@ -13,7 +13,7 @@ from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 from utils.videos import save_data
 
-__all__ = ["download_screenshots_of_reddit_posts"]
+__all__ = ["get_screenshots_of_reddit_posts"]
 
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
@@ -58,6 +58,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         bgcolor = (255, 255, 255, 255)
         txtcolor = (0, 0, 0)
         transparent = False
+
     if storymode and settings.config["settings"]["storymodemethod"] == 1:
         # for idx,item in enumerate(reddit_object["thread_post"]):
         print_substep("Generating images...")
@@ -85,6 +86,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             color_scheme="dark",
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
         )
         cookies = json.load(cookie_file)
         cookie_file.close()
@@ -98,9 +100,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.wait_for_load_state()
 
-        page.locator('[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator('[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
-        page.locator("button[class$='m-full-width']").click()
+        page.locator(f'input[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
+        page.locator(f'input[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+        page.get_by_role("button", name="Log In").click()
         page.wait_for_timeout(5000)
 
         login_error_div = page.locator(".AnimatedForm__errorMessage").first
@@ -218,7 +220,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 if page.locator('[data-testid="content-gate"]').is_visible():
                     page.locator('[data-testid="content-gate"] button').click()
 
-                page.goto(f'https://reddit.com{comment["comment_url"]}', timeout=0)
+                page.goto(f"https://new.reddit.com/{comment['comment_url']}")
 
                 # translate code
 

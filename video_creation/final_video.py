@@ -2,21 +2,23 @@ import multiprocessing
 import os
 import re
 import tempfile
+import textwrap
 import threading
 import time
 from os.path import exists  # Needs to be imported specifically
-from typing import Final
-from typing import Tuple, Dict
+from pathlib import Path
+from typing import Dict, Final, Tuple
 
 import ffmpeg
 import translators
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
 from rich.progress import track
 
 from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from utils.fonts import getheight
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
 
@@ -104,6 +106,63 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         print(e.stderr.decode("utf8"))
         exit(1)
     return output_path
+
+
+def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
+    print_step(f"Creating fancy thumbnail for: {text}")
+    font_title_size = 47
+    font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+    image_width, image_height = image.size
+    lines = textwrap.wrap(text, width=wrap)
+    y = (
+        (image_height / 2)
+        - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+        + 30
+    )
+    draw = ImageDraw.Draw(image)
+
+    username_font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 30)
+    draw.text(
+        (205, 825),
+        settings.config["settings"]["channel_name"],
+        font=username_font,
+        fill=text_color,
+        align="left",
+    )
+
+    if len(lines) == 3:
+        lines = textwrap.wrap(text, width=wrap + 10)
+        font_title_size = 40
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (
+            (image_height / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            + 35
+        )
+    elif len(lines) == 4:
+        lines = textwrap.wrap(text, width=wrap + 10)
+        font_title_size = 35
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (
+            (image_height / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            + 40
+        )
+    elif len(lines) > 4:
+        lines = textwrap.wrap(text, width=wrap + 10)
+        font_title_size = 30
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (
+            (image_height / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            + 30
+        )
+
+    for line in lines:
+        draw.text((120, y), line, font=font, fill=text_color, align="left")
+        y += getheight(font, line) + padding
+
+    return image
 
 
 def merge_background_audio(audio: ffmpeg, reddit_id: str):
@@ -201,6 +260,23 @@ def make_final_video(
 
     image_clips = list()
 
+    Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
+
+    # Credits to tim (beingbored)
+    # get the title_template image and draw a text in the middle part of it with the title of the thread
+    title_template = Image.open("assets/title_template.png")
+
+    title = reddit_obj["thread_title"]
+
+    title = name_normalize(title)
+
+    font_color = "#000000"
+    padding = 5
+
+    # create_fancy_thumbnail(image, text, text_color, padding
+    title_img = create_fancy_thumbnail(title_template, title, font_color, padding)
+
+    title_img.save(f"assets/temp/{reddit_id}/png/title.png")
     image_clips.insert(
         0,
         ffmpeg.input(f"assets/temp/{reddit_id}/png/title.png")["v"].filter(
@@ -256,6 +332,9 @@ def make_final_video(
                 )
             )
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
+            assert (
+                audio_clips_durations is not None
+            ), "Please make a GitHub issue if you see this. Ping @JasonLovesDoggo on GitHub."
             background_clip = background_clip.overlay(
                 image_overlay,
                 enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",

@@ -3,10 +3,10 @@ import random
 import re
 from pathlib import Path
 from random import randrange
-from typing import Any, Tuple, Dict
+from typing import Any, Dict, Tuple
 
 import yt_dlp
-from moviepy.editor import VideoFileClip, AudioFileClip
+from moviepy.editor import AudioFileClip, VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 from utils import settings

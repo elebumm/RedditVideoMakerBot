@@ -2,7 +2,7 @@
 import base64
 import random
 import time
-from typing import Optional, Final
+from typing import Final, Optional
 
 import requests
 
