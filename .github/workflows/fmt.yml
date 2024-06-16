@@ -22,7 +22,7 @@ jobs:
         run: black --check . --line-length 101
       - name: Run isort check
         run: isort . --check-only
-      - name: If needed, commit black changes to the pull request
+      - name: If needed, commit changes to the pull request
         if: failure()
         run: |
           black . --line-length 101
