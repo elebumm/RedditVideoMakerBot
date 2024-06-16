@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 
 from TTS.engine_wrapper import process_text
-from utils.fonts import getsize, getheight
+from utils.fonts import getheight, getsize
 
 
 def draw_multiple_line_text(
@@ -19,7 +19,9 @@ def draw_multiple_line_text(
     font_height = getheight(font, text)
     image_width, image_height = image.size
     lines = textwrap.wrap(text, width=wrap)
-    y = (image_height / 2) - (((font_height + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+    y = (image_height / 2) - (
+        ((font_height + (len(lines) * padding) / len(lines)) * len(lines)) / 2
+    )
     for line in lines:
         line_width, line_height = getsize(font, line)
         if transparent:
@@ -71,5 +73,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     for idx, text in track(enumerate(texts), "Rendering Image"):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
-        draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
+        draw_multiple_line_text(
+            image, text, font, txtclr, padding, wrap=30, transparent=transparent
+        )
         image.save(f"assets/temp/{id}/png/img{idx}.png")

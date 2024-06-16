@@ -7,9 +7,7 @@ import requests
 
 def ffmpeg_install_windows():
     try:
-        ffmpeg_url = (
-            "https://github.com/GyanD/codexffmpeg/releases/download/6.0/ffmpeg-6.0-full_build.zip"
-        )
+        ffmpeg_url = "https://github.com/GyanD/codexffmpeg/releases/download/6.0/ffmpeg-6.0-full_build.zip"
         ffmpeg_zip_filename = "ffmpeg.zip"
         ffmpeg_extracted_folder = "ffmpeg"
 
@@ -129,7 +127,9 @@ def ffmpeg_install():
             elif os.name == "mac":
                 ffmpeg_install_mac()
             else:
-                print("Your OS is not supported. Please install FFmpeg manually and try again.")
+                print(
+                    "Your OS is not supported. Please install FFmpeg manually and try again."
+                )
                 exit()
         else:
             print("Please install FFmpeg manually and try again.")

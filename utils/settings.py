@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 import toml
 from rich.console import Console
@@ -53,7 +53,11 @@ def check(value, checks, name):
         and not hasattr(value, "__iter__")
         and (
             ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and value > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -61,8 +65,16 @@ def check(value, checks, name):
         not incorrect
         and hasattr(value, "__iter__")
         and (
-            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+            (
+                "nmin" in checks
+                and checks["nmin"] is not None
+                and len(value) < checks["nmin"]
+            )
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and len(value) > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -70,9 +82,15 @@ def check(value, checks, name):
     if incorrect:
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
+                (
+                    ("[blue]Example: " + str(checks["example"]) + "\n")
+                    if "example" in checks
+                    else ""
+                )
                 + "[red]"
-                + ("Non-optional ", "Optional ")["optional" in checks and checks["optional"] is True]
+                + ("Non-optional ", "Optional ")[
+                    "optional" in checks and checks["optional"] is True
+                ]
             )
             + "[#C0CAF5 bold]"
             + str(name)
@@ -113,7 +131,9 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     try:
         template = toml.load(template_file)
     except Exception as error:
-        console.print(f"[red bold]Encountered error when trying to to load {template_file}: {error}")
+        console.print(
+            f"[red bold]Encountered error when trying to to load {template_file}: {error}"
+        )
         return False
     try:
         config = toml.load(config_file)

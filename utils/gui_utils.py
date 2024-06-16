@@ -67,7 +67,11 @@ def check(value, checks):
         and not hasattr(value, "__iter__")
         and (
             ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and value > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -76,8 +80,16 @@ def check(value, checks):
         not incorrect
         and hasattr(value, "__iter__")
         and (
-            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+            (
+                "nmin" in checks
+                and checks["nmin"] is not None
+                and len(value) < checks["nmin"]
+            )
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and len(value) > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -150,7 +162,9 @@ def delete_background(key):
 # Add background video
 def add_background(youtube_uri, filename, citation, position):
     # Validate YouTube URI
-    regex = re.compile(r"(?:\/|%3D|v=|vi=)([0-9A-z\-_]{11})(?:[%#?&]|$)").search(youtube_uri)
+    regex = re.compile(r"(?:\/|%3D|v=|vi=)([0-9A-z\-_]{11})(?:[%#?&]|$)").search(
+        youtube_uri
+    )
 
     if not regex:
         flash("YouTube URI is invalid!", "error")

@@ -11,19 +11,17 @@ from prawcore import ResponseException
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step
-from utils.console import print_substep
+from utils.console import print_markdown, print_step, print_substep
 from utils.ffmpeg_install import ffmpeg_install
 from utils.id import id
 from utils.version import checkversion
-from video_creation.background import (
-    download_background_video,
-    download_background_audio,
-    chop_background,
-    get_background_config,
-)
+from video_creation.background import (chop_background,
+                                       download_background_audio,
+                                       download_background_video,
+                                       get_background_config)
 from video_creation.final_video import make_final_video
-from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
+from video_creation.screenshot_downloader import \
+    get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 
 __VERSION__ = "3.2.1"
@@ -38,7 +36,6 @@ print(
 ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═════╝ ╚═╝   ╚═╝         ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 """
 )
-# Modified by JasonLovesDoggo
 print_markdown(
     "### Thanks for using this tool! Feel free to contribute to this project on GitHub! If you have any questions, feel free to join my Discord server or submit a GitHub issue. You can find solutions to many common problems in the documentation: https://reddit-video-maker-bot.netlify.app/"
 )
@@ -104,7 +101,9 @@ if __name__ == "__main__":
         sys.exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+            for index, post_id in enumerate(
+                config["reddit"]["thread"]["post_id"].split("+")
+            ):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
