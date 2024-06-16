@@ -13,7 +13,7 @@ from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 from utils.videos import save_data
 
-__all__ = ["download_screenshots_of_reddit_posts"]
+__all__ = ["get_screenshots_of_reddit_posts"]
 
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
