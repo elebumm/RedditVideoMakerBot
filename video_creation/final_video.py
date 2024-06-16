@@ -334,6 +334,9 @@ def make_final_video(
                 )
             )
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
+            assert (
+                audio_clips_durations is not None
+            ), "Please make a GitHub issue if you see this. Ping @JasonLovesDoggo on GitHub."
             background_clip = background_clip.overlay(
                 image_overlay,
                 enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
