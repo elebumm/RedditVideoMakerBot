@@ -21,12 +21,12 @@ jobs:
       - name: Run black check
         run: black --check . --line-length 101
       - name: Run isort check
-        run: isort . --check-only
+        run: isort . --check-only --diff --profile black
       - name: If needed, commit changes to the pull request
         if: failure()
         run: |
           black . --line-length 101
-          isort .
+          isort . --profile black
           git config --global user.name github-actions
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY

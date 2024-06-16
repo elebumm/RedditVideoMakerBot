@@ -11,3 +11,5 @@ jobs:
         with:
           options: "--line-length 101"
       - uses: isort/isort-action@v1
+        with:
+          configuration: "--check-only --diff --profile black"

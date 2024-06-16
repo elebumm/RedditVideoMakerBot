@@ -3,8 +3,14 @@ from pathlib import Path
 
 # Used "tomlkit" instead of "toml" because it doesn't change formatting on "dump"
 import tomlkit
-from flask import (Flask, redirect, render_template, request,
-                   send_from_directory, url_for)
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 
 import utils.gui_utils as gui
 
