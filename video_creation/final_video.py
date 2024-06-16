@@ -77,9 +77,7 @@ def name_normalize(name: str) -> str:
     lang = settings.config["reddit"]["thread"]["post_lang"]
     if lang:
         print_substep("Translating filename...")
-        translated_name = translators.translate_text(
-            name, translator="google", to_language=lang
-        )
+        translated_name = translators.translate_text(name, translator="google", to_language=lang)
         return translated_name
     else:
         return name
@@ -118,10 +116,7 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
     lines = textwrap.wrap(text, width=wrap)
     y = (
         (image_height / 2)
-        - (
-            ((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines))
-            / 2
-        )
+        - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
         + 30
     )
     draw = ImageDraw.Draw(image)
@@ -138,52 +133,28 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
     if len(lines) == 3:
         lines = textwrap.wrap(text, width=wrap + 10)
         font_title_size = 40
-        font = ImageFont.truetype(
-            os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size
-        )
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (
-                (
-                    (getheight(font, text) + (len(lines) * padding) / len(lines))
-                    * len(lines)
-                )
-                / 2
-            )
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 35
         )
     elif len(lines) == 4:
         lines = textwrap.wrap(text, width=wrap + 10)
         font_title_size = 35
-        font = ImageFont.truetype(
-            os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size
-        )
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (
-                (
-                    (getheight(font, text) + (len(lines) * padding) / len(lines))
-                    * len(lines)
-                )
-                / 2
-            )
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 40
         )
     elif len(lines) > 4:
         lines = textwrap.wrap(text, width=wrap + 10)
         font_title_size = 30
-        font = ImageFont.truetype(
-            os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size
-        )
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (
-                (
-                    (getheight(font, text) + (len(lines) * padding) / len(lines))
-                    * len(lines)
-                )
-                / 2
-            )
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 30
         )
 
@@ -200,9 +171,7 @@ def merge_background_audio(audio: ffmpeg, reddit_id: str):
         audio (ffmpeg): The TTS final audio but without background.
         reddit_id (str): The ID of subreddit
     """
-    background_audio_volume = settings.config["settings"]["background"][
-        "background_audio_volume"
-    ]
+    background_audio_volume = settings.config["settings"]["background"]["background_audio_volume"]
     if background_audio_volume == 0:
         return audio  # Return the original audio
     else:
@@ -256,42 +225,27 @@ def make_final_video(
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 0:
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
-            audio_clips.insert(
-                1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3")
-            )
+            audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
             audio_clips = [
                 ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(
-                    range(number_of_clips + 1), "Collecting the audio files..."
-                )
+                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
             ]
-            audio_clips.insert(
-                0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")
-            )
+            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
         audio_clips = [
-            ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
-            for i in range(number_of_clips)
+            ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3") for i in range(number_of_clips)
         ]
         audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
         audio_clips_durations = [
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/{i}.mp3")["format"][
-                    "duration"
-                ]
-            )
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/{i}.mp3")["format"]["duration"])
             for i in range(number_of_clips)
         ]
         audio_clips_durations.insert(
             0,
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"][
-                    "duration"
-                ]
-            ),
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
     ffmpeg.output(
@@ -334,19 +288,13 @@ def make_final_video(
     if settings.config["settings"]["storymode"]:
         audio_clips_durations = [
             float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")[
-                    "format"
-                ]["duration"]
+                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")["format"]["duration"]
             )
             for i in range(number_of_clips)
         ]
         audio_clips_durations.insert(
             0,
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"][
-                    "duration"
-                ]
-            ),
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
         if settings.config["settings"]["storymodemethod"] == 0:
             image_clips.insert(
@@ -363,9 +311,7 @@ def make_final_video(
             )
             current_time += audio_clips_durations[0]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(
-                range(0, number_of_clips + 1), "Collecting the image files..."
-            ):
+            for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
                         "scale", screenshot_width, -1
@@ -381,9 +327,9 @@ def make_final_video(
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(
-                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")[
-                    "v"
-                ].filter("scale", screenshot_width, -1)
+                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")["v"].filter(
+                    "scale", screenshot_width, -1
+                )
             )
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
             assert (
@@ -405,15 +351,11 @@ def make_final_video(
     subreddit = settings.config["reddit"]["thread"]["subreddit"]
 
     if not exists(f"./results/{subreddit}"):
-        print_substep(
-            "The 'results' folder could not be found so it was automatically created."
-        )
+        print_substep("The 'results' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}")
 
     if not exists(f"./results/{subreddit}/OnlyTTS") and allowOnlyTTSFolder:
-        print_substep(
-            "The 'OnlyTTS' folder could not be found so it was automatically created."
-        )
+        print_substep("The 'OnlyTTS' folder could not be found so it was automatically created.")
         os.makedirs(f"./results/{subreddit}/OnlyTTS")
 
     # create a thumbnail for the video
@@ -427,11 +369,7 @@ def make_final_video(
             os.makedirs(f"./results/{subreddit}/thumbnails")
         # get the first file with the .png extension from assets/backgrounds and use it as a background for the thumbnail
         first_image = next(
-            (
-                file
-                for file in os.listdir("assets/backgrounds")
-                if file.endswith(".png")
-            ),
+            (file for file in os.listdir("assets/backgrounds") if file.endswith(".png")),
             None,
         )
         if first_image is None:
@@ -453,9 +391,7 @@ def make_final_video(
                 title_thumb,
             )
             thumbnailSave.save(f"./assets/temp/{reddit_id}/thumbnail.png")
-            print_substep(
-                f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
-            )
+            print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     text = f"Background by {background_config['video'][2]}"
     background_clip = ffmpeg.drawtext(
@@ -496,9 +432,7 @@ def make_final_video(
                     "b:a": "192k",
                     "threads": multiprocessing.cpu_count(),
                 },
-            ).overwrite_output().global_args(
-                "-progress", progress.output_file.name
-            ).run(
+            ).overwrite_output().global_args("-progress", progress.output_file.name).run(
                 quiet=True,
                 overwrite_output=True,
                 capture_stdout=False,
@@ -528,9 +462,7 @@ def make_final_video(
                         "b:a": "192k",
                         "threads": multiprocessing.cpu_count(),
                     },
-                ).overwrite_output().global_args(
-                    "-progress", progress.output_file.name
-                ).run(
+                ).overwrite_output().global_args("-progress", progress.output_file.name).run(
                     quiet=True,
                     overwrite_output=True,
                     capture_stdout=False,
