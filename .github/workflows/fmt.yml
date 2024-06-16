@@ -17,8 +17,6 @@ jobs:
         with:
           python-version: 3.10.14
       - uses: isort/isort-action@v1
-        with:
-          check-only: false
       - name: Install Black
         run: pip install black
       - name: Run black check
