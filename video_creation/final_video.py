@@ -20,6 +20,7 @@ from rich.progress import track
 from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
+from utils.fonts import getheight
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
 
@@ -117,7 +118,7 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
     lines = textwrap.wrap(text, width=wrap)
     y = (
         (image_height / 2)
-        - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+        - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
         + 30
     )
     draw = ImageDraw.Draw(image)
@@ -137,7 +138,7 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 35
         )
     elif len(lines) == 4:
@@ -146,7 +147,7 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 40
         )
     elif len(lines) > 4:
@@ -155,14 +156,13 @@ def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
         y = (
             (image_height / 2)
-            - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+            - (((getheight(font, text) + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
             + 30
         )
 
     for line in lines:
-        _, line_height = font.getsize(line)
         draw.text((120, y), line, font=font, fill=text_color, align="left")
-        y += line_height + padding
+        y += getheight(font, line) + padding
 
     return image
 

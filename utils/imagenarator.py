@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from rich.progress import track
 
 from TTS.engine_wrapper import process_text
+from utils.fonts import getsize, getheight
 
 
 def draw_multiple_line_text(
@@ -15,12 +16,12 @@ def draw_multiple_line_text(
     Draw multiline text over given image
     """
     draw = ImageDraw.Draw(image)
-    Fontperm = font.getsize(text)
+    font_height = getheight(font, text)
     image_width, image_height = image.size
     lines = textwrap.wrap(text, width=wrap)
-    y = (image_height / 2) - (((Fontperm[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
+    y = (image_height / 2) - (((font_height + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
     for line in lines:
-        line_width, line_height = font.getsize(line)
+        line_width, line_height = getsize(font, line)
         if transparent:
             shadowcolor = "black"
             for i in range(1, 5):
