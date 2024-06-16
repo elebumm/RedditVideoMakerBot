@@ -3,13 +3,14 @@ import random
 import re
 from pathlib import Path
 from random import randrange
-from typing import Any, Tuple, Dict
+from typing import Any, Dict, Tuple
 
-from moviepy.editor import VideoFileClip, AudioFileClip
+import yt_dlp
+from moviepy.editor import AudioFileClip, VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 from utils import settings
 from utils.console import print_step, print_substep
-import yt_dlp
 
 
 def load_background_options():

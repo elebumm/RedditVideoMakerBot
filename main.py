@@ -7,25 +7,25 @@ from subprocess import Popen
 from typing import NoReturn
 
 from prawcore import ResponseException
-from utils.console import print_substep
+
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
 from utils.cleanup import cleanup
-from utils.console import print_markdown, print_step
+from utils.console import print_markdown, print_step, print_substep
+from utils.ffmpeg_install import ffmpeg_install
 from utils.id import id
 from utils.version import checkversion
 from video_creation.background import (
-    download_background_video,
-    download_background_audio,
     chop_background,
+    download_background_audio,
+    download_background_video,
     get_background_config,
 )
 from video_creation.final_video import make_final_video
 from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
-from utils.ffmpeg_install import ffmpeg_install
 
-__VERSION__ = "3.2.1"
+__VERSION__ = "3.3.0"
 
 print(
     """
@@ -37,7 +37,6 @@ print(
 ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═════╝ ╚═╝   ╚═╝         ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 """
 )
-# Modified by JasonLovesDoggo
 print_markdown(
     "### Thanks for using this tool! Feel free to contribute to this project on GitHub! If you have any questions, feel free to join my Discord server or submit a GitHub issue. You can find solutions to many common problems in the documentation: https://reddit-video-maker-bot.netlify.app/"
 )
