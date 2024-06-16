@@ -1,4 +1,4 @@
-FROM python:3.10.9-slim
+FROM python:3.10.14-slim
 
 RUN apt update
 RUN apt-get install -y ffmpeg

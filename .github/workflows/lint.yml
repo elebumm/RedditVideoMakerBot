@@ -12,4 +12,4 @@ jobs:
           options: "--line-length 101"
       - uses: isort/isort-action@v1
         with:
-          requirement-files: "requirements.txt"
+          requirements-files: "requirements.txt"
