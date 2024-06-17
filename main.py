@@ -84,7 +84,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reddit Video Maker Bot")
     parser.add_argument("--post-id", help="Specify the post ID")
     parser.add_argument("--run-many", type=int, help="Run the program multiple times")
-    parser.add_argument("--id")
     args = parser.parse_args()
     if sys.version_info.major != 3 or sys.version_info.minor not in [10, 11]:
         print(
