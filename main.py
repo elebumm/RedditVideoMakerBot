@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import math
 import sys
 from os import name
@@ -14,8 +16,6 @@ from utils.ffmpeg_install import ffmpeg_install
 from utils.id import id
 from utils.version import checkversion
 import argparse
-
-#!/usr/bin/env python
 
 from video_creation.background import (
     chop_background,
