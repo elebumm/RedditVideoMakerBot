@@ -4,7 +4,7 @@ import sys
 from os import name
 from pathlib import Path
 from subprocess import Popen
-from typing import NoReturn, Dict
+from typing import Dict, NoReturn
 
 from prawcore import ResponseException
 
@@ -44,6 +44,7 @@ checkversion(__VERSION__)
 
 reddit_id: str
 reddit_object: Dict[str, str | list]
+
 
 def main(POST_ID=None) -> None:
     global reddit_id, reddit_object
