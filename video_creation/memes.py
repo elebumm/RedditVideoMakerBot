@@ -8,8 +8,6 @@ def make_meme_video():
         os.mkdir("./clipped")
     directory = f'./results/{settings.config["reddit"]["thread"]["subreddit"]}'
 
-    print(directory)
-
     # Get a list of all MP4 files in the directory
     mp4_files = [f for f in os.listdir(directory) if f.endswith('.mp4')]
 
