@@ -25,7 +25,9 @@ def get_checks():
 
 
 # Get current config (from config.toml) as dict
-def get_config(obj: dict, done={}):
+def get_config(obj: dict, done=None):
+    if done is None:
+        done = {}
     for key in obj.keys():
         if not isinstance(obj[key], dict):
             done[key] = obj[key]
@@ -44,13 +46,13 @@ def check(value, checks):
 
     if not incorrect and "type" in checks:
         try:
-            value = eval(checks["type"])(value)
+            value = eval(checks["type"])(value)  # fixme remove eval
         except Exception:
             incorrect = True
 
     if (
         not incorrect and "options" in checks and value not in checks["options"]
-    ):  # FAILSTATE Value is not one of the options
+    ):  # FAILSTATE Value isn't one of the options
         incorrect = True
     if (
         not incorrect
@@ -59,7 +61,7 @@ def check(value, checks):
             (isinstance(value, str) and re.match(checks["regex"], value) is None)
             or not isinstance(value, str)
         )
-    ):  # FAILSTATE Value doesn't match regex, or has regex but is not a string.
+    ):  # FAILSTATE Value doesn't match regular expression, or has regular expression but isn't a string.
         incorrect = True
 
     if (
@@ -88,17 +90,17 @@ def check(value, checks):
     return value
 
 
-# Modify settings (after form is submitted)
+# Modify settings (after the form is submitted)
 def modify_settings(data: dict, config_load, checks: dict):
     # Modify config settings
-    def modify_config(obj: dict, name: str, value: any):
+    def modify_config(obj: dict, config_name: str, value: any):
         for key in obj.keys():
-            if name == key:
+            if config_name == key:
                 obj[key] = value
             elif not isinstance(obj[key], dict):
                 continue
             else:
-                modify_config(obj[key], name, value)
+                modify_config(obj[key], config_name, value)
 
     # Remove empty/incorrect key-value pairs
     data = {key: value for key, value in data.items() if value and key in checks.keys()}
@@ -158,7 +160,7 @@ def add_background(youtube_uri, filename, citation, position):
 
     youtube_uri = f"https://www.youtube.com/watch?v={regex.group(1)}"
 
-    # Check if position is valid
+    # Check if the position is valid
     if position == "" or position == "center":
         position = "center"
 
@@ -178,7 +180,7 @@ def add_background(youtube_uri, filename, citation, position):
 
     filename = filename.replace(" ", "_")
 
-    # Check if background doesn't already exist
+    # Check if the background doesn't already exist
     with open("utils/backgrounds.json", "r", encoding="utf-8") as backgrounds:
         data = json.load(backgrounds)
 

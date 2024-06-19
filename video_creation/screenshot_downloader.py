@@ -34,7 +34,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     # ! Make sure the reddit screenshots folder exists
     Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
-    # set the theme and disable non-essential cookies
+    # set the theme and turn off non-essential cookies
     if settings.config["settings"]["theme"] == "dark":
         cookie_file = open("./video_creation/data/cookie-dark-mode.json", encoding="utf-8")
         bgcolor = (33, 33, 36, 255)
@@ -60,7 +60,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         transparent = False
 
     if storymode and settings.config["settings"]["storymodemethod"] == 1:
-        # for idx,item in enumerate(reddit_object["thread_post"]):
         print_substep("Generating images...")
         return imagemaker(
             theme=bgcolor,

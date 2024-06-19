@@ -4,7 +4,7 @@ import sys
 from os import name
 from pathlib import Path
 from subprocess import Popen
-from typing import NoReturn
+from typing import NoReturn, Dict
 
 from prawcore import ResponseException
 
@@ -13,7 +13,7 @@ from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step, print_substep
 from utils.ffmpeg_install import ffmpeg_install
-from utils.id import id
+from utils.id import extract_id
 from utils.version import checkversion
 from video_creation.background import (
     chop_background,
@@ -42,11 +42,14 @@ print_markdown(
 )
 checkversion(__VERSION__)
 
+reddit_id: str
+reddit_object: Dict[str, str | list]
 
 def main(POST_ID=None) -> None:
-    global redditid, reddit_object
+    global reddit_id, reddit_object
     reddit_object = get_subreddit_threads(POST_ID)
-    redditid = id(reddit_object)
+    reddit_id = extract_id(reddit_object)
+    print_substep(f"Thread ID is {reddit_id}", style="bold blue")
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
     get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
@@ -64,15 +67,15 @@ def run_many(times) -> None:
     for x in range(1, times + 1):
         print_step(
             f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
-        )  # correct 1st 2nd 3rd 4th 5th....
+        )
         main()
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
 def shutdown() -> NoReturn:
-    if "redditid" in globals():
+    if "reddit_id" in globals():
         print_markdown("## Clearing temp files")
-        cleanup(redditid)
+        cleanup(reddit_id)
 
     print("Exiting...")
     sys.exit()
