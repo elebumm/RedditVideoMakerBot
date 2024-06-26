@@ -10,7 +10,7 @@ class GTTS:
         self.max_chars = 5000
         self.voices = []
 
-    def run(self, text, filepath):
+    def run(self, text, filepath, random_voice=False):
         tts = gTTS(
             text=text,
             lang=settings.config["reddit"]["thread"]["post_lang"] or "en",
