@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+
 import math
 import sys
 from os import name
 from pathlib import Path
 from subprocess import Popen
-from typing import Dict, NoReturn
-
+from typing import NoReturn
 from prawcore import ResponseException
 
 from reddit.subreddit import get_subreddit_threads
@@ -15,6 +15,8 @@ from utils.console import print_markdown, print_step, print_substep
 from utils.ffmpeg_install import ffmpeg_install
 from utils.id import extract_id
 from utils.version import checkversion
+import argparse
+
 from video_creation.background import (
     chop_background,
     download_background_audio,
@@ -83,6 +85,10 @@ def shutdown() -> NoReturn:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Reddit Video Maker Bot")
+    parser.add_argument("--post-id", help="Specify the post ID")
+    parser.add_argument("--run-many", type=int, help="Run the program multiple times")
+    args = parser.parse_args()
     if sys.version_info.major != 3 or sys.version_info.minor not in [10, 11]:
         print(
             "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
@@ -90,6 +96,13 @@ if __name__ == "__main__":
         sys.exit()
     ffmpeg_install()
     directory = Path().absolute()
+    if args.post_id:
+        main(args.post_id)
+    elif args.run_many:
+        run_many(args.run_many)
+    else:
+        main()
+
     config = settings.check_toml(
         f"{directory}/utils/.config.template.toml", f"{directory}/config.toml"
     )
