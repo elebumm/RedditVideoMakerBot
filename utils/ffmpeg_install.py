@@ -28,8 +28,8 @@ def ffmpeg_install_windows():
             for root, dirs, files in os.walk(ffmpeg_extracted_folder, topdown=False):
                 for file in files:
                     os.remove(os.path.join(root, file))
-                for dir in dirs:
-                    os.rmdir(os.path.join(root, dir))
+                for directory in dirs:
+                    os.rmdir(os.path.join(root, directory))
             os.rmdir(ffmpeg_extracted_folder)
 
         # Extract FFmpeg
@@ -110,7 +110,7 @@ def ffmpeg_install():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         # Check if there's ffmpeg.exe in the current directory
         if os.path.exists("./ffmpeg.exe"):
             print(

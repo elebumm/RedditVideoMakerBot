@@ -12,7 +12,7 @@ def mean_pooling(model_output, attention_mask):
     )
 
 
-# This function sort the given threads based on their total similarity with the given keywords
+# This function sorts the given threads based on their total similarity with the given keywords
 def sort_by_similarity(thread_objects, keywords):
     # Initialize tokenizer + model.
     tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
@@ -34,7 +34,7 @@ def sort_by_similarity(thread_objects, keywords):
         threads_embeddings = model(**encoded_threads)
     threads_embeddings = mean_pooling(threads_embeddings, encoded_threads["attention_mask"])
 
-    # Keywords inference
+    # Keyword inference
     encoded_keywords = tokenizer(keywords, padding=True, truncation=True, return_tensors="pt")
     with torch.no_grad():
         keywords_embeddings = model(**encoded_keywords)
@@ -53,7 +53,7 @@ def sort_by_similarity(thread_objects, keywords):
 
     similarity_scores, indices = torch.sort(total_scores, descending=True)
 
-    threads_sentences = np.array(threads_sentences)[indices.numpy()]
+    # threads_sentences = np.array(threads_sentences)[indices.numpy()]
 
     thread_objects = np.array(thread_objects)[indices.numpy()].tolist()
 

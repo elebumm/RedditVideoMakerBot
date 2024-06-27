@@ -102,7 +102,7 @@ def handle_input(
         user_input = input("").strip()
         if check_type is not False:
             try:
-                isinstance(eval(user_input), check_type)
+                isinstance(eval(user_input), check_type)  # fixme: remove eval
                 return check_type(user_input)
             except:
                 console.print(
