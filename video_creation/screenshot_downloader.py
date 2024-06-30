@@ -182,7 +182,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                 page.screenshot(clip=location, path=postcontentpath)
             else:
                 page.wait_for_load_state('load')
-                page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+                post_content_locator = page.locator('[data-test-id="post-content"]')
+                post_content_locator.wait_for(timeout=60000)
+                post_content_locator.screenshot(path=postcontentpath)
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
