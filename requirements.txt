@@ -10,7 +10,7 @@ rich==13.7.1
 toml==0.10.2
 translators==5.9.2
 pyttsx3==2.90
-Pillow==10.3.0
+Pillow==10.4.0
 tomlkit==0.12.5
 Flask==3.0.3
 clean-text==0.6.0
