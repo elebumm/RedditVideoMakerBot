@@ -46,13 +46,13 @@ The only original thing being done is the editing and gathering of all materials
 2. Create and activate a virtual environment:
     - On **Windows**:
         ```sh
-        python -m venv venv
-        venv\Scripts\activate
+        python -m venv ./venv
+        .\venv\Scripts\activate
         ```
     - On **macOS and Linux**:
         ```sh
-        python3 -m venv venv
-        source venv/bin/activate
+        python3 -m venv ./venv
+        source ./venv/bin/activate
         ```
 
 3. Install the required dependencies:
