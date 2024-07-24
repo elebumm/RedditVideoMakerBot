@@ -57,7 +57,7 @@ class TTSEngine:
         i = 1
 
         for comment in self.reddit_object["comments"]:
-            
+
             # remove links
             regex_urls = r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*"
             comment["comment_body"] = re.sub(regex_urls, " ", comment["comment_body"])
@@ -73,7 +73,7 @@ class TTSEngine:
 
     def run(self) -> Tuple[int, int]:
         from utils.imagenarator import comment_image_maker
-        
+
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
 
@@ -107,11 +107,12 @@ class TTSEngine:
                 if (
                     len(comment["comment_body"]) > self.tts_module.max_chars
                 ):  # Split the comment if it is too long
-                    self.split_post(comment["comment_body"], idx)  # Split the comment     
+                    self.split_post(comment["comment_body"], idx)  # Split the comment
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
-            comment_image_maker((0, 0, 0, 0), self.reddit_object, comments, (255, 255, 255), transparent=True)
+            if settings.config["settings"]["storymodemethod"] != 0:
+                comment_image_maker((0, 0, 0, 0), self.reddit_object, comments, (255, 255, 255), transparent=True)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
@@ -161,7 +162,7 @@ class TTSEngine:
         self.tts_module.run(
             text,
             filepath=f"{self.path}/{filename}.mp3",
-            random_voice=settings.config["settings"]["tts"]["random_voice"], 
+            random_voice=settings.config["settings"]["tts"]["random_voice"],
         )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length

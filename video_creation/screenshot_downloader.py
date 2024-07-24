@@ -11,7 +11,7 @@ from rich.progress import track
 
 from utils import settings
 from utils.console import print_step, print_substep
-from utils.imagenarator import imagemaker, comment_image_maker
+from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 from utils.videos import save_data
 
@@ -24,7 +24,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         reddit_object (Dict): Reddit object received from reddit/subreddit.py
         screenshot_num (int): Number of screenshots to download
     """
-    
+
     # settings values
     W: Final[int] = int(settings.config["settings"]["resolution_w"])
     H: Final[int] = int(settings.config["settings"]["resolution_h"])
@@ -70,7 +70,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             txtclr=txtcolor,
             transparent=transparent,
         )
-    
+
     if settings.config["settings"]["storymodemethod"] == 1:
         return
 

@@ -14,9 +14,9 @@ from utils import settings
 def check_similarity(video_title, text):
         video_title_words = set(video_title.lower().split())
         text_words = set(text.lower().split())
-        
+
         common_words = text_words.intersection(video_title_words)
-        
+
         return len(common_words) / len(text_words) >= 0.6
 
 # Runthrough
@@ -32,11 +32,11 @@ def generate_captions(file_path, title):
         video_title = title.lower()
         video_file_name = title.replace(" ", "_")
 
-        page.click("//span[contains(text(),'Decline all')]") 
+        page.click("//span[contains(text(),'Decline all')]")
 
         page.click("//span[contains(text(),'OK')]")
-        
-        page.click("//span[contains(text(),'Sign in')]")
+
+        page.goto("https://www.capcut.com/login")
 
         page.fill("//input[@class='lv-input lv-input-size-default lv_sign_in_panel_wide-input']", email)
 
@@ -44,30 +44,31 @@ def generate_captions(file_path, title):
 
         # time.sleep(5)
 
-        page.fill("//input[@type='password']", password) 
+        page.fill("//input[@type='password']", password)
 
         page.click("//span[contains(text(),'Sign in')]")
 
-        try: 
+        try:
             page.click("//div[@class='skip--kncMC']")
 
         except:
             pass
-    
+
         page.goto(f"https://www.capcut.com/my-cloud/{str(settings.config['capcut']['cloud_id'])}?start_tab=video&enter_from=page_header&from_page=work_space&tab=all")
 
         try:
-            page.click("//span[contains(text(),'Decline all')]") 
-                        
+            page.click("//span[contains(text(),'Decline all')]")
+
         except:
             pass
 
-        page.click("//div[@class='guide-modal-close-icon']")
+        if page.is_visible("//div[@class='guide-modal-close-icon']"):
+            page.click("//div[@class='guide-modal-close-icon']")
 
         if page.is_visible("//div[@data-selectable-item-id]"):
 
             page.hover("//div[@data-selectable-item-id]")
-                        
+
             page.click("//*[@width='16']")
 
             page.click("//div[contains(text(),'Move to Trash')]")
@@ -84,17 +85,26 @@ def generate_captions(file_path, title):
 
         page.goto("https://www.capcut.com/editor?enter_from=create_new&current_page=landing_page&from_page=work_space&start_tab=video&__action_from=my_draft&position=my_draft&scenario=youtube_ads&scale=9%3A16")
 
-        page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
-        
-        page.click("//div[@class='guide-placeholder-before-OsTdXF']")
+        if page.is_visible("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']"):
+            page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
 
-        page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
+        if page.is_visible("//div[@class='guide-placeholder-before-OsTdXF']"):
+            page.click("//div[@class='guide-placeholder-before-OsTdXF']")
 
-        page.set_input_files("(//input[@type='file'])[1]", file_path) 
+        if page.is_visible("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']"):
+            page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
+
+        if page.is_visible("//div[@class='guide-close-icon-Gtxdju']//*[name()='svg']"):
+            page.click("//div[@class='guide-close-icon-Gtxdju']//*[name()='svg']")
+
+        if page.is_visible("//div[@class='guide-close-icon-Gtxdju']"):
+            page.click("//div[@class='guide-close-icon-Gtxdju']")
+
+        page.set_input_files("(//input[@type='file'])[1]", file_path)
 
         time.sleep(2)
 
-        page.click("//div[@class='tools-ZGlCP0']")
+        page.click("//div[@class='tools-dCzTyg']")
         page.click("(//li[@role='option'])[5]")
 
         time.sleep(18)
@@ -102,7 +112,7 @@ def generate_captions(file_path, title):
         page.click("//div[@id='siderMenuCaption']//div[@class='menu-inner-box']//*[name()='svg']")
 
         page.click("//div[normalize-space()='Auto captions']")
-        
+
         video_ready = False
         while not video_ready:
             page.click("//footer[@class='active-panel']//span[contains(text(),'Generate')]")
@@ -127,7 +137,7 @@ def generate_captions(file_path, title):
 
         time.sleep(1)
 
-        page.click(f"(//img[@class='image-DUnWNW'])[{str(settings.config['capcut']['preset_number'])}]")
+        page.click(f"(//img[@class='image-QII91y'])[{str(settings.config['capcut']['preset_number'])}]")
 
         time.sleep(2)
 
@@ -174,8 +184,8 @@ def generate_captions(file_path, title):
 
         page.click("//li[contains(text(),'High quality')]")
 
-        page.click("//span[contains(text(),'30fps')]") 
-          
+        page.click("//span[contains(text(),'30fps')]")
+
         page.click("//li[contains(text(),'60fps')]")
 
         time.sleep(2)
@@ -189,12 +199,12 @@ def generate_captions(file_path, title):
 
         with page.expect_download() as download_info:
             page.locator("//a[@class='shadowAnchor_5bc06']").click()
-        
+
         dl = download_info.value
         print(dl.path())
         working_dir_path = os.getcwd()
 
-        os.makedirs(os.path.join(working_dir_path, "capcut_results", "videos"), exist_ok=True)  
+        os.makedirs(os.path.join(working_dir_path, "capcut_results", "videos"), exist_ok=True)
 
         final_path = os.path.join(working_dir_path, "capcut_results", "videos", video_file_name + ".mp4")
         print(final_path)

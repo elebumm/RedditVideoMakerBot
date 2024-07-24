@@ -245,7 +245,7 @@ def make_final_video(
 
     if not settings.config["settings"]["mememode"]:
         Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
-        
+
         # Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
         # get the title_template image and draw a text in the middle part of it with the title of the thread
         title_template = Image.open("assets/title_template.png")
@@ -349,17 +349,18 @@ def make_final_video(
                     "scale", screenshot_width, -1
                 )
             )
+
             if i == 0:
                 time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
 
-            image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
-            background_clip = background_clip.overlay(
-                image_overlay,
-                enable=f"between(t,{current_time},{current_time + time_for_clip})",
-                x="(main_w-overlay_w)/2",
-                y="(main_h-overlay_h)/2",
-            )
-            current_time += time_for_clip
+                image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
+                background_clip = background_clip.overlay(
+                    image_overlay,
+                    enable=f"between(t,{current_time},{current_time + time_for_clip})",
+                    x="(main_w-overlay_w)/2",
+                    y="(main_h-overlay_h)/2",
+                )
+                current_time += time_for_clip
 
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
