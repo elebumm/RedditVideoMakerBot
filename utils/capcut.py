@@ -100,6 +100,12 @@ def generate_captions(file_path, title):
         if page.is_visible("//div[@class='guide-close-icon-Gtxdju']"):
             page.click("//div[@class='guide-close-icon-Gtxdju']")
 
+        if page.is_visible("//div[@class='guide-close-icon-Gtxdju'][1]"):
+            page.click("//div[@class='guide-close-icon-Gtxdju'][1]")
+
+        if page.is_visible("//div[@class='guide-close-icon-OwPlMC']"):
+            page.click("//div[@class='guide-close-icon-OwPlMC']")
+
         page.set_input_files("(//input[@type='file'])[1]", file_path)
 
         time.sleep(2)

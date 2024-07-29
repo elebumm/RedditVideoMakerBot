@@ -111,7 +111,8 @@ class TTSEngine:
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
 
-            if settings.config["settings"]["storymodemethod"] != 0:
+            # TODO: Maybe move this somewhere better?
+            if not settings.config["settings"]["use_capcut"]:
                 comment_image_maker((0, 0, 0, 0), self.reddit_object, comments, (255, 255, 255), transparent=True)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")

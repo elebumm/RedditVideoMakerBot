@@ -496,7 +496,7 @@ def make_final_video(
     pbar.close()
 
 
-    if settings.config["settings"]["storymodemethod"] == 0:
+    if settings.config["settings"]["use_capcut"]:
         print_step("Adding CapCut captions 📝")
         file_path = os.getcwd() + f"/results/{subreddit}/{filename}.mp4"
         capcut.generate_captions(file_path, filename)
