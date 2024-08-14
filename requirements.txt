@@ -11,7 +11,7 @@ toml==0.10.2
 translators==5.9.2
 pyttsx3==2.90
 Pillow==10.4.0
-tomlkit==0.13.0
+tomlkit==0.13.2
 Flask==3.0.3
 clean-text==0.6.0
 unidecode==1.3.8
