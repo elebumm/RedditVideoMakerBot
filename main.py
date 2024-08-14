@@ -28,7 +28,7 @@ from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
 from video_creation.voices import save_text_to_mp3
 from video_creation.memes import make_meme_video
 
-__VERSION__ = "3.2.1"
+__VERSION__ = "3.2.2"
 
 print(
     """
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         print_markdown("## Invalid credentials")
         print_markdown("Please check your credentials in the config.toml file")
         shutdown()
-    except Exception as err:        
+    except Exception as err:
         config["settings"]["tts"]["elevenlabs_api_key"] = "REDACTED"
         print_step(
             f"Sorry, something went wrong with this version! Try again, and feel free to report this issue at GitHub or the Discord community.\n"

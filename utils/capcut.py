@@ -36,6 +36,7 @@ def generate_captions(file_path, title):
 
         page.click("//span[contains(text(),'OK')]")
 
+        print("Logging in")
         page.goto("https://www.capcut.com/login")
 
         page.fill("//input[@class='lv-input lv-input-size-default lv_sign_in_panel_wide-input']", email)
@@ -65,6 +66,7 @@ def generate_captions(file_path, title):
         if page.is_visible("//div[@class='guide-modal-close-icon']"):
             page.click("//div[@class='guide-modal-close-icon']")
 
+        print("Trying to remove old video")
         if page.is_visible("//div[@data-selectable-item-id]"):
 
             page.hover("//div[@data-selectable-item-id]")
@@ -85,6 +87,7 @@ def generate_captions(file_path, title):
 
         page.goto("https://www.capcut.com/editor?enter_from=create_new&current_page=landing_page&from_page=work_space&start_tab=video&__action_from=my_draft&position=my_draft&scenario=youtube_ads&scale=9%3A16")
 
+        print("Uploading video")
         if page.is_visible("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']"):
             page.click("//div[@class='guide-close-icon-f8J9FZ']//*[name()='svg']")
 
@@ -106,11 +109,18 @@ def generate_captions(file_path, title):
         if page.is_visible("//div[@class='guide-close-icon-OwPlMC']"):
             page.click("//div[@class='guide-close-icon-OwPlMC']")
 
+        while True:
+            try:
+                page.click("div[class^='guide-close-icon-']", timeout=1000)
+            except:
+                break
+
+
         page.set_input_files("(//input[@type='file'])[1]", file_path)
 
         time.sleep(2)
 
-        page.click("//div[@class='tools-dCzTyg']")
+        page.click("//div[@class='tools-97tWCU']")
         page.click("(//li[@role='option'])[5]")
 
         time.sleep(18)
@@ -143,7 +153,7 @@ def generate_captions(file_path, title):
 
         time.sleep(1)
 
-        page.click(f"(//img[@class='image-QII91y'])[{str(settings.config['capcut']['preset_number'])}]")
+        page.click(f"(//img[@class='image-E7GTkW'])[{str(settings.config['capcut']['preset_number'])}]")
 
         time.sleep(2)
 

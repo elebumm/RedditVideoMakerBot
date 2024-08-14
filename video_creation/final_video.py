@@ -17,11 +17,11 @@ from rich.progress import track
 
 from utils import settings
 from utils import capcut
+from utils import thumbnail
 from utils.cleanup import cleanup
 from utils.console import print_step, print_substep
-from utils.thumbnail import create_thumbnail
+from utils.thumbnail import create_thumbnail, create_fancy_thumbnail
 from utils.videos import save_data
-from utils.process_post import split_text
 
 from pathlib import Path
 
@@ -110,43 +110,6 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
         print(e.stderr.decode("utf8"))
         exit(1)
     return output_path
-
-
-# The following function is based on code under: Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
-def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
-    print_step(f"Creating fancy thumbnail for: {text}")
-    font_title_size = 47
-    font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
-    image_width, image_height = image.size
-    lines = textwrap.wrap(text, width=wrap)
-    y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 30
-    draw = ImageDraw.Draw(image)
-
-    username_font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 30)
-    draw.text((205, 825), settings.config["settings"]["channel_name"], font=username_font, fill=text_color, align="left")
-
-    if len(lines) == 3:
-        lines = textwrap.wrap(text, width=wrap+10)
-        font_title_size = 40
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
-        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 35
-    elif len(lines) == 4:
-        lines = textwrap.wrap(text, width=wrap+10)
-        font_title_size = 35
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
-        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 40
-    elif len(lines) > 4:
-        lines = textwrap.wrap(text, width=wrap+10)
-        font_title_size = 30
-        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
-        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 30
-
-    for line in lines:
-        _, line_height = font.getsize(line)
-        draw.text((120, y), line, font=font, fill=text_color, align="left")
-        y += line_height + padding
-
-    return image
 
 def merge_background_audio(audio: ffmpeg, reddit_id: str):
     """Gather an audio and merge with assets/backgrounds/background.mp3
@@ -246,8 +209,6 @@ def make_final_video(
     if not settings.config["settings"]["mememode"]:
         Path(f"assets/temp/{reddit_id}/png").mkdir(parents=True, exist_ok=True)
 
-        # Copyright 2024 beingbored (aka. Tim), MIT License, permission granted to use, copy, modify, and distribute.
-        # get the title_template image and draw a text in the middle part of it with the title of the thread
         title_template = Image.open("assets/title_template.png")
 
         title = reddit_obj["thread_title"]
@@ -264,8 +225,6 @@ def make_final_video(
         )
 
         title_img.save(f"assets/temp/{reddit_id}/png/title.png")
-
-        # Copyright end
 
     image_clips.insert(
         0,
@@ -307,27 +266,19 @@ def make_final_video(
                 ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]
             )
 
-            text = " ".join(reddit_obj["thread_post"])
-            number_of_clips_splitted = len(split_text(text))
-
-            # TODO:  Fix that it sometimes goes out of sync
-            for i in track(range(0, number_of_clips_splitted + 1), "Collecting the image files..."):
-                time_for_clip = total_audio_duration/(number_of_clips_splitted+1)
-                if i == 0:
-                    time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
-                image_clips.append(
-                    ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
-                        "scale", screenshot_width, -1
-                    )
+            time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
+            image_clips.append(
+                ffmpeg.input(f"assets/temp/{reddit_id}/png/img{0}.png")["v"].filter(
+                    "scale", screenshot_width, -1
                 )
+            )
 
-                background_clip = background_clip.overlay(
-                    image_clips[i],
-                    enable=f"between(t,{current_time},{current_time + time_for_clip})",
-                    x="(main_w-overlay_w)/2",
-                    y="(main_h-overlay_h)/2",
-                )
-                current_time += time_for_clip
+            background_clip = background_clip.overlay(
+                image_clips[0],
+                enable=f"between(t,{current_time},{current_time + time_for_clip})",
+                x="(main_w-overlay_w)/2",
+                y="(main_h-overlay_h)/2",
+            )
     else:
         total_audio_duration = float(
             ffmpeg.probe(f"assets/temp/{reddit_id}/audio.mp3")["format"]["duration"]
@@ -343,13 +294,6 @@ def make_final_video(
             )
 
         for i in range(0, num_files):
-            time_for_clip = total_audio_duration/(num_files)
-            image_clips.append(
-                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")["v"].filter(
-                    "scale", screenshot_width, -1
-                )
-            )
-
             if i == 0:
                 time_for_clip = float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"])
 

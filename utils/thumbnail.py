@@ -1,4 +1,9 @@
-from PIL import ImageDraw, ImageFont
+import textwrap
+import os
+
+from PIL import ImageDraw, ImageFont, Image
+from utils import settings
+from utils.console import print_step, print_substep
 
 
 def create_thumbnail(thumbnail, font_family, font_size, font_color, width, height, title):
@@ -33,3 +38,38 @@ def create_thumbnail(thumbnail, font_family, font_size, font_color, width, heigh
         draw.text((MarginXaxis, MarginYaxis + (LineHeight * i)), arrayTitle[i], rgb, font=font)
 
     return thumbnail
+
+def create_fancy_thumbnail(image, text, text_color, padding, wrap=35):
+    print_step(f"Creating fancy thumbnail for: {text}")
+    font_title_size = 47
+    font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+    image_width, image_height = image.size
+    lines = textwrap.wrap(text, width=wrap)
+    y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 30
+    draw = ImageDraw.Draw(image)
+
+    username_font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 30)
+    draw.text((205, 825), settings.config["settings"]["channel_name"], font=username_font, fill=text_color, align="left")
+
+    if len(lines) == 3:
+        lines = textwrap.wrap(text, width=wrap+10)
+        font_title_size = 40
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 35
+    elif len(lines) == 4:
+        lines = textwrap.wrap(text, width=wrap+10)
+        font_title_size = 35
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 40
+    elif len(lines) > 4:
+        lines = textwrap.wrap(text, width=wrap+10)
+        font_title_size = 30
+        font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_title_size)
+        y = (image_height / 2) - (((font.getsize(text)[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2) + 30
+
+    for line in lines:
+        _, line_height = font.getsize(line)
+        draw.text((120, y), line, font=font, fill=text_color, align="left")
+        y += line_height + padding
+
+    return image

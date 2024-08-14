@@ -11,7 +11,6 @@ from rich.progress import track
 
 from utils import settings
 from utils.console import print_step, print_substep
-from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 from utils.videos import save_data
 
@@ -61,15 +60,6 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         bgcolor = (255, 255, 255, 255)
         txtcolor = (0, 0, 0)
         transparent = False
-    if storymode and settings.config["settings"]["storymodemethod"] == 1:
-        # for idx,item in enumerate(reddit_object["thread_post"]):
-        print_substep("Generating images...")
-        return imagemaker(
-            theme=bgcolor,
-            reddit_obj=reddit_object,
-            txtclr=txtcolor,
-            transparent=transparent,
-        )
 
     if settings.config["settings"]["storymodemethod"] == 1:
         return

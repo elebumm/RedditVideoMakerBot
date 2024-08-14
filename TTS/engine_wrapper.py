@@ -72,8 +72,6 @@ class TTSEngine:
             comment["comment_body"] = re.sub(r'\."\.', '".', comment["comment_body"])
 
     def run(self) -> Tuple[int, int]:
-        from utils.imagenarator import comment_image_maker
-
         Path(self.path).mkdir(parents=True, exist_ok=True)
         print_step("Saving Text to MP3 files...")
 
@@ -94,7 +92,6 @@ class TTSEngine:
 
         else:
             comments = []
-            os.makedirs("assets/temp/" + self.redditid + "/png", exist_ok=True)
             for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
                 # TODO: Maybe move this somewhere better?
                 comments.append(comment["comment_body"])
@@ -110,10 +107,6 @@ class TTSEngine:
                     self.split_post(comment["comment_body"], idx)  # Split the comment
                 else:  # If the comment is not too long, just call the tts engine
                     self.call_tts(f"{idx}", process_text(comment["comment_body"]))
-
-            # TODO: Maybe move this somewhere better?
-            if not settings.config["settings"]["use_capcut"]:
-                comment_image_maker((0, 0, 0, 0), self.reddit_object, comments, (255, 255, 255), transparent=True)
 
         print_substep("Saved Text to MP3 files successfully.", style="bold green")
         return self.length, idx
