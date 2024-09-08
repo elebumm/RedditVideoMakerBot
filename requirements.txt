@@ -6,7 +6,7 @@ playwright==1.44.0
 praw==7.7.1
 prawcore~=2.3.0
 requests==2.32.3
-rich==13.7.1
+rich==13.8.0
 toml==0.10.2
 translators==5.9.2
 pyttsx3==2.91
