@@ -270,7 +270,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                             # Take a screenshot of the parent element with the adjusted height
                             page.screenshot(
                                 clip=location,
-                                path=f"assets/temp/{reddit_id}/png/comment_{idx}_parent.png",
+                                path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
                             )
                         else:
                             print("Could not get the bounding box of the parent element.")
