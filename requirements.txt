@@ -8,7 +8,7 @@ prawcore~=2.3.0
 requests==2.32.3
 rich==13.8.1
 toml==0.10.2
-translators==5.9.2
+translators==5.9.3
 pyttsx3==2.97
 Pillow==10.4.0
 tomlkit==0.13.2
