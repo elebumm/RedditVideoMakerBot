@@ -181,7 +181,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     location[i] = float("{:.2f}".format(location[i] * zoom))
                 page.screenshot(clip=location, path=postcontentpath)
             else:
-                page.locator('[data-test-id="post-content"]').screenshot(path=postcontentpath)
+                page.locator('h1[slot="title"]').screenshot(path=postcontentpath)
         except Exception as e:
             print_substep("Something went wrong!", style="red")
             resp = input(
@@ -230,11 +230,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
                     page.evaluate(
-                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id} > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
-                        [comment_tl, comment["comment_id"]],
+                        '([tl_content, tl_id]) => document.querySelector(`#t1_${tl_id}-comment-rtjson-content p`).textContent = tl_content',
+                        [comment_tl, comment["comment_id"]]
                     )
                 try:
                     if settings.config["settings"]["zoom"] != 1:
+                        # click on button to close replies so that they are not shown in the video
+                        page.locator("button[aria-controls=\"comment-children\"]").first.click()
                         # store zoom settings
                         zoom = settings.config["settings"]["zoom"]
                         # zoom the body of the page
@@ -242,7 +244,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         # scroll comment into view
                         page.locator(f"#t1_{comment['comment_id']}").scroll_into_view_if_needed()
                         # as zooming the body doesn't change the properties of the divs, we need to adjust for the zoom
-                        location = page.locator(f"#t1_{comment['comment_id']}").bounding_box()
+                        location = page.locator(f"shreddit-comment[thingid=\"t1_{comment['comment_id']}\"]").bounding_box()
                         for i in location:
                             location[i] = float("{:.2f}".format(location[i] * zoom))
                         page.screenshot(
@@ -250,7 +252,9 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png",
                         )
                     else:
-                        page.locator(f"#t1_{comment['comment_id']}").screenshot(
+                        # click on button to close replies so that they are not shown in the video
+                        page.locator("button[aria-controls=\"comment-children\"]").first.click()
+                        page.locator(f"shreddit-comment[thingid=\"t1_{comment['comment_id']}\"]").screenshot(
                             path=f"assets/temp/{reddit_id}/png/comment_{idx}.png"
                         )
                 except TimeoutError:
