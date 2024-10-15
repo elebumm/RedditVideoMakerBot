@@ -16,7 +16,9 @@ def get_reddit_instance():
     """Initialize and return a Reddit instance."""
     print_substep("Logging into Reddit.")
     if settings.config["reddit"]["creds"]["2fa"]:
-        print("\nEnter your two-factor authentication code from your authenticator app.\n")
+        print(
+            "\nEnter your two-factor authentication code from your authenticator app.\n"
+        )
         code = input("> ")
         print()
         password = settings.config["reddit"]["creds"]["password"]
@@ -48,7 +50,9 @@ def get_subreddit(reddit):
     """Get the subreddit based on user input or config."""
     if not settings.config["reddit"]["thread"]["subreddit"]:
         try:
-            subreddit_name = sub(r"r\/", "", input("What subreddit would you like to pull from? "))
+            subreddit_name = sub(
+                r"r\/", "", input("What subreddit would you like to pull from? ")
+            )
             return reddit.subreddit(subreddit_name)
         except ValueError:
             print_substep("Subreddit not defined. Using AskReddit.")
@@ -66,15 +70,25 @@ def get_submission(reddit, subreddit, post_id):
     if post_id:
         return reddit.submission(id=post_id)
 
-    if settings.config["reddit"]["thread"]["post_id"] and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1:
+    if (
+        settings.config["reddit"]["thread"]["post_id"]
+        and len(str(settings.config["reddit"]["thread"]["post_id"]).split("+")) == 1
+    ):
         return reddit.submission(id=settings.config["reddit"]["thread"]["post_id"])
 
     if settings.config["ai"]["ai_similarity_enabled"]:
         threads = subreddit.hot(limit=50)
-        keywords = [keyword.strip() for keyword in settings.config["ai"]["ai_similarity_keywords"].split(",")]
-        print(f"Sorting threads by similarity to the given keywords: {', '.join(keywords)}")
+        keywords = [
+            keyword.strip()
+            for keyword in settings.config["ai"]["ai_similarity_keywords"].split(",")
+        ]
+        print(
+            f"Sorting threads by similarity to the given keywords: {', '.join(keywords)}"
+        )
         threads, similarity_scores = sort_by_similarity(threads, keywords)
-        return get_subreddit_undone(threads, subreddit, similarity_scores=similarity_scores)
+        return get_subreddit_undone(
+            threads, subreddit, similarity_scores=similarity_scores
+        )
 
     threads = subreddit.hot(limit=25)
     return get_subreddit_undone(threads, subreddit)
@@ -92,14 +106,20 @@ def collect_comments(submission):
 
         if not top_level_comment.stickied:
             sanitized_text = sanitize_text(top_level_comment.body)
-            if sanitized_text and len(top_level_comment.body) <= int(settings.config["reddit"]["thread"]["max_comment_length"]):
-                if len(top_level_comment.body) >= int(settings.config["reddit"]["thread"]["min_comment_length"]):
+            if sanitized_text and len(top_level_comment.body) <= int(
+                settings.config["reddit"]["thread"]["max_comment_length"]
+            ):
+                if len(top_level_comment.body) >= int(
+                    settings.config["reddit"]["thread"]["min_comment_length"]
+                ):
                     if top_level_comment.author is not None:
-                        comments.append({
-                            "comment_body": top_level_comment.body,
-                            "comment_url": top_level_comment.permalink,
-                            "comment_id": top_level_comment.id,
-                        })
+                        comments.append(
+                            {
+                                "comment_body": top_level_comment.body,
+                                "comment_url": top_level_comment.permalink,
+                                "comment_id": top_level_comment.id,
+                            }
+                        )
     return comments
 
 
@@ -116,7 +136,10 @@ def get_subreddit_threads(post_id):
     if submission is None:
         return get_subreddit_threads(post_id)
 
-    if not submission.num_comments and settings.config["settings"]["storymode"] == "false":
+    if (
+        not submission.num_comments
+        and settings.config["settings"]["storymode"] == "false"
+    ):
         print_substep("No comments found. Skipping.")
         exit()
 
