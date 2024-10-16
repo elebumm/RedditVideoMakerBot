@@ -44,7 +44,7 @@ background_thumbnail_font_size = { optional = true, type = "int", default = 96, 
 background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", ], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
+voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "azuretts", ], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
 random_voice = { optional = false, type = "bool", default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
 elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
 elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
@@ -56,3 +56,7 @@ python_voice = { optional = false, default = "1", example = "1", explanation = "
 py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
 silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
 no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
+azure_api_key = { optional = true, example = "fb37d9e152864e1d8992a70154cf3bba", explanation = "Azure Speech service API key" }
+azure_region = { optional = true, default = "westus2", example = "westus2", explanation = "Azure region" }
+azure_voice_name = { optional = false, default = "en-US-AvaMultilingualNeural", options = ["en-US-AndrewMultilingualNeural", "en-US-AvaMultilingualNeural", "de-DE-FlorianMultilingualNeural", "en-US-EmmaMultilingualNeural", "de-DE-SeraphinaMultilingualNeural", "de-DE-FlorianMultilingualNeural", "fr-FR-VivienneMultilingualNeural", "fr-FR-RemyMultilingualNeural", "zh-CN-XiaoxiaoMultilingualNeural", "zh-CN-XiaochenMultilingualNeural", "zh-CN-XiaoyuMultilingualNeural", "zh-CN-YunyiMultilingualNeural"], example = "en-US-AvaMultilingualNeural", explanation = "Azure voice name" }
+azure_voice_speed_boost = { optional = false, default = 0, example = 50, explanation = "Azuretts voice speed boost (in %). Has to be a number between 0 and 100" }

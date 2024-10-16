@@ -258,6 +258,7 @@
                         <option value="googletranslate">Google Translate</option>
                         <option value="awspolly">AWS Polly</option>
                         <option value="pyttsx">Python TTS (pyttsx)</option>
+                        <option value="azuretts">Azure TTS (Speech service)</option>
                     </select>
                 </div>
             </div>
@@ -406,6 +407,46 @@
                             data-toggle="tooltip"
                             data-original-title='The number of system voices (2 are pre-installed in Windows)'>
                     </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="azure_api_key" class="col-4">Azure API Key</label>
+                <div class="col-8">
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <i class="bi bi-key-fill"></i>
+                        </div>
+                        <input name="azure_api_key" value="{{ data.azure_api_key }}" type="text" class="form-control"
+                            placeholder="Azure Speech service API key" data-toggle="tooltip"
+                            data-original-title="Azure Speech service API key">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="azure_region" class="col-4">Azure Region</label>
+                <div class="col-8">
+                    <input name="azure_region" type="text" class="form-control"
+                        placeholder="arial" value="{{ data.azure_region }}">
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <label for="azure_voice_name" class="col-4">Azure Voice Name</label>
+                <div class="col-8">
+                    <select name="azure_voice_name" class="form-select" data-toggle="tooltip"
+                        data-original-title="Azure voice name">
+                        <option value="en-US-AndrewMultilingualNeural">en-US-AndrewMultilingualNeural</option>
+                        <option value="en-US-AvaMultilingualNeural">en-US-AvaMultilingualNeural</option>
+                        <option value="de-DE-FlorianMultilingualNeural">de-DE-FlorianMultilingualNeural</option>
+                        <option value="en-US-EmmaMultilingualNeural">en-US-EmmaMultilingualNeural</option>
+                        <option value="de-DE-SeraphinaMultilingualNeural">de-DE-SeraphinaMultilingualNeural</option>
+                        <option value="fr-FR-VivienneMultilingualNeural">fr-FR-VivienneMultilingualNeural</option>
+                        <option value="fr-FR-RemyMultilingualNeural">fr-FR-RemyMultilingualNeural</option>
+                        <option value="zh-CN-XiaoxiaoMultilingualNeural">zh-CN-XiaoxiaoMultilingualNeural</option>
+                        <option value="zh-CN-XiaochenMultilingualNeural">zh-CN-XiaochenMultilingualNeural</option>
+                        <option value="zh-CN-XiaoyuMultilingualNeural">zh-CN-XiaoyuMultilingualNeural</option>
+                        <option value="zh-CN-YunyiMultilingualNeural">zh-CN-YunyiMultilingualNeural</option>
+                    </select>
                 </div>
             </div>
             <div class="row mb-2">
