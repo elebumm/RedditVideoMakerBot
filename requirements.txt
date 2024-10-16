@@ -22,3 +22,4 @@ ffmpeg-python==0.2.0
 elevenlabs==1.8.1
 yt-dlp==2024.10.7
 numpy==1.26.4
+azure-cognitiveservices-speech==1.41.1
