@@ -21,4 +21,4 @@ transformers==4.48.0
 ffmpeg-python==0.2.0
 elevenlabs==1.8.1
 yt-dlp==2025.1.15
-numpy==1.26.4
+numpy==2.2.2
