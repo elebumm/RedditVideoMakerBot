@@ -22,6 +22,7 @@ from utils.fonts import getheight
 from utils.id import extract_id
 from utils.thumbnail import create_thumbnail
 from utils.videos import save_data
+import os
 
 console = Console()
 
