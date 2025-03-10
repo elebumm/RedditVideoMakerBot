@@ -172,7 +172,7 @@ function install_main(){
         echo "Assuming yes"
     # else, ask if they want to continue
     else
-        echo "Continue? (y/n)" 
+        echo "Continue? (y/N)" 
         read answer 
         # if the answer is not yes, then exit
         if [ "$answer" != "y" ]; then
@@ -215,7 +215,7 @@ function install_main(){
             echo "Assuming yes"
             # else, ask if they want to continue
         else
-            echo "Continue? (y/n)" 
+            echo "Continue? (y/N)" 
             read answer 
             # if the answer is not yes, then exit
             if [ "$answer" != "y" ]; then
