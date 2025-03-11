@@ -109,7 +109,7 @@ def get_encoder():
             return base_encoder
     except Exception as e:
         print(f"Error while checking for NVENC support: {e}")
-        print("Falling back to libx264")
+        print(f"Falling back to {base_encoder}")
         return base_encoder
 
 
