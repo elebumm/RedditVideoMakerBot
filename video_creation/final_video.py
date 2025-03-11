@@ -84,9 +84,10 @@ def name_normalize(name: str) -> str:
         return name
 
 
-def check_nvenc_support():
+def get_encoder():
     """Check if the system supports NVENC encoding by attempting to encode a test frame."""
     import subprocess
+    base_encoder = "libx264"
 
     try:
         # Try to encode a single black frame using NVENC
@@ -100,9 +101,16 @@ def check_nvenc_support():
         )
 
         # If the command succeeds (return code 0) and there's no error output, NVENC is supported
-        return result.returncode == 0 and not result.stderr
-    except Exception:
-        return False
+        if result.returncode == 0:
+            print("NVENC supported")
+            return "h264_nvenc"
+        else:
+            print("NVENC not supported")
+            return base_encoder
+    except Exception as e:
+        print(f"Error while checking for NVENC support: {e}")
+        print("Falling back to libx264")
+        return base_encoder
 
 
 
@@ -240,11 +248,7 @@ def make_final_video(
 
     reddit_id = extract_id(reddit_obj)
 
-    if check_nvenc_support():
-        print("Using NVENC Encoder.")
-        encoder = "h264_nvenc"
-    else:
-        encoder = "libx264"
+    encoder = get_encoder()
 
     allowOnlyTTSFolder: bool = (
         settings.config["settings"]["background"]["enable_extra_audio"]
