@@ -15,7 +15,7 @@ clean-text==0.6.0
 unidecode==1.4.0
 spacy==3.8.4
 torch==2.7.0
-transformers==4.50.2
+transformers==4.51.3
 ffmpeg-python==0.2.0
 elevenlabs==1.57.0
 yt-dlp==2025.3.27
