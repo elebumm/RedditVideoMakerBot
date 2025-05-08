@@ -17,5 +17,5 @@ spacy==3.8.4
 torch==2.7.0
 transformers==4.51.3
 ffmpeg-python==0.2.0
-elevenlabs==1.57.0
+elevenlabs==1.58.1
 yt-dlp==2025.3.27
