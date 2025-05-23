@@ -13,7 +13,7 @@ tomlkit==0.13.2
 Flask==3.1.0
 clean-text==0.6.0
 unidecode==1.4.0
-spacy==3.8.4
+spacy==3.8.7
 torch==2.7.0
 transformers==4.51.3
 ffmpeg-python==0.2.0
