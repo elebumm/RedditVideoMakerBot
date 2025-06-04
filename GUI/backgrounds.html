@@ -14,6 +14,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <form action="background/delete" method="post">
+    {% csrf_token %}
                     <input type="hidden" id="background-key" name="background-key" value="">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
@@ -33,6 +34,7 @@
 
                 <!-- Add video form -->
                 <form id="addBgForm" action="background/add" method="post" novalidate>
+    {% csrf_token %}
                     <div class="form-group row">
                         <label class="col-4 col-form-label" for="youtube_uri">YouTube URI</label>
                         <div class="col-8">
