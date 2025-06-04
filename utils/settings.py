@@ -1,3 +1,4 @@
+import ast
 import re
 from pathlib import Path
 from typing import Dict, Tuple
@@ -30,7 +31,7 @@ def check(value, checks, name):
         incorrect = True
     if not incorrect and "type" in checks:
         try:
-            value = eval(checks["type"])(value)
+            value = ast.literal_eval(checks["type"])(value)
         except:
             incorrect = True
 
@@ -78,7 +79,7 @@ def check(value, checks, name):
             + str(name)
             + "[#F7768E bold]=",
             extra_info=get_check_value("explanation", ""),
-            check_type=eval(get_check_value("type", "False")),
+            check_type=ast.literal_eval(get_check_value("type", "False")),
             default=get_check_value("default", NotImplemented),
             match=get_check_value("regex", ""),
             err_message=get_check_value("input_error", "Incorrect input"),
