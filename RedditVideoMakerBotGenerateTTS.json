@@ -1,0 +1,187 @@
+{
+  "name": "RedditVideoMakerBot Generate TTS",
+  "tags": ["TTS", "Audio", "Subworkflow", "FOSS", "Piper"],
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Reddit Video Maker Bot - Generate TTS Subworkflow (Piper TTS)\n\nThis subworkflow generates text-to-speech audio for a given text segment using Piper TTS (via command line) and converts it to MP3 using ffmpeg.\n\n**Inputs:**\n- `text_segment` (string): The text to convert to speech.\n- `piper_voice_model_path` (string): Path to the Piper voice model file (e.g., en_US-lessac-medium.onnx).\n\n**Outputs:**\n- `tts_audio_binary` (binary): The generated MP3 audio data.\n- `audio_file_path` (string): The path to the saved MP3 audio file (e.g., `audio_cache/tts_output.mp3`).\n\n**Prerequisites on n8n execution environment:**\n- Piper TTS installed and accessible via `piper` command.\n- ffmpeg installed and accessible via `ffmpeg` command.\n- `audio_cache/` directory must be writable by n8n."
+      },
+      "name": "Sticky Note: Explanation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -50,
+        -450
+      ],
+      "id": "StickyNote_TTS_Explanation"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "text_segment",
+              "type": "string",
+              "example": "Hello, this is a test sentence."
+            },
+            {
+              "name": "piper_voice_model_path",
+              "type": "string",
+              "example": "/models/piper/en_US-lessac-medium.onnx"
+            }
+          ]
+        }
+      },
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -200
+      ],
+      "id": "ExecuteWorkflowTrigger_TTS"
+    },
+    {
+      "parameters": {
+        "command": "mkdir -p audio_cache && piper --model {{ $json.piper_voice_model_path }} --output_file audio_cache/tts_output.wav",
+        "stdin": "{{ $json.text_segment }}",
+        "options": {
+          "shell": true,
+          "timeout": 120000
+        }
+      },
+      "name": "Generate WAV with Piper TTS",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 2.1,
+      "position": [
+        250,
+        -200
+      ],
+      "id": "ExecuteCommand_PiperTTS",
+      "notesInFlow": true,
+      "notes": "Ensure 'audio_cache' exists. Timeout set to 2 mins."
+    },
+    {
+      "parameters": {
+        "command": "ffmpeg -y -i audio_cache/tts_output.wav -codec:a libmp3lame -qscale:a 2 audio_cache/tts_output.mp3",
+        "options": {
+          "shell": true,
+          "timeout": 60000
+        }
+      },
+      "name": "Convert WAV to MP3",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        -200
+      ],
+      "id": "ExecuteCommand_FFmpeg_WAV_to_MP3",
+      "notesInFlow": true,
+      "notes": "Overwrite if exists. Timeout 1 min."
+    },
+    {
+      "parameters": {
+        "filePath": "audio_cache/tts_output.mp3",
+        "outputPropertyName": "tts_audio_binary",
+        "options": {}
+      },
+      "name": "Read MP3 Audio File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1.2,
+      "position": [
+        750,
+        -200
+      ],
+      "id": "ReadBinaryFile_MP3"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "audio_file_path",
+              "value": "={{ $json.tts_audio_binary.fileName || 'audio_cache/tts_output.mp3' }}"
+            }
+          ]
+        },
+        "options": {
+          "keepOnlySet": false
+        }
+      },
+      "name": "Set Output Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        -200
+      ],
+      "id": "Set_Output_Data"
+    }
+  ],
+  "connections": {
+    "ExecuteWorkflowTrigger_TTS": [
+      {
+        "main": [
+          [
+            {
+              "node": "Generate WAV with Piper TTS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    ],
+    "Generate WAV with Piper TTS": [
+      {
+        "main": [
+          [
+            {
+              "node": "Convert WAV to MP3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    ],
+    "Convert WAV to MP3": [
+      {
+        "main": [
+          [
+            {
+              "node": "Read MP3 Audio File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    ],
+    "Read MP3 Audio File": [
+      {
+        "main": [
+          [
+            {
+              "node": "Set Output Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1b9a12a4-8f6c-4c2e-9d1a-5b7c0f8e2d3a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  }
+}

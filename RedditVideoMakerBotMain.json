@@ -1,0 +1,236 @@
+{
+  "name": "RedditVideoMakerBot Main",
+  "tags": ["Reddit", "Video Automation", "FOSS", "Main Workflow"],
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Reddit Video Maker Bot - Main Workflow (FOSS)\n\nThis workflow automates short-form video creation from Reddit posts using FOSS tools.\n\n**Steps:**\n1.  **Schedule Trigger**: Runs periodically.\n2.  **Set Configuration**: Defines global parameters (subreddit, Piper paths, ffmpeg paths, local folders, etc.). **USER MUST CONFIGURE THESE PATHS.**\n3.  **Reddit - Get Top Posts**: Fetches posts.\n4.  **Code - Filter Posts**: Filters posts.\n5.  **Split In Batches**: Processes one post at a time.\n6.  **Execute Subworkflow: Process Post**: Triggers video generation for each post.\n7.  **Log Processed Post**: Logs completion.\n\n**Prerequisites for n8n environment:**\n- `ffmpeg` installed.\n- Piper TTS installed, with voice models at specified paths.\n- Specified local folders (`video_background_local_folder_path`, `audio_cache/`, `results/`) must exist and be writable/readable."
+      },
+      "name": "Sticky Note: Main Explanation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "id": "StickyNote_Main_Explanation",
+      "position": [
+        0,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 3,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "id": "ScheduleTrigger_Main",
+      "position": [
+        0,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "subreddit",
+              "value": "askreddit"
+            },
+            {
+              "name": "timeframe",
+              "value": "day"
+            },
+            {
+              "name": "piper_voice_model_path_author",
+              "value": "/opt/n8n/piper_voices/en_US-lessac-medium.onnx"
+            },
+            {
+              "name": "piper_voice_model_path_commenter",
+              "value": "/opt/n8n/piper_voices/en_US-ryan-medium.onnx"
+            },
+            {
+              "name": "video_background_local_folder_path",
+              "value": "/opt/n8n/video_backgrounds/"
+            },
+            {
+              "name": "output_resolution",
+              "value": "1080x1920"
+            },
+            {
+              "name": "caption_font_path",
+              "value": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            },
+            {
+              "name": "caption_font_size",
+              "value": "48"
+            },
+            {
+              "name": "caption_color",
+              "value": "white"
+            },
+            {
+              "name": "ffmpeg_path",
+              "value": "ffmpeg"
+            },
+            {
+              "name": "piper_path",
+              "value": "piper"
+            }
+          ],
+          "number": [
+            {
+              "name": "post_limit",
+              "value": 3
+            },
+            {
+              "name": "min_score",
+              "value": 50
+            },
+            {
+              "name": "min_title_length",
+              "value": 10
+            },
+            {
+              "name": "min_content_length",
+              "value": 30
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "id": "Set_Configuration_Main",
+      "position": [
+        250,
+        -150
+      ],
+      "notes": "USER ACTION: Update all paths and settings here to match your environment!"
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/{{$node['Set Configuration'].json['subreddit']}}/top.json?t={{$node['Set Configuration'].json['timeframe']}}&limit={{$node['Set Configuration'].json['post_limit']}}",
+        "options": {
+          "response": {
+            "responseFormat": "json"
+          }
+        },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-RedditVideoMakerBot/1.0"
+            }
+          ]
+        }
+      },
+      "name": "Reddit - Get Top Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "id": "HttpRequest_GetRedditPosts",
+      "position": [
+        500,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const minScore = $node['Set Configuration'].json.min_score;\nconst minTitleLength = $node['Set Configuration'].json.min_title_length;\nconst minContentLength = $node['Set Configuration'].json.min_content_length;\n\nlet filteredItems = [];\nif (items[0].json.data && items[0].json.data.children) {\n  filteredItems = items[0].json.data.children.filter(item => {\n    const post = item.data;\n    const isSelfPost = post.is_self;\n    const score = post.score;\n    const titleLength = post.title.length;\n    const contentLength = isSelfPost ? post.selftext.length : 0;\n    return score >= minScore && titleLength >= minTitleLength && (isSelfPost ? contentLength >= minContentLength : true);\n  });\n}\nreturn filteredItems.map(item => ({ json: item.data }));"
+      },
+      "name": "Code - Filter Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "Code_FilterPosts",
+      "position": [
+        750,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "id": "SplitInBatches_Main",
+      "position": [
+        1000,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "RedditVideoMakerBot Process Post"
+        },
+        "workflowInputs": {
+          "value": {
+            "reddit_post_data": "={{ $json }}",
+            "config": "={{ $node['Set Configuration'].json }}"
+          },
+          "schema": [
+            { "id": "reddit_post_data", "type": "object", "displayName": "Reddit Post Data" },
+            { "id": "config", "type": "object", "displayName": "Global Configuration" }
+          ]
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "name": "Execute Subworkflow: Process Post",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "id": "ExecuteWorkflow_ProcessPost",
+      "position": [
+        1250,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "message": "Successfully processed Reddit post: {{ $json.reddit_post_data.title }}",
+        "logLevel": "info",
+        "options": {}
+      },
+      "name": "Log Processed Post",
+      "type": "n8n-nodes-base.logMessage",
+      "typeVersion": 1,
+      "id": "LogMessage_ProcessedPost",
+      "position": [
+        1500,
+        -150
+      ]
+    }
+  ],
+  "connections": {
+    "ScheduleTrigger_Main": [{"main":[[{"node":"Set Configuration","type":"main","index":0}]]}],
+    "Set Configuration": [{"main":[[{"node":"Reddit - Get Top Posts","type":"main","index":0}]]}],
+    "Reddit - Get Top Posts": [{"main":[[{"node":"Code - Filter Posts","type":"main","index":0}]]}],
+    "Code - Filter Posts": [{"main":[[{"node":"Split In Batches","type":"main","index":0}]]}],
+    "Split In Batches": [{"main":[[{"node":"Execute Subworkflow: Process Post","type":"main","index":0}]]}],
+    "Execute Subworkflow: Process Post": [{"main":[[{"node":"Log Processed Post","type":"main","index":0}]]}]
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "cc8f1b9a-3e4d-4f2a-8c9a-1b2c3d4e5f6a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  }
+}

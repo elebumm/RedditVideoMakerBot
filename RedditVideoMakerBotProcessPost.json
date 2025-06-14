@@ -1,0 +1,174 @@
+{
+  "name": "RedditVideoMakerBot Process Post",
+  "tags": ["Reddit", "Video Automation", "Subworkflow", "FOSS", "ffmpeg"],
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Reddit Video Maker Bot - Process Post Subworkflow (FOSS)\n\nProcesses a single Reddit post to create a video using FOSS tools.\n\n**Inputs:**\n- `reddit_post_data` (object): Data for the Reddit post.\n- `config` (object): Global configuration from main workflow.\n\n**Steps:**\n1.  Fetch Reddit comments.\n2.  Prepare script (title, selftext, comments).\n3.  Generate TTS for each script part via 'Generate TTS' subworkflow.\n4.  Concatenate all TTS audio files using ffmpeg.\n5.  Select a random background video from local folder.\n6.  Generate SRT captions from script.\n7.  Assemble final video (background + audio + captions) using ffmpeg.\n8.  Generate basic YouTube metadata.\n9.  (Future Step: Upload to YouTube - HTTPRequest node for this is complex and omitted for brevity but would be similar to original user example if needed)\n\n**Prerequisites on n8n execution environment:**\n- As per Main and TTS workflows (ffmpeg, Piper, local folders)."
+      },
+      "name": "Sticky Note: Process Post Explanation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "id": "StickyNote_ProcessPost_Explanation",
+      "position": [0, -600]
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "reddit_post_data", "type": "object" },
+            { "name": "config", "type": "object" }
+          ]
+        }
+      },
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "id": "ExecuteWorkflowTrigger_ProcessPost",
+      "position": [0, -400]
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com{{ $json.reddit_post_data.permalink }}.json",
+        "options": { "response": { "responseFormat": "json" } },
+        "headerParameters": { "parameters": [{ "name": "User-Agent", "value": "n8n-RedditVideoMakerBot/1.0" }] }
+      },
+      "name": "Reddit - Get Comments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "id": "HttpRequest_GetComments",
+      "position": [250, -400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const post = $node['When Executed by Another Workflow'].json.reddit_post_data;\nconst commentsResponse = $input.item.json; // Response from Get Comments\nlet script = [];\n\nscript.push({ text: post.title, speaker: 'author', duration_estimate: Math.max(3, post.title.length / 15) });\nif (post.is_self && post.selftext) {\n  script.push({ text: post.selftext, speaker: 'author', duration_estimate: Math.max(5, post.selftext.length / 15) });\n}\n\nif (commentsResponse && commentsResponse.length > 1 && commentsResponse[1].data && commentsResponse[1].data.children) {\n  const comments = commentsResponse[1].data.children;\n  comments.slice(0, 5).forEach(commentItem => { // Top 5 comments\n    if (commentItem.data && commentItem.data.body && commentItem.data.body.length > 10) { // Basic filter for comment quality\n      script.push({ text: commentItem.data.body, speaker: 'commenter', duration_estimate: Math.max(3, commentItem.data.body.length / 15) });\n    }\n  });\n}\nreturn [{ json: { script: script, post_id: post.id } }];"
+      },
+      "name": "Code - Prepare Script & Estimate Durations",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "Code_PrepareScript",
+      "position": [500, -400]
+    },
+    {
+      "parameters": { "batchSize": 1, "fieldToSplitOut": "script", "options": {} },
+      "name": "Split Script for TTS",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "id": "SplitInBatches_TTS",
+      "position": [750, -400]
+    },
+    {
+      "parameters": {
+        "workflowId": { "__rl": true, "mode": "name", "value": "RedditVideoMakerBot Generate TTS" },
+        "workflowInputs": {
+          "value": {
+            "text_segment": "={{ $json.text }}",
+            "piper_voice_model_path": "={{ $json.speaker === 'author' ? $node['When Executed by Another Workflow'].json.config.piper_voice_model_path_author : $node['When Executed by Another Workflow'].json.config.piper_voice_model_path_commenter }}"
+          }
+        },
+        "options": { "waitForSubWorkflow": true }
+      },
+      "name": "Execute Subworkflow: Generate TTS",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "id": "ExecuteWorkflow_GenerateTTS",
+      "position": [1000, -400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst fs = require('fs');\nconst postId = items[0].json.post_id; // Ensure post_id is available from one of the items\nlet concatListContent = '';\nlet tempFilePaths = [];\n\nif (!fs.existsSync('audio_cache')) fs.mkdirSync('audio_cache', { recursive: true });\n\nfor (let i = 0; i < items.length; i++) {\n  if (items[i].binary && items[i].binary.tts_audio_binary && items[i].binary.tts_audio_binary.data) {\n    const audioData = Buffer.from(items[i].binary.tts_audio_binary.data, 'base64');\n    const tempFileName = `audio_cache/segment_${postId}_${i}.mp3`;\n    try {\n      fs.writeFileSync(tempFileName, audioData);\n      concatListContent += `file '${tempFileName.replace(/'/g, \"'\\\\\\\\'"')}'\\n`; // Escape single quotes in filenames for ffmpeg list\n      tempFilePaths.push(tempFileName);\n    } catch (e) {\n      console.error(`Error writing temp audio file ${tempFileName}:`, e);\n      throw e; // Propagate error\n    }\n  } else {\n    console.warn(`Missing binary audio data for item ${i}`);\n  }\n}\nconst listFilePath = `audio_cache/ffmpeg_concat_list_${postId}.txt`;\nfs.writeFileSync(listFilePath, concatListContent);\n\nreturn { json: { concat_list_path: listFilePath, concatenated_audio_path: `audio_cache/concatenated_audio_${postId}.mp3`, postId: postId, temp_audio_files: tempFilePaths } };"
+      },
+      "name": "Code - Write Audios & Prepare Concat List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "Code_WriteAudiosAndPrepareConcatList",
+      "position": [1250, -400],
+      "notes": "Writes TTS binaries to temp files and creates ffmpeg concat list. Requires fs access."
+    },
+    {
+        "parameters": {
+            "command": "mkdir -p audio_cache && {{ $node['When Executed by Another Workflow'].json.config.ffmpeg_path }} -y -f concat -safe 0 -i {{ $json.concat_list_path }} -c copy {{ $json.concatenated_audio_path }}",
+            "options": {"shell": true, "timeout": 120000 }
+        },
+        "name": "Execute Command: Concatenate Audio",
+        "type": "n8n-nodes-base.executeCommand",
+        "typeVersion": 2.1,
+        "id": "ExecuteCommand_ConcatAudio",
+        "position": [1500, -400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst folderPath = $node['When Executed by Another Workflow'].json.config.video_background_local_folder_path;\nlet background_video_path = '';\ntry {\n  if (!fs.existsSync(folderPath)) { throw new Error(`Background video folder not found: ${folderPath}`); }\n  const files = fs.readdirSync(folderPath);\n  const mp4Files = files.filter(file => file.toLowerCase().endsWith('.mp4'));\n  if (mp4Files.length > 0) {\n    background_video_path = folderPath + (folderPath.endsWith('/') ? '' : '/') + mp4Files[Math.floor(Math.random() * mp4Files.length)];\n  } else { throw new Error(`No .mp4 files found in ${folderPath}`); }\n} catch (e) {\n  console.error('Error accessing background video folder:', e);\n  throw e; // Propagate error\n}\nreturn { json: { ...$input.item.json, background_video_path: background_video_path } };"
+      },
+      "name": "Code - Get Random Background Video",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "Code_GetBackgroundVideo",
+      "position": [0, -150],
+      "notes": "Needs fs access. Ensure folder and MP4 files exist."
+    },
+    {
+      "parameters": {
+        "jsCode": "const script = $node['Code - Prepare Script & Estimate Durations'].json.script;\nconst postId = $input.item.json.postId; \nlet srtContent = '';\nlet currentTime = 0; // seconds\n\nfunction formatTime(seconds) {\n  const h = Math.floor(seconds / 3600).toString().padStart(2, '0');\n  const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');\n  const s = Math.floor(seconds % 60).toString().padStart(2, '0');\n  const ms = Math.floor((seconds - Math.floor(seconds)) * 1000).toString().padStart(3, '0');\n  return `${h}:${m}:${s},${ms}`;\n}\n\nfor (let i = 0; i < script.length; i++) {\n  const segment = script[i];\n  const startTime = currentTime;\n  const duration = segment.duration_estimate > 0 ? segment.duration_estimate : 3; // Ensure duration is positive\n  const endTime = startTime + duration;\n  \n  srtContent += `${i + 1}\\n`;\n  srtContent += `${formatTime(startTime)} --> ${formatTime(endTime)}\\n`;\n  srtContent += `${segment.text.replace(/\\n/g, ' ')}\\n\\n`; // Replace newlines in text to avoid SRT issues\n  \n  currentTime = endTime;\n}\n\nconst fs = require('fs');\nif (!fs.existsSync('audio_cache')) fs.mkdirSync('audio_cache', { recursive: true });\nconst srtFilePath = `audio_cache/captions_${postId}.srt`;\nfs.writeFileSync(srtFilePath, srtContent);\n\nreturn { json: { ...$input.item.json, srt_file_path: srtFilePath, total_script_duration: currentTime } };"
+      },
+      "name": "Code - Generate SRT Captions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "Code_GenerateSRTCaptions",
+      "position": [250, -150],
+      "notes": "Needs fs access. Caption timing is based on estimated duration."
+    },
+    {
+        "parameters": {
+            "command": "mkdir -p results && {{ $node['When Executed by Another Workflow'].json.config.ffmpeg_path }} -y -i {{ $json.background_video_path }} -i {{ $json.concatenated_audio_path }} -vf \"subtitles='{{ $json.srt_file_path }}':force_style='FontFile={{ $node['When Executed by Another Workflow'].json.config.caption_font_path }},FontSize={{ $node['When Executed by Another Workflow'].json.config.caption_font_size }},PrimaryColour=&HFF{{ $node['When Executed by Another Workflow'].json.config.caption_color.replace('#', '') }}',scale={{ $node['When Executed by Another Workflow'].json.config.output_resolution }}\" -c:v libx264 -c:a aac -strict experimental -shortest -t {{ $json.total_script_duration + 1 }} results/final_video_{{ $json.postId }}.mp4",
+            "options": { "shell": true, "timeout": 600000 }
+        },
+        "name": "Execute Command: Assemble Video",
+        "type": "n8n-nodes-base.executeCommand",
+        "typeVersion": 2.1,
+        "id": "ExecuteCommand_AssembleVideo",
+        "position": [500, -150],
+        "notes": "Timeout 10 mins. Ensure font path (escaped) and color format are correct for ffmpeg. PrimaryColour is AABBGGRR."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            { "name": "youtube_title", "value": "Reddit Story: {{ $node['When Executed by Another Workflow'].json.reddit_post_data.title }}" },
+            { "name": "youtube_description", "value": "A video generated from the Reddit post titled: {{ $node['When Executed by Another Workflow'].json.reddit_post_data.title }}\\n\\n{{ $node['When Executed by Another Workflow'].json.reddit_post_data.selftext ? $node['When Executed by Another Workflow'].json.reddit_post_data.selftext.substring(0,500) : '' }}\\n\\n#Reddit #AskReddit #Shorts" },
+            { "name": "final_video_path", "value": "results/final_video_{{ $json.postId }}.mp4" }
+          ]
+        },
+        "options": {"keepOnlySet": false}
+      },
+      "name": "Set - YouTube Metadata & Final Path",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "id": "Set_YouTubeMetadata",
+      "position": [750, -150]
+    }
+  ],
+  "connections": {
+    "ExecuteWorkflowTrigger_ProcessPost": [{"main":[[{"node":"Reddit - Get Comments","type":"main","index":0}]]}],
+    "Reddit - Get Comments": [{"main":[[{"node":"Code - Prepare Script & Estimate Durations","type":"main","index":0}]]}],
+    "Code - Prepare Script & Estimate Durations": [{"main":[[{"node":"Split Script for TTS","type":"main","index":0}]]}],
+    "Split Script for TTS": [{"main":[[{"node":"Execute Subworkflow: Generate TTS","type":"main","index":0}]]}],
+    "Execute Subworkflow: Generate TTS": [{"main":[[{"node":"Code - Write Audios & Prepare Concat List","type":"main","index":0}]]}],
+    "Code - Write Audios & Prepare Concat List": [{"main":[[{"node":"Execute Command: Concatenate Audio","type":"main","index":0}]]}],
+    "Execute Command: Concatenate Audio": [{"main":[[{"node":"Code - Get Random Background Video","type":"main","index":0}]]}],
+    "Code - Get Random Background Video": [{"main":[[{"node":"Code - Generate SRT Captions","type":"main","index":0}]]}],
+    "Code - Generate SRT Captions": [{"main":[[{"node":"Execute Command: Assemble Video","type":"main","index":0}]]}],
+    "Execute Command: Assemble Video": [{"main":[[{"node":"Set - YouTube Metadata & Final Path","type":"main","index":0}]]}]
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "9d5e2c8f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  }
+}
