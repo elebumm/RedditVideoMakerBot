@@ -5,10 +5,15 @@ from typing import Dict, Tuple
 import toml
 from rich.console import Console
 
+import elevenlabs
 from utils.console import handle_input
+
 
 console = Console()
 config = dict  # autocomplete
+
+# A mapping of type names to their actual constructors for safe type casting.
+TYPE_CONSTRUCTORS = {"str": str, "int": int, "bool": bool, "float": float}
 
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
@@ -25,18 +30,78 @@ def check(value, checks, name):
     def get_check_value(key, default_result):
         return checks[key] if key in checks else default_result
 
+    # Dynamically fetch ElevenLabs voices if the API key is present
+    if name == "elevenlabs_voice_name":
+        # This relies on elevenlabs_api_key being processed first in the .toml file
+        api_key = config.get("settings", {}).get("tts", {}).get("elevenlabs_api_key")
+        if api_key:
+            console.print(
+                "\n[blue]Attempting to fetch your ElevenLabs voices...[/blue]"
+            )
+            try:
+                # This logic is ported from TTS/elevenlabs.py to avoid import issues
+                client = elevenlabs.ElevenLabs(api_key=api_key)
+                response = client.voices.get_all()
+                if not response.voices:
+                    console.print(
+                        "[yellow]No voices found for your ElevenLabs account. Check your API key.[/yellow]"
+                    )
+                else:
+                    available_voice_names = [
+                        voice.name.lower() for voice in response.voices
+                    ]
+                    console.print(
+                        f"✅ [green]Success! Found {len(list(response.voices))} voices for your account.[/green]"
+                    )
+                    checks["options"] = available_voice_names
+                    checks["explanation"] = (
+                        "Select a voice from your ElevenLabs account. Leave blank for random."
+                    )
+            except Exception as e:
+                console.print(f"❌ [red]Failed to fetch ElevenLabs voices: {e}[/red]")
+                console.print(
+                    "[yellow]You can enter a voice name manually or leave blank for random.[/yellow]"
+                )
+            # This setting is always optional (blank means random voice)
+            checks["optional"] = True
+
     incorrect = False
     if value == {}:
         incorrect = True
     if not incorrect and "type" in checks:
-        try:
-            value = eval(checks["type"])(value)  # fixme remove eval
-        except:
+        type_constructor = TYPE_CONSTRUCTORS.get(checks["type"])
+        if type_constructor:
+            try:
+                # Special handling for bool, as bool('False') is True.
+                if type_constructor is bool and isinstance(value, str):
+                    value = value.lower() not in ("false", "0", "no", "")
+                else:
+                    value = type_constructor(value)
+            except (ValueError, TypeError):
+                incorrect = True
+        else:
+            # The type specified in the template is not a known/safe type.
+            console.print(
+                f"[red]Error: Unknown type '{checks['type']}' in config template for '{name}'.[/red]"
+            )
             incorrect = True
 
+    # Prepare value for checks; especially for case-insensitive options like voice names
+    check_value = value
+    if name == "elevenlabs_voice_name":
+        check_value = str(value).lower().strip()
+
+    # A blank value is acceptable for optional fields
+    is_optional_and_blank = (
+        "optional" in checks and checks["optional"] and str(value).strip() == ""
+    )
+
     if (
-        not incorrect and "options" in checks and value not in checks["options"]
-    ):  # FAILSTATE Value is not one of the options
+        not incorrect
+        and not is_optional_and_blank
+        and "options" in checks
+        and check_value not in checks["options"]
+    ):
         incorrect = True
     if (
         not incorrect
@@ -53,7 +118,11 @@ def check(value, checks, name):
         and not hasattr(value, "__iter__")
         and (
             ("nmin" in checks and checks["nmin"] is not None and value < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and value > checks["nmax"])
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and value > checks["nmax"]
+            )
         )
     ):
         incorrect = True
@@ -61,24 +130,45 @@ def check(value, checks, name):
         not incorrect
         and hasattr(value, "__iter__")
         and (
-            ("nmin" in checks and checks["nmin"] is not None and len(value) < checks["nmin"])
-            or ("nmax" in checks and checks["nmax"] is not None and len(value) > checks["nmax"])
+            (
+                "nmin" in checks
+                and checks["nmin"] is not None
+                and len(value) < checks["nmin"]
+            )
+            or (
+                "nmax" in checks
+                and checks["nmax"] is not None
+                and len(value) > checks["nmax"]
+            )
         )
     ):
         incorrect = True
 
     if incorrect:
+        # Safely get the type constructor for the input prompt.
+        # The "False" default is a special case for handle_input, which we preserve.
+        type_str = get_check_value("type", "False")
+        check_type_arg = (
+            TYPE_CONSTRUCTORS.get(type_str) if type_str != "False" else False
+        )
+
         value = handle_input(
             message=(
-                (("[blue]Example: " + str(checks["example"]) + "\n") if "example" in checks else "")
+                (
+                    ("[blue]Example: " + str(checks["example"]) + "\n")
+                    if "example" in checks
+                    else ""
+                )
                 + "[red]"
-                + ("Non-optional ", "Optional ")["optional" in checks and checks["optional"] is True]
+                + ("Non-optional ", "Optional ")[
+                    "optional" in checks and checks["optional"] is True
+                ]
             )
             + "[#C0CAF5 bold]"
             + str(name)
             + "[#F7768E bold]=",
             extra_info=get_check_value("explanation", ""),
-            check_type=eval(get_check_value("type", "False")),  # fixme remove eval
+            check_type=check_type_arg,
             default=get_check_value("default", NotImplemented),
             match=get_check_value("regex", ""),
             err_message=get_check_value("input_error", "Incorrect input"),
@@ -113,7 +203,9 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     try:
         template = toml.load(template_file)
     except Exception as error:
-        console.print(f"[red bold]Encountered error when trying to to load {template_file}: {error}")
+        console.print(
+            f"[red bold]Encountered error when trying to to load {template_file}: {error}"
+        )
         return False
     try:
         config = toml.load(config_file)
