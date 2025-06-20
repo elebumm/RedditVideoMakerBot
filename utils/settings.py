@@ -6,7 +6,7 @@ import toml
 from rich.console import Console
 
 from utils.console import handle_input
-from TTS.elevenlabs import elevenlabs
+import elevenlabs
 
 console = Console()
 config = dict  # autocomplete
@@ -32,14 +32,22 @@ def check(value, checks, name):
         api_key = config.get("settings", {}).get("tts", {}).get("elevenlabs_api_key")
         if api_key:
             console.print("\n[blue]Attempting to fetch your ElevenLabs voices...[/blue]")
-            # Use a static method to get voices without initializing the full class
-            available_voices = elevenlabs.get_available_voices(api_key)
-            if available_voices:
-                console.print("[green]Successfully fetched voices![/green]")
-                checks["options"] = available_voices
-                checks["explanation"] = "Select a voice from your ElevenLabs account. Leave blank for random."
-            else:
-                console.print("[yellow]Could not fetch voices. Check your API key. You can enter a voice name manually.[/yellow]")
+            try:
+                # This logic is ported from TTS/elevenlabs.py to avoid import issues
+                client = elevenlabs.ElevenLabs(api_key=api_key)
+                response = client.voices.search(include_total_count=True, page_size=100)
+                if not response.voices:
+                    console.print("[yellow]No voices found for your ElevenLabs account. Check your API key.[/yellow]")
+                else:
+                    available_voice_names = [voice.name.lower() for voice in response.voices]
+                    console.print(f"✅ [green]Success! Found {response.total_count} voices for your account.[/green]")
+                    checks["options"] = available_voice_names
+                    checks["explanation"] = "Select a voice from your ElevenLabs account. Leave blank for random."
+            except Exception as e:
+                console.print(f"❌ [red]Failed to fetch ElevenLabs voices: {e}[/red]")
+                console.print("[yellow]You can enter a voice name manually or leave blank for random.[/yellow]")
+            # This setting is always optional (blank means random voice)
+            checks["optional"] = True
 
     incorrect = False
     if value == {}:
@@ -50,9 +58,20 @@ def check(value, checks, name):
         except:
             incorrect = True
 
+    # Prepare value for checks; especially for case-insensitive options like voice names
+    check_value = value
+    if name == "elevenlabs_voice_name":
+        check_value = str(value).lower().strip()
+
+    # A blank value is acceptable for optional fields
+    is_optional_and_blank = "optional" in checks and checks["optional"] and str(value).strip() == ""
+
     if (
-        not incorrect and "options" in checks and value not in checks["options"]
-    ):  # FAILSTATE Value is not one of the options
+        not incorrect
+        and not is_optional_and_blank
+        and "options" in checks
+        and check_value not in checks["options"]
+    ):
         incorrect = True
     if (
         not incorrect

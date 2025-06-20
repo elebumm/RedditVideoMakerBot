@@ -246,3 +246,6 @@ video_creation/data/envvars.txt
 
 config.toml
 *.exe
+
+# /feat/elevenlabs_v2_support testing script
+test_elevenlabs.py
