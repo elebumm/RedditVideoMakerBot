@@ -6,6 +6,7 @@ import toml
 from rich.console import Console
 
 from utils.console import handle_input
+from TTS.elevenlabs import elevenlabs
 
 console = Console()
 config = dict  # autocomplete
@@ -24,6 +25,21 @@ def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
 def check(value, checks, name):
     def get_check_value(key, default_result):
         return checks[key] if key in checks else default_result
+
+    # Dynamically fetch ElevenLabs voices if the API key is present
+    if name == "elevenlabs_voice_name":
+        # This relies on elevenlabs_api_key being processed first in the .toml file
+        api_key = config.get("settings", {}).get("tts", {}).get("elevenlabs_api_key")
+        if api_key:
+            console.print("\n[blue]Attempting to fetch your ElevenLabs voices...[/blue]")
+            # Use a static method to get voices without initializing the full class
+            available_voices = elevenlabs.get_available_voices(api_key)
+            if available_voices:
+                console.print("[green]Successfully fetched voices![/green]")
+                checks["options"] = available_voices
+                checks["explanation"] = "Select a voice from your ElevenLabs account. Leave blank for random."
+            else:
+                console.print("[yellow]Could not fetch voices. Check your API key. You can enter a voice name manually.[/yellow]")
 
     incorrect = False
     if value == {}:
