@@ -229,50 +229,33 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                         to_language=settings.config["reddit"]["thread"]["post_lang"],
                     )
                     page.evaluate(
-                        '([tl_content, tl_id]) => document.querySelector(`shreddit-comment[thingid="t1_${tl_id}"] > div:nth-child(2) > div > div[data-testid="comment"] > div`).textContent = tl_content',
+                        '([tl_content, tl_id]) => document.querySelector(`shreddit-comment[thingid="t1_${tl_id}"] > div[slot="comment"] > div > p`).textContent = tl_content',
                         [comment_tl, comment["comment_id"]],
                     )
                 try:
-                    target = f'shreddit-comment[thingid="t1_{comment["comment_id"]}"] div#t1_{comment["comment_id"]}-comment-rtjson-content'
-                    visible = page.locator(target).is_visible()
+
+                    # Hide child responses/replies, other responses button and threadline arrows before taking the screenshot
+                    page.evaluate(
+                        '''() => {
+                            // Hide all comments with depth > 0 (these are all replies/children)
+                            document.querySelectorAll('shreddit-comment[thingid="t1_${tl_id}"] > shreddit-comment[depth="1"]').forEach(el => {
+                                el.style.display = "none";
+                            });
+
+                            // Hide the "other responses" button
+                            document.querySelectorAll('shreddit-comment[thingid="t1_${tl_id}"] > faceplate-partial').forEach(el => {
+                                el.style.display = "none";
+                            });
+
+                            // Hide the threadline arrows
+                            // document.querySelector('shreddit-comment[thingid="t1_${tl_id}"]').shadowRoot.querySelectorAll('div.threadline').forEach(el => {
+                            //     el.style.display = "none";
+                            // });
+                        }'''
+                    )
                     
-                    if not visible:
-                        class ElementVisible(Exception):pass
-                        try:
-                            for _ in range(30):
-                                page.evaluate("""
-                                    (target) => {
-                                        const element = document.querySelector(target);
-                                        if (element) {
-                                            element.style.display = 'block'; // 或 'inline'
-                                            element.style.visibility = 'visible';
-                                        }
-                                    }
-                                """, target)
-                                page.wait_for_timeout(1000)
-                                visible = page.locator(target).is_visible()
-                                if visible:
-                                    raise ElementVisible
-                            target = f'shreddit-comment[thingid="t1_{comment["comment_id"]}"] div#t1_{comment["comment_id"]}-comment-rtjson-content div#-post-rtjson-content'
-                            visible = page.locator(target).is_visible()
-                            if not visible:
-                                for _ in range(30):
-                                    page.evaluate("""
-                                        (target) => {
-                                            const element = document.querySelector(target);
-                                            if (element) {
-                                                element.style.display = 'block'; // 或 'inline'
-                                                element.style.visibility = 'visible';
-                                            }
-                                        }
-                                    """, target)
-                                    page.wait_for_timeout(1000)
-                                    visible = page.locator(target).is_visible()
-                                    if visible:
-                                        raise ElementVisible
-                                    target = f'shreddit-comment[thingid="t1_{comment["comment_id"]}"]'
-                        except ElementVisible:
-                            pass
+                    # Target only the main comment content, NOW not including replies
+                    target = f'shreddit-comment[thingid="t1_{comment["comment_id"]}"]'
 
                     if settings.config["settings"]["zoom"] != 1:
                         # store zoom settings
