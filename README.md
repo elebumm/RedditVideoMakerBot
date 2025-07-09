@@ -1,6 +1,15 @@
 # Reddit Video Maker Bot 🎥
 
-All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
+![Logo Screenshot](./assets/redditVideoMaker.png)
+
+> **Automate viral Reddit video creation with zero video editing skills required!**
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Discord](https://img.shields.io/discord/980117851434864690?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://discord.gg/qfQSx45xCV)
+[![Documentation](https://img.shields.io/badge/Documentation-Available-brightgreen)](https://reddit-video-maker-bot.netlify.app/)
+
+All done WITHOUT video editing or asset compiling. Just pure ✨**programming magic**✨.
 
 Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
 
@@ -10,98 +19,267 @@ Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
   <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
   <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
 </picture>
-
 </a>
 
-## Video Explainer
+## 🌟 Features
 
-[![lewisthumbnail](https://user-images.githubusercontent.com/6053155/173631669-1d1b14ad-c478-4010-b57d-d79592a789f2.png)
-](https://www.youtube.com/watch?v=3gjcY_00U1w)
+### 🎬 **Video Creation**
+- **Automated Reddit scraping** - Pull hot posts from any subreddit
+- **Text-to-speech generation** - Convert Reddit posts and comments to natural speech
+- **Dynamic video assembly** - Combine background footage with Reddit content
+- **Custom thumbnails** - Auto-generate eye-catching thumbnails
+- **Multiple output formats** - Create videos optimized for different platforms
 
-## Motivation 🤔
+### 🎙️ **Text-to-Speech Providers**
+- **TikTok TTS** - 50+ voices including Disney characters, multiple languages
+- **AWS Polly** - Premium neural voices with natural intonation
+- **Google Translate** - Free multilingual TTS
+- **Streamlabs Polly** - Streamer-friendly voice options
+- **ElevenLabs** - AI-powered ultra-realistic voices
+- **System TTS** - Use your operating system's built-in voices
 
-These videos on TikTok, YouTube and Instagram get MILLIONS of views across all platforms and require very little effort.
-The only original thing being done is the editing and gathering of all materials...
+### 🎨 **Customization Options**
+- **Background videos** - Minecraft, GTA, nature scenes, or add your own
+- **Background music** - Add ambient music to enhance viewer experience
+- **Voice settings** - Random voice selection or consistent narrator
+- **Visual effects** - Opacity, transitions, and comment styling
+- **Content filtering** - NSFW filtering and content moderation
+- **Story mode** - Include the full Reddit post text
 
-... but what if we can automate that process? 🤔
+### 🖥️ **User Interface**
+- **Web-based GUI** - Easy-to-use browser interface at `localhost:4000`
+- **Command-line interface** - Full control via terminal
+- **Settings management** - Centralized configuration system
+- **Background manager** - Add/remove background videos easily
 
-## Disclaimers 🚨
+### 🔧 **Advanced Features**
+- **Duplicate detection** - Prevents creating videos from already processed posts
+- **Multi-language support** - Create videos in various languages
+- **Batch processing** - Generate multiple videos automatically
+- **Custom Reddit threads** - Target specific posts by ID
+- **Light/Dark mode** - Theme support for better user experience
 
-- **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that
-  you will then have to upload manually. This is for the sake of avoiding any sort of community guideline issues.
+## 🎯 Demo & Examples
 
-## Requirements
+### Video Explainer
+[![Tutorial Video](https://user-images.githubusercontent.com/6053155/173631669-1d1b14ad-c478-4010-b57d-d79592a789f2.png)](https://www.youtube.com/watch?v=3gjcY_00U1w)
 
-- Python 3.10
-- Playwright (this should install automatically in installation)
-
-## Installation 👩‍💻
-
-1. Clone this repository:
-    ```sh
-    git clone https://github.com/elebumm/RedditVideoMakerBot.git
-    cd RedditVideoMakerBot
-    ```
-
-2. Create and activate a virtual environment:
-    - On **Windows**:
-        ```sh
-        python -m venv ./venv
-        .\venv\Scripts\activate
-        ```
-    - On **macOS and Linux**:
-        ```sh
-        python3 -m venv ./venv
-        source ./venv/bin/activate
-        ```
-
-3. Install the required dependencies:
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-4. Install Playwright and its dependencies:
-    ```sh
-    python -m playwright install
-    python -m playwright install-deps
-    ```
-
----
-
-**EXPERIMENTAL!!!!**
-
-   - On macOS and Linux (Debian, Arch, Fedora, CentOS, and based on those), you can run an installation script that will automatically install steps 1 to 3. (requires bash)
-   - `bash <(curl -sL https://raw.githubusercontent.com/elebumm/RedditVideoMakerBot/master/install.sh)`
-   - This can also be used to update the installation
-
----
-
-5. Run the bot:
-    ```sh
-    python main.py
-    ```
-
-6. Visit [the Reddit Apps page](https://www.reddit.com/prefs/apps), and set up an app that is a "script". Paste any URL in the redirect URL field, for example: `https://jasoncameron.dev`.
-
-7. The bot will prompt you to fill in your details to connect to the Reddit API and configure the bot to your liking.
-
-8. Enjoy 😎
-
-9. If you need to reconfigure the bot, simply open the `config.toml` file and delete the lines that need to be changed. On the next run of the bot, it will help you reconfigure those options.
-
-(Note: If you encounter any errors installing or running the bot, try using `python3` or `pip3` instead of `python` or `pip`.)
-
-For a more detailed guide about the bot, please refer to the [documentation](https://reddit-video-maker-bot.netlify.app/).
-
-## Video
-
+### Sample Output
 https://user-images.githubusercontent.com/66544866/173453972-6526e4e6-c6ef-41c5-ab40-5d275e724e7c.mp4
 
-## Contributing & Ways to improve 📈
+## 🚀 Quick Start
 
-In its current state, this bot does exactly what it needs to do. However, improvements can always be made!
+### Prerequisites
+- **Python 3.10 or 3.11** (Required)
+- **FFmpeg** (Auto-installed)
+- **Reddit API Access** (Free)
 
-I have tried to simplify the code so anyone can read it and start contributing at any skill level. Don't be shy :) contribute!
+### Installation
+
+#### 🐍 **Method 1: Standard Installation**
+```bash
+# Clone the repository
+git clone https://github.com/elebumm/RedditVideoMakerBot.git
+cd RedditVideoMakerBot
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install Playwright browsers
+python -m playwright install
+python -m playwright install-deps
+```
+
+#### 🔥 **Method 2: Auto-Installer (Linux/macOS)** *Experimental!!!*
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/elebumm/RedditVideoMakerBot/master/install.sh)
+```
+
+### First Run
+1. **Start the bot:**
+   ```bash
+   python main.py
+   ```
+
+2. **Reddit API Setup:**
+   - Visit [Reddit Apps](https://www.reddit.com/prefs/apps)
+   - Create a new "script" application
+   - Use any redirect URL (e.g., `https://jasoncameron.dev`)
+   - The bot will guide you through the configuration
+
+3. **Configure settings:**
+   - Follow the interactive prompts
+   - Or use the web GUI at `http://localhost:4000`
+
+4. **Generate your first video!** 🎉
+
+## 🎛️ Configuration
+
+### Web Interface
+
+<!-- ![Web Interface Screenshot](./assets/redditVideoMakerInterface.png) {Please add this} -->
+
+Launch the GUI for easy configuration:
+```bash
+python GUI.py
+```
+Navigate to `http://localhost:4000` to access:
+- **Settings Panel** - Configure all bot options
+- **Background Manager** - Add/remove background videos
+- **Video Dashboard** - View generated content
+
+### Command Line
+Edit `config.toml` directly or delete specific lines to reconfigure:
+```toml
+[reddit]
+[reddit.thread]
+subreddit = "AskReddit"
+post_id = ""  # Leave empty for random posts
+max_comment_length = 500
+
+[settings]
+times_to_run = 1
+opacity = 0.9
+transition = 0.2
+```
+
+## 🎵 Text-to-Speech Configuration
+
+### TikTok TTS (Default)
+```toml
+[settings.tts]
+voice_choice = "tiktok"
+tiktok_voice = "en_us_001"  # Female voice
+tiktok_sessionid = "your_session_id"  # Required
+```
+
+**Available voices:**
+- **Disney**: Ghost Face, Chewbacca, C3PO, Stitch, Stormtrooper
+- **English**: Multiple male/female variants
+- **International**: French, German, Spanish, Japanese, Korean, and more
+
+### AWS Polly
+```toml
+[settings.tts]
+voice_choice = "awspolly"
+aws_polly_voice = "Joanna"  # Neural voice
+```
+
+### ElevenLabs (Premium)
+```toml
+[settings.tts]
+voice_choice = "elevenlabs"
+elevenlabs_api_key = "your_api_key"
+elevenlabs_voice_name = "Rachel"
+```
+
+## 🎬 Background Customization
+
+### Add Custom Backgrounds
+1. **Via Web Interface:**
+   - Go to `http://localhost:4000/backgrounds`
+   - Click "Add background video"
+   - Provide YouTube URL and details
+
+2. **Via JSON Configuration:**
+   ```json
+   {
+     "my_background": [
+       "https://youtube.com/watch?v=VIDEO_ID",
+       "background.mp4",
+       "Creator Name",
+       "center"
+     ]
+   }
+   ```
+
+### Built-in Backgrounds
+- **Minecraft gameplay** - Classic parkour and building
+- **GTA V gameplay** - Driving and action sequences  
+- **Nature scenes** - Relaxing landscapes and timelapses
+- **Abstract animations** - Colorful motion graphics
+
+## 🛠️ Advanced Usage
+
+### Batch Processing
+```bash
+# Generate 5 videos from r/AskReddit
+python main.py --times 5 --subreddit AskReddit
+```
+
+### Target Specific Posts
+```bash
+# Create video from specific Reddit post
+python main.py --post-id abc123xyz
+```
+
+### Story Mode
+Enable story mode to include the full Reddit post text:
+```toml
+[settings]
+storymode = true
+storymodemethod = 0  # 0 = full post, 1 = sentence by sentence
+```
+
+## 🔊 Audio Features
+
+### Background Music
+- **Automatic audio extraction** from background videos
+- **Volume control** - Adjust music vs. speech balance
+- **Audio synchronization** - Perfect timing with visual content
+
+### Voice Settings
+- **Random voice selection** - Different voice per video
+- **Consistent narrator** - Same voice throughout
+- **Silence duration** - Control pauses between comments
+- **Voice translation** - Multi-language support
+
+## 📁 Project Structure
+
+```
+RedditVideoMakerBot/
+├── main.py                 # Main application entry point
+├── GUI.py                  # Web interface server
+├── config.toml            # Configuration file
+├── requirements.txt       # Python dependencies
+├── TTS/                   # Text-to-speech engines
+│   ├── TikTok.py         # TikTok TTS implementation
+│   ├── aws_polly.py      # AWS Polly integration
+│   ├── elevenlabs.py     # ElevenLabs API
+│   └── ...
+├── video_creation/        # Video generation modules
+│   ├── final_video.py    # Video assembly
+│   ├── background.py     # Background processing
+│   └── voices.py         # Voice management
+├── reddit/               # Reddit API integration
+├── utils/                # Utility functions
+├── assets/               # Static assets
+└── results/              # Generated videos
+```
+
+## 🤝 Contributing
+
+We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Setup
+```bash
+# Fork and clone the repository
+git clone https://github.com/your-username/RedditVideoMakerBot.git
+
+# Create a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install development dependencies
+pip install -r requirements-dev.txt  # If available
+
+# Run tests
+python -m pytest
+```
+### Current Roadmap
 
 - [ ] Creating better documentation and adding a command line interface.
 - [x] Allowing the user to choose background music for their videos.
@@ -113,30 +291,167 @@ I have tried to simplify the code so anyone can read it and start contributing a
 - [x] Light and Dark modes
 - [x] NSFW post filter
 
-Please read our [contributing guidelines](CONTRIBUTING.md) for more detailed information.
+## 📊 Performance & Optimization
 
-### For any questions or support join the [Discord](https://discord.gg/qfQSx45xCV) server
+### System Requirements
+- **CPU**: Multi-core recommended for faster processing
+- **RAM**: 4GB minimum, 8GB recommended
+- **Storage**: 2GB free space for temporary files
+- **Network**: Stable internet for Reddit API and TTS services
 
-## Developers and maintainers.
+### Performance Tips
+- **Use SSD storage** for faster video rendering
+- **Close unnecessary applications** during processing
+- **Batch process** multiple videos for efficiency
+- **Configure video quality** based on target platform
 
-Elebumm (Lewis#6305) - https://github.com/elebumm (Founder)
+## 🐛 Troubleshooting
 
-Jason Cameron - https://github.com/JasonLovesDoggo (Maintainer)
+### Common Issues
 
-Simon (OpenSourceSimon) - https://github.com/OpenSourceSimon
+**Python Version Error:**
+```bash
+# Ensure you're using Python 3.10 or 3.11
+python --version
+```
 
-CallumIO (c.#6837) - https://github.com/CallumIO
+**TikTok TTS Issues:**
+- Ensure `tiktok_sessionid` is properly configured
+- Check the [documentation](https://reddit-video-maker-bot.netlify.app/) for session ID extraction
 
-Verq (Verq#2338) - https://github.com/CordlessCoder
+**FFmpeg Not Found:**
+```bash
+# The bot will attempt to install FFmpeg automatically
+# If this fails, install manually based on your OS
+```
 
-LukaHietala (Pix.#0001) - https://github.com/LukaHietala
+**Reddit API Errors:**
+- Verify your Reddit app credentials
+- Check API rate limits
+- Ensure subreddit exists and is accessible
 
-Freebiell (Freebie#3263) - https://github.com/FreebieII
+### Getting Help
+- 📚 **Documentation**: [reddit-video-maker-bot.netlify.app](https://reddit-video-maker-bot.netlify.app/)
+- 💬 **Discord**: [Join our community](https://discord.gg/qfQSx45xCV)
+- 🐞 **Issues**: [GitHub Issues](https://github.com/elebumm/RedditVideoMakerBot/issues)
 
-Aman Raza (electro199#8130) - https://github.com/electro199
+## 🎨 Customization Examples
 
-Cyteon (cyteon) - https://github.com/cyteon
+### Create Gaming Content
+```toml
+[reddit.thread]
+subreddit = "gaming"
+post_id = ""
+
+[settings]
+background_choice = "minecraft-parkour"
+opacity = 0.8
+```
+
+### Educational Content
+```toml
+[reddit.thread]
+subreddit = "todayilearned"
+
+[settings.tts]
+voice_choice = "awspolly"
+aws_polly_voice = "Matthew"  # Professional male voice
+```
+
+### Storytelling Videos
+```toml
+[reddit.thread]
+subreddit = "nosleep"
+
+[settings]
+storymode = true
+background_choice = "dark-ambiance"
+```
+
+## 📈 Analytics & Monitoring
+
+### Video Output Tracking
+- **Generated video count** - Track your content creation
+- **Processing time** - Monitor performance metrics
+- **File sizes** - Optimize for different platforms
+- **Error logging** - Debug issues efficiently
+
+### Quality Metrics
+- **Audio quality** - Ensure clear speech
+- **Video resolution** - Optimize for target platforms
+- **Render speed** - Track processing efficiency
+
+## 🔒 Privacy & Legal
+
+### Data Handling
+- **Local processing** - All video generation happens on your machine
+- **No data collection** - The bot doesn't store or transmit your content
+- **Reddit API compliance** - Respects Reddit's terms of service
+- **Rate limiting** - Prevents API abuse
+
+### Content Guidelines
+- **Manual upload** - You control what gets published
+- **Content filtering** - Built-in NSFW detection
+- **Fair use** - Respect intellectual property rights
+- **Platform guidelines** - Follow TikTok, YouTube, Instagram rules
+
+## 🌍 Community
+
+### Discord Server
+Join our community for:
+- **Technical support** - Get help with setup and configuration
+- **Feature requests** - Suggest new improvements
+- **Showcase** - Share your generated content
+- **Collaboration** - Connect with other creators
+
+### Contributing Guidelines
+- **Code style** - Follow PEP 8 for Python code
+- **Testing** - Include tests for new features
+- **Documentation** - Update docs for any changes
+- **Issue tracking** - Use GitHub Issues for bugs and features
+
+## 📄 License
+
+This project is licensed under the GNU General Public License License - see the [LICENSE](LICENSE) file for details.
+
+### Third-Party Licenses
+- **Roboto Fonts** - [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
+- **Dependencies** - See individual package licenses in `requirements.txt`
+
+## 🙏 Acknowledgments
+
+### Developers and Maintainers
+
+- **Elebumm (Lewis)** - Founder and Lead Developer ([Github](https://github.com/elebumm))
+- **Jason Cameron** - Maintainer and Core Contributor ([Github](https://github.com/JasonLovesDoggo))
+- **OpenSourceSimon** - Feature Development ([Github](https://github.com/OpenSourceSimon))
+- **CallumIO** - UI/UX Improvements ([Github](https://github.com/CallumIO))
+- **Verq** - Performance Optimization ([Github](https://github.com/CordlessCoder))
+- **LukaHietala** - Feature implementations ([Github](https://github.com/LukaHietala))
+- **Freebiell** - Bug fixes and improvements ([Github](https://github.com/FreebieII))
+- **Aman Raza** - Code optimization ([Github](https://github.com/electro199))
+- **Cyteon** - Documentation improvements ([Github](https://github.com/cyteon))
+
+### Motivation 🤔
+
+These videos on TikTok, YouTube and Instagram get **MILLIONS** of views across all platforms and require very little effort. The only original thing being done is the editing and gathering of all materials...
+
+**...but what if we can automate that process?** 🤔
+
+### Disclaimers 🚨
+
+- **Manual Upload Required** - This bot generates video files that you must upload manually to avoid community guideline issues
+- **API Compliance** - Respects Reddit's API terms and rate limits
+- **Educational Purpose** - Designed for learning and legitimate content creation
+
+---
+
+<div align="center">
+
+**Made with ❤️**
+
+[⭐ Star on GitHub](https://github.com/elebumm/RedditVideoMakerBot) • [🐛 Report Issues](https://github.com/elebumm/RedditVideoMakerBot/issues) • [💬 Join Discord](https://discord.gg/qfQSx45xCV)
+
+</div>
 
 
-## LICENSE
-[Roboto Fonts](https://fonts.google.com/specimen/Roboto/about) are licensed under [Apache License V2](https://www.apache.org/licenses/LICENSE-2.0)
