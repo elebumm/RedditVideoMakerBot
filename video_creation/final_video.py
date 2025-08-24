@@ -254,7 +254,11 @@ def make_final_video(
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
-    screenshot_width = int((W * 45) // 100)
+    # For 9:16 portrait videos, use an even smaller width to completely prevent clipping
+    # Since W=1080 and H=1920, we need to be extremely conservative with the width
+    screenshot_width = int((W * 15) // 100)  # Use only 15% of video width (162px)
+    # Ensure minimum and maximum bounds for portrait videos with extra padding
+    screenshot_width = max(150, min(screenshot_width, W - 300))  # Min 150px, Max W-300px for extra generous padding
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
     final_audio = merge_background_audio(audio, reddit_id)
 

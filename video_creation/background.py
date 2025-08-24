@@ -86,9 +86,10 @@ def download_background_video(background_config: Tuple[str, str, str, Any]):
     print_substep("Downloading the backgrounds videos... please be patient 🙏 ")
     print_substep(f"Downloading {filename} from {uri}")
     ydl_opts = {
-        "format": "bestvideo[height<=1080][ext=mp4]",
+        "format": "best[height<=1080]/best",
         "outtmpl": f"assets/backgrounds/video/{credit}-{filename}",
         "retries": 10,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:

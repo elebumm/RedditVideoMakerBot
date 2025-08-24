@@ -79,12 +79,13 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
-        dsf = (W // 600) + 1
+        # For better scaling, use a more conservative approach
+        dsf = max(1, min(2, (W // 800) + 1))  # Cap dsf between 1 and 2 for better compatibility
 
         context = browser.new_context(
             locale=lang or "en-us",
             color_scheme="dark",
-            viewport=ViewportSize(width=W, height=H),
+            viewport=ViewportSize(width=min(W, 1200), height=min(H, 1600)),  # Cap viewport size
             device_scale_factor=dsf,
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
         )
@@ -131,7 +132,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
             page.reload()
         # Get the thread screenshot
         page.goto(reddit_object["thread_url"], timeout=0)
-        page.set_viewport_size(ViewportSize(width=W, height=H))
+        page.set_viewport_size(ViewportSize(width=min(W, 1200), height=min(H, 1600)))
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 

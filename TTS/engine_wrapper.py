@@ -144,11 +144,20 @@ class TTSEngine:
             print("OSError")
 
     def call_tts(self, filename: str, text: str):
-        self.tts_module.run(
-            text,
-            filepath=f"{self.path}/{filename}.mp3",
-            random_voice=settings.config["settings"]["tts"]["random_voice"],
-        )
+        # Check if the TTS module supports random_voice parameter
+        import inspect
+        run_signature = inspect.signature(self.tts_module.run)
+        if 'random_voice' in run_signature.parameters:
+            self.tts_module.run(
+                text,
+                filepath=f"{self.path}/{filename}.mp3",
+                random_voice=settings.config["settings"]["tts"]["random_voice"],
+            )
+        else:
+            self.tts_module.run(
+                text,
+                filepath=f"{self.path}/{filename}.mp3",
+            )
         # try:
         #     self.length += MP3(f"{self.path}/{filename}.mp3").info.length
         # except (MutagenError, HeaderNotFoundError):
