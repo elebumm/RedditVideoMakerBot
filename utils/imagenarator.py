@@ -76,6 +76,126 @@ def draw_multiple_line_text(
         y += line_height + padding
 
 
+def draw_highlighted_text(
+    image, text, font, padding, wrap=50, highlighted_word_index=-1
+) -> None:
+    """
+    Draw text with white fill, black outline, and yellow inner outline (layered effect)
+    """
+    draw = ImageDraw.Draw(image)
+    image_width, image_height = image.size
+    
+    # Split text into words and wrap
+    words = text.split()
+    lines = []
+    current_line = []
+    current_line_width = 0
+    
+    for word in words:
+        word_width, _ = getsize(font, word + " ")
+        if current_line_width + word_width <= image_width - 40:  # 20px padding on each side
+            current_line.append(word)
+            current_line_width += word_width
+        else:
+            if current_line:
+                lines.append(" ".join(current_line))
+            current_line = [word]
+            current_line_width = word_width
+    
+    if current_line:
+        lines.append(" ".join(current_line))
+    
+    # Calculate total height
+    line_height = getheight(font, "A")
+    total_height = len(lines) * line_height + (len(lines) - 1) * padding
+    y_start = (image_height - total_height) // 2
+    
+    # Draw each line
+    word_index = 0
+    for line_idx, line in enumerate(lines):
+        line_words = line.split()
+        x = (image_width - getsize(font, line)[0]) // 2
+        y = y_start + line_idx * (line_height + padding)
+        
+        # Draw each word in the line
+        for word in line_words:
+            word_width, _ = getsize(font, word + " ")
+            
+            # Determine color based on highlighting
+            if highlighted_word_index >= 0 and word_index == highlighted_word_index:
+                text_color = (255, 255, 0)  # Bright yellow for highlighted word
+                inner_outline_color = (255, 255, 255)  # White inner outline for highlighted word
+            else:
+                text_color = (255, 255, 255)  # White for other words
+                inner_outline_color = (255, 255, 0)  # Yellow inner outline for non-highlighted words
+            
+            # Draw black outer outline (thickest)
+            outer_stroke_width = 4
+            for dx in range(-outer_stroke_width, outer_stroke_width + 1):
+                for dy in range(-outer_stroke_width, outer_stroke_width + 1):
+                    if dx != 0 or dy != 0:  # Skip the center pixel
+                        draw.text(
+                            (x + dx, y + dy),
+                            word,
+                            font=font,
+                            fill=(0, 0, 0)  # Black outer outline
+                        )
+            
+            # Draw yellow inner outline (medium thickness)
+            inner_stroke_width = 2
+            for dx in range(-inner_stroke_width, inner_stroke_width + 1):
+                for dy in range(-inner_stroke_width, inner_stroke_width + 1):
+                    if dx != 0 or dy != 0:  # Skip the center pixel
+                        draw.text(
+                            (x + dx, y + dy),
+                            word,
+                            font=font,
+                            fill=inner_outline_color  # Yellow inner outline
+                        )
+            
+            # Draw the main text (white or yellow)
+            draw.text((x, y), word, font=font, fill=text_color)
+            
+            x += word_width
+            word_index += 1
+
+
+def create_highlighted_captions(theme, reddit_obj: dict, padding=5) -> None:
+    """
+    Create captions with white text and black stroke (highlighted style)
+    """
+    texts = reddit_obj["thread_post"]
+    id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+
+    # Use the actual video resolution from config
+    W = int(settings.config["settings"]["resolution_w"])
+    H = int(settings.config["settings"]["resolution_h"])
+    size = (W, H)
+    
+    # Use larger, bolder font for better visibility like the screenshot
+    font_size = min(80, max(40, H // 25))  # Larger font size for better impact
+    font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), font_size)
+
+    for idx, text in track(enumerate(texts), "Creating Highlighted Captions"):
+        text = process_text(text, False)
+        
+        # Create transparent background
+        image = Image.new("RGBA", size, (0, 0, 0, 0))
+        
+        # Draw highlighted text with white text and black stroke
+        draw_highlighted_text(
+            image, 
+            text, 
+            font, 
+            padding=padding, 
+            wrap=25,  # Tighter wrap for better text flow
+            highlighted_word_index=-1  # No specific word highlighted, just the style
+        )
+        
+        # Save the image
+        image.save(f"assets/temp/{id}/png/img{idx}.png")
+
+
 def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) -> None:
     """
     Render Images for video
