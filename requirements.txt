@@ -18,4 +18,4 @@ torch==2.7.0
 transformers==4.52.4
 ffmpeg-python==0.2.0
 elevenlabs==1.57.0
-yt-dlp==2025.5.22
+yt-dlp==2025.10.22
