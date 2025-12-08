@@ -6,7 +6,7 @@ from utils.ai_methods import sort_by_similarity
 from utils.console import print_substep
 
 
-def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None):
+def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similarity_scores=None, exclude_terms=None):
     """_summary_
 
     Args:
@@ -29,9 +29,16 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
             json.dump([], f)
     with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
+    terms = [term.lower() for term in (exclude_terms or []) if term]
+
     for i, submission in enumerate(submissions):
         if already_done(done_videos, submission):
             continue
+        if terms:
+            post_text = f"{submission.title or ''} {getattr(submission, 'selftext', '') or ''}".lower()
+            if any(term in post_text for term in terms):
+                print_substep("Post contains an excluded phrase. Skipping...")
+                continue
         if submission.over_18:
             try:
                 if not settings.config["settings"]["allow_nsfw"]:
@@ -90,6 +97,7 @@ def get_subreddit_undone(submissions: list, subreddit, times_checked=0, similari
         ),
         subreddit,
         times_checked=index,
+        exclude_terms=exclude_terms,
     )  # all the videos in hot have already been done
 
 

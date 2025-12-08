@@ -46,9 +46,33 @@ reddit_id: str
 reddit_object: Dict[str, str | list]
 
 
-def main(POST_ID=None) -> None:
+def prompt_excluded_terms():
+    """Ask the user if any words/phrases should be excluded from posts or comments."""
+
+    print_substep(
+        "Would you like to exclude any comments or posts that contain a word or phrase? (y/n)"
+    )
+    choice = input("> ").strip().lower()
+    if not choice.startswith("y"):
+        return []
+
+    print_substep(
+        "Enter words or phrases to exclude (comma-separated). Leave blank to skip.",
+    )
+    raw_terms = input("> ").strip()
+    if not raw_terms:
+        return []
+
+    terms = [term.strip().lower() for term in raw_terms.split(",") if term.strip()]
+    return terms
+
+
+def main(POST_ID=None, exclude_terms=None) -> None:
     global reddit_id, reddit_object
-    reddit_object = get_subreddit_threads(POST_ID)
+    reddit_object = get_subreddit_threads(POST_ID, exclude_terms)
+    if reddit_object is None:
+        print_substep("No suitable submission found after applying exclusions.", style="bold red")
+        return
     reddit_id = extract_id(reddit_object)
     print_substep(f"Thread ID is {reddit_id}", style="bold blue")
     length, number_of_comments = save_text_to_mp3(reddit_object)
@@ -64,12 +88,12 @@ def main(POST_ID=None) -> None:
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 
 
-def run_many(times) -> None:
+def run_many(times, exclude_terms=None) -> None:
     for x in range(1, times + 1):
         print_step(
             f'on the {x}{("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")[x % 10]} iteration of {times}'
         )
-        main()
+        main(exclude_terms=exclude_terms)
         Popen("cls" if name == "nt" else "clear", shell=True).wait()
 
 
@@ -95,6 +119,8 @@ if __name__ == "__main__":
     )
     config is False and sys.exit()
 
+    exclude_terms = prompt_excluded_terms()
+
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
         or settings.config["settings"]["tts"]["tiktok_sessionid"] == ""
@@ -111,12 +137,12 @@ if __name__ == "__main__":
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
                 )
-                main(post_id)
+                main(post_id, exclude_terms)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
         elif config["settings"]["times_to_run"]:
-            run_many(config["settings"]["times_to_run"])
+            run_many(config["settings"]["times_to_run"], exclude_terms)
         else:
-            main()
+            main(None, exclude_terms)
     except KeyboardInterrupt:
         shutdown()
     except ResponseException:

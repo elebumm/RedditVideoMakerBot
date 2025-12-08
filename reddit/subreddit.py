@@ -13,7 +13,7 @@ from utils.videos import check_done
 from utils.voice import sanitize_text
 
 
-def get_subreddit_threads(POST_ID: str):
+def get_subreddit_threads(POST_ID: str, exclude_terms=None):
     """
     Returns a list of threads from the AskReddit subreddit.
     """
@@ -86,14 +86,24 @@ def get_subreddit_threads(POST_ID: str):
         print(f"Sorting threads by similarity to the given keywords: {keywords_print}")
         threads, similarity_scores = sort_by_similarity(threads, keywords)
         submission, similarity_score = get_subreddit_undone(
-            threads, subreddit, similarity_scores=similarity_scores
+            threads, subreddit, similarity_scores=similarity_scores, exclude_terms=exclude_terms
         )
     else:
         threads = subreddit.hot(limit=25)
-        submission = get_subreddit_undone(threads, subreddit)
+        submission = get_subreddit_undone(threads, subreddit, exclude_terms=exclude_terms)
 
     if submission is None:
-        return get_subreddit_threads(POST_ID)  # submission already done. rerun
+        return get_subreddit_threads(POST_ID, exclude_terms)  # submission already done. rerun
+
+    if exclude_terms:
+        terms = [term.lower() for term in exclude_terms if term]
+        post_text = f"{submission.title or ''} {getattr(submission, 'selftext', '') or ''}".lower()
+        if any(term in post_text for term in terms):
+            if POST_ID or settings.config["reddit"]["thread"]["post_id"]:
+                print_substep("Selected post contains an excluded phrase. Exiting this run.", style="bold red")
+                return None
+            print_substep("Post contains an excluded phrase. Trying another post...", style="bold yellow")
+            return get_subreddit_threads(POST_ID, exclude_terms)
 
     elif not submission.num_comments and settings.config["settings"]["storymode"] == "false":
         print_substep("No comments found. Skipping.")
@@ -135,6 +145,12 @@ def get_subreddit_threads(POST_ID: str):
             if top_level_comment.body in ["[removed]", "[deleted]"]:
                 continue  # # see https://github.com/JasonLovesDoggo/RedditVideoMakerBot/issues/78
             if not top_level_comment.stickied:
+                if exclude_terms:
+                    lower_body = top_level_comment.body.lower()
+                    terms = [term.lower() for term in exclude_terms if term]
+                    if any(term in lower_body for term in terms):
+                        print_substep("Skipping comment containing an excluded phrase.")
+                        continue
                 sanitised = sanitize_text(top_level_comment.body)
                 if not sanitised or sanitised == " ":
                     continue
