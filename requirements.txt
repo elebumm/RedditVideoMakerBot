@@ -1,6 +1,6 @@
 boto3==1.36.8
 botocore==1.36.8
-fish-audio-sdk==1.1.0
+fish-audio-sdk==1.1.1
 gTTS==2.5.4
 moviepy==2.2.1
 playwright==1.49.1
