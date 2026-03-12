@@ -12,7 +12,7 @@ translators==5.9.9
 pyttsx3==2.98
 tomlkit==0.13.2
 Flask==3.1.1
-clean-text==0.6.0
+clean-text==0.7.1
 unidecode==1.4.0
 spacy==3.8.11
 torch==2.9.1
