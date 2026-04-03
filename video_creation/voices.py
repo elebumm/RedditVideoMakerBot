@@ -3,6 +3,7 @@ from typing import Tuple
 from rich.console import Console
 
 from TTS.aws_polly import AWSPolly
+from TTS.cambai import CambAITTS
 from TTS.elevenlabs import elevenlabs
 from TTS.engine_wrapper import TTSEngine
 from TTS.GTTS import GTTS
@@ -23,6 +24,7 @@ TTSProviders = {
     "pyttsx": pyttsx,
     "ElevenLabs": elevenlabs,
     "OpenAI": OpenAITTS,
+    "CambAI": CambAITTS,
 }
 
 

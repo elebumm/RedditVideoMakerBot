@@ -45,7 +45,7 @@ background_thumbnail_font_size = { optional = true, type = "int", default = 96, 
 background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI"], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
+voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI", "CambAI"], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
 random_voice = { optional = false, type = "bool", default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
 elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
 elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
@@ -61,3 +61,7 @@ openai_api_url = { optional = true, default = "https://api.openai.com/v1/", exam
 openai_api_key = { optional = true, example = "sk-abc123def456...", explanation = "Your OpenAI API key for TTS generation" }
 openai_voice_name = { optional = false, default = "alloy", example = "alloy", explanation = "The voice used for OpenAI TTS generation", options = ["alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer", "af_heart"] }
 openai_model = { optional = false, default = "tts-1", example = "tts-1", explanation = "The model variant used for OpenAI TTS generation", options = ["tts-1", "tts-1-hd", "gpt-4o-mini-tts"] }
+cambai_api_key = { optional = true, example = "your-camb-ai-api-key", explanation = "CAMB AI API key from studio.camb.ai" }
+cambai_voice_id = { optional = false, default = "147320", example = "147320", explanation = "The CAMB AI voice ID (integer) to use for TTS generation" }
+cambai_speech_model = { optional = false, default = "mars-flash", example = "mars-flash", explanation = "The CAMB AI speech model to use", options = ["mars-flash", "mars-pro", "mars-instruct"] }
+cambai_language = { optional = false, default = "en-us", example = "en-us", explanation = "The language code for CAMB AI TTS (BCP-47 format)", options = ["en-us", "es-es", "fr-fr", "de-de", "ja-jp", "hi-in", "pt-br", "zh-cn", "ko-kr", "it-it", "nl-nl", "ru-ru", "ar-sa"] }
