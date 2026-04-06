@@ -40,6 +40,15 @@ THEMES = {
     },
 }
 
+# Avatar color palette for comments
+AVATAR_COLORS = [
+    (88, 101, 242),   # Blue
+    (237, 66, 69),    # Red
+    (87, 242, 135),   # Green
+    (254, 231, 92),   # Yellow
+    (235, 69, 158),   # Pink
+]
+
 
 def _get_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     """Load font hỗ trợ tiếng Việt."""
@@ -236,14 +245,7 @@ def create_comment_image(
     )
 
     # Avatar (smaller for comments)
-    colors = [
-        (88, 101, 242),   # Blue
-        (237, 66, 69),    # Red
-        (87, 242, 135),   # Green
-        (254, 231, 92),   # Yellow
-        (235, 69, 158),   # Pink
-    ]
-    avatar_color = colors[index % len(colors)]
+    avatar_color = AVATAR_COLORS[index % len(AVATAR_COLORS)]
     _draw_avatar(draw, padding, y_cursor, avatar_size, avatar_color)
 
     # Username

@@ -3,6 +3,7 @@ Base Uploader - Lớp cơ sở cho tất cả uploaders.
 """
 
 import os
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional, List
@@ -112,6 +113,10 @@ class BaseUploader(ABC):
                     f"[{self.platform_name}] Lỗi upload (lần {attempt}): {e}",
                     style="bold red",
                 )
+                if attempt < max_retries:
+                    backoff = min(2 ** attempt, 60)  # Exponential backoff, max 60s
+                    print_substep(f"Chờ {backoff}s trước khi thử lại...", style="bold yellow")
+                    time.sleep(backoff)
 
         print_substep(f"Upload {self.platform_name} thất bại sau {max_retries} lần thử!", style="bold red")
         return None

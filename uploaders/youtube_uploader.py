@@ -150,6 +150,8 @@ class YouTubeUploader(BaseUploader):
 
         # Step 2: Upload video file
         file_size = os.path.getsize(metadata.file_path)
+        # Dynamic timeout: minimum 120s, add 60s per 100MB
+        upload_timeout = max(120, 60 * (file_size // (100 * 1024 * 1024) + 1))
         with open(metadata.file_path, "rb") as video_file:
             upload_response = requests.put(
                 upload_url,
@@ -158,7 +160,7 @@ class YouTubeUploader(BaseUploader):
                     "Content-Length": str(file_size),
                 },
                 data=video_file,
-                timeout=600,  # 10 minutes timeout for large files
+                timeout=upload_timeout,
             )
             upload_response.raise_for_status()
 
