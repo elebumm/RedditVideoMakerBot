@@ -1,63 +1,107 @@
-[reddit.creds]
-client_id = { optional = false, nmin = 12, nmax = 30, explanation = "The ID of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The ID should be over 12 and under 30 characters, double check your input." }
-client_secret = { optional = false, nmin = 20, nmax = 40, explanation = "The SECRET of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The secret should be over 20 and under 40 characters, double check your input." }
-username = { optional = false, nmin = 3, nmax = 20, explanation = "The username of your reddit account", example = "JasonLovesDoggo", regex = "^[-_0-9a-zA-Z]+$", oob_error = "A username HAS to be between 3 and 20 characters" }
-password = { optional = false, nmin = 8, explanation = "The password of your reddit account", example = "fFAGRNJru1FTz70BzhT3Zg", oob_error = "Password too short" }
-2fa = { optional = true, type = "bool", options = [true, false, ], default = false, explanation = "Whether you have Reddit 2FA enabled, Valid options are True and False", example = true }
+# ===== THREADS CONFIGURATION (thay thế Reddit cho thị trường Việt Nam) =====
 
+[threads.creds]
+access_token = { optional = false, nmin = 10, explanation = "Threads API access token (lấy từ Meta Developer Portal)", example = "THR_abc123def456" }
+user_id = { optional = false, nmin = 1, explanation = "Threads user ID của bạn", example = "12345678" }
 
-[reddit.thread]
-random = { optional = true, options = [true, false, ], default = false, type = "bool", explanation = "If set to no, it will ask you a thread link to extract the thread, if yes it will randomize it. Default: 'False'", example = "True" }
-subreddit = { optional = false, regex = "[_0-9a-zA-Z\\+]+$", nmin = 3, explanation = "What subreddit to pull posts from, the name of the sub, not the URL. You can have multiple subreddits, add an + with no spaces.", example = "AskReddit+Redditdev", oob_error = "A subreddit name HAS to be between 3 and 20 characters" }
-post_id = { optional = true, default = "", regex = "^((?!://|://)[+a-zA-Z0-9])*$", explanation = "Used if you want to use a specific post.", example = "urdtfx" }
-max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "max number of characters a comment can have. default is 500", example = 500, oob_error = "the max comment length should be between 10 and 10000" }
-min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "min_comment_length number of characters a comment can have. default is 0", example = 50, oob_error = "the max comment length should be between 1 and 100" }
-post_lang = { default = "", optional = true, explanation = "The language you would like to translate to.", example = "es-cr", options = ['','af', 'ak', 'am', 'ar', 'as', 'ay', 'az', 'be', 'bg', 'bho', 'bm', 'bn', 'bs', 'ca', 'ceb', 'ckb', 'co', 'cs', 'cy', 'da', 'de', 'doi', 'dv', 'ee', 'el', 'en', 'en-US', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gom', 'gu', 'ha', 'haw', 'hi', 'hmn', 'hr', 'ht', 'hu', 'hy', 'id', 'ig', 'ilo', 'is', 'it', 'iw', 'ja', 'jw', 'ka', 'kk', 'km', 'kn', 'ko', 'kri', 'ku', 'ky', 'la', 'lb', 'lg', 'ln', 'lo', 'lt', 'lus', 'lv', 'mai', 'mg', 'mi', 'mk', 'ml', 'mn', 'mni-Mtei', 'mr', 'ms', 'mt', 'my', 'ne', 'nl', 'no', 'nso', 'ny', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'qu', 'ro', 'ru', 'rw', 'sa', 'sd', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tr', 'ts', 'tt', 'ug', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'yo', 'zh-CN', 'zh-TW', 'zu'] }
-min_comments = { default = 20, optional = false, nmin = 10, type = "int", explanation = "The minimum number of comments a post should have to be included. default is 20", example = 29, oob_error = "the minimum number of comments should be between 15 and 999999" }
-blocked_words = { optional = true, default = "", type = "str", explanation = "Comma-separated list of words/phrases. Posts and comments containing any of these will be skipped.", example = "nsfw, spoiler, politics" }
+[threads.thread]
+target_user_id = { optional = true, default = "", explanation = "ID user muốn lấy threads. Để trống dùng user của bạn.", example = "87654321" }
+post_id = { optional = true, default = "", explanation = "ID cụ thể của thread. Để trống để tự động chọn.", example = "18050000000000000" }
+keywords = { optional = true, default = "", type = "str", explanation = "Từ khóa lọc threads, phân cách bằng dấu phẩy.", example = "viral, trending, hài hước" }
+max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "Độ dài tối đa reply (ký tự). Mặc định: 500", example = 500, oob_error = "Phải trong khoảng 10-10000" }
+min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "Độ dài tối thiểu reply. Mặc định: 1", example = 10 }
+post_lang = { default = "vi", optional = true, explanation = "Ngôn ngữ. Mặc định: vi (Tiếng Việt)", example = "vi", options = ['vi', 'en', 'zh-CN', 'ja', 'ko', 'th', ''] }
+min_comments = { default = 5, optional = false, nmin = 1, type = "int", explanation = "Số replies tối thiểu. Mặc định: 5", example = 5 }
+blocked_words = { optional = true, default = "", type = "str", explanation = "Từ bị chặn, phân cách bằng dấu phẩy.", example = "spam, quảng cáo" }
+channel_name = { optional = true, default = "Threads Vietnam", example = "Threads VN Stories", explanation = "Tên kênh hiển thị trên video" }
 
 [ai]
-ai_similarity_enabled = {optional = true, option = [true, false], default = false, type = "bool", explanation = "Threads read from Reddit are sorted based on their similarity to the keywords given below"}
-ai_similarity_keywords = {optional = true, type="str", example= 'Elon Musk, Twitter, Stocks', explanation = "Every keyword or even sentence, seperated with comma, is used to sort the reddit threads based on similarity"}
+ai_similarity_enabled = { optional = true, option = [true, false], default = false, type = "bool", explanation = "Sắp xếp threads theo độ tương đồng với từ khóa" }
+ai_similarity_keywords = { optional = true, type = "str", example = "viral, trending, hài hước", explanation = "Từ khóa sắp xếp threads theo độ tương đồng" }
 
 [settings]
-allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false, ], explanation = "Whether to allow NSFW content, True or False" }
-theme = { optional = false, default = "dark", example = "light", options = ["dark", "light", "transparent", ], explanation = "Sets the Reddit theme, either LIGHT or DARK. For story mode you can also use a transparent background." }
-times_to_run = { optional = false, default = 1, example = 2, explanation = "Used if you want to run multiple times. Set to an int e.g. 4 or 29 or 1", type = "int", nmin = 1, oob_error = "It's very hard to run something less than once." }
-opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Sets the opacity of the comments when overlayed over the background", type = "float", nmin = 0, nmax = 1, oob_error = "The opacity HAS to be between 0 and 1", input_error = "The opacity HAS to be a decimal number between 0 and 1" }
-#transition = { optional = true, default = 0.2, example = 0.2, explanation = "Sets the transition time (in seconds) between the comments. Set to 0 if you want to disable it.", type = "float", nmin = 0, nmax = 2, oob_error = "The transition HAS to be between 0 and 2", input_error = "The opacity HAS to be a decimal number between 0 and 2" }
-storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Only read out title and post content, great for subreddits with stories" }
-storymodemethod= { optional = true, default = 1, example = 1, explanation = "Style that's used for the storymode. Set to 0 for single picture display in whole video, set to 1 for fancy looking video ", type = "int", nmin = 0, oob_error = "It's very hard to run something less than once.", options = [0, 1] }
-storymode_max_length = { optional = true, default = 1000, example = 1000, explanation = "Max length of the storymode video in characters. 200 characters are approximately 50 seconds.", type = "int", nmin = 1, oob_error = "It's very hard to make a video under a second." }
-resolution_w = { optional = false, default = 1080, example = 1440, explantation = "Sets the width in pixels of the final video" }
-resolution_h = { optional = false, default = 1920, example = 2560, explantation = "Sets the height in pixels of the final video" }
-zoom = { optional = true, default = 1, example = 1.1, explanation = "Sets the browser zoom level. Useful if you want the text larger.", type = "float", nmin = 0.1, nmax = 2, oob_error = "The text is really difficult to read at a zoom level higher than 2" }
-channel_name = { optional = true, default = "Reddit Tales", example = "Reddit Stories", explanation = "Sets the channel name for the video" }
+allow_nsfw = { optional = false, type = "bool", default = false, example = false, options = [true, false], explanation = "Cho phép nội dung NSFW" }
+theme = { optional = false, default = "dark", example = "dark", options = ["dark", "light"], explanation = "Giao diện Threads: DARK hoặc LIGHT" }
+times_to_run = { optional = false, default = 1, example = 2, explanation = "Số video tạo mỗi lần chạy", type = "int", nmin = 1, oob_error = "Phải >= 1" }
+opacity = { optional = false, default = 0.9, example = 0.8, explanation = "Độ trong suốt hình ảnh trên video", type = "float", nmin = 0, nmax = 1, oob_error = "Phải trong khoảng 0-1" }
+storymode = { optional = true, type = "bool", default = false, example = false, options = [true, false], explanation = "Chế độ đọc truyện" }
+storymodemethod = { optional = true, default = 1, example = 1, type = "int", nmin = 0, options = [0, 1], explanation = "Kiểu story mode. 0: 1 hình, 1: nhiều hình" }
+storymode_max_length = { optional = true, default = 1000, example = 1000, type = "int", nmin = 1, explanation = "Độ dài tối đa story (ký tự)" }
+resolution_w = { optional = false, default = 1080, example = 1080, explantation = "Chiều rộng video (pixels)" }
+resolution_h = { optional = false, default = 1920, example = 1920, explantation = "Chiều cao video (pixels)" }
+zoom = { optional = true, default = 1, example = 1.1, type = "float", nmin = 0.1, nmax = 2, explanation = "Mức zoom text" }
+channel_name = { optional = true, default = "Threads Vietnam", example = "Threads VN", explanation = "Tên kênh" }
 
 [settings.background]
-background_video = { optional = true, default = "minecraft", example = "rocket-league", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2","multiversus","fall-guys","steep", ""], explanation = "Sets the background for the video based on game name" }
-background_audio = { optional = true, default = "lofi", example = "chill-summer", options = ["lofi","lofi-2","chill-summer",""], explanation = "Sets the background audio for the video" }
-background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation="Sets the volume of the background audio. If you don't want background audio, set it to 0.", oob_error = "The volume HAS to be between 0 and 1", input_error = "The volume HAS to be a float number between 0 and 1"}
-enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation="Used if you want to render another video without background audio in a separate folder", input_error = "The value HAS to be true or false"}
-background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false,], explanation = "Generate a thumbnail for the video (put a thumbnail.png file in the assets/backgrounds directory.)" }
-background_thumbnail_font_family = { optional = true, default = "arial", example = "arial", explanation = "Font family for the thumbnail text" }
-background_thumbnail_font_size = { optional = true, type = "int", default = 96, example = 96, explanation = "Font size in pixels for the thumbnail text" }
-background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
+background_video = { optional = true, default = "minecraft", example = "minecraft", options = ["minecraft", "gta", "rocket-league", "motor-gta", "csgo-surf", "cluster-truck", "minecraft-2", "multiversus", "fall-guys", "steep", ""], explanation = "Video nền" }
+background_audio = { optional = true, default = "lofi", example = "lofi", options = ["lofi", "lofi-2", "chill-summer", ""], explanation = "Nhạc nền" }
+background_audio_volume = { optional = true, type = "float", nmin = 0, nmax = 1, default = 0.15, example = 0.05, explanation = "Âm lượng nhạc nền (0-1)" }
+enable_extra_audio = { optional = true, type = "bool", default = false, example = false, explanation = "Tạo thêm video chỉ có TTS" }
+background_thumbnail = { optional = true, type = "bool", default = false, example = false, options = [true, false], explanation = "Tạo thumbnail tự động" }
+background_thumbnail_font_family = { optional = true, default = "arial", example = "arial", explanation = "Font thumbnail" }
+background_thumbnail_font_size = { optional = true, type = "int", default = 96, example = 96, explanation = "Cỡ chữ thumbnail" }
+background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Màu chữ thumbnail (RGB)" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI"], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
-random_voice = { optional = false, type = "bool", default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
-elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
-elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
-aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for AWS Polly" }
-streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "The voice used for Streamlabs Polly" }
-tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "The voice used for TikTok TTS" }
-tiktok_sessionid = { optional = true, example = "c76bcc3a7625abcc27b508c7db457ff1", explanation = "TikTok sessionid needed if you're using the TikTok TTS. Check documentation if you don't know how to obtain it." }
-python_voice = { optional = false, default = "1", example = "1", explanation = "The index of the system tts voices (can be downloaded externally, run ptt.py to find value, start from zero)" }
-py_voice_num = { optional = false, default = "2", example = "2", explanation = "The number of system voices (2 are pre-installed in Windows)" }
-silence_duration = { optional = true, example = "0.1", explanation = "Time in seconds between TTS comments", default = 0.3, type = "float" }
-no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false,], explanation = "Whether to remove emojis from the comments" }
-openai_api_url = { optional = true, default = "https://api.openai.com/v1/", example = "https://api.openai.com/v1/", explanation = "The API endpoint URL for OpenAI TTS generation" }
-openai_api_key = { optional = true, example = "sk-abc123def456...", explanation = "Your OpenAI API key for TTS generation" }
-openai_voice_name = { optional = false, default = "alloy", example = "alloy", explanation = "The voice used for OpenAI TTS generation", options = ["alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer", "af_heart"] }
-openai_model = { optional = false, default = "tts-1", example = "tts-1", explanation = "The model variant used for OpenAI TTS generation", options = ["tts-1", "tts-1-hd", "gpt-4o-mini-tts"] }
+voice_choice = { optional = false, default = "googletranslate", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI"], example = "googletranslate", explanation = "Engine TTS. googletranslate hỗ trợ tiếng Việt tốt nhất" }
+random_voice = { optional = false, type = "bool", default = false, example = false, options = [true, false], explanation = "Ngẫu nhiên giọng đọc" }
+elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam"], explanation = "Giọng ElevenLabs" }
+elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "ElevenLabs API key" }
+aws_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "Giọng AWS Polly" }
+streamlabs_polly_voice = { optional = false, default = "Matthew", example = "Matthew", explanation = "Giọng Streamlabs Polly" }
+tiktok_voice = { optional = true, default = "en_us_001", example = "en_us_006", explanation = "Giọng TikTok TTS" }
+tiktok_sessionid = { optional = true, example = "c76bcc3a7625abcc27b508c7db457ff1", explanation = "TikTok session ID" }
+python_voice = { optional = false, default = "1", example = "1", explanation = "Index giọng hệ thống" }
+py_voice_num = { optional = false, default = "2", example = "2", explanation = "Số giọng hệ thống" }
+silence_duration = { optional = true, example = "0.1", default = 0.3, type = "float", explanation = "Khoảng lặng giữa TTS (giây)" }
+no_emojis = { optional = false, type = "bool", default = false, example = false, options = [true, false], explanation = "Loại bỏ emoji" }
+openai_api_url = { optional = true, default = "https://api.openai.com/v1/", example = "https://api.openai.com/v1/", explanation = "OpenAI API URL" }
+openai_api_key = { optional = true, example = "sk-abc123...", explanation = "OpenAI API key" }
+openai_voice_name = { optional = false, default = "alloy", example = "alloy", options = ["alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer", "af_heart"], explanation = "Giọng OpenAI TTS" }
+openai_model = { optional = false, default = "tts-1", example = "tts-1", options = ["tts-1", "tts-1-hd", "gpt-4o-mini-tts"], explanation = "Model OpenAI TTS" }
+
+# ===== AUTO-UPLOAD PLATFORMS =====
+
+[uploaders.youtube]
+enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật upload YouTube" }
+client_id = { optional = true, default = "", explanation = "Google OAuth2 Client ID" }
+client_secret = { optional = true, default = "", explanation = "Google OAuth2 Client Secret" }
+refresh_token = { optional = true, default = "", explanation = "Google OAuth2 Refresh Token" }
+
+[uploaders.tiktok]
+enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật upload TikTok" }
+client_key = { optional = true, default = "", explanation = "TikTok Client Key" }
+client_secret = { optional = true, default = "", explanation = "TikTok Client Secret" }
+refresh_token = { optional = true, default = "", explanation = "TikTok Refresh Token" }
+
+[uploaders.facebook]
+enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật upload Facebook" }
+page_id = { optional = true, default = "", explanation = "Facebook Page ID" }
+access_token = { optional = true, default = "", explanation = "Facebook Page Access Token" }
+
+# ===== SCHEDULER =====
+
+[scheduler]
+enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật lên lịch tự động" }
+cron = { optional = true, default = "0 */6 * * *", explanation = "Cron expression. Mặc định: mỗi 6 giờ", example = "0 8,14,20 * * *" }
+timezone = { optional = true, default = "Asia/Ho_Chi_Minh", explanation = "Múi giờ", example = "Asia/Ho_Chi_Minh" }
+max_videos_per_day = { optional = true, default = 4, type = "int", nmin = 1, nmax = 20, explanation = "Số video tối đa/ngày" }
+
+# ===== LEGACY REDDIT CONFIG =====
+
+[reddit.creds]
+client_id = { optional = true, default = "", nmin = 0, explanation = "(Legacy) Reddit client ID" }
+client_secret = { optional = true, default = "", nmin = 0, explanation = "(Legacy) Reddit client secret" }
+username = { optional = true, default = "", nmin = 0, explanation = "(Legacy) Reddit username" }
+password = { optional = true, default = "", nmin = 0, explanation = "(Legacy) Reddit password" }
+2fa = { optional = true, type = "bool", options = [true, false], default = false, explanation = "(Legacy) Reddit 2FA" }
+
+[reddit.thread]
+random = { optional = true, options = [true, false], default = false, type = "bool", explanation = "(Legacy)" }
+subreddit = { optional = true, default = "AskReddit", nmin = 0, explanation = "(Legacy)" }
+post_id = { optional = true, default = "", explanation = "(Legacy)" }
+max_comment_length = { default = 500, optional = true, nmin = 10, nmax = 10000, type = "int", explanation = "(Legacy)" }
+min_comment_length = { default = 1, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "(Legacy)" }
+post_lang = { default = "vi", optional = true, explanation = "(Legacy)", options = ['','vi','af','ak','am','ar','as','ay','az','be','bg','bho','bm','bn','bs','ca','ceb','ckb','co','cs','cy','da','de','doi','dv','ee','el','en','en-US','eo','es','et','eu','fa','fi','fr','fy','ga','gd','gl','gn','gom','gu','ha','haw','hi','hmn','hr','ht','hu','hy','id','ig','ilo','is','it','iw','ja','jw','ka','kk','km','kn','ko','kri','ku','ky','la','lb','lg','ln','lo','lt','lus','lv','mai','mg','mi','mk','ml','mn','mni-Mtei','mr','ms','mt','my','ne','nl','no','nso','ny','om','or','pa','pl','ps','pt','qu','ro','ru','rw','sa','sd','si','sk','sl','sm','sn','so','sq','sr','st','su','sv','sw','ta','te','tg','th','ti','tk','tl','tr','ts','tt','ug','uk','ur','uz','vi','xh','yi','yo','zh-CN','zh-TW','zu'] }
+min_comments = { default = 20, optional = true, nmin = 1, type = "int", explanation = "(Legacy)" }
+blocked_words = { optional = true, default = "", type = "str", explanation = "(Legacy)" }

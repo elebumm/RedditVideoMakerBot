@@ -75,7 +75,12 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
 
-    lang = settings.config["reddit"]["thread"]["post_lang"]
+    # Support both Threads and Reddit config
+    lang = ""
+    if "threads" in settings.config and "thread" in settings.config["threads"]:
+        lang = settings.config["threads"]["thread"].get("post_lang", "")
+    if not lang and "reddit" in settings.config and "thread" in settings.config["reddit"]:
+        lang = settings.config["reddit"]["thread"].get("post_lang", "")
     if lang:
         print_substep("Translating filename...")
         translated_name = translators.translate_text(name, translator="google", to_language=lang)
@@ -359,7 +364,12 @@ def make_final_video(
     title_thumb = reddit_obj["thread_title"]
 
     filename = f"{name_normalize(title)[:251]}"
-    subreddit = settings.config["reddit"]["thread"]["subreddit"]
+    # Support both Threads and Reddit config for subreddit/channel name
+    subreddit = "threads"
+    if "threads" in settings.config and "thread" in settings.config["threads"]:
+        subreddit = settings.config["threads"]["thread"].get("channel_name", "threads")
+    elif "reddit" in settings.config and "thread" in settings.config["reddit"]:
+        subreddit = settings.config["reddit"]["thread"].get("subreddit", "threads")
 
     if not exists(f"./results/{subreddit}"):
         print_substep("The 'results' folder could not be found so it was automatically created.")
