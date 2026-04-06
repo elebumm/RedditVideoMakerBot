@@ -12,6 +12,7 @@ import requests
 
 from utils import settings
 from utils.console import print_step, print_substep
+from utils.title_history import is_title_used
 from utils.videos import check_done
 from utils.voice import sanitize_text
 
@@ -158,13 +159,21 @@ def get_threads_posts(POST_ID: str = None) -> dict:
             keyword_list = [k.strip() for k in keywords.split(",") if k.strip()]
             threads_list = client.search_threads_by_keyword(threads_list, keyword_list)
 
-        # Chọn thread phù hợp (chưa tạo video, đủ replies)
+        # Chọn thread phù hợp (chưa tạo video, đủ replies, title chưa dùng)
         thread = None
         for t in threads_list:
             thread_id = t.get("id", "")
             # Kiểm tra xem đã tạo video cho thread này chưa
             text = t.get("text", "")
             if not text or _contains_blocked_words(text):
+                continue
+            # Kiểm tra title đã được sử dụng chưa (tránh trùng lặp)
+            title_candidate = text[:200] if len(text) > 200 else text
+            if is_title_used(title_candidate):
+                print_substep(
+                    f"Bỏ qua thread đã tạo video: {text[:50]}...",
+                    style="bold yellow",
+                )
                 continue
             # Kiểm tra số lượng replies
             try:

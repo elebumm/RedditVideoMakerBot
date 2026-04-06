@@ -83,9 +83,9 @@ access_token = { optional = true, default = "", explanation = "Facebook Page Acc
 
 [scheduler]
 enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật lên lịch tự động" }
-cron = { optional = true, default = "0 */6 * * *", explanation = "Cron expression. Mặc định: mỗi 6 giờ", example = "0 8,14,20 * * *" }
+cron = { optional = true, default = "0 */3 * * *", explanation = "Cron expression. Mặc định: mỗi 3 giờ (8 video/ngày)", example = "0 */3 * * *" }
 timezone = { optional = true, default = "Asia/Ho_Chi_Minh", explanation = "Múi giờ", example = "Asia/Ho_Chi_Minh" }
-max_videos_per_day = { optional = true, default = 4, type = "int", nmin = 1, nmax = 20, explanation = "Số video tối đa/ngày" }
+max_videos_per_day = { optional = true, default = 8, type = "int", nmin = 1, nmax = 50, explanation = "Số video tối đa/ngày. Mặc định: 8 (mỗi 3 giờ × 1 video)" }
 
 # ===== LEGACY REDDIT CONFIG =====
 

@@ -95,6 +95,13 @@ def main_threads(POST_ID=None) -> None:
     chop_background(bg_config, length, thread_object)
     make_final_video(number_of_comments, length, thread_object, bg_config)
 
+    # Lưu title vào lịch sử để tránh tạo trùng lặp
+    from utils.title_history import save_title
+    title = thread_object.get("thread_title", "")
+    tid = thread_object.get("thread_id", "")
+    if title:
+        save_title(title=title, thread_id=tid, source="threads")
+
 
 def main_threads_with_upload(POST_ID=None) -> None:
     """Pipeline đầy đủ: Threads → Video → Upload lên các platform."""

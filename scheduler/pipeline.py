@@ -17,6 +17,7 @@ from utils import settings
 from utils.cleanup import cleanup
 from utils.console import print_markdown, print_step, print_substep
 from utils.id import extract_id
+from utils.title_history import save_title
 
 
 def run_pipeline(post_id: Optional[str] = None) -> Optional[str]:
@@ -128,6 +129,13 @@ def run_pipeline(post_id: Optional[str] = None) -> Optional[str]:
                     print_substep(f"  ❌ {platform}: Thất bại", style="bold red")
 
         print_step("✅ Pipeline hoàn tất!")
+
+        # Lưu title vào lịch sử để tránh tạo trùng lặp
+        title = thread_object.get("thread_title", "")
+        tid = thread_object.get("thread_id", "")
+        if title:
+            save_title(title=title, thread_id=tid, source="threads")
+
         return video_path
 
     except Exception as e:
@@ -158,8 +166,8 @@ def run_scheduled():
         return
 
     timezone = scheduler_config.get("timezone", "Asia/Ho_Chi_Minh")
-    cron_expression = scheduler_config.get("cron", "0 */6 * * *")  # Mặc định mỗi 6 giờ
-    max_videos_per_day = scheduler_config.get("max_videos_per_day", 4)
+    cron_expression = scheduler_config.get("cron", "0 */3 * * *")  # Mặc định mỗi 3 giờ (8 lần/ngày: 00, 03, 06, 09, 12, 15, 18, 21h)
+    max_videos_per_day = scheduler_config.get("max_videos_per_day", 8)
 
     # Parse cron expression
     cron_parts = cron_expression.split()
