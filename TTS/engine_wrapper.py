@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from pathlib import Path
 from typing import Tuple
 
@@ -127,12 +128,16 @@ class TTSEngine:
                     split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     f.write("file " + f"'silence.mp3'" + "\n")
 
-                os.system(
-                    "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
-                    + "-i "
-                    + f"{self.path}/list.txt "
-                    + "-c copy "
-                    + f"{self.path}/{idx}.mp3"
+                subprocess.run(
+                    [
+                        "ffmpeg", "-f", "concat", "-y",
+                        "-hide_banner", "-loglevel", "panic",
+                        "-safe", "0",
+                        "-i", f"{self.path}/list.txt",
+                        "-c", "copy",
+                        f"{self.path}/{idx}.mp3",
+                    ],
+                    check=False,
                 )
         try:
             for i in range(0, len(split_files)):
