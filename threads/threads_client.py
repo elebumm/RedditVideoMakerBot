@@ -376,6 +376,138 @@ def _get_trending_content(
     return content
 
 
+def _get_google_trends_content(
+    max_comment_length: int,
+    min_comment_length: int,
+) -> Optional[dict]:
+    """Lấy nội dung từ Threads dựa trên từ khóa trending của Google Trends.
+
+    Kết hợp Google Trends (lấy từ khóa) + Playwright (tìm bài viết trên Threads).
+    Trả về None nếu không thể lấy content (để fallback sang user threads).
+    """
+    from threads.google_trends import (
+        GoogleTrendsError,
+        get_threads_from_google_trends,
+    )
+    from threads.trending import scrape_thread_replies
+
+    try:
+        google_threads = get_threads_from_google_trends()
+    except GoogleTrendsError as e:
+        print_substep(f"⚠️ Lỗi lấy Google Trends: {e}", style="bold yellow")
+        return None
+    except Exception as e:
+        print_substep(
+            f"⚠️ Lỗi không mong đợi khi lấy Google Trends: {e}",
+            style="bold yellow",
+        )
+        return None
+
+    if not google_threads:
+        print_substep(
+            "⚠️ Không tìm thấy bài viết Threads nào từ Google Trends keywords.",
+            style="bold yellow",
+        )
+        return None
+
+    # Chọn thread phù hợp (chưa tạo video, không chứa từ bị chặn)
+    thread = None
+    for t in google_threads:
+        text = t.get("text", "")
+        if not text or _contains_blocked_words(text):
+            continue
+        title_candidate = text[:_MAX_TITLE_LENGTH]
+        if is_title_used(title_candidate):
+            print_substep(
+                f"Bỏ qua thread đã tạo video: {text[:50]}...",
+                style="bold yellow",
+            )
+            continue
+        thread = t
+        break
+
+    if thread is None:
+        if google_threads:
+            thread = google_threads[0]
+        else:
+            return None
+
+    thread_text = thread.get("text", "")
+    thread_username = thread.get("username", "unknown")
+    thread_url = thread.get("permalink", "")
+    shortcode = thread.get("shortcode", "")
+    keyword = thread.get("keyword", "")
+
+    # Dùng keyword làm tiêu đề video nếu có
+    display_title = keyword if keyword else thread_text[:_MAX_TITLE_LENGTH]
+
+    print_substep(
+        f"Video sẽ được tạo từ Google Trends: {display_title[:100]}...",
+        style="bold green",
+    )
+    print_substep(f"Thread URL: {thread_url}", style="bold green")
+    print_substep(f"Tác giả: @{thread_username}", style="bold blue")
+    print_substep(f"Từ khóa Google Trends: {keyword}", style="bold blue")
+
+    content: dict = {
+        "thread_url": thread_url,
+        "thread_title": display_title[:_MAX_TITLE_LENGTH],
+        "thread_id": re.sub(r"[^\w\s-]", "", shortcode or thread_text[:20]),
+        "thread_author": f"@{thread_username}",
+        "is_nsfw": False,
+        "thread_post": thread_text,
+        "comments": [],
+    }
+
+    if not settings.config["settings"].get("storymode", False):
+        # Lấy replies bằng scraping
+        try:
+            if thread_url:
+                raw_replies = scrape_thread_replies(thread_url, limit=50)
+            else:
+                raw_replies = []
+        except Exception as exc:
+            print_substep(
+                f"⚠️ Lỗi lấy replies (Google Trends): {exc}",
+                style="bold yellow",
+            )
+            raw_replies = []
+
+        for idx, reply in enumerate(raw_replies):
+            reply_text = reply.get("text", "")
+            reply_username = reply.get("username", "unknown")
+
+            if not reply_text or _contains_blocked_words(reply_text):
+                continue
+
+            sanitised = sanitize_text(reply_text)
+            if not sanitised or sanitised.strip() == "":
+                continue
+
+            if len(reply_text) > max_comment_length:
+                continue
+            if len(reply_text) < min_comment_length:
+                continue
+
+            content["comments"].append(
+                {
+                    "comment_body": reply_text,
+                    "comment_url": "",
+                    "comment_id": re.sub(
+                        r"[^\w\s-]", "", f"gtrends_reply_{idx}"
+                    ),
+                    "comment_author": f"@{reply_username}",
+                }
+            )
+
+    print_substep(
+        f"Đã lấy nội dung từ Google Trends thành công! "
+        f"({len(content.get('comments', []))} replies)",
+        style="bold green",
+    )
+    return content
+
+
 def get_threads_posts(POST_ID: str = None) -> dict:
     """Lấy nội dung từ Threads để tạo video.
 
@@ -449,9 +581,35 @@ def get_threads_posts(POST_ID: str = None) -> dict:
         )
         if content is not None:
             return content
-        # Fallback: nếu trending thất bại, tiếp tục dùng user threads
+        # Fallback: trending thất bại → thử Google Trends
         print_substep(
-            "⚠️ Trending không khả dụng, chuyển sang lấy từ user threads...",
+            "⚠️ Trending không khả dụng, thử lấy từ Google Trends...",
+            style="bold yellow",
+        )
+        content = _get_google_trends_content(
+            max_comment_length=max_comment_length,
+            min_comment_length=min_comment_length,
+        )
+        if content is not None:
+            return content
+        print_substep(
+            "⚠️ Google Trends cũng không khả dụng, chuyển sang user threads...",
+            style="bold yellow",
+        )
+
+    # ------------------------------------------------------------------
+    # Source: google_trends  –  Lấy bài viết dựa trên Google Trends
+    # ------------------------------------------------------------------
+    if source == "google_trends" and not POST_ID:
+        content = _get_google_trends_content(
+            max_comment_length=max_comment_length,
+            min_comment_length=min_comment_length,
+        )
+        if content is not None:
+            return content
+        # Fallback: Google Trends thất bại → tiếp tục dùng user threads
+        print_substep(
+            "⚠️ Google Trends không khả dụng, chuyển sang lấy từ user threads...",
             style="bold yellow",
         )
 
@@ -468,12 +626,27 @@ def get_threads_posts(POST_ID: str = None) -> dict:
 
         if not threads_list:
             print_substep(
+                "⚠️ Không tìm thấy threads từ user API!\n"
+                f"   - User ID đang dùng: {target_user}\n"
+                "   Đang thử lấy bài viết từ Google Trends...",
+                style="bold yellow",
+            )
+            # Fallback cuối cùng: thử Google Trends khi user threads cũng thất bại
+            if source != "google_trends":  # Tránh gọi lại nếu đã thử
+                content = _get_google_trends_content(
+                    max_comment_length=max_comment_length,
+                    min_comment_length=min_comment_length,
+                )
+                if content is not None:
+                    return content
+            print_substep(
                 "❌ Không tìm thấy threads nào!\n"
                 "   Kiểm tra các nguyên nhân sau:\n"
                 f"   - User ID đang dùng: {target_user}\n"
                 "   - User này có bài viết công khai không?\n"
                 "   - Token có quyền threads_basic_read?\n"
-                "   - Token có đúng cho user_id này không?",
+                "   - Token có đúng cho user_id này không?\n"
+                "   - Google Trends fallback cũng không tìm thấy bài viết.",
                 style="bold red",
             )
             raise ValueError(
