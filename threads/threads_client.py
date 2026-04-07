@@ -6,6 +6,7 @@ Docs: https://developers.facebook.com/docs/threads
 """
 
 import re
+import time as _time
 from typing import Dict, List, Optional
 
 import requests
@@ -18,6 +19,20 @@ from utils.voice import sanitize_text
 
 THREADS_API_BASE = "https://graph.threads.net/v1.0"
 
+# Retry configuration for transient failures
+_MAX_RETRIES = 3
+_RETRY_DELAY_SECONDS = 2
+_REQUEST_TIMEOUT_SECONDS = 30
+
+
+class ThreadsAPIError(Exception):
+    """Lỗi khi gọi Threads API (token hết hạn, quyền thiếu, v.v.)."""
+
+    def __init__(self, message: str, error_type: str = "", error_code: int = 0):
+        self.error_type = error_type
+        self.error_code = error_code
+        super().__init__(message)
+
 
 class ThreadsClient:
     """Client để tương tác với Threads API (Meta)."""
@@ -26,21 +41,131 @@ class ThreadsClient:
         self.access_token = settings.config["threads"]["creds"]["access_token"]
         self.user_id = settings.config["threads"]["creds"]["user_id"]
         self.session = requests.Session()
-        self.session.headers.update(
-            {
-                "Authorization": f"Bearer {self.access_token}",
-            }
-        )
 
     def _get(self, endpoint: str, params: Optional[dict] = None) -> dict:
-        """Make a GET request to the Threads API."""
+        """Make a GET request to the Threads API with retry logic.
+
+        Raises:
+            ThreadsAPIError: If the API returns an error in the response body.
+            requests.HTTPError: If the HTTP request fails after retries.
+        """
         url = f"{THREADS_API_BASE}/{endpoint}"
         if params is None:
             params = {}
         params["access_token"] = self.access_token
-        response = self.session.get(url, params=params)
-        response.raise_for_status()
-        return response.json()
+
+        last_exception: Optional[Exception] = None
+        for attempt in range(1, _MAX_RETRIES + 1):
+            try:
+                response = self.session.get(url, params=params, timeout=_REQUEST_TIMEOUT_SECONDS)
+
+                # Check for HTTP-level errors with detailed messages
+                if response.status_code == 401:
+                    raise ThreadsAPIError(
+                        "Access token không hợp lệ hoặc đã hết hạn (HTTP 401). "
+                        "Vui lòng cập nhật access_token trong config.toml.",
+                        error_type="OAuthException",
+                        error_code=401,
+                    )
+                if response.status_code == 403:
+                    raise ThreadsAPIError(
+                        "Không có quyền truy cập (HTTP 403). Kiểm tra quyền "
+                        "threads_basic_read trong Meta Developer Portal.",
+                        error_type="PermissionError",
+                        error_code=403,
+                    )
+                response.raise_for_status()
+                data = response.json()
+
+                # Meta Graph API có thể trả về 200 nhưng body chứa error
+                if "error" in data:
+                    err = data["error"]
+                    error_msg = err.get("message", "Unknown API error")
+                    error_type = err.get("type", "")
+                    error_code = err.get("code", 0)
+                    raise ThreadsAPIError(
+                        f"Threads API error: {error_msg} (type={error_type}, code={error_code})",
+                        error_type=error_type,
+                        error_code=error_code,
+                    )
+
+                return data
+
+            except (requests.ConnectionError, requests.Timeout) as exc:
+                last_exception = exc
+                if attempt < _MAX_RETRIES:
+                    print_substep(
+                        f"Lỗi kết nối (lần {attempt}/{_MAX_RETRIES}), "
+                        f"thử lại sau {_RETRY_DELAY_SECONDS}s...",
+                        style="bold yellow",
+                    )
+                    _time.sleep(_RETRY_DELAY_SECONDS)
+                    continue
+                raise
+            except (ThreadsAPIError, requests.HTTPError):
+                raise
+
+    def validate_token(self) -> dict:
+        """Kiểm tra access token có hợp lệ bằng cách gọi /me endpoint.
+
+        Returns:
+            User profile data nếu token hợp lệ.
+
+        Raises:
+            ThreadsAPIError: Nếu token không hợp lệ hoặc đã hết hạn.
+        """
+        try:
+            return self._get("me", params={"fields": "id,username"})
+        except (ThreadsAPIError, requests.HTTPError) as exc:
+            raise ThreadsAPIError(
+                "Access token không hợp lệ hoặc đã hết hạn. "
+                "Vui lòng cập nhật access_token trong config.toml. "
+                "Hướng dẫn: https://developers.facebook.com/docs/threads/get-started\n"
+                f"Chi tiết: {exc}"
+            ) from exc
+
+    def refresh_token(self) -> str:
+        """Làm mới access token (long-lived token).
+
+        Meta Threads API cho phép refresh long-lived tokens.
+        Endpoint: GET /refresh_access_token?grant_type=th_refresh_token&access_token=...
+
+        Returns:
+            Access token mới.
+
+        Raises:
+            ThreadsAPIError: Nếu không thể refresh token.
+        """
+        try:
+            url = f"{THREADS_API_BASE}/refresh_access_token"
+            response = self.session.get(
+                url,
+                params={
+                    "grant_type": "th_refresh_token",
+                    "access_token": self.access_token,
+                },
+                timeout=_REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            if "error" in data:
+                error_msg = data["error"].get("message", "Unknown error")
+                raise ThreadsAPIError(f"Không thể refresh token: {error_msg}")
+
+            new_token = data.get("access_token", "")
+            if not new_token:
+                raise ThreadsAPIError("API không trả về access_token mới khi refresh.")
+
+            self.access_token = new_token
+            print_substep("✅ Đã refresh access token thành công!", style="bold green")
+            return new_token
+        except requests.RequestException as exc:
+            raise ThreadsAPIError(
+                "Không thể refresh token. Vui lòng lấy token mới từ "
+                "Meta Developer Portal.\n"
+                f"Chi tiết: {exc}"
+            ) from exc
 
     def get_user_threads(self, user_id: Optional[str] = None, limit: int = 25) -> List[dict]:
         """Lấy danh sách threads của user.
@@ -138,11 +263,50 @@ def get_threads_posts(POST_ID: str = None) -> dict:
 
     Returns:
         Dict chứa thread content và replies.
+
+    Raises:
+        ThreadsAPIError: Nếu token không hợp lệ hoặc API trả về lỗi.
+        ValueError: Nếu không tìm thấy threads phù hợp.
     """
     print_substep("Đang kết nối với Threads API...")
 
     client = ThreadsClient()
     content = {}
+
+    # Bước 0: Validate token trước khi gọi API
+    print_substep("Đang kiểm tra access token...")
+    try:
+        user_info = client.validate_token()
+        print_substep(
+            f"✅ Token hợp lệ - User: @{user_info.get('username', 'N/A')} "
+            f"(ID: {user_info.get('id', 'N/A')})",
+            style="bold green",
+        )
+    except ThreadsAPIError:
+        # Token không hợp lệ → thử refresh
+        print_substep(
+            "⚠️ Token có thể đã hết hạn, đang thử refresh...",
+            style="bold yellow",
+        )
+        try:
+            client.refresh_token()
+            user_info = client.validate_token()
+            print_substep(
+                f"✅ Token đã refresh - User: @{user_info.get('username', 'N/A')}",
+                style="bold green",
+            )
+        except (ThreadsAPIError, requests.RequestException) as refresh_err:
+            print_substep(
+                "❌ Không thể xác thực hoặc refresh token.\n"
+                "   Vui lòng lấy token mới từ Meta Developer Portal:\n"
+                "   https://developers.facebook.com/docs/threads/get-started",
+                style="bold red",
+            )
+            raise ThreadsAPIError(
+                "Access token không hợp lệ hoặc đã hết hạn. "
+                "Vui lòng cập nhật access_token trong config.toml. "
+                f"Chi tiết: {refresh_err}"
+            ) from refresh_err
 
     thread_config = settings.config["threads"]["thread"]
     max_comment_length = int(thread_config.get("max_comment_length", 500))
@@ -160,14 +324,36 @@ def get_threads_posts(POST_ID: str = None) -> dict:
         threads_list = client.get_user_threads(user_id=target_user, limit=25)
 
         if not threads_list:
-            print_substep("Không tìm thấy threads nào!", style="bold red")
-            raise ValueError("No threads found")
+            print_substep(
+                "❌ Không tìm thấy threads nào!\n"
+                "   Kiểm tra các nguyên nhân sau:\n"
+                f"   - User ID đang dùng: {target_user}\n"
+                "   - User này có bài viết công khai không?\n"
+                "   - Token có quyền threads_basic_read?\n"
+                "   - Token có đúng cho user_id này không?",
+                style="bold red",
+            )
+            raise ValueError(
+                f"No threads found for user '{target_user}'. "
+                "Verify the user has public posts and the access token has "
+                "'threads_basic_read' permission."
+            )
 
         # Lọc theo từ khóa nếu có
         keywords = thread_config.get("keywords", "")
+        unfiltered_count = len(threads_list)
         if keywords:
             keyword_list = [k.strip() for k in keywords.split(",") if k.strip()]
-            threads_list = client.search_threads_by_keyword(threads_list, keyword_list)
+            filtered = client.search_threads_by_keyword(threads_list, keyword_list)
+            if filtered:
+                threads_list = filtered
+            else:
+                # Nếu keyword filter loại hết → bỏ qua filter, dùng list gốc
+                print_substep(
+                    f"⚠️ Keyword filter ({keywords}) loại hết {unfiltered_count} "
+                    "threads. Bỏ qua keyword filter, dùng tất cả threads.",
+                    style="bold yellow",
+                )
 
         # Chọn thread phù hợp (chưa tạo video, đủ replies, title chưa dùng)
         thread = None
