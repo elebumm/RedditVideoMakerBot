@@ -35,8 +35,7 @@ from utils.id import extract_id
 
 __VERSION__ = "4.0.0"
 
-print(
-    """
+print("""
 ████████╗██╗  ██╗██████╗ ███████╗ █████╗ ██████╗ ███████╗    ██╗   ██╗██╗██████╗ ███████╗ ██████╗
 ╚══██╔══╝██║  ██║██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝    ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
    ██║   ███████║██████╔╝█████╗  ███████║██║  ██║███████╗    ██║   ██║██║██║  ██║█████╗  ██║   ██║
@@ -50,8 +49,7 @@ print(
    ██║╚██╔╝██║██╔══██║██╔═██╗ ██╔══╝  ██╔══██╗    Auto-post: TikTok | YouTube | Facebook
    ██║ ╚═╝ ██║██║  ██║██║  ██╗███████╗██║  ██║
    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-"""
-)
+""")
 print_markdown(
     "### 🇻🇳 Threads Video Maker Bot - Phiên bản Việt Nam\n"
     "Tạo video tự động từ nội dung Threads và đăng lên TikTok, YouTube, Facebook.\n"
@@ -97,6 +95,7 @@ def main_threads(POST_ID=None) -> None:
 
     # Lưu title vào lịch sử để tránh tạo trùng lặp
     from utils.title_history import save_title
+
     title = thread_object.get("thread_title", "")
     tid = thread_object.get("thread_id", "")
     if title:
@@ -106,6 +105,7 @@ def main_threads(POST_ID=None) -> None:
 def main_threads_with_upload(POST_ID=None) -> None:
     """Pipeline đầy đủ: Threads → Video → Upload lên các platform."""
     from scheduler.pipeline import run_pipeline
+
     run_pipeline(POST_ID)
 
 
@@ -160,6 +160,7 @@ def shutdown() -> NoReturn:
 def parse_args():
     """Parse command line arguments."""
     import argparse
+
     parser = argparse.ArgumentParser(description="Threads Video Maker Bot - Vietnam Edition")
     parser.add_argument(
         "--mode",
@@ -177,9 +178,7 @@ def parse_args():
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor not in [10, 11, 12]:
-        print(
-            "Ứng dụng yêu cầu Python 3.10, 3.11 hoặc 3.12. Vui lòng cài đặt phiên bản phù hợp."
-        )
+        print("Ứng dụng yêu cầu Python 3.10, 3.11 hoặc 3.12. Vui lòng cài đặt phiên bản phù hợp.")
         sys.exit()
 
     args = parse_args()
@@ -191,9 +190,9 @@ if __name__ == "__main__":
     config is False and sys.exit()
 
     # Kiểm tra TikTok TTS session
-    if (
-        not settings.config["settings"]["tts"].get("tiktok_sessionid", "")
-    ) and config["settings"]["tts"]["voice_choice"] == "tiktok":
+    if (not settings.config["settings"]["tts"].get("tiktok_sessionid", "")) and config["settings"][
+        "tts"
+    ]["voice_choice"] == "tiktok":
         print_substep(
             "TikTok TTS cần sessionid! Xem tài liệu để biết cách lấy.",
             "bold red",
@@ -205,6 +204,7 @@ if __name__ == "__main__":
             # Chế độ lên lịch tự động
             print_step("🕐 Khởi động chế độ lên lịch tự động...")
             from scheduler.pipeline import run_scheduled
+
             run_scheduled()
 
         elif args.mode == "auto":
@@ -234,9 +234,12 @@ if __name__ == "__main__":
             if args.reddit:
                 # Legacy Reddit mode
                 from prawcore import ResponseException
+
                 try:
                     if config["reddit"]["thread"]["post_id"]:
-                        for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+                        for index, post_id in enumerate(
+                            config["reddit"]["thread"]["post_id"].split("+")
+                        ):
                             index += 1
                             print_step(f"Đang xử lý post {index}...")
                             main_reddit(post_id)

@@ -152,10 +152,8 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     try:
         config = toml.load(config_file)
     except toml.TomlDecodeError:
-        console.print(
-            f"""[blue]Couldn't read {config_file}.
-Overwrite it?(y/n)"""
-        )
+        console.print(f"""[blue]Couldn't read {config_file}.
+Overwrite it?(y/n)""")
         if not input().startswith("y"):
             print("Unable to read config, and not allowed to overwrite it. Giving up.")
             return False
@@ -169,10 +167,8 @@ Overwrite it?(y/n)"""
                 )
                 return False
     except FileNotFoundError:
-        console.print(
-            f"""[blue]Couldn't find {config_file}
-Creating it now."""
-        )
+        console.print(f"""[blue]Couldn't find {config_file}
+Creating it now.""")
         try:
             with open(config_file, "x") as f:
                 f.write("")
@@ -183,16 +179,14 @@ Creating it now."""
             )
             return False
 
-    console.print(
-        """\
+    console.print("""\
 [blue bold]###############################
 #                             #
 # Checking TOML configuration #
 #                             #
 ###############################
 If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
-"""
-    )
+""")
     crawl(template, check_vars)
     with open(config_file, "w") as f:
         toml.dump(config, f)

@@ -6,7 +6,7 @@ import os
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional, List
+from typing import List, Optional
 
 from utils.console import print_step, print_substep
 
@@ -14,6 +14,7 @@ from utils.console import print_step, print_substep
 @dataclass
 class VideoMetadata:
     """Metadata cho video cần upload."""
+
     file_path: str
     title: str
     description: str = ""
@@ -65,12 +66,16 @@ class BaseUploader(ABC):
             True nếu hợp lệ.
         """
         if not os.path.exists(metadata.file_path):
-            print_substep(f"[{self.platform_name}] File không tồn tại: {metadata.file_path}", style="bold red")
+            print_substep(
+                f"[{self.platform_name}] File không tồn tại: {metadata.file_path}", style="bold red"
+            )
             return False
 
         file_size = os.path.getsize(metadata.file_path)
         if file_size == 0:
-            print_substep(f"[{self.platform_name}] File rỗng: {metadata.file_path}", style="bold red")
+            print_substep(
+                f"[{self.platform_name}] File rỗng: {metadata.file_path}", style="bold red"
+            )
             return False
 
         if not metadata.title:
@@ -114,9 +119,11 @@ class BaseUploader(ABC):
                     style="bold red",
                 )
                 if attempt < max_retries:
-                    backoff = min(2 ** attempt, 60)  # Exponential backoff, max 60s
+                    backoff = min(2**attempt, 60)  # Exponential backoff, max 60s
                     print_substep(f"Chờ {backoff}s trước khi thử lại...", style="bold yellow")
                     time.sleep(backoff)
 
-        print_substep(f"Upload {self.platform_name} thất bại sau {max_retries} lần thử!", style="bold red")
+        print_substep(
+            f"Upload {self.platform_name} thất bại sau {max_retries} lần thử!", style="bold red"
+        )
         return None

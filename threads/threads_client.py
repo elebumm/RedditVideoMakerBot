@@ -16,7 +16,6 @@ from utils.title_history import is_title_used
 from utils.videos import check_done
 from utils.voice import sanitize_text
 
-
 THREADS_API_BASE = "https://graph.threads.net/v1.0"
 
 
@@ -27,9 +26,11 @@ class ThreadsClient:
         self.access_token = settings.config["threads"]["creds"]["access_token"]
         self.user_id = settings.config["threads"]["creds"]["user_id"]
         self.session = requests.Session()
-        self.session.headers.update({
-            "Authorization": f"Bearer {self.access_token}",
-        })
+        self.session.headers.update(
+            {
+                "Authorization": f"Bearer {self.access_token}",
+            }
+        )
 
     def _get(self, endpoint: str, params: Optional[dict] = None) -> dict:
         """Make a GET request to the Threads API."""
@@ -52,10 +53,13 @@ class ThreadsClient:
             Danh sách các thread objects.
         """
         uid = user_id or self.user_id
-        data = self._get(f"{uid}/threads", params={
-            "fields": "id,media_type,media_url,permalink,text,timestamp,username,shortcode,is_reply,reply_audience",
-            "limit": limit,
-        })
+        data = self._get(
+            f"{uid}/threads",
+            params={
+                "fields": "id,media_type,media_url,permalink,text,timestamp,username,shortcode,is_reply,reply_audience",
+                "limit": limit,
+            },
+        )
         return data.get("data", [])
 
     def get_thread_replies(self, thread_id: str, limit: int = 50) -> List[dict]:
@@ -68,11 +72,14 @@ class ThreadsClient:
         Returns:
             Danh sách replies.
         """
-        data = self._get(f"{thread_id}/replies", params={
-            "fields": "id,text,timestamp,username,permalink,hide_status",
-            "limit": limit,
-            "reverse": "true",
-        })
+        data = self._get(
+            f"{thread_id}/replies",
+            params={
+                "fields": "id,text,timestamp,username,permalink,hide_status",
+                "limit": limit,
+                "reverse": "true",
+            },
+        )
         return data.get("data", [])
 
     def get_thread_by_id(self, thread_id: str) -> dict:
@@ -84,9 +91,12 @@ class ThreadsClient:
         Returns:
             Thread object.
         """
-        return self._get(thread_id, params={
-            "fields": "id,media_type,media_url,permalink,text,timestamp,username,shortcode",
-        })
+        return self._get(
+            thread_id,
+            params={
+                "fields": "id,media_type,media_url,permalink,text,timestamp,username,shortcode",
+            },
+        )
 
     def search_threads_by_keyword(self, threads: List[dict], keywords: List[str]) -> List[dict]:
         """Lọc threads theo từ khóa.
@@ -194,7 +204,9 @@ def get_threads_posts(POST_ID: str = None) -> dict:
 
     thread_id = thread.get("id", "")
     thread_text = thread.get("text", "")
-    thread_url = thread.get("permalink", f"https://www.threads.net/post/{thread.get('shortcode', '')}")
+    thread_url = thread.get(
+        "permalink", f"https://www.threads.net/post/{thread.get('shortcode', '')}"
+    )
     thread_username = thread.get("username", "unknown")
 
     print_substep(f"Video sẽ được tạo từ: {thread_text[:100]}...", style="bold green")
@@ -240,12 +252,14 @@ def get_threads_posts(POST_ID: str = None) -> dict:
             if len(reply_text) < min_comment_length:
                 continue
 
-            content["comments"].append({
-                "comment_body": reply_text,
-                "comment_url": reply.get("permalink", ""),
-                "comment_id": re.sub(r"[^\w\s-]", "", reply.get("id", "")),
-                "comment_author": f"@{reply_username}",
-            })
+            content["comments"].append(
+                {
+                    "comment_body": reply_text,
+                    "comment_url": reply.get("permalink", ""),
+                    "comment_id": re.sub(r"[^\w\s-]", "", reply.get("id", "")),
+                    "comment_author": f"@{reply_username}",
+                }
+            )
 
     print_substep(
         f"Đã lấy nội dung từ Threads thành công! ({len(content.get('comments', []))} replies)",

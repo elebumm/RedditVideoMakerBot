@@ -7,8 +7,8 @@ Yêu cầu:
 - Scopes: https://www.googleapis.com/auth/youtube.upload
 """
 
-import os
 import json
+import os
 import time
 from typing import Optional
 
@@ -63,12 +63,16 @@ class YouTubeUploader(BaseUploader):
             return False
 
         try:
-            response = requests.post(self.TOKEN_URL, data={
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "refresh_token": refresh_token,
-                "grant_type": "refresh_token",
-            }, timeout=30)
+            response = requests.post(
+                self.TOKEN_URL,
+                data={
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "refresh_token": refresh_token,
+                    "grant_type": "refresh_token",
+                },
+                timeout=30,
+            )
             response.raise_for_status()
 
             token_data = response.json()
@@ -93,7 +97,7 @@ class YouTubeUploader(BaseUploader):
         if not self.access_token:
             return None
 
-        title = metadata.title[:self.MAX_TITLE_LENGTH]
+        title = metadata.title[: self.MAX_TITLE_LENGTH]
         description = self._build_description(metadata)
         tags = metadata.tags or []
 
@@ -106,7 +110,7 @@ class YouTubeUploader(BaseUploader):
         video_metadata = {
             "snippet": {
                 "title": title,
-                "description": description[:self.MAX_DESCRIPTION_LENGTH],
+                "description": description[: self.MAX_DESCRIPTION_LENGTH],
                 "tags": tags,
                 "categoryId": self._get_category_id(metadata.category),
                 "defaultLanguage": metadata.language,
@@ -168,7 +172,9 @@ class YouTubeUploader(BaseUploader):
         video_id = video_data.get("id", "")
 
         if not video_id:
-            print_substep("YouTube: Upload thành công nhưng không lấy được video ID", style="bold yellow")
+            print_substep(
+                "YouTube: Upload thành công nhưng không lấy được video ID", style="bold yellow"
+            )
             return None
 
         # Step 3: Upload thumbnail if available

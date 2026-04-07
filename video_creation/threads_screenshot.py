@@ -17,7 +17,6 @@ from rich.progress import track
 from utils import settings
 from utils.console import print_step, print_substep
 
-
 # Threads color themes
 THEMES = {
     "dark": {
@@ -42,11 +41,11 @@ THEMES = {
 
 # Avatar color palette for comments
 AVATAR_COLORS = [
-    (88, 101, 242),   # Blue
-    (237, 66, 69),    # Red
-    (87, 242, 135),   # Green
-    (254, 231, 92),   # Yellow
-    (235, 69, 158),   # Pink
+    (88, 101, 242),  # Blue
+    (237, 66, 69),  # Red
+    (87, 242, 135),  # Green
+    (254, 231, 92),  # Yellow
+    (235, 69, 158),  # Pink
 ]
 
 
@@ -329,9 +328,7 @@ def get_screenshots_of_threads_posts(thread_object: dict, screenshot_num: int):
     else:
         # Comment mode - tạo hình cho từng reply
         comments = thread_object.get("comments", [])[:screenshot_num]
-        for idx, comment in enumerate(
-            track(comments, "Đang tạo hình ảnh replies...")
-        ):
+        for idx, comment in enumerate(track(comments, "Đang tạo hình ảnh replies...")):
             if idx >= screenshot_num:
                 break
 

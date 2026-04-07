@@ -6,9 +6,9 @@ import os
 from typing import Dict, List, Optional
 
 from uploaders.base_uploader import BaseUploader, VideoMetadata
-from uploaders.youtube_uploader import YouTubeUploader
-from uploaders.tiktok_uploader import TikTokUploader
 from uploaders.facebook_uploader import FacebookUploader
+from uploaders.tiktok_uploader import TikTokUploader
+from uploaders.youtube_uploader import YouTubeUploader
 from utils import settings
 from utils.console import print_step, print_substep
 

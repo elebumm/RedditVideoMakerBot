@@ -81,7 +81,9 @@ def run_pipeline(post_id: Optional[str] = None) -> Optional[str]:
         make_final_video(number_of_comments, length, thread_object, bg_config)
 
         # Tìm file video đã tạo
-        subreddit = settings.config.get("threads", {}).get("thread", {}).get("channel_name", "threads")
+        subreddit = (
+            settings.config.get("threads", {}).get("thread", {}).get("channel_name", "threads")
+        )
         results_dir = f"./results/{subreddit}"
         video_path = None
         if os.path.exists(results_dir):
@@ -96,8 +98,7 @@ def run_pipeline(post_id: Optional[str] = None) -> Optional[str]:
         # Step 6: Upload (nếu cấu hình)
         upload_config = settings.config.get("uploaders", {})
         has_uploaders = any(
-            upload_config.get(p, {}).get("enabled", False)
-            for p in ["youtube", "tiktok", "facebook"]
+            upload_config.get(p, {}).get("enabled", False) for p in ["youtube", "tiktok", "facebook"]
         )
 
         if has_uploaders and video_path:
@@ -166,13 +167,17 @@ def run_scheduled():
         return
 
     timezone = scheduler_config.get("timezone", "Asia/Ho_Chi_Minh")
-    cron_expression = scheduler_config.get("cron", "0 */3 * * *")  # Mặc định mỗi 3 giờ (8 lần/ngày: 00, 03, 06, 09, 12, 15, 18, 21h)
+    cron_expression = scheduler_config.get(
+        "cron", "0 */3 * * *"
+    )  # Mặc định mỗi 3 giờ (8 lần/ngày: 00, 03, 06, 09, 12, 15, 18, 21h)
     max_videos_per_day = scheduler_config.get("max_videos_per_day", 8)
 
     # Parse cron expression
     cron_parts = cron_expression.split()
     if len(cron_parts) != 5:
-        print_substep("Cron expression không hợp lệ! Format: minute hour day month weekday", style="bold red")
+        print_substep(
+            "Cron expression không hợp lệ! Format: minute hour day month weekday", style="bold red"
+        )
         return
 
     scheduler = BlockingScheduler(timezone=timezone)

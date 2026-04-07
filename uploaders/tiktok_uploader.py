@@ -58,12 +58,16 @@ class TikTokUploader(BaseUploader):
             return False
 
         try:
-            response = requests.post(self.TOKEN_URL, json={
-                "client_key": client_key,
-                "client_secret": client_secret,
-                "grant_type": "refresh_token",
-                "refresh_token": refresh_token,
-            }, timeout=30)
+            response = requests.post(
+                self.TOKEN_URL,
+                json={
+                    "client_key": client_key,
+                    "client_secret": client_secret,
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                },
+                timeout=30,
+            )
             response.raise_for_status()
 
             token_data = response.json()
@@ -209,7 +213,7 @@ class TikTokUploader(BaseUploader):
             hashtag_str = " ".join(f"#{tag}" for tag in metadata.hashtags)
             parts.append(hashtag_str)
         caption = " ".join(parts)
-        return caption[:self.MAX_CAPTION_LENGTH]
+        return caption[: self.MAX_CAPTION_LENGTH]
 
     @staticmethod
     def _map_privacy(privacy: str) -> str:

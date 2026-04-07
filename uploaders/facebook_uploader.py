@@ -70,7 +70,10 @@ class FacebookUploader(BaseUploader):
 
             if "id" in data:
                 self._authenticated = True
-                print_substep(f"Facebook: Xác thực thành công (Page: {data.get('name', self.page_id)}) ✅", style="bold green")
+                print_substep(
+                    f"Facebook: Xác thực thành công (Page: {data.get('name', self.page_id)}) ✅",
+                    style="bold green",
+                )
                 return True
             else:
                 print_substep("Facebook: Token không hợp lệ", style="bold red")
@@ -96,7 +99,7 @@ class FacebookUploader(BaseUploader):
 
         file_size = os.path.getsize(metadata.file_path)
 
-        title = metadata.title[:self.MAX_TITLE_LENGTH]
+        title = metadata.title[: self.MAX_TITLE_LENGTH]
         description = self._build_description(metadata)
 
         # Step 1: Initialize upload session
@@ -163,7 +166,7 @@ class FacebookUploader(BaseUploader):
                 "upload_session_id": upload_session_id,
                 "access_token": self.access_token,
                 "title": title,
-                "description": description[:self.MAX_DESCRIPTION_LENGTH],
+                "description": description[: self.MAX_DESCRIPTION_LENGTH],
             }
 
             if metadata.schedule_time:
