@@ -285,10 +285,25 @@ if __name__ == "__main__":
         except (KeyError, TypeError):
             pass
 
-        print_step(
-            f"Đã xảy ra lỗi! Vui lòng thử lại hoặc báo lỗi trên GitHub.\n"
-            f"Phiên bản: {__VERSION__}\n"
-            f"Lỗi: {err}\n"
-            f'Config: {config.get("settings", {})}'
-        )
+        # Import here to avoid circular import at module level
+        from threads.threads_client import ThreadsAPIError
+
+        if isinstance(err, ThreadsAPIError):
+            print_step(
+                f"❌ Lỗi xác thực Threads API!\n"
+                f"Phiên bản: {__VERSION__}\n"
+                f"Lỗi: {err}\n\n"
+                "Hướng dẫn khắc phục:\n"
+                "1. Kiểm tra access_token trong config.toml còn hiệu lực không\n"
+                "2. Lấy token mới tại: https://developers.facebook.com/docs/threads\n"
+                "3. Đảm bảo token có quyền: threads_basic_read\n"
+                "4. Kiểm tra user_id khớp với tài khoản Threads"
+            )
+        else:
+            print_step(
+                f"Đã xảy ra lỗi! Vui lòng thử lại hoặc báo lỗi trên GitHub.\n"
+                f"Phiên bản: {__VERSION__}\n"
+                f"Lỗi: {err}\n"
+                f'Config: {config.get("settings", {})}'
+            )
         raise err
