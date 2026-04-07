@@ -451,8 +451,11 @@ def _get_google_trends_content(
 
     content: dict = {
         "thread_url": thread_url,
-        "thread_title": display_title[:_MAX_TITLE_LENGTH],
-        "thread_id": re.sub(r"[^\w\s-]", "", shortcode or thread_text[:20]),
+        "thread_title": display_title,
+        "thread_id": re.sub(
+            r"[^\w\s-]", "",
+            shortcode or f"gtrends_{hash(thread_text) % 10**8}",
+        ),
         "thread_author": f"@{thread_username}",
         "is_nsfw": False,
         "thread_post": thread_text,
