@@ -5,7 +5,8 @@ access_token = { optional = false, nmin = 10, explanation = "Threads API access 
 user_id = { optional = false, nmin = 1, explanation = "Threads user ID của bạn", example = "12345678" }
 
 [threads.thread]
-target_user_id = { optional = true, default = "", explanation = "ID user muốn lấy threads. Để trống dùng user của bạn.", example = "87654321" }
+source = { optional = true, default = "user", options = ["user", "trending"], explanation = "Nguồn lấy bài viết: 'user' (từ user cụ thể) hoặc 'trending' (từ Trending now). Mặc định: user", example = "user" }
+target_user_id = { optional = true, default = "", explanation = "ID user muốn lấy threads. Để trống dùng user của bạn. Chỉ dùng khi source = 'user'.", example = "87654321" }
 post_id = { optional = true, default = "", explanation = "ID cụ thể của thread. Để trống để tự động chọn.", example = "18050000000000000" }
 keywords = { optional = true, default = "", type = "str", explanation = "Từ khóa lọc threads, phân cách bằng dấu phẩy.", example = "viral, trending, hài hước" }
 max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "Độ dài tối đa reply (ký tự). Mặc định: 500", example = 500, oob_error = "Phải trong khoảng 10-10000" }

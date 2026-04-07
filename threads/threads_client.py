@@ -253,6 +253,126 @@ def _contains_blocked_words(text: str) -> bool:
     return any(word in text_lower for word in blocked_list)
 
 
+def _get_trending_content(
+    max_comment_length: int,
+    min_comment_length: int,
+) -> Optional[dict]:
+    """Lấy nội dung từ Trending now trên Threads.
+
+    Sử dụng Playwright scraper để lấy bài viết từ trending topics.
+    Trả về None nếu không thể lấy trending content (để fallback sang user threads).
+    """
+    from threads.trending import (
+        TrendingScrapeError,
+        get_trending_threads,
+        scrape_thread_replies,
+    )
+
+    try:
+        trending_threads = get_trending_threads()
+    except TrendingScrapeError as e:
+        print_substep(f"⚠️ Lỗi lấy trending: {e}", style="bold yellow")
+        return None
+
+    if not trending_threads:
+        return None
+
+    # Chọn thread phù hợp (chưa tạo video, không chứa từ bị chặn)
+    thread = None
+    for t in trending_threads:
+        text = t.get("text", "")
+        if not text or _contains_blocked_words(text):
+            continue
+        title_candidate = text[:200]
+        if is_title_used(title_candidate):
+            print_substep(
+                f"Bỏ qua trending đã tạo video: {text[:50]}...",
+                style="bold yellow",
+            )
+            continue
+        thread = t
+        break
+
+    if thread is None:
+        if trending_threads:
+            thread = trending_threads[0]
+        else:
+            return None
+
+    thread_text = thread.get("text", "")
+    thread_username = thread.get("username", "unknown")
+    thread_url = thread.get("permalink", "")
+    shortcode = thread.get("shortcode", "")
+    topic_title = thread.get("topic_title", "")
+
+    # Dùng topic_title làm tiêu đề video nếu có
+    display_title = topic_title if topic_title else thread_text[:200]
+
+    print_substep(
+        f"Video sẽ được tạo từ trending: {display_title[:100]}...",
+        style="bold green",
+    )
+    print_substep(f"Thread URL: {thread_url}", style="bold green")
+    print_substep(f"Tác giả: @{thread_username}", style="bold blue")
+
+    content: dict = {
+        "thread_url": thread_url,
+        "thread_title": display_title[:200],
+        "thread_id": re.sub(r"[^\w\s-]", "", shortcode or thread_text[:20]),
+        "thread_author": f"@{thread_username}",
+        "is_nsfw": False,
+        "thread_post": thread_text,
+        "comments": [],
+    }
+
+    if not settings.config["settings"].get("storymode", False):
+        # Lấy replies bằng scraping (vì thread không thuộc user nên API không dùng được)
+        try:
+            if thread_url:
+                raw_replies = scrape_thread_replies(thread_url, limit=50)
+            else:
+                raw_replies = []
+        except Exception as exc:
+            print_substep(
+                f"⚠️ Lỗi lấy replies trending: {exc}", style="bold yellow"
+            )
+            raw_replies = []
+
+        for idx, reply in enumerate(raw_replies):
+            reply_text = reply.get("text", "")
+            reply_username = reply.get("username", "unknown")
+
+            if not reply_text or _contains_blocked_words(reply_text):
+                continue
+
+            sanitised = sanitize_text(reply_text)
+            if not sanitised or sanitised.strip() == "":
+                continue
+
+            if len(reply_text) > max_comment_length:
+                continue
+            if len(reply_text) < min_comment_length:
+                continue
+
+            content["comments"].append(
+                {
+                    "comment_body": reply_text,
+                    "comment_url": "",
+                    "comment_id": re.sub(
+                        r"[^\w\s-]", "", f"trending_reply_{idx}"
+                    ),
+                    "comment_author": f"@{reply_username}",
+                }
+            )
+
+    print_substep(
+        f"Đã lấy nội dung trending thành công! "
+        f"({len(content.get('comments', []))} replies)",
+        style="bold green",
+    )
+    return content
+
+
 def get_threads_posts(POST_ID: str = None) -> dict:
     """Lấy nội dung từ Threads để tạo video.
 
@@ -312,9 +432,29 @@ def get_threads_posts(POST_ID: str = None) -> dict:
     max_comment_length = int(thread_config.get("max_comment_length", 500))
     min_comment_length = int(thread_config.get("min_comment_length", 1))
     min_comments = int(thread_config.get("min_comments", 5))
+    source = thread_config.get("source", "user")
 
     print_step("Đang lấy nội dung từ Threads...")
 
+    # ------------------------------------------------------------------
+    # Source: trending  –  Lấy bài viết từ Trending now
+    # ------------------------------------------------------------------
+    if source == "trending" and not POST_ID:
+        content = _get_trending_content(
+            max_comment_length=max_comment_length,
+            min_comment_length=min_comment_length,
+        )
+        if content is not None:
+            return content
+        # Fallback: nếu trending thất bại, tiếp tục dùng user threads
+        print_substep(
+            "⚠️ Trending không khả dụng, chuyển sang lấy từ user threads...",
+            style="bold yellow",
+        )
+
+    # ------------------------------------------------------------------
+    # Source: user  (mặc định) hoặc POST_ID cụ thể
+    # ------------------------------------------------------------------
     if POST_ID:
         # Lấy thread cụ thể theo ID
         thread = client.get_thread_by_id(POST_ID)
@@ -399,6 +539,7 @@ def get_threads_posts(POST_ID: str = None) -> dict:
     print_substep(f"Thread URL: {thread_url}", style="bold green")
     print_substep(f"Tác giả: @{thread_username}", style="bold blue")
 
+    content = {}
     content["thread_url"] = thread_url
     content["thread_title"] = thread_text[:200] if len(thread_text) > 200 else thread_text
     content["thread_id"] = re.sub(r"[^\w\s-]", "", thread_id)
