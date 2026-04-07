@@ -84,7 +84,7 @@ class ThreadsClient:
                     error_type = err.get("type", "")
                     error_code = err.get("code", 0)
                     raise ThreadsAPIError(
-                        f"Threads API error: {error_msg} " f"(type={error_type}, code={error_code})",
+                        f"Threads API error: {error_msg} (type={error_type}, code={error_code})",
                         error_type=error_type,
                         error_code=error_code,
                     )
@@ -104,11 +104,6 @@ class ThreadsClient:
                 raise
             except (ThreadsAPIError, requests.HTTPError):
                 raise
-
-        # Should not be reached, but just in case
-        if last_exception is not None:
-            raise last_exception
-        raise RuntimeError("Unexpected retry loop exit")
 
     def validate_token(self) -> dict:
         """Kiểm tra access token có hợp lệ bằng cách gọi /me endpoint.
@@ -300,7 +295,7 @@ def get_threads_posts(POST_ID: str = None) -> dict:
                 f"✅ Token đã refresh - User: @{user_info.get('username', 'N/A')}",
                 style="bold green",
             )
-        except (ThreadsAPIError, Exception) as refresh_err:
+        except (ThreadsAPIError, requests.RequestException) as refresh_err:
             print_substep(
                 "❌ Không thể xác thực hoặc refresh token.\n"
                 "   Vui lòng lấy token mới từ Meta Developer Portal:\n"
