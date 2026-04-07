@@ -50,6 +50,11 @@ def run_pipeline(post_id: Optional[str] = None) -> Optional[str]:
 
     print_step("🚀 Bắt đầu pipeline tạo video...")
 
+    # Preflight: kiểm tra access token trước khi gọi API
+    from utils.check_token import preflight_check
+
+    preflight_check()
+
     try:
         # Step 1: Lấy nội dung từ Threads
         print_step("📱 Bước 1: Lấy nội dung từ Threads...")

@@ -199,6 +199,12 @@ if __name__ == "__main__":
         )
         sys.exit()
 
+    # Kiểm tra access token trước khi chạy (chỉ cho Threads mode)
+    if not args.reddit:
+        from utils.check_token import preflight_check
+
+        preflight_check()
+
     try:
         if args.mode == "scheduled":
             # Chế độ lên lịch tự động
