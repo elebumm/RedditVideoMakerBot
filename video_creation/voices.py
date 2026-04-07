@@ -6,6 +6,7 @@ from TTS.aws_polly import AWSPolly
 from TTS.elevenlabs import elevenlabs
 from TTS.engine_wrapper import TTSEngine
 from TTS.GTTS import GTTS
+from TTS.minimax_tts import MiniMaxTTS
 from TTS.openai_tts import OpenAITTS
 from TTS.pyttsx import pyttsx
 from TTS.streamlabs_polly import StreamlabsPolly
@@ -23,6 +24,7 @@ TTSProviders = {
     "pyttsx": pyttsx,
     "ElevenLabs": elevenlabs,
     "OpenAI": OpenAITTS,
+    "MiniMax": MiniMaxTTS,
 }
 
 

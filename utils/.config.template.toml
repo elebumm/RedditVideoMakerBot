@@ -45,7 +45,7 @@ background_thumbnail_font_size = { optional = true, type = "int", default = 96, 
 background_thumbnail_font_color = { optional = true, default = "255,255,255", example = "255,255,255", explanation = "Font color in RGB format for the thumbnail text" }
 
 [settings.tts]
-voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI"], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
+voice_choice = { optional = false, default = "tiktok", options = ["elevenlabs", "streamlabspolly", "tiktok", "googletranslate", "awspolly", "pyttsx", "OpenAI", "MiniMax"], example = "tiktok", explanation = "The voice platform used for TTS generation. " }
 random_voice = { optional = false, type = "bool", default = true, example = true, options = [true, false,], explanation = "Randomizes the voice used for each comment" }
 elevenlabs_voice_name = { optional = false, default = "Bella", example = "Bella", explanation = "The voice used for elevenlabs", options = ["Adam", "Antoni", "Arnold", "Bella", "Domi", "Elli", "Josh", "Rachel", "Sam", ] }
 elevenlabs_api_key = { optional = true, example = "21f13f91f54d741e2ae27d2ab1b99d59", explanation = "Elevenlabs API key" }
@@ -61,3 +61,7 @@ openai_api_url = { optional = true, default = "https://api.openai.com/v1/", exam
 openai_api_key = { optional = true, example = "sk-abc123def456...", explanation = "Your OpenAI API key for TTS generation" }
 openai_voice_name = { optional = false, default = "alloy", example = "alloy", explanation = "The voice used for OpenAI TTS generation", options = ["alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer", "af_heart"] }
 openai_model = { optional = false, default = "tts-1", example = "tts-1", explanation = "The model variant used for OpenAI TTS generation", options = ["tts-1", "tts-1-hd", "gpt-4o-mini-tts"] }
+minimax_api_key = { optional = true, example = "sk-api-xxx...", explanation = "MiniMax API key for TTS generation (also read from MINIMAX_API_KEY env var)" }
+minimax_api_url = { optional = true, default = "https://api.minimax.io", example = "https://api.minimax.io", explanation = "The base URL for the MiniMax API" }
+minimax_voice_name = { optional = false, default = "English_Graceful_Lady", example = "English_Graceful_Lady", explanation = "The voice used for MiniMax TTS generation", options = ["English_Graceful_Lady", "English_Insightful_Speaker", "English_radiant_girl", "English_Persuasive_Man", "English_Lucky_Robot", "English_expressive_narrator"] }
+minimax_tts_model = { optional = false, default = "speech-2.8-hd", example = "speech-2.8-hd", explanation = "The model variant used for MiniMax TTS generation", options = ["speech-2.8-hd", "speech-2.8-turbo"] }
