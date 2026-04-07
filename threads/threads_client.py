@@ -24,6 +24,9 @@ _MAX_RETRIES = 3
 _RETRY_DELAY_SECONDS = 2
 _REQUEST_TIMEOUT_SECONDS = 30
 
+# Title length limit for video titles
+_MAX_TITLE_LENGTH = 200
+
 
 class ThreadsAPIError(Exception):
     """Lỗi khi gọi Threads API (token hết hạn, quyền thiếu, v.v.)."""
@@ -283,7 +286,7 @@ def _get_trending_content(
         text = t.get("text", "")
         if not text or _contains_blocked_words(text):
             continue
-        title_candidate = text[:200]
+        title_candidate = text[:_MAX_TITLE_LENGTH]
         if is_title_used(title_candidate):
             print_substep(
                 f"Bỏ qua trending đã tạo video: {text[:50]}...",
@@ -306,7 +309,7 @@ def _get_trending_content(
     topic_title = thread.get("topic_title", "")
 
     # Dùng topic_title làm tiêu đề video nếu có
-    display_title = topic_title if topic_title else thread_text[:200]
+    display_title = topic_title if topic_title else thread_text[:_MAX_TITLE_LENGTH]
 
     print_substep(
         f"Video sẽ được tạo từ trending: {display_title[:100]}...",
@@ -317,7 +320,7 @@ def _get_trending_content(
 
     content: dict = {
         "thread_url": thread_url,
-        "thread_title": display_title[:200],
+        "thread_title": display_title[:_MAX_TITLE_LENGTH],
         "thread_id": re.sub(r"[^\w\s-]", "", shortcode or thread_text[:20]),
         "thread_author": f"@{thread_username}",
         "is_nsfw": False,
@@ -504,7 +507,7 @@ def get_threads_posts(POST_ID: str = None) -> dict:
             if not text or _contains_blocked_words(text):
                 continue
             # Kiểm tra title đã được sử dụng chưa (tránh trùng lặp)
-            title_candidate = text[:200] if len(text) > 200 else text
+            title_candidate = text[:_MAX_TITLE_LENGTH] if len(text) > _MAX_TITLE_LENGTH else text
             if is_title_used(title_candidate):
                 print_substep(
                     f"Bỏ qua thread đã tạo video: {text[:50]}...",
@@ -541,7 +544,7 @@ def get_threads_posts(POST_ID: str = None) -> dict:
 
     content = {}
     content["thread_url"] = thread_url
-    content["thread_title"] = thread_text[:200] if len(thread_text) > 200 else thread_text
+    content["thread_title"] = thread_text[:_MAX_TITLE_LENGTH] if len(thread_text) > _MAX_TITLE_LENGTH else thread_text
     content["thread_id"] = re.sub(r"[^\w\s-]", "", thread_id)
     content["thread_author"] = f"@{thread_username}"
     content["is_nsfw"] = False
