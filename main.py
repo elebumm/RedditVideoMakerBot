@@ -301,7 +301,7 @@ if __name__ == "__main__":
                 f"Lỗi: {err}\n\n"
                 "Hướng dẫn khắc phục:\n"
                 "1. Kiểm tra access_token trong config.toml còn hiệu lực không\n"
-                "2. Lấy token mới tại: https://developers.facebook.com/docs/threads\n"
+                "2. Lấy token mới tại: https://developers.facebook.com/docs/threads/get-started\n"
                 "3. Đảm bảo token có quyền: threads_basic_read\n"
                 "4. Kiểm tra user_id khớp với tài khoản Threads"
             )

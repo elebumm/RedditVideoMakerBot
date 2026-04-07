@@ -25,7 +25,7 @@ from utils import settings
 from utils.console import print_step, print_substep
 
 THREADS_API_BASE = "https://graph.threads.net/v1.0"
-_REQUEST_TIMEOUT = 15  # seconds – preflight should be fast
+_REQUEST_TIMEOUT_SECONDS = 15  # preflight should be fast
 
 
 class TokenCheckError(Exception):
@@ -39,7 +39,7 @@ def _call_me_endpoint(access_token: str) -> dict:
         "fields": "id,username",
         "access_token": access_token,
     }
-    response = requests.get(url, params=params, timeout=_REQUEST_TIMEOUT)
+    response = requests.get(url, params=params, timeout=_REQUEST_TIMEOUT_SECONDS)
 
     # HTTP-level errors
     if response.status_code == 401:
@@ -79,7 +79,7 @@ def _try_refresh(access_token: str) -> Optional[str]:
                 "grant_type": "th_refresh_token",
                 "access_token": access_token,
             },
-            timeout=_REQUEST_TIMEOUT,
+            timeout=_REQUEST_TIMEOUT_SECONDS,
         )
         resp.raise_for_status()
         data = resp.json()
