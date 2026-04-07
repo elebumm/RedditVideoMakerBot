@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from pathlib import Path
 from typing import Tuple
 
@@ -127,12 +128,24 @@ class TTSEngine:
                     split_files.append(str(f"{self.path}/{idx}-{idy}.part.mp3"))
                     f.write("file " + f"'silence.mp3'" + "\n")
 
-                os.system(
-                    "ffmpeg -f concat -y -hide_banner -loglevel panic -safe 0 "
-                    + "-i "
-                    + f"{self.path}/list.txt "
-                    + "-c copy "
-                    + f"{self.path}/{idx}.mp3"
+                subprocess.run(
+                    [
+                        "ffmpeg",
+                        "-f",
+                        "concat",
+                        "-y",
+                        "-hide_banner",
+                        "-loglevel",
+                        "panic",
+                        "-safe",
+                        "0",
+                        "-i",
+                        f"{self.path}/list.txt",
+                        "-c",
+                        "copy",
+                        f"{self.path}/{idx}.mp3",
+                    ],
+                    check=False,
                 )
         try:
             for i in range(0, len(split_files)):
@@ -179,7 +192,12 @@ class TTSEngine:
 
 
 def process_text(text: str, clean: bool = True):
-    lang = settings.config["reddit"]["thread"]["post_lang"]
+    # Support both Threads and Reddit config
+    lang = ""
+    if "threads" in settings.config and "thread" in settings.config["threads"]:
+        lang = settings.config["threads"]["thread"].get("post_lang", "")
+    if not lang and "reddit" in settings.config and "thread" in settings.config["reddit"]:
+        lang = settings.config["reddit"]["thread"].get("post_lang", "")
     new_text = sanitize_text(text) if clean else text
     if lang:
         print_substep("Translating Text...")

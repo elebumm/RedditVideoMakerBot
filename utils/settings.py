@@ -10,6 +10,40 @@ from utils.console import handle_input
 console = Console()
 config = dict  # autocomplete
 
+# Safe type mapping to replace eval() calls
+_SAFE_TYPE_MAP = {
+    "int": int,
+    "float": float,
+    "str": str,
+    "bool": bool,
+    "False": False,
+}
+
+
+def _safe_type_cast(type_str, value):
+    """Safely cast value to type without eval().
+
+    Args:
+        type_str: String name of the type (e.g. 'int', 'float', 'str', 'bool').
+        value: The value to cast.
+
+    Returns:
+        The cast value.
+
+    Raises:
+        ValueError: If the type string is not recognized.
+    """
+    if type_str in _SAFE_TYPE_MAP:
+        target_type = _SAFE_TYPE_MAP[type_str]
+        if target_type is False:
+            return False
+        if target_type is bool:
+            if isinstance(value, str):
+                return value.lower() in ("true", "1", "yes")
+            return bool(value)
+        return target_type(value)
+    raise ValueError(f"Unknown type: {type_str}")
+
 
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
     if path is None:  # path Default argument value is mutable
@@ -30,7 +64,7 @@ def check(value, checks, name):
         incorrect = True
     if not incorrect and "type" in checks:
         try:
-            value = eval(checks["type"])(value)  # fixme remove eval
+            value = _safe_type_cast(checks["type"], value)
         except:
             incorrect = True
 
@@ -78,7 +112,7 @@ def check(value, checks, name):
             + str(name)
             + "[#F7768E bold]=",
             extra_info=get_check_value("explanation", ""),
-            check_type=eval(get_check_value("type", "False")),  # fixme remove eval
+            check_type=_SAFE_TYPE_MAP.get(get_check_value("type", "False"), False),
             default=get_check_value("default", NotImplemented),
             match=get_check_value("regex", ""),
             err_message=get_check_value("input_error", "Incorrect input"),
@@ -118,10 +152,8 @@ def check_toml(template_file, config_file) -> Tuple[bool, Dict]:
     try:
         config = toml.load(config_file)
     except toml.TomlDecodeError:
-        console.print(
-            f"""[blue]Couldn't read {config_file}.
-Overwrite it?(y/n)"""
-        )
+        console.print(f"""[blue]Couldn't read {config_file}.
+Overwrite it?(y/n)""")
         if not input().startswith("y"):
             print("Unable to read config, and not allowed to overwrite it. Giving up.")
             return False
@@ -135,10 +167,8 @@ Overwrite it?(y/n)"""
                 )
                 return False
     except FileNotFoundError:
-        console.print(
-            f"""[blue]Couldn't find {config_file}
-Creating it now."""
-        )
+        console.print(f"""[blue]Couldn't find {config_file}
+Creating it now.""")
         try:
             with open(config_file, "x") as f:
                 f.write("")
@@ -149,16 +179,14 @@ Creating it now."""
             )
             return False
 
-    console.print(
-        """\
+    console.print("""\
 [blue bold]###############################
 #                             #
 # Checking TOML configuration #
 #                             #
 ###############################
 If you see any prompts, that means that you have unset/incorrectly set variables, please input the correct values.\
-"""
-    )
+""")
     crawl(template, check_vars)
     with open(config_file, "w") as f:
         toml.dump(config, f)

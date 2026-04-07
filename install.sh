@@ -50,7 +50,7 @@ function install_macos(){
     if [ ! command -v brew &> /dev/null ]; then
         echo "Installing Homebrew"
         # if it's is not installed, then install it in a NONINTERACTIVE way
-        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)" 
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" 
         # Check for what arcitecture, so you can place path.
         if [[ "uname -m" == "x86_64" ]]; then
             echo "export PATH=/usr/local/bin:$PATH" >> ~/.bash_profile && source ~/.bash_profile

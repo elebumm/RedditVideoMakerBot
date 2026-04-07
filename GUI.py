@@ -1,3 +1,4 @@
+import os
 import webbrowser
 from pathlib import Path
 
@@ -22,8 +23,8 @@ PORT = 4000
 # Configure application
 app = Flask(__name__, template_folder="GUI")
 
-# Configure secret key only to use 'flash'
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+# Configure secret key from environment variable or generate a random one
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
 
 
 # Ensure responses aren't cached

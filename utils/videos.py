@@ -1,34 +1,38 @@
 import json
 import time
 
-from praw.models import Submission
-
 from utils import settings
 from utils.console import print_step
 
 
 def check_done(
-    redditobj: Submission,
-) -> Submission:
+    redditobj,
+):
     # don't set this to be run anyplace that isn't subreddit.py bc of inspect stack
     """Checks if the chosen post has already been generated
 
     Args:
-        redditobj (Submission): Reddit object gotten from reddit/subreddit.py
+        redditobj: Reddit/Threads submission object
 
     Returns:
-        Submission|None: Reddit object in args
+        The object if not done, None if already done
     """
     with open("./video_creation/data/videos.json", "r", encoding="utf-8") as done_vids_raw:
         done_videos = json.load(done_vids_raw)
     for video in done_videos:
         if video["id"] == str(redditobj):
-            if settings.config["reddit"]["thread"]["post_id"]:
+            # Check both threads and reddit config for post_id
+            post_id = ""
+            if "threads" in settings.config and "thread" in settings.config["threads"]:
+                post_id = settings.config["threads"]["thread"].get("post_id", "")
+            if not post_id and "reddit" in settings.config and "thread" in settings.config["reddit"]:
+                post_id = settings.config["reddit"]["thread"].get("post_id", "")
+            if post_id:
                 print_step(
-                    "You already have done this video but since it was declared specifically in the config file the program will continue"
+                    "Video đã được tạo trước đó nhưng được chỉ định cụ thể trong config, tiếp tục..."
                 )
                 return redditobj
-            print_step("Getting new post as the current one has already been done")
+            print_step("Đang lấy bài viết mới vì bài này đã được tạo video")
             return None
     return redditobj
 

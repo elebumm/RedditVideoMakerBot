@@ -1,33 +1,134 @@
-# Reddit Video Maker Bot 🎥
+# 🇻🇳 Threads Video Maker Bot - Phiên Bản Việt Nam 🎥
 
-All done WITHOUT video editing or asset compiling. Just pure ✨programming magic✨.
+Tạo video tự động từ nội dung **Threads (Meta)** và đăng lên **TikTok**, **YouTube**, **Facebook**.
 
-Created by Lewis Menelaws & [TMRRW](https://tmrrwinc.ca)
+Được phát triển dựa trên nền tảng Reddit Video Maker Bot, tối ưu hóa cho thị trường Việt Nam.
 
-<a target="_blank" href="https://tmrrwinc.ca">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/6053155/170528535-e274dc0b-7972-4b27-af22-637f8c370133.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png">
-  <img src="https://user-images.githubusercontent.com/6053155/170528582-cb6671e7-5a2f-4bd4-a048-0e6cfa54f0f7.png" width="350">
-</picture>
+## Tính Năng Chính ✨
 
-</a>
+- 📱 **Threads Integration**: Lấy nội dung tự động từ Threads (Meta) thay vì Reddit
+- 🎙️ **TTS Tiếng Việt**: Hỗ trợ đọc tiếng Việt qua Google Translate TTS, OpenAI, và nhiều engine khác
+- 📤 **Auto-Upload**: Tự động đăng video lên TikTok, YouTube, Facebook
+- ⏰ **Lên Lịch Tự Động**: Cron-based scheduling với múi giờ Việt Nam
+- 🎬 **Video Chất Lượng**: Background gaming, nhạc nền lofi, subtitle overlay
+- 🔄 **Pipeline Hoàn Chỉnh**: Từ lấy nội dung → TTS → Screenshot → Video → Upload
 
-## Video Explainer
+## Cài Đặt 🛠️
 
-[![lewisthumbnail](https://user-images.githubusercontent.com/6053155/173631669-1d1b14ad-c478-4010-b57d-d79592a789f2.png)
-](https://www.youtube.com/watch?v=3gjcY_00U1w)
+### Yêu Cầu
+- Python 3.10, 3.11 hoặc 3.12
+- FFmpeg
+- Tài khoản Threads Developer (Meta)
 
-## Motivation 🤔
+### Bước 1: Clone và cài đặt
+```bash
+git clone https://github.com/thaitien280401-stack/RedditVideoMakerBot.git
+cd RedditVideoMakerBot
+pip install -r requirements.txt
+```
 
-These videos on TikTok, YouTube and Instagram get MILLIONS of views across all platforms and require very little effort.
-The only original thing being done is the editing and gathering of all materials...
+### Bước 2: Cấu hình
+Chạy lần đầu để tạo file `config.toml`:
+```bash
+python main.py
+```
 
-... but what if we can automate that process? 🤔
+Hoặc copy từ template:
+```bash
+cp utils/.config.template.toml config.toml
+```
 
-## Disclaimers 🚨
+### Bước 3: Điền thông tin API
+Chỉnh sửa `config.toml`:
 
-- **At the moment**, this repository won't attempt to upload this content through this bot. It will give you a file that
+```toml
+[threads.creds]
+access_token = "YOUR_THREADS_ACCESS_TOKEN"
+user_id = "YOUR_THREADS_USER_ID"
+
+[settings.tts]
+voice_choice = "googletranslate"  # Hỗ trợ tiếng Việt tốt nhất
+```
+
+## Sử Dụng 🚀
+
+### Chế độ Manual (Mặc định)
+```bash
+python main.py
+```
+
+### Chế độ Auto (Tạo + Upload)
+```bash
+python main.py --mode auto
+```
+
+### Chế độ Scheduled (Lên lịch tự động)
+```bash
+python main.py --mode scheduled
+```
+
+### Legacy Reddit Mode
+```bash
+python main.py --reddit
+```
+
+## Cấu Hình Upload 📤
+
+### YouTube
+```toml
+[uploaders.youtube]
+enabled = true
+client_id = "YOUR_GOOGLE_CLIENT_ID"
+client_secret = "YOUR_GOOGLE_CLIENT_SECRET"
+refresh_token = "YOUR_GOOGLE_REFRESH_TOKEN"
+```
+
+### TikTok
+```toml
+[uploaders.tiktok]
+enabled = true
+client_key = "YOUR_TIKTOK_CLIENT_KEY"
+client_secret = "YOUR_TIKTOK_CLIENT_SECRET"
+refresh_token = "YOUR_TIKTOK_REFRESH_TOKEN"
+```
+
+### Facebook
+```toml
+[uploaders.facebook]
+enabled = true
+page_id = "YOUR_FACEBOOK_PAGE_ID"
+access_token = "YOUR_FACEBOOK_PAGE_ACCESS_TOKEN"
+```
+
+## Cấu Hình Scheduler ⏰
+
+```toml
+[scheduler]
+enabled = true
+cron = "0 8,14,20 * * *"  # Chạy lúc 8h, 14h, 20h hàng ngày
+timezone = "Asia/Ho_Chi_Minh"
+max_videos_per_day = 4
+```
+
+## Kiến Trúc Hệ Thống 🏗️
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Threads API   │────▶│   Video Engine   │────▶│  Upload Manager │
+│  (Meta Graph)   │     │  TTS + FFmpeg    │     │  YT/TT/FB APIs  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+   threads/            video_creation/            uploaders/
+   threads_client.py   threads_screenshot.py      youtube_uploader.py
+                       voices.py                  tiktok_uploader.py
+                       final_video.py             facebook_uploader.py
+                                                  upload_manager.py
+                              │
+                              ▼
+                       scheduler/
+                       pipeline.py (APScheduler)
+```
   you will then have to upload manually. This is for the sake of avoiding any sort of community guideline issues.
 
 ## Requirements
