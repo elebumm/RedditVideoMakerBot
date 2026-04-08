@@ -1,0 +1,35 @@
+FROM python:3.10.14-slim
+
+# Install system dependencies including browser support and VNC
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    xvfb \
+    x11vnc \
+    novnc \
+    websockify \
+    fluxbox \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set display for headless browser
+ENV DISPLAY=:99
+ENV VNC_PORT=5900
+ENV NOVNC_PORT=6080
+
+RUN mkdir /app
+ADD . /app
+WORKDIR /app
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright browsers with system dependencies
+RUN playwright install --with-deps chromium
+
+# Copy the entrypoint script
+COPY docker-gui-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 5900 6080
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["python3", "main.py"]

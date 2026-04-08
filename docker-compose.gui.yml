@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  reddit-bot-gui:
+    build:
+      context: .
+      dockerfile: Dockerfile.gui
+    ports:
+      - "5900:5900"   # VNC
+      - "6080:6080"   # noVNC (web browser access)
+    volumes:
+      - ./results:/app/results
+      - ./.config.toml:/app/.config.toml
+    environment:
+      - DISPLAY=:99
