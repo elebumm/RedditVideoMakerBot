@@ -12,8 +12,10 @@ Các API được hỗ trợ:
     5. Threads Insights API     – Metrics cấp thread và cấp user
     6. Rate Limiting            – Kiểm tra quota publishing
     7. Token Management         – Refresh long-lived token
+    8. Keyword Search API       – Tìm kiếm bài viết theo từ khóa hoặc thẻ chủ đề
 """
 
+import hashlib
 import re
 import time as _time
 from typing import Any, Dict, List, Optional
@@ -103,6 +105,36 @@ _SCORE_WEIGHT_LIKES = 5
 _SCORE_WEIGHT_REPLIES = 10
 _SCORE_WEIGHT_REPOSTS = 15
 
+# ---------------------------------------------------------------------------
+# Keyword Search constants
+# https://developers.facebook.com/docs/threads/keyword-search
+# ---------------------------------------------------------------------------
+
+# search_type values
+SEARCH_TYPE_TOP = "TOP"
+SEARCH_TYPE_RECENT = "RECENT"
+
+# search_mode values
+SEARCH_MODE_KEYWORD = "KEYWORD"
+SEARCH_MODE_TAG = "TAG"
+
+# media_type values for search filter
+SEARCH_MEDIA_TEXT = "TEXT"
+SEARCH_MEDIA_IMAGE = "IMAGE"
+SEARCH_MEDIA_VIDEO = "VIDEO"
+
+# Keyword search rate limit: 2,200 queries / 24 hours
+_KEYWORD_SEARCH_RATE_LIMIT = 2200
+
+# Fields cho Keyword Search results (owner bị loại trừ theo API docs)
+KEYWORD_SEARCH_FIELDS = (
+    "id,media_product_type,media_type,media_url,permalink,"
+    "username,text,timestamp,shortcode,thumbnail_url,"
+    "children,is_quote_status,has_replies,root_post,replied_to,"
+    "is_reply,is_reply_owned_by_me,hide_status,reply_audience,"
+    "link_attachment_url,alt_text"
+)
+
 
 # ---------------------------------------------------------------------------
 # Exceptions
@@ -136,6 +168,7 @@ class ThreadsClient:
         - Insights API: metrics cấp thread & user
         - Rate Limiting: kiểm tra quota publishing
         - Token Management: validate & refresh
+        - Keyword Search API: tìm kiếm theo từ khóa hoặc thẻ chủ đề
     """
 
     def __init__(self):
@@ -905,6 +938,107 @@ class ThreadsClient:
             return True
 
     # ===================================================================
+    # 8. Keyword Search API
+    # https://developers.facebook.com/docs/threads/keyword-search
+    # ===================================================================
+
+    def keyword_search(
+        self,
+        q: str,
+        search_type: Optional[str] = None,
+        search_mode: Optional[str] = None,
+        media_type: Optional[str] = None,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        limit: Optional[int] = None,
+        author_username: Optional[str] = None,
+        fields: Optional[str] = None,
+    ) -> List[dict]:
+        """Tìm kiếm bài viết công khai trên Threads theo từ khóa hoặc thẻ chủ đề.
+
+        Endpoint: GET /{user-id}/threads_keyword_search
+        Docs: https://developers.facebook.com/docs/threads/keyword-search
+
+        Quyền cần thiết:
+            - threads_basic (bắt buộc)
+            - threads_keyword_search (bắt buộc)
+
+        Giới hạn: 2.200 truy vấn / 24 giờ (trên mỗi user, trên tất cả apps).
+        Các truy vấn không trả về kết quả sẽ không được tính vào giới hạn.
+
+        Args:
+            q: Từ khóa cần tìm (bắt buộc).
+            search_type: Loại tìm kiếm. ``TOP`` (mặc định) hoặc ``RECENT``.
+            search_mode: Chế độ tìm kiếm. ``KEYWORD`` (mặc định) hoặc ``TAG``.
+            media_type: Lọc theo loại media. ``TEXT``, ``IMAGE``, hoặc ``VIDEO``.
+            since: Ngày bắt đầu (Unix timestamp hoặc chuỗi strtotime).
+                Phải >= 1688540400 và < ``until``.
+            until: Ngày kết thúc (Unix timestamp hoặc chuỗi strtotime).
+                Phải <= thời điểm hiện tại và > ``since``.
+            limit: Số kết quả tối đa (mặc định 25, tối đa 100).
+            author_username: Lọc theo tên người dùng cụ thể (không có @).
+            fields: Custom fields. Mặc định dùng KEYWORD_SEARCH_FIELDS.
+
+        Returns:
+            Danh sách media objects phù hợp.
+
+        Raises:
+            ThreadsAPIError: Nếu API trả về lỗi (token/quyền/rate limit).
+            ValueError: Nếu tham số không hợp lệ.
+        """
+        if not q or not q.strip():
+            raise ValueError("Tham số 'q' (từ khóa tìm kiếm) là bắt buộc.")
+
+        params: Dict[str, Any] = {
+            "q": q.strip(),
+            "fields": fields or KEYWORD_SEARCH_FIELDS,
+        }
+
+        if search_type is not None:
+            if search_type not in (SEARCH_TYPE_TOP, SEARCH_TYPE_RECENT):
+                raise ValueError(
+                    f"search_type không hợp lệ: '{search_type}'. "
+                    f"Chỉ chấp nhận: {SEARCH_TYPE_TOP}, {SEARCH_TYPE_RECENT}."
+                )
+            params["search_type"] = search_type
+
+        if search_mode is not None:
+            if search_mode not in (SEARCH_MODE_KEYWORD, SEARCH_MODE_TAG):
+                raise ValueError(
+                    f"search_mode không hợp lệ: '{search_mode}'. "
+                    f"Chỉ chấp nhận: {SEARCH_MODE_KEYWORD}, {SEARCH_MODE_TAG}."
+                )
+            params["search_mode"] = search_mode
+
+        if media_type is not None:
+            if media_type not in (SEARCH_MEDIA_TEXT, SEARCH_MEDIA_IMAGE, SEARCH_MEDIA_VIDEO):
+                raise ValueError(
+                    f"media_type không hợp lệ: '{media_type}'. "
+                    f"Chỉ chấp nhận: {SEARCH_MEDIA_TEXT}, {SEARCH_MEDIA_IMAGE}, {SEARCH_MEDIA_VIDEO}."
+                )
+            params["media_type"] = media_type
+
+        if since is not None:
+            params["since"] = since
+
+        if until is not None:
+            params["until"] = until
+
+        if limit is not None:
+            if limit < 1 or limit > 100:
+                raise ValueError(
+                    f"limit không hợp lệ: {limit}. Phải trong khoảng 1-100."
+                )
+            params["limit"] = limit
+
+        if author_username is not None:
+            # Loại bỏ @ nếu user vô tình thêm vào
+            params["author_username"] = author_username.lstrip("@")
+
+        data = self._get(f"{self.user_id}/threads_keyword_search", params=params)
+        return data.get("data", [])
+
+    # ===================================================================
     # Utility methods (không gọi API)
     # ===================================================================
 
@@ -1197,6 +1331,193 @@ def _get_google_trends_content(
     return content
 
 
+def _get_keyword_search_content(
+    max_comment_length: int,
+    min_comment_length: int,
+) -> Optional[dict]:
+    """Lấy nội dung từ Threads bằng Keyword Search API.
+
+    Sử dụng Threads Keyword Search API chính thức để tìm bài viết
+    công khai theo từ khóa hoặc thẻ chủ đề.
+    Trả về None nếu không thể lấy content (để fallback sang source khác).
+
+    Yêu cầu quyền: threads_basic + threads_keyword_search.
+    """
+    thread_config = settings.config["threads"]["thread"]
+    search_query = thread_config.get("search_query", "")
+    if not search_query:
+        print_substep(
+            "⚠️ Chưa cấu hình search_query cho keyword_search.",
+            style="bold yellow",
+        )
+        return None
+
+    search_type = thread_config.get("search_type", SEARCH_TYPE_TOP)
+    search_mode = thread_config.get("search_mode", SEARCH_MODE_KEYWORD)
+    search_media_type = thread_config.get("search_media_type", "")
+
+    client = ThreadsClient()
+
+    try:
+        print_substep(
+            f"🔎 Đang tìm kiếm trên Threads: '{search_query}' "
+            f"(mode={search_mode}, type={search_type})...",
+            style="bold blue",
+        )
+
+        search_kwargs: Dict[str, Any] = {
+            "q": search_query,
+            "search_type": search_type,
+            "search_mode": search_mode,
+            "limit": 25,
+        }
+        if search_media_type:
+            search_kwargs["media_type"] = search_media_type
+
+        results = client.keyword_search(**search_kwargs)
+    except ThreadsAPIError as e:
+        print_substep(
+            f"⚠️ Lỗi Keyword Search API: {e}",
+            style="bold yellow",
+        )
+        return None
+    except requests.RequestException as e:
+        print_substep(
+            f"⚠️ Lỗi kết nối khi tìm kiếm: {e}",
+            style="bold yellow",
+        )
+        return None
+
+    if not results:
+        print_substep(
+            f"⚠️ Không tìm thấy kết quả cho '{search_query}'.",
+            style="bold yellow",
+        )
+        return None
+
+    print_substep(
+        f"✅ Tìm thấy {len(results)} bài viết từ Keyword Search.",
+        style="bold green",
+    )
+
+    # Chọn thread phù hợp (chưa tạo video, không chứa từ bị chặn)
+    thread = None
+    for t in results:
+        text = t.get("text", "")
+        if not text or _contains_blocked_words(text):
+            continue
+        if t.get("is_reply"):
+            continue
+        title_candidate = text[:_MAX_TITLE_LENGTH]
+        if is_title_used(title_candidate):
+            print_substep(
+                f"Bỏ qua thread đã tạo video: {text[:50]}...",
+                style="bold yellow",
+            )
+            continue
+        thread = t
+        break
+
+    if thread is None:
+        # results is guaranteed non-empty here (checked earlier)
+        thread = results[0]
+
+    thread_id = thread.get("id", "")
+    thread_text = thread.get("text", "")
+    thread_username = thread.get("username", "unknown")
+    thread_url = thread.get(
+        "permalink",
+        f"https://www.threads.net/post/{thread.get('shortcode', '')}",
+    )
+    shortcode = thread.get("shortcode", "")
+
+    # Dùng search_query làm tiêu đề video
+    remaining = _MAX_TITLE_LENGTH - len(search_query) - 2
+    if search_query and remaining > 0:
+        display_title = f"{search_query}: {thread_text[:remaining]}"
+    else:
+        display_title = thread_text[:_MAX_TITLE_LENGTH]
+
+    print_substep(
+        f"Video sẽ được tạo từ Keyword Search: {display_title[:100]}...",
+        style="bold green",
+    )
+    print_substep(f"Thread URL: {thread_url}", style="bold green")
+    print_substep(f"Tác giả: @{thread_username}", style="bold blue")
+    print_substep(
+        f"Từ khóa tìm kiếm: {search_query} (mode={search_mode})",
+        style="bold blue",
+    )
+
+    content: dict = {
+        "thread_url": thread_url,
+        "thread_title": display_title,
+        "thread_id": re.sub(
+            r"[^\w\s-]", "",
+            shortcode or thread_id or f"kwsearch_{hashlib.md5(thread_text.encode()).hexdigest()[:8]}",
+        ),
+        "thread_author": f"@{thread_username}",
+        "is_nsfw": False,
+        "thread_post": thread_text,
+        "comments": [],
+    }
+
+    if not settings.config["settings"].get("storymode", False):
+        # Lấy replies qua Conversation API (nếu có thread_id)
+        if thread_id:
+            try:
+                conversation = client.get_conversation(thread_id, limit=100)
+            except (ThreadsAPIError, requests.RequestException):
+                try:
+                    conversation = client.get_thread_replies(thread_id, limit=50)
+                except Exception as e:
+                    print_substep(
+                        f"⚠️ Lỗi lấy replies (Keyword Search): {e}",
+                        style="bold yellow",
+                    )
+                    conversation = []
+        else:
+            conversation = []
+
+        for reply in conversation:
+            reply_text = reply.get("text", "")
+            reply_username = reply.get("username", "unknown")
+
+            if not reply_text:
+                continue
+            if reply.get("hide_status", "") == "HIDDEN":
+                continue
+            if _contains_blocked_words(reply_text):
+                continue
+
+            sanitised = sanitize_text(reply_text)
+            if not sanitised or sanitised.strip() == "":
+                continue
+
+            if len(reply_text) > max_comment_length:
+                continue
+            if len(reply_text) < min_comment_length:
+                continue
+
+            content["comments"].append(
+                {
+                    "comment_body": reply_text,
+                    "comment_url": reply.get("permalink", ""),
+                    "comment_id": re.sub(
+                        r"[^\w\s-]", "", reply.get("id", "")
+                    ),
+                    "comment_author": f"@{reply_username}",
+                }
+            )
+
+    print_substep(
+        f"Đã lấy nội dung từ Keyword Search thành công! "
+        f"({len(content.get('comments', []))} replies)",
+        style="bold green",
+    )
+    return content
+
+
 def _select_best_thread(
     client: ThreadsClient,
     threads_list: List[dict],
@@ -1387,6 +1708,32 @@ def get_threads_posts(POST_ID: str = None) -> dict:
         # Fallback: Google Trends thất bại → tiếp tục dùng user threads
         print_substep(
             "⚠️ Google Trends không khả dụng, chuyển sang lấy từ user threads...",
+            style="bold yellow",
+        )
+
+    # ------------------------------------------------------------------
+    # Source: keyword_search  –  Tìm kiếm bằng Keyword Search API
+    # ------------------------------------------------------------------
+    if source == "keyword_search" and not POST_ID:
+        content = _get_keyword_search_content(
+            max_comment_length=max_comment_length,
+            min_comment_length=min_comment_length,
+        )
+        if content is not None:
+            return content
+        # Fallback: keyword_search thất bại → thử trending → user threads
+        print_substep(
+            "⚠️ Keyword Search không khả dụng, thử lấy từ Trending...",
+            style="bold yellow",
+        )
+        content = _get_trending_content(
+            max_comment_length=max_comment_length,
+            min_comment_length=min_comment_length,
+        )
+        if content is not None:
+            return content
+        print_substep(
+            "⚠️ Trending cũng không khả dụng, chuyển sang user threads...",
             style="bold yellow",
         )
 
