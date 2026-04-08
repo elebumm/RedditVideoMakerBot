@@ -15,6 +15,13 @@ post_lang = { default = "vi", optional = true, explanation = "Ngôn ngữ. Mặc
 min_comments = { default = 5, optional = false, nmin = 1, type = "int", explanation = "Số replies tối thiểu. Mặc định: 5", example = 5 }
 blocked_words = { optional = true, default = "", type = "str", explanation = "Từ bị chặn, phân cách bằng dấu phẩy.", example = "spam, quảng cáo" }
 channel_name = { optional = true, default = "Threads Vietnam", example = "Threads VN Stories", explanation = "Tên kênh hiển thị trên video" }
+use_conversation = { optional = true, default = true, type = "bool", options = [true, false], explanation = "Dùng Conversation API (lấy full reply tree) thay vì chỉ direct replies. Mặc định: true" }
+use_insights = { optional = true, default = true, type = "bool", options = [true, false], explanation = "Dùng Insights API để chọn thread có engagement cao nhất. Mặc định: true" }
+
+[threads.publishing]
+enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật Publishing API - đăng bài mới lên Threads sau khi tạo video" }
+reply_control = { optional = true, default = "everyone", options = ["everyone", "accounts_you_follow", "mentioned_only"], explanation = "Ai được phép reply bài đăng. Mặc định: everyone" }
+check_quota = { optional = true, default = true, type = "bool", options = [true, false], explanation = "Kiểm tra quota trước khi publish (250 posts / 24h). Mặc định: true" }
 
 [ai]
 ai_similarity_enabled = { optional = true, option = [true, false], default = false, type = "bool", explanation = "Sắp xếp threads theo độ tương đồng với từ khóa" }
