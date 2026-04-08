@@ -1344,7 +1344,7 @@ def get_threads_posts(POST_ID: str = None) -> dict:
     max_comment_length = int(thread_config.get("max_comment_length", 500))
     min_comment_length = int(thread_config.get("min_comment_length", 1))
     min_comments = int(thread_config.get("min_comments", 5))
-    source = thread_config.get("source", "user")
+    source = thread_config.get("source", "trending")
 
     print_step("Đang lấy nội dung từ Threads...")
 
