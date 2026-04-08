@@ -33,10 +33,14 @@ class TokenCheckError(Exception):
 
 
 def _call_me_endpoint(access_token: str) -> dict:
-    """GET /me?fields=id,username&access_token=… with minimal retry."""
+    """GET /me?fields=id,username,name,threads_profile_picture_url,threads_biography
+
+    Sử dụng đầy đủ profile fields theo Threads Profiles API:
+    https://developers.facebook.com/docs/threads/threads-profiles
+    """
     url = f"{THREADS_API_BASE}/me"
     params = {
-        "fields": "id,username",
+        "fields": "id,username,name,threads_profile_picture_url,threads_biography",
         "access_token": access_token,
     }
     response = requests.get(url, params=params, timeout=_REQUEST_TIMEOUT_SECONDS)
