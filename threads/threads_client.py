@@ -97,6 +97,12 @@ REPLY_CONTROL_MENTIONED_ONLY = "mentioned_only"
 _PUBLISH_POLL_INTERVAL = 3  # seconds
 _PUBLISH_POLL_MAX_ATTEMPTS = 40  # ~2 phút
 
+# Engagement scoring weights cho thread selection
+_SCORE_WEIGHT_VIEWS = 1
+_SCORE_WEIGHT_LIKES = 5
+_SCORE_WEIGHT_REPLIES = 10
+_SCORE_WEIGHT_REPOSTS = 15
+
 
 # ---------------------------------------------------------------------------
 # Exceptions
@@ -1255,12 +1261,11 @@ def _select_best_thread(
             score = reply_count  # Base score = số replies
             try:
                 engagement = client.get_thread_engagement(thread_id)
-                # Weighted score: views * 1 + likes * 5 + replies * 10
                 score = (
-                    engagement.get("views", 0)
-                    + engagement.get("likes", 0) * 5
-                    + engagement.get("replies", 0) * 10
-                    + engagement.get("reposts", 0) * 15
+                    engagement.get("views", 0) * _SCORE_WEIGHT_VIEWS
+                    + engagement.get("likes", 0) * _SCORE_WEIGHT_LIKES
+                    + engagement.get("replies", 0) * _SCORE_WEIGHT_REPLIES
+                    + engagement.get("reposts", 0) * _SCORE_WEIGHT_REPOSTS
                 )
             except (ThreadsAPIError, requests.RequestException):
                 # Insights không khả dụng → dùng reply_count làm score
