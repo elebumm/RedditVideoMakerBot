@@ -5,7 +5,7 @@ access_token = { optional = false, nmin = 10, explanation = "Threads API access 
 user_id = { optional = false, nmin = 1, explanation = "Threads user ID của bạn", example = "12345678" }
 
 [threads.thread]
-source = { optional = true, default = "trending", options = ["user", "trending", "google_trends"], explanation = "Nguồn lấy bài viết: 'trending' (từ Trending now - mặc định), 'google_trends' (từ khóa Google Trends), hoặc 'user' (từ user cụ thể)", example = "trending" }
+source = { optional = true, default = "trending", options = ["user", "trending", "google_trends", "keyword_search"], explanation = "Nguồn lấy bài viết: 'trending' (từ Trending now - mặc định), 'google_trends' (từ khóa Google Trends), 'keyword_search' (Keyword Search API), hoặc 'user' (từ user cụ thể)", example = "trending" }
 target_user_id = { optional = true, default = "", explanation = "ID user muốn lấy threads. Để trống dùng user của bạn. Chỉ dùng khi source = 'user'.", example = "87654321" }
 post_id = { optional = true, default = "", explanation = "ID cụ thể của thread. Để trống để tự động chọn.", example = "18050000000000000" }
 keywords = { optional = true, default = "", type = "str", explanation = "Từ khóa lọc threads, phân cách bằng dấu phẩy.", example = "viral, trending, hài hước" }
@@ -17,6 +17,10 @@ blocked_words = { optional = true, default = "", type = "str", explanation = "T�
 channel_name = { optional = true, default = "Threads Vietnam", example = "Threads VN Stories", explanation = "Tên kênh hiển thị trên video" }
 use_conversation = { optional = true, default = true, type = "bool", options = [true, false], explanation = "Dùng Conversation API (lấy full reply tree) thay vì chỉ direct replies. Mặc định: true" }
 use_insights = { optional = true, default = true, type = "bool", options = [true, false], explanation = "Dùng Insights API để chọn thread có engagement cao nhất. Mặc định: true" }
+search_query = { optional = true, default = "", type = "str", explanation = "Từ khóa tìm kiếm khi source = 'keyword_search'. Yêu cầu quyền threads_keyword_search.", example = "viral trending" }
+search_type = { optional = true, default = "TOP", options = ["TOP", "RECENT"], explanation = "Loại kết quả tìm kiếm: TOP (phổ biến nhất) hoặc RECENT (mới nhất). Mặc định: TOP" }
+search_mode = { optional = true, default = "KEYWORD", options = ["KEYWORD", "TAG"], explanation = "Chế độ tìm kiếm: KEYWORD (từ khóa) hoặc TAG (thẻ chủ đề). Mặc định: KEYWORD" }
+search_media_type = { optional = true, default = "", options = ["", "TEXT", "IMAGE", "VIDEO"], explanation = "Lọc loại media khi tìm kiếm: TEXT, IMAGE, VIDEO. Để trống để không lọc." }
 
 [threads.publishing]
 enabled = { optional = true, type = "bool", default = false, options = [true, false], explanation = "Bật Publishing API - đăng bài mới lên Threads sau khi tạo video" }
