@@ -15,6 +15,7 @@ Các API được hỗ trợ:
     8. Keyword Search API       – Tìm kiếm bài viết theo từ khóa hoặc thẻ chủ đề
 """
 
+import hashlib
 import re
 import time as _time
 from typing import Any, Dict, List, Optional
@@ -1024,9 +1025,9 @@ class ThreadsClient:
             params["until"] = until
 
         if limit is not None:
-            if limit < 0 or limit > 100:
+            if limit < 1 or limit > 100:
                 raise ValueError(
-                    f"limit không hợp lệ: {limit}. Phải trong khoảng 0-100."
+                    f"limit không hợp lệ: {limit}. Phải trong khoảng 1-100."
                 )
             params["limit"] = limit
 
@@ -1418,10 +1419,8 @@ def _get_keyword_search_content(
         break
 
     if thread is None:
-        if results:
-            thread = results[0]
-        else:
-            return None
+        # results is guaranteed non-empty here (checked earlier)
+        thread = results[0]
 
     thread_id = thread.get("id", "")
     thread_text = thread.get("text", "")
@@ -1433,11 +1432,11 @@ def _get_keyword_search_content(
     shortcode = thread.get("shortcode", "")
 
     # Dùng search_query làm tiêu đề video
-    display_title = (
-        f"{search_query}: {thread_text[:_MAX_TITLE_LENGTH - len(search_query) - 2]}"
-        if search_query
-        else thread_text[:_MAX_TITLE_LENGTH]
-    )
+    remaining = _MAX_TITLE_LENGTH - len(search_query) - 2
+    if search_query and remaining > 0:
+        display_title = f"{search_query}: {thread_text[:remaining]}"
+    else:
+        display_title = thread_text[:_MAX_TITLE_LENGTH]
 
     print_substep(
         f"Video sẽ được tạo từ Keyword Search: {display_title[:100]}...",
@@ -1455,7 +1454,7 @@ def _get_keyword_search_content(
         "thread_title": display_title,
         "thread_id": re.sub(
             r"[^\w\s-]", "",
-            shortcode or thread_id or f"kwsearch_{hash(thread_text) % 10**8}",
+            shortcode or thread_id or f"kwsearch_{hashlib.md5(thread_text.encode()).hexdigest()[:8]}",
         ),
         "thread_author": f"@{thread_username}",
         "is_nsfw": False,
