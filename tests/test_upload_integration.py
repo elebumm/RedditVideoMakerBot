@@ -196,7 +196,7 @@ class TestTikTokUploadIntegration:
             url = uploader.upload(m)
 
             assert url is not None
-            assert "tiktok.com" in url
+            assert url.startswith("https://www.tiktok.com/")
 
 
 # ===================================================================
@@ -254,4 +254,4 @@ class TestFacebookUploadIntegration:
             url = uploader.upload(m)
 
             assert url is not None
-            assert "facebook.com" in url
+            assert url.startswith("https://www.facebook.com/")

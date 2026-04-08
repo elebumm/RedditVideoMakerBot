@@ -43,12 +43,9 @@ class TestSanitizeText:
 
         text = "1+1 equals 2"
         result = sanitize_text(text)
-        # The + is replaced by "plus" via str.replace before regex strips it
-        # However, the regex removes standalone + first.
-        # The replacement text.replace("+", "plus") runs after regex.
-        # So "1+1" → regex removes "+" → "1 1" → replace doesn't find "+" → "1 1"
-        # But text.replace runs on the result, so let's check actual behavior.
+        # Verify numeric content is preserved after sanitization
         assert "1" in result
+        assert "equals" in result
 
     def test_removes_extra_whitespace(self):
         from utils.voice import sanitize_text

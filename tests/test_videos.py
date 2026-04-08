@@ -67,5 +67,5 @@ class TestSaveData:
         with patch("builtins.open", m):
             save_data("test_channel", "output2.mp4", "Another Title", "thread_123", "gta")
 
-        # Should not write anything since ID exists
-        assert not m().write.called or m().seek.called is False
+        # Verify no new data was written (duplicate ID skipped)
+        assert not m().write.called
