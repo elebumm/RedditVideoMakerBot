@@ -91,10 +91,10 @@ def videos_json():
     return send_from_directory("video_creation/data", "videos.json")
 
 
-# Make backgrounds.json accessible
+# Make background_videos.json accessible via the existing backgrounds.json endpoint
 @app.route("/backgrounds.json")
 def backgrounds_json():
-    return send_from_directory("utils", "backgrounds.json")
+    return send_from_directory("utils", "background_videos.json")
 
 
 # Make videos in results folder accessible
