@@ -246,3 +246,5 @@ video_creation/data/envvars.txt
 
 config.toml
 *.exe
+.gitnexus
+node_modules/
