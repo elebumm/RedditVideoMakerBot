@@ -1,29 +1,30 @@
-<!-- gitnexus:start -->
-# GitNexus — Code Intelligence
-
-This project is indexed by GitNexus as **RedditVideoMakerBot** (283 symbols, 684 relationships, 21 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
-
-> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
-
-## RAG-First Protocol (MANDATORY)
+# RAG-First Protocol (MANDATORY)
 
 **Before answering ANY question about this codebase or writing ANY code, you MUST query GitNexus first.** This is the highest priority rule — do NOT skip it.
 
-### Step 0: Always Start Here
+## Step 0: Always Start Here
 1. **User asks about code?** → Run `gitnexus_query({query: "<user's question>"})` FIRST to find relevant execution flows and symbols.
 2. **User asks to modify code?** → Run `gitnexus_query()` to understand the area, THEN `gitnexus_impact()` on target symbols before editing.
 3. **User asks "how does X work?"** → Run `gitnexus_context({name: "X"})` to get 360-degree view (callers, callees, processes).
 4. **User asks to debug?** → Run `gitnexus_query({query: "<error or symptom>"})` to trace execution flows.
 
-### Enforcement Rules
+## Enforcement Rules
 - **NEVER use Grep/Glob/Read as your first action** when exploring code. Always query the knowledge graph first via `gitnexus_query` or `gitnexus_context`.
 - **NEVER answer questions about code structure, flow, or dependencies from memory alone.** Always verify against the graph.
 - **ONLY fall back to Grep/Glob** if GitNexus returns no results for your query.
 - **Cite GitNexus results** in your answer (e.g., "According to the knowledge graph, function X is called by Y in process Z").
 
+---
+
+<!-- gitnexus:start -->
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **RedditVideoMakerBot** (286 symbols, 687 relationships, 21 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+
 ## Always Do
 
-- **MUST query GitNexus knowledge graph BEFORE answering any code question or making any edit.** This is Step 0 — non-negotiable.
 - **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
 - **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
 - **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
