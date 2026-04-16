@@ -72,52 +72,64 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
     with sync_playwright() as p:
         print_substep("Launching Headless Browser...")
 
-        browser = p.chromium.launch(
-            headless=True
-        )  # headless=False will show the browser for debugging purposes
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
         # so we need a dsf such that the width of the screenshot is greater than the final resolution of the video
         dsf = (W // 600) + 1
 
-        context = browser.new_context(
+        # Create a persistent context directory to save browser profile (cookies, login state, etc.)
+        user_data_dir = Path("./assets/browser_profile")
+        user_data_dir.mkdir(parents=True, exist_ok=True)
+
+        context = p.chromium.launch_persistent_context(
+            str(user_data_dir),
+            headless=True,  # headless=False will show the browser for debugging purposes
             locale=lang or "en-CA,en;q=0.9",
             color_scheme="dark",
             viewport=ViewportSize(width=W, height=H),
             device_scale_factor=dsf,
-            user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{browser.version}.0.0.0 Safari/537.36",
+            user_agent=f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
             extra_http_headers={
                 "Dnt": "1",
                 "Sec-Ch-Ua": '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
             },
         )
+
         cookies = json.load(cookie_file)
         cookie_file.close()
-
         context.add_cookies(cookies)  # load preference cookies
 
-        # Login to Reddit
-        print_substep("Logging in to Reddit...")
+        # Login to Reddit only if not already logged in
+        print_substep("Checking Reddit login status...")
         page = context.new_page()
-        page.goto("https://www.reddit.com/login", timeout=0)
-        page.set_viewport_size(ViewportSize(width=1920, height=1080))
+        page.goto("https://www.reddit.com", timeout=0)
         page.wait_for_load_state()
 
-        page.locator(f'input[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
-        page.locator(f'input[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
-        page.get_by_role("button", name="Log In").click()
-        page.wait_for_timeout(5000)
+        # Check if already logged in by looking for profile dropdown
+        is_logged_in = page.locator('button[aria-label*="user menu"]').is_visible() or \
+                       page.locator('a[href*="/user/"]').first.is_visible()
 
-        login_error_div = page.locator(".AnimatedForm__errorMessage").first
-        if login_error_div.is_visible():
+        if not is_logged_in:
+            print_substep("Not logged in. Logging in to Reddit...")
+            page.goto("https://www.reddit.com/login", timeout=0)
+            page.set_viewport_size(ViewportSize(width=1920, height=1080))
+            page.wait_for_load_state()
 
-            print_substep(
-                "Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
-                style="red",
-            )
-            exit()
+            page.locator(f'input[name="username"]').fill(settings.config["reddit"]["creds"]["username"])
+            page.locator(f'input[name="password"]').fill(settings.config["reddit"]["creds"]["password"])
+            page.get_by_role("button", name="Log In").click()
+            page.wait_for_timeout(5000)
+
+            login_error_div = page.locator(".AnimatedForm__errorMessage").first
+            if login_error_div.is_visible():
+                print_substep(
+                    "Your reddit credentials are incorrect! Please modify them accordingly in the config.toml file.",
+                    style="red",
+                )
+                context.close()
+                exit()
         else:
-            pass
+            print_substep("Already logged in! Skipping login...")
 
         page.wait_for_load_state()
         # Handle the redesign
@@ -258,7 +270,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
                     print("TimeoutError: Skipping screenshot...")
                     continue
 
-        # close browser instance when we are done using it
-        browser.close()
+        # close browser context when we are done using it
+        context.close()
 
     print_substep("Screenshots downloaded Successfully.", style="bold green")
