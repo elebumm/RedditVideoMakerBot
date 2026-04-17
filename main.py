@@ -48,20 +48,21 @@ reddit_object: Dict[str, str | list]
 
 def main(POST_ID=None) -> None:
     global reddit_id, reddit_object
-    reddit_object = get_subreddit_threads(POST_ID)
-    reddit_id = extract_id(reddit_object)
-    print_substep(f"Thread ID is {reddit_id}", style="bold blue")
-    length, number_of_comments = save_text_to_mp3(reddit_object)
-    length = math.ceil(length)
-    get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    bg_config = {
-        "video": get_background_config("video"),
-        "audio": get_background_config("audio"),
-    }
-    download_background_video(bg_config["video"])
-    download_background_audio(bg_config["audio"])
-    chop_background(bg_config, length, reddit_object)
-    make_final_video(number_of_comments, length, reddit_object, bg_config)
+    # reddit_object = get_subreddit_threads(POST_ID)
+    # reddit_id = extract_id(reddit_object)
+    # print_substep(f"Thread ID is {reddit_id}", style="bold blue")
+    # length, number_of_comments = save_text_to_mp3(reddit_object)
+    # length = math.ceil(length)
+    # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
+    # bg_config = {
+    #     "video": get_background_config("video"),
+    #     "audio": get_background_config("audio"),
+    # }
+    # download_background_video(bg_config["video"])
+    # download_background_audio(bg_config["audio"])
+    # chop_background(bg_config, length, reddit_object)
+    # make_final_video(number_of_comments, length, reddit_object, bg_config)
+    print_step("Reddit pipeline is disabled. Uncomment main() body to re-enable.")
 
 
 def run_many(times) -> None:
