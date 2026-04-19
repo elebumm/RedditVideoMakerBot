@@ -11,6 +11,7 @@ from prawcore import ResponseException
 from reddit.subreddit import get_subreddit_threads
 from utils import settings
 from utils.cleanup import cleanup
+from utils.checkpoint import run_step, save_checkpoint, load_checkpoint, clear_checkpoint, print_resume_status
 from utils.console import print_markdown, print_step, print_substep
 from utils.ffmpeg_install import ffmpeg_install
 from utils.id import extract_id
@@ -48,21 +49,58 @@ reddit_object: Dict[str, str | list]
 
 def main(POST_ID=None) -> None:
     global reddit_id, reddit_object
-    # reddit_object = get_subreddit_threads(POST_ID)
-    # reddit_id = extract_id(reddit_object)
-    # print_substep(f"Thread ID is {reddit_id}", style="bold blue")
-    # length, number_of_comments = save_text_to_mp3(reddit_object)
-    # length = math.ceil(length)
-    # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-    # bg_config = {
-    #     "video": get_background_config("video"),
-    #     "audio": get_background_config("audio"),
-    # }
-    # download_background_video(bg_config["video"])
-    # download_background_audio(bg_config["audio"])
-    # chop_background(bg_config, length, reddit_object)
-    # make_final_video(number_of_comments, length, reddit_object, bg_config)
-    print_step("Reddit pipeline is disabled. Uncomment main() body to re-enable.")
+
+    # Step 1: Fetch Reddit threads (no checkpoint — reddit_id unknown yet)
+    reddit_object = get_subreddit_threads(POST_ID)
+    reddit_id = extract_id(reddit_object)
+    print_substep(f"Thread ID is {reddit_id}", style="bold blue")
+    save_checkpoint(reddit_id, "fetch_reddit", {"result": None})
+    print_resume_status(reddit_id)
+
+    # Step 2: Generate TTS audio
+    tts_result = run_step(
+        reddit_id, "generate_tts",
+        save_text_to_mp3, reddit_object,
+    )
+    length, number_of_comments = tts_result[0], tts_result[1]
+    length = math.ceil(length)
+
+    # Step 3: Take screenshots
+    run_step(
+        reddit_id, "take_screenshots",
+        get_screenshots_of_reddit_posts, reddit_object, number_of_comments,
+    )
+
+    # Step 4: Download background video & audio
+    bg_config = {
+        "video": get_background_config("video"),
+        "audio": get_background_config("audio"),
+    }
+    run_step(
+        reddit_id, "download_background",
+        _download_backgrounds, bg_config,
+    )
+
+    # Step 5: Chop background
+    run_step(
+        reddit_id, "chop_background",
+        chop_background, bg_config, length, reddit_object,
+    )
+
+    # Step 6: Make final video
+    run_step(
+        reddit_id, "make_final_video",
+        make_final_video, number_of_comments, length, reddit_object, bg_config,
+    )
+
+    # Pipeline complete — clear checkpoint
+    clear_checkpoint(reddit_id)
+    print_step("Pipeline completed successfully! Checkpoint cleared.")
+
+
+def _download_backgrounds(bg_config):
+    download_background_video(bg_config["video"])
+    download_background_audio(bg_config["audio"])
 
 
 def run_many(times) -> None:
