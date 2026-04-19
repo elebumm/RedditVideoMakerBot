@@ -145,16 +145,11 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
-        if page.locator(
-            "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
-        ).is_visible():
-            # This means the post is NSFW and requires to click the proceed button.
-
+        nsfw_button = page.locator("button:has-text('Yes'), button:has-text('Continue'), [data-testid='content-gate'] button").first
+        if nsfw_button.is_visible():
             print_substep("Post is NSFW. You are spicy...")
-            page.locator(
-                "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
-            ).click()
-            page.wait_for_load_state()  # Wait for page to fully load
+            nsfw_button.click()
+            page.wait_for_load_state()
 
             # translate code
         if page.locator(

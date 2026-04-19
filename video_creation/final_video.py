@@ -1,6 +1,8 @@
 import multiprocessing
 import os
 import re
+import shutil
+import subprocess
 import tempfile
 import textwrap
 import threading
@@ -10,6 +12,21 @@ from pathlib import Path
 from typing import Dict, Final, Tuple
 
 import ffmpeg
+
+
+def _get_video_codec() -> str:
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-encoders"], capture_output=True, text=True, timeout=10
+        )
+        if "h264_nvenc" in result.stdout:
+            return "h264_nvenc"
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        pass
+    return "libx264"
+
+
+VIDEO_CODEC = _get_video_codec()
 import translators
 from PIL import Image, ImageDraw, ImageFont
 from rich.console import Console
@@ -93,7 +110,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             output_path,
             an=None,
             **{
-                "c:v": "h264_nvenc",
+                "c:v": VIDEO_CODEC,
                 "b:v": "20M",
                 "b:a": "192k",
                 "threads": multiprocessing.cpu_count(),
@@ -438,7 +455,7 @@ def make_final_video(
                 path,
                 f="mp4",
                 **{
-                    "c:v": "h264_nvenc",
+                    "c:v": VIDEO_CODEC,
                     "b:v": "20M",
                     "b:a": "192k",
                     "threads": multiprocessing.cpu_count(),
@@ -468,7 +485,7 @@ def make_final_video(
                     path,
                     f="mp4",
                     **{
-                        "c:v": "h264_nvenc",
+                        "c:v": VIDEO_CODEC,
                         "b:v": "20M",
                         "b:a": "192k",
                         "threads": multiprocessing.cpu_count(),

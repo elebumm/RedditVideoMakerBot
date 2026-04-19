@@ -1,4 +1,5 @@
 import re
+import sys
 
 import praw
 from praw.models import MoreComments
@@ -38,14 +39,16 @@ def get_subreddit_threads(POST_ID: str):
             client_secret=settings.config["reddit"]["creds"]["client_secret"],
             user_agent="Accessing Reddit threads",
             username=username,
-            passkey=passkey,
+            password=passkey,
             check_for_async=False,
         )
     except ResponseException as e:
         if e.response.status_code == 401:
             print("Invalid credentials - please check them in config.toml")
-    except:
-        print("Something went wrong...")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Something went wrong logging into Reddit: {e}")
+        sys.exit(1)
 
     # Ask user for subreddit input
     print_step("Getting subreddit threads...")
