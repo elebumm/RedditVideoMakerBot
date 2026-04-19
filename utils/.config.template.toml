@@ -1,3 +1,12 @@
+[threads.creds]
+access_token = { optional = false, nmin = 10, explanation = "Meta Threads Graph API access token with threads_basic and threads_read_replies permissions", example = "THAAaBbCc123...", oob_error = "Access token too short" }
+
+[threads.thread]
+post_id = { optional = true, default = "", explanation = "Specific Threads post URL or ID. Use '+' to separate multiple IDs. Leave empty to fetch from your own recent threads.", example = "https://www.threads.net/@user/post/ABC123" }
+max_comment_length = { default = 500, optional = false, nmin = 10, nmax = 10000, type = "int", explanation = "Max characters per reply" }
+min_comment_length = { default = 10, optional = true, nmin = 0, nmax = 10000, type = "int", explanation = "Min characters per reply" }
+blocked_words = { optional = true, default = "", type = "str", explanation = "Comma-separated words to exclude from replies", example = "spam, nsfw" }
+
 [reddit.creds]
 client_id = { optional = false, nmin = 12, nmax = 30, explanation = "The ID of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The ID should be over 12 and under 30 characters, double check your input." }
 client_secret = { optional = false, nmin = 20, nmax = 40, explanation = "The SECRET of your Reddit app of SCRIPT type", example = "fFAGRNJru1FTz70BzhT3Zg", regex = "^[-a-zA-Z0-9._~+/]+=*$", input_error = "The client ID can only contain printable characters.", oob_error = "The secret should be over 20 and under 40 characters, double check your input." }

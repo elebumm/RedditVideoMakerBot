@@ -6,9 +6,9 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Dict, NoReturn
 
-from prawcore import ResponseException
-
-from reddit.subreddit import get_subreddit_threads
+# Reddit pipeline disabled — Threads is the active source.
+# from reddit.subreddit import get_subreddit_threads
+from threads.threads_api import get_threads_posts
 from utils import settings
 from utils.cleanup import cleanup
 from utils.checkpoint import run_step, save_checkpoint, load_checkpoint, clear_checkpoint, print_resume_status
@@ -47,14 +47,14 @@ reddit_id: str
 reddit_object: Dict[str, str | list]
 
 
-def main(POST_ID=None) -> None:
+def main(POST_URL=None) -> None:
     global reddit_id, reddit_object
 
-    # Step 1: Fetch Reddit threads (no checkpoint — reddit_id unknown yet)
-    reddit_object = get_subreddit_threads(POST_ID)
+    # Step 1: Fetch Threads post (no checkpoint — thread_id unknown yet)
+    reddit_object = get_threads_posts(POST_URL)
     reddit_id = extract_id(reddit_object)
     print_substep(f"Thread ID is {reddit_id}", style="bold blue")
-    save_checkpoint(reddit_id, "fetch_reddit", {"result": None})
+    save_checkpoint(reddit_id, "fetch_thread", {"result": None})
     print_resume_status(reddit_id)
 
     # Step 2: Generate TTS audio
@@ -144,11 +144,15 @@ if __name__ == "__main__":
         )
         sys.exit()
     try:
-        if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
+        threads_post_id = (
+            config.get("threads", {}).get("thread", {}).get("post_id", "")
+            if isinstance(config.get("threads", {}), dict) else ""
+        )
+        if threads_post_id:
+            for index, post_id in enumerate(threads_post_id.split("+")):
                 index += 1
                 print_step(
-                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
+                    f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(threads_post_id.split("+"))}'
                 )
                 main(post_id)
                 Popen("cls" if name == "nt" else "clear", shell=True).wait()
@@ -157,10 +161,6 @@ if __name__ == "__main__":
         else:
             main()
     except KeyboardInterrupt:
-        shutdown()
-    except ResponseException:
-        print_markdown("## Invalid credentials")
-        print_markdown("Please check your credentials in the config.toml file")
         shutdown()
     except Exception as err:
         config["settings"]["tts"]["tiktok_sessionid"] = "REDACTED"
