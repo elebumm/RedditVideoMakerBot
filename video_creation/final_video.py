@@ -84,7 +84,38 @@ def name_normalize(name: str) -> str:
         return name
 
 
-def prepare_background(reddit_id: str, W: int, H: int) -> str:
+def get_encoder():
+    """Check if the system supports NVENC encoding by attempting to encode a test frame."""
+    import subprocess
+    base_encoder = "libx264"
+
+    try:
+        # Try to encode a single black frame using NVENC
+        result = subprocess.run(
+            ['ffmpeg', '-loglevel', 'error', '-f', 'lavfi', '-i',
+             'color=black:s=1080x1080', '-vframes', '1', '-an',
+             '-c:v', 'h264_nvenc', '-f', 'null', '-'],
+            capture_output=True,
+            text=True,
+            stderr=subprocess.PIPE
+        )
+
+        # If the command succeeds (return code 0) and there's no error output, NVENC is supported
+        if result.returncode == 0:
+            print("NVENC supported")
+            return "h264_nvenc"
+        else:
+            print("NVENC not supported")
+            return base_encoder
+    except Exception as e:
+        print(f"Error while checking for NVENC support: {e}")
+        print(f"Falling back to {base_encoder}")
+        return base_encoder
+
+
+
+
+def prepare_background(reddit_id: str, W: int, H: int, encoder = "libx264") -> str:
     output_path = f"assets/temp/{reddit_id}/background_noaudio.mp4"
     output = (
         ffmpeg.input(f"assets/temp/{reddit_id}/background.mp4")
@@ -93,7 +124,7 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             output_path,
             an=None,
             **{
-                "c:v": "h264_nvenc",
+                "c:v": encoder,
                 "b:v": "20M",
                 "b:a": "192k",
                 "threads": multiprocessing.cpu_count(),
@@ -217,6 +248,8 @@ def make_final_video(
 
     reddit_id = extract_id(reddit_obj)
 
+    encoder = get_encoder()
+
     allowOnlyTTSFolder: bool = (
         settings.config["settings"]["background"]["enable_extra_audio"]
         and settings.config["settings"]["background"]["background_audio_volume"] != 0
@@ -224,7 +257,7 @@ def make_final_video(
 
     print_step("Creating the final video 🎥")
 
-    background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H))
+    background_clip = ffmpeg.input(prepare_background(reddit_id, W=W, H=H, encoder=encoder))
 
     # Gather all audio clips
     audio_clips = list()
@@ -430,7 +463,7 @@ def make_final_video(
         path = defaultPath + f"/{filename}"
         path = (
             path[:251] + ".mp4"
-        )  # Prevent a error by limiting the path length, do not change this.
+        )  # Prevent an error by limiting the path length, do not change this.
         try:
             ffmpeg.output(
                 background_clip,
@@ -438,7 +471,7 @@ def make_final_video(
                 path,
                 f="mp4",
                 **{
-                    "c:v": "h264_nvenc",
+                    "c:v": encoder,
                     "b:v": "20M",
                     "b:a": "192k",
                     "threads": multiprocessing.cpu_count(),
@@ -468,7 +501,7 @@ def make_final_video(
                     path,
                     f="mp4",
                     **{
-                        "c:v": "h264_nvenc",
+                        "c:v": encoder,
                         "b:v": "20M",
                         "b:a": "192k",
                         "threads": multiprocessing.cpu_count(),
