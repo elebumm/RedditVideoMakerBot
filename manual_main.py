@@ -16,6 +16,7 @@ Usage:
 
 import argparse
 import json
+import shutil
 import sys
 from os.path import exists
 from pathlib import Path
@@ -103,7 +104,7 @@ _BASE_SETTINGS_DEFAULTS = {
             "background_thumbnail_font_color": "255,255,255",
         },
         "tts": {
-            "voice_choice": "crikk",
+            "voice_choice": "ohfreeme",
             "random_voice": False,
             "elevenlabs_voice_name": "Bella",
             "elevenlabs_api_key": "",
@@ -230,7 +231,7 @@ def cmd_render(args, manual_config):
             print_markdown(
                 f"### [{i+1}/{len(posts_to_render)}] Rendering: {post['post_id']}"
             )
-            _render_single(post, manual_config)
+            _render_single(post, manual_config, force=args.force)
     else:
         # Render single post
         if not args.post_id:
@@ -248,10 +249,10 @@ def cmd_render(args, manual_config):
             )
             return
 
-        _render_single(post, manual_config)
+        _render_single(post, manual_config, force=args.force)
 
 
-def _render_single(post_object: dict, manual_config: dict):
+def _render_single(post_object: dict, manual_config: dict, force: bool = False):
     """Render a single post into a video.
 
     Pipeline:
@@ -259,6 +260,18 @@ def _render_single(post_object: dict, manual_config: dict):
     2. Video: Assemble screenshots + audio + background → MP4
     """
     post_id = post_object["post_id"]
+
+    if force:
+        temp_path = Path(f"assets/temp/{post_id}")
+        if temp_path.exists():
+            try:
+                shutil.rmtree(temp_path)
+                print_substep("🗑️ Cleaned temp folder (--force mode)", style="dim")
+            except Exception as e:
+                print_substep(f"Failed to clean temp folder: {e}", style="red")
+                print_substep("Aborting render to avoid inconsistent state.", style="red")
+                return
+
     print_step(f"🚀 Starting render for: {post_id}")
 
     # Step 1: TTS

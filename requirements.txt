@@ -3,7 +3,6 @@ botocore==1.36.8
 gTTS==2.5.4
 moviepy==2.2.1
 playwright==1.49.1
-praw==7.8.1
 requests==2.32.3
 rich==13.9.4
 toml==0.10.2
@@ -13,8 +12,6 @@ tomlkit==0.13.2
 Flask==3.1.1
 clean-text==0.6.0
 unidecode==1.4.0
-spacy==3.8.7
-torch==2.7.0
 transformers==4.52.4
 ffmpeg-python==0.2.0
 elevenlabs==1.57.0

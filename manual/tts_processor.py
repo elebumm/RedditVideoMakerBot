@@ -49,6 +49,13 @@ class ManualTTSProcessor:
         self.mp3_dir.mkdir(parents=True, exist_ok=True)
         print_step("🔊 Processing audio files...")
 
+        existing_audio = self._scan_existing_audio()
+        if existing_audio:
+            print_substep(
+                f"  ♻ Found {len(existing_audio)} cached TTS audio file(s).",
+                style="dim",
+            )
+
         total_duration = 0
         processed_count = 0
         tts_needed = False
@@ -58,13 +65,7 @@ class ManualTTSProcessor:
 
             # Case 1: .mp3 already provided — just measure duration
             if screenshot.get("audio_path"):
-                try:
-                    clip = AudioFileClip(screenshot["audio_path"])
-                    duration = clip.duration
-                    clip.close()
-                except Exception as e:
-                    print_substep(f"  ✗ Failed to read audio #{idx}: {e}", style="red")
-                    duration = 0
+                duration = self._get_audio_duration(screenshot["audio_path"])
 
                 screenshot["audio_duration"] = duration
                 total_duration += duration
@@ -75,7 +76,26 @@ class ManualTTSProcessor:
                 )
                 continue
 
-            # Case 2: Only .txt provided — need TTS
+            # Case 2: Cached temp .mp3 from a previous failed render — validate and reuse
+            cached_audio_path = existing_audio.get(idx)
+            if cached_audio_path:
+                if self._validate_audio_file(cached_audio_path):
+                    duration = self._get_audio_duration(cached_audio_path)
+                    screenshot["audio_path"] = cached_audio_path
+                    screenshot["audio_duration"] = duration
+                    total_duration += duration
+                    processed_count += 1
+                    print_substep(
+                        f"  ✓ #{idx} → {duration:.1f}s (reused cached .mp3)",
+                        style="green",
+                    )
+                    continue
+                print_substep(
+                    f"  ⚠ Cached audio #{idx} is invalid, regenerating...",
+                    style="yellow",
+                )
+
+            # Case 3: Only .txt provided — need TTS
             text = screenshot.get("text", "").strip()
             if not text:
                 print_substep(
@@ -108,13 +128,7 @@ class ManualTTSProcessor:
                 self._generate_audio(clean_text, mp3_path)
 
             # Measure duration
-            try:
-                clip = AudioFileClip(mp3_path)
-                duration = clip.duration
-                clip.close()
-            except Exception as e:
-                print_substep(f"  ✗ Failed to read audio #{idx}: {e}", style="red")
-                duration = 0
+            duration = self._get_audio_duration(mp3_path)
 
             # Update screenshot entry
             screenshot["audio_path"] = mp3_path
@@ -147,6 +161,38 @@ class ManualTTSProcessor:
         )
 
         return self.post
+
+    def _scan_existing_audio(self) -> dict[int, str]:
+        """Return temp mp3 candidates mapped by screenshot index."""
+        if not self.mp3_dir.exists():
+            return {}
+
+        existing_audio = {}
+        for mp3_file in sorted(self.mp3_dir.glob("*.mp3")):
+            if mp3_file.name.endswith(".part.mp3"):
+                continue
+            if not mp3_file.stem.isdigit():
+                continue
+            existing_audio[int(mp3_file.stem)] = str(mp3_file)
+        return existing_audio
+
+    def _get_audio_duration(self, filepath: str) -> float:
+        """Return audio duration in seconds, or 0.0 if unreadable."""
+        try:
+            clip = AudioFileClip(filepath)
+            duration = float(clip.duration or 0)
+            clip.close()
+            return duration
+        except Exception as e:
+            print_substep(f"  ✗ Failed to read audio: {e}", style="red")
+            return 0.0
+
+    def _validate_audio_file(self, filepath: str) -> bool:
+        """Return True when an existing audio file can be reused."""
+        audio_path = Path(filepath)
+        if not audio_path.exists() or audio_path.stat().st_size == 0:
+            return False
+        return self._get_audio_duration(filepath) > 0
 
     def _get_tts_engine(self):
         """Initialize the TTS engine based on config.
