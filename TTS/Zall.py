@@ -14,10 +14,10 @@ from utils.console import print_substep
 # Load environment variables from .env file
 load_dotenv()
 
-OHFREEME_API_URL = os.getenv("OHFREEME_API_URL", "")
-OHFREEME_BASE_URL = os.getenv("OHFREEME_BASE_URL", "")
-OHFREEME_JWT_TOKEN = os.getenv("OHFREEME_JWT_TOKEN", "")
-VOICES_FILE = Path(__file__).resolve().parent.parent / "config" / "ohfreeme_voices.json"
+ZALL_API_URL = os.getenv("ZALL_API_URL", "")
+ZALL_BASE_URL = os.getenv("ZALL_BASE_URL", "")
+ZALL_JWT_TOKEN = os.getenv("ZALL_JWT_TOKEN", "")
+VOICES_FILE = Path(__file__).resolve().parent.parent / "config" / "zall_voices.json"
 MAX_RETRIES = 3
 RATE_LIMIT_WAIT = 20
 
@@ -31,7 +31,7 @@ def _load_voices() -> list[dict]:
         return []
 
 
-class OhFreeMe:
+class Zall:
     # Load list of User‑Agent strings for random header
     _user_agents = None
 
@@ -70,7 +70,7 @@ class OhFreeMe:
             f.write(audio_bytes)
 
     def randomvoice(self) -> dict:
-        lang = settings.config["settings"]["tts"].get("ohfreeme_lang", "vi")
+        lang = settings.config["settings"]["tts"].get("zall_lang", "vi")
         filtered = [v for v in self.voices if v["lang"] == lang]
         if not filtered:
             filtered = self.voices
@@ -79,8 +79,8 @@ class OhFreeMe:
     def _pick_voice(self, random_voice: bool) -> dict:
         if random_voice:
             return self.randomvoice()
-        lang = settings.config["settings"]["tts"].get("ohfreeme_lang", "vi")
-        gender = settings.config["settings"]["tts"].get("ohfreeme_gender", "random")
+        lang = settings.config["settings"]["tts"].get("zall_lang", "vi")
+        gender = settings.config["settings"]["tts"].get("zall_gender", "random")
         candidates = [v for v in self.voices if v["lang"] == lang]
         if gender != "random":
             candidates = [v for v in candidates if v["gender"] == gender]
@@ -90,11 +90,14 @@ class OhFreeMe:
 
     def _call_api(self, text: str, voice_id: int) -> bytes:
         payload = {
-            "text": text,
-            "id": voice_id,
-            "useEnhance": settings.config["settings"]["tts"].get("ohfreeme_enhance", False),
-            "rate": settings.config["settings"]["tts"].get("ohfreeme_rate", 1),
-            "pitch": settings.config["settings"]["tts"].get("ohfreeme_pitch", 0),
+            "segments": [
+                {
+                    "voiceId": voice_id,
+                    "text": text
+                }
+            ],
+            "useNaturalVoice": settings.config["settings"]["tts"].get("zall_natural_voice", False),
+            "enableBrandKeywords": settings.config["settings"]["tts"].get("zall_enable_brand_keywords", False),
         }
         headers = {
             "cache-control": "no-cache",
@@ -103,52 +106,38 @@ class OhFreeMe:
             "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,vi;q=0.7", # important
             "sec-fetch-mode": "cors", # important
             "sec-fetch-site": "same-origin", # important
-            "Cookie": f"auth_token={OHFREEME_JWT_TOKEN}", # important
+            "Cookie": f"auth_token={ZALL_JWT_TOKEN}", # important
             "user-agent": self._pick_user_agent(), # important
-            # "origin": OHFREEME_BASE_URL,
-            # "referer": f"{OHFREEME_BASE_URL}/",
         }
 
-        # streaming NDJSON response with debug logging
         for attempt in range(MAX_RETRIES):
-            resp = requests.post(OHFREEME_API_URL, json=payload, headers=headers, stream=True)
-            # Rate‑limit handling – first line may contain error object
-            try:
-                first_line = next(resp.iter_lines())
-                parsed = json.loads(first_line.decode('utf-8'))
-                print_substep(f"[OhFreeMe debug] First line parsed: {parsed}", style="blue")
-                if parsed.get("status") == "error":
+            resp = requests.post(ZALL_API_URL, json=payload, headers=headers, stream=True)
+            audio_bytes = b""
+
+            for line in resp.iter_lines():
+                if not line:
+                    continue
+
+                try:
+                    event = json.loads(line.decode("utf-8"))
+                except json.JSONDecodeError:
+                    continue
+
+                status = event.get("status")
+                if status == "audio_chunk":
+                    audio_bytes += base64.b64decode(event["chunk"])
+                elif status == "error":
                     print_substep(
                         f"  Rate limited, waiting {RATE_LIMIT_WAIT}s... (attempt {attempt + 1}/{MAX_RETRIES})",
                         style="yellow",
                     )
                     time.sleep(RATE_LIMIT_WAIT)
-                    continue
-            except (StopIteration, json.JSONDecodeError):
-                pass
+                    break
+                elif status == "done":
+                    if not audio_bytes:
+                        raise RuntimeError("Zall TTS completed without audio chunks")
+                    return audio_bytes
+            else:
+                raise RuntimeError("Zall TTS response ended before completion")
 
-            # iterate remaining chunks until done, keeping only the final line for processing
-            for line in resp.iter_lines():
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line.decode('utf-8'))
-                except json.JSONDecodeError:
-                    continue
-                # debug: print raw line (decoded) to terminal
-                if data.get("status") == "done":
-                    print_substep(f"[OhFreeMe debug] Received")
-                    return self._extract_audio(data)
-
-        raise RuntimeError(f"OhFreeMe TTS failed after {MAX_RETRIES} retries (rate limited)")
-
-    def _extract_audio(self, data: dict) -> bytes:
-        # Expecting a dict with a "url" field containing a data URI
-        url = data.get("url")
-        if not url:
-            raise RuntimeError("Missing 'url' in API response data")
-        # url format: "data:audio/mpeg;base64,<base64data>"
-        if not (url.startswith("data:") and ";base64," in url):
-            raise RuntimeError(f"Unexpected URL format in API response: {url}")
-        b64_part = url.split(";base64,", 1)[1]
-        return base64.b64decode(b64_part)
+        raise RuntimeError(f"Zall TTS failed after {MAX_RETRIES} retries (rate limited)")

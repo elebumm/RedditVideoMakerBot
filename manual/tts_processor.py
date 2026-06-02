@@ -200,7 +200,7 @@ class ManualTTSProcessor:
         Reuses the TTS engines from video_creation/voices.py
         """
         from TTS.GTTS import GTTS
-        from TTS.OhFreeMe import OhFreeMe
+        from TTS.Zall import Zall
         from TTS.Crikk import Crikk
         from TTS.TikTok import TikTok
         from TTS.aws_polly import AWSPolly
@@ -211,7 +211,7 @@ class ManualTTSProcessor:
 
         providers = {
             "googletranslate": GTTS,
-            "ohfreeme": OhFreeMe,
+            "zall": Zall,
             "crikk": Crikk,
             "awspolly": AWSPolly,
             "streamlabspolly": StreamlabsPolly,
