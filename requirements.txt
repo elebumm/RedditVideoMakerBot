@@ -10,7 +10,7 @@ rich==13.9.4
 toml==0.10.2
 translators==5.9.9
 pyttsx3==2.98
-tomlkit==0.15.0
+tomlkit==0.15.1
 Flask==3.1.1
 clean-text==0.6.0
 unidecode==1.4.0
