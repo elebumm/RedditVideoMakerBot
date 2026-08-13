@@ -4,7 +4,7 @@ fish-audio-sdk==1.1.0
 gTTS==2.5.4
 moviepy==2.2.1
 playwright==1.49.1
-praw==7.8.1
+praw==8.0.2
 requests==2.34.0
 rich==13.9.4
 toml==0.10.2
